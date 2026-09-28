@@ -148,8 +148,8 @@ python scripts/gate_phase0.py    # 本机门禁：GATE PHASE0: PASS（5/5），�
     会告警（合并后 import/export 失效），dist 必须自包含。
 13. **landingUrl 白名单**：spec 落地页是产物唯一允许外链——改 golden 的 landingUrl 要同步 gate 断言。
 14. **npm workspaces**：必须同时含 `packages/*` 与 `packages/templates/*`（Phase 0 实测教训）。
-15. **占位子命令语义**：pfcore build/run/pack/rules-check exit 2 是当前契约的一部分（编排器接通前），
-    不要"顺手实现"而不改 pipeline-contract。
+15. **占位子命令语义**：pfcore build/pack/rules-check exit 2 是当前契约的一部分，不要"顺手实现"而不改
+    pipeline-contract。全流水线命令名 2026-09-28 裁决为 `make`（已实现；占位 `run` 已删除，勿复活）。
 16. **coverage include 必须包内相对**：npm workspaces 的 `npm run -w <pkg>` 在**包目录**下执行脚本，
     c8 `--include` 写 monorepo 根相对路径会匹配 0 文件 → 0% 覆盖仍 exit 0（"空过"，2026-09-28 再生试验
     发现并修复）。验证门有效性的方法：临时把 `--lines` 抬到必失败值跑一遍，必须 exit 1。

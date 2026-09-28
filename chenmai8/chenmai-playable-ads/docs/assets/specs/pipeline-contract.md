@@ -12,13 +12,14 @@
 | 能力 | 规划正文写法 | 实现现状（2026-09-28 代码） | 状态 |
 |---|---|---|---|
 | 规格校验 | `pfcore validate <spec...>` | **已实现**：`python -m pfcore validate <spec...>`（支持 glob） | frozen |
-| 全流水线（校验→构建→打包→质检→汇总） | `pfcore make --spec S --locales en,ar --channels all` | **未实现**。占位子命令名为 `run`（argparse 已注册，执行即回显"尚未实现"并 exit 2） | **命令名漂移，待统一** |
-| 全渠道打包 | `pfcore pack --spec S --all-channels --locale en` | 占位 `pack`（exit 2） | 未实现 |
-| 单模板构建 | `pfcore build`（占位） | 占位 `build`（exit 2）；**实际能用的构建入口是模板自己的 `node packages/templates/tmpl-match3/build.mjs`** | 未实现 |
+| 全流水线（校验→构建→打包→质检→汇总） | `pfcore make --spec S --locales en,ar --channels all` | **已实现**（`python/pfcore/make.py`）：`python -m pfcore make --spec S [--locales en,ar] [--channels all] [--out] [--serve-port] [--serve-host] [--no-serve]`。默认渠道=规则库三投放渠道；实现对首个 single-html 渠道跑 qacore `--autoplay`，产出 summary/二维码/计时/demo-prebuilt | frozen（**裁决：`make`，占位 `run` 已删除**） |
+| 全渠道打包 | `pfcore pack --spec S --all-channels --locale en` | 占位 `pack`（exit 2）；实际可用的打包入口是 `node packages/packager/bin.mjs build` | 未实现 |
+| 单模板构建 | `pfcore build`（占位） | 占位 `build`（exit 2）；**实际能用的构建入口是模板自己的 `node packages/templates/tmpl-match3/build.mjs`**（`make` 内部即调它） | 未实现 |
 | 规则库校验 | `pfcore rules-check` | 占位（exit 2）；结构校验实际由 packager 的 `loadRules()` 承担 | 未实现 |
 
-**裁决建议**（由仓库 owner 定夺后回填本页）：冻结名取 `make`（与规划一致）或 `run`（与占位一致），
-二选一后删除另一处提法；在裁决前，任何新代码不得引入第三个全流水线命令名。
+**裁决记录（2026-09-28 回填）**：全流水线冻结名取 **`make`**（与规划正文一致）；实现前占位名 `run`
+已从 argparse、门禁常量（`scripts/gate_phase0.py` PFCORE_SUBCOMMANDS）与本仓全部文档删除。
+任何新代码不得引入第三个全流水线命令名。
 
 ## 2. 退出码契约（已实现部分，冻结）
 
@@ -53,6 +54,27 @@
 - `<projectId>` 取 spec `meta.projectId`（校验 `/^[A-Za-z0-9][A-Za-z0-9._-]*$/`）。
 - `--out` 缺省 = `artifacts`（相对当前工作目录）。
 
+### 3.4 make 全流水线产物（2026-09-28 实现，冻结）
+
+```
+<out>/preview/<projectId>-<locale>.html      # 模板构建的真实可玩单文件（§3.1 路径 A）
+<out>/<projectId>/dist/<locale>/index.html   # 打包器输入形态（§3.1 路径 B，构建产物的拷贝）
+<out>/<projectId>/<channel>/<locale>/        # §3.2 渠道包 + qacore 报告/截图（质检渠道）
+<out>/demo-prebuilt/                         # 演示兜底目录（全绿时才产出；每次运行整体重建）
+  ├─ index.html                              # 汇总页（计时/渠道表/质检表/链接，零外链、仅相对引用）
+  ├─ qr.png                                  # 二维码（内容=§5 的 LAN 预览 URL）
+  ├─ pipeline-report.json                    # make 运行报告（计时/包清单/质检 checks/伺服状态）
+  ├─ preview/<projectId>-<locale>.html       # 可玩 HTML 拷贝
+  └─ channels/<channel>/<locale>/…           # 渠道包整目录拷贝（含 pack-manifest 与质检报告）
+<out>/.demo-serve.json                       # 静态伺服状态（port/pid/root；复用判定用，demo-prebuilt 外）
+```
+
+- 渠道集合：`--channels` 缺省 `applovin,meta,mintegral`（规则库已冻结的三投放渠道）；
+  `all` = 规则库全部渠道（`preview` 为本地渠道不打包）。规则库外渠道 exit 2。
+- 质检：首个 single-html 渠道 × 首语言，`qacore run --autoplay`（预算取 spec `qc.*`）；
+  报告落在该渠道目录（`index.report.json` + 双视口截图）。
+- 任何质检 fail → exit 1，**不产出** 二维码与 demo-prebuilt（质检是裁判）。
+
 ### 3.3 质检报告（qacore 输出，冻结）
 
 - 默认写到产物旁：`<产物名>.report.json`；截屏 `<产物名>.png`；横屏趟 `<产物名>-landscape.png`。
@@ -79,6 +101,9 @@
     "channel": "preview",
     "channel_max_bytes": 5242880,            // 规则库缺失该渠道时为 null → CHK01 skip
     "external_requests": [],                 // 非本机请求（已 abort）
+    "runtime_stubs": [],                     // 渠道容器运行时脚本本地桩（如 mraid.js；声明于
+                                             // channel-rules runtime.injectRelativeScripts 且
+                                             // 本地缺失时以空 JS 桩应答，模拟容器注入——2026-09-28 增）
     "request_count": 2,
     "console_errors": [],                    // console.error + pageerror
     "load_ms": 572,                          // 竖屏趟 load 耗时
@@ -95,12 +120,21 @@
 - 注意：`facts` 中**不含** autoplay 明细（单独在判定前抽出，不落盘到 facts）——两趟视口与试玩事实的完整采集结构见 [qacore spec](qacore.md)。
 - **缺口**：报告尚无正式 JSON Schema（CHK 字段表即本节；schema 化列入 M8 后续）。
 
-## 5. 二维码指向（未实现，规划契约）
+## 5. 二维码指向与计时（2026-09-28 随 `make` 实现，冻结）
 
-- 现状：无任何二维码产出（webui 与编排器均为空壳；`qrcode` 仅在 Python 依赖清单中）。
-- 规划契约（冻结为方向，实现前不得偏移）：二维码内容 = **LAN 可达的预览 HTML 的 http URL**
-  （必须是局域网 IP，`127.0.0.1` 手机不可扫）；由本机静态伺服该文件；报告页与二维码同源。
-- 计时口径（待实现）：墙钟从"spec 修改完成"到"二维码可扫"为止；目标 ≤90s（--quick 口径）。
+- 二维码内容 = **LAN 可达的预览 HTML 的 http URL**（`http://<局域网IP>:<port>/preview/<file>`；
+  必须是局域网 IP，`127.0.0.1` 手机不可扫）。IP 探测按段优先级选（192.168 > 10 > 172.16-31 >
+  100.64/10 > 其他 > 198.18/15 兜底——默认路由常落在 TUN 虚拟网卡上，不可直接采信），
+  `--serve-host` 可显式覆盖。
+- 伺服：`make` 以分离子进程启动 `python -m http.server <port> --bind 0.0.0.0 --directory
+  <out>/demo-prebuilt`（缺省端口 8618，被未知进程占用时向后顺延；状态记 `<out>/.demo-serve.json`，
+  端口仍可连则复用上次会话的伺服器）。汇总页 `index.html` 与二维码同源。
+- "可扫"判定 = qr.png 落盘 **且** 伺服端口 TCP 监听实测通过（本模块不向 loopback/私网发起
+  HTTP 请求，健康检查只做 TCP connect）。
+- 计时口径（实测打印两行，并写入 pipeline-report.json）：
+  1. **make 墙钟**：编排入口 → 二维码可扫（演示计时器口径，目标 ≤90s；
+     留档实测 41.8s：构建+三渠道包+qacore 自动试玩+兜底目录）；
+  2. **spec 修改完成 → 二维码可扫**：以 spec 文件 mtime 为"改完 spec"的客观代理。
 
 ## 6. 本契约的变更流程
 

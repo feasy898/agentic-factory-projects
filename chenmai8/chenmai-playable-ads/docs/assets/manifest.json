@@ -172,21 +172,23 @@
       "name": "编排器（= M9 pfcore CLI + M10 webui 壳）",
       "status": "partial",
       "lang": "Python CLI（argparse）+ 计划中 FastAPI 壳",
-      "responsibility": "一条命令串联 校验→构建→打包→质检→汇总/二维码；命令行是主体，网页只是上传与二维码壳。当前仅 validate 子命令 frozen，build/run/pack/rules-check 为占位（exit 2），webui 为空壳。",
+      "responsibility": "一条命令串联 校验→构建→打包→质检→汇总/二维码；命令行是主体，网页只是上传与二维码壳。validate 与 make（全流水线，2026-09-28 接通）frozen，build/pack/rules-check 为占位（exit 2），webui 为空壳。",
       "physicalLocations": [
-        "python/pfcore/__main__.py（validate frozen + 4 个占位子命令）",
+        "python/pfcore/__main__.py（validate + make frozen；build/pack/rules-check 占位）",
+        "python/pfcore/make.py（make 全流水线编排实现）",
         "webui/__init__.py（占位）"
       ],
       "contract": {
-        "pipeline": "流水线契约（唯一命令名/退出码/目录形态/报告字段/二维码指向）见 docs/assets/specs/pipeline-contract.md；命令名漂移（规划 make vs 占位 run）在该页如实记录，待统一"
+        "pipeline": "流水线契约（唯一命令名/退出码/目录形态/报告字段/二维码指向）见 docs/assets/specs/pipeline-contract.md；命令名 2026-09-28 裁决冻结为 make（占位 run 已删除）"
       },
       "dependsOn": ["M1-spec", "M3-templates", "M4-packager", "M8-qacore", "M5-assetkit"],
       "eval": {
         "commands": [
           "python/.venv/Scripts/python.exe -m pfcore validate specs-eval/golden-match3.json",
+          "python/.venv/Scripts/python.exe -m pfcore make --spec specs-eval/golden-match3.json",
           "python/.venv/Scripts/python.exe -m pfcore rules-check"
         ],
-        "passLine": "validate exit 0；未实现子命令回显占位并 exit 2（占位语义本身是当前契约）"
+        "passLine": "validate exit 0；make exit 0（三渠道包+质检 0 FAIL+二维码+demo-prebuilt）；占位子命令回显占位并 exit 2"
       },
       "regenOrder": 9,
       "specDoc": "docs/assets/specs/orchestrator.md"

@@ -20,7 +20,7 @@ packages/       Node 侧（npm workspaces，TS）
   templates/      玩法模板（三消 / 合成 / 拔针 / 排序）
   packager/       配置驱动的多渠道打包器
 python/         Python 侧（统一 venv）
-  pfcore/         编排 CLI（validate / build / run / pack）
+  pfcore/         编排 CLI（validate / make 全流水线；build / pack 占位）
   llmgw/          LLM 网关抽象层
   director/       截图 / 录屏 → Spec 草稿（演示级）
   qacore/         无头自动质检器
