@@ -2,8 +2,10 @@
 
 判定状态取值：pass / fail / skip。
 - pass/fail：由本次无头打开过程真实测得；
-- skip：检查项尚未实装（CHK02/06/10）或本产物不具备判定前提（如无 PF 桥、
-  无 --autoplay），不做任何假定结论。
+- skip：检查项尚未实装（CHK02/06/10）或产物/配置不具备判定前提
+  （如无 PF 桥且渠道未强制静音、无 --autoplay），不做任何假定结论。
+  注意：渠道要求静音时（muteBeforeFirstInteraction 默认 true），
+  CHK04 缺 PF 桥/探针不是 skip 而是 fail——无法证明静音合规即违规。
 """
 
 from __future__ import annotations
@@ -49,39 +51,70 @@ def evaluate(facts: dict[str, Any]) -> list[Check]:
 
     checks.append(skip("CHK02", "文件数 ≤ 渠道上限", "未实装（当前输入为单 HTML 文件，无目录清点）"))
 
-    # CHK03 零外网请求（横竖屏两趟合并判定）
+    # CHK03 零外网连接（横竖屏两趟合并判定）：
+    # HTTP 请求由 route 拦截记账；WebSocket 由 route_web_socket 关闭并记账
+    # （条目前缀 websocket:）；WebRTC 不经过网络层，由页面探针计数 RTCPeerConnection。
     external = facts["external_requests"]
-    if external:
+    rtc = int(facts.get("rtc_connections") or 0)
+    if external or rtc:
         shown = "；".join(_clip(u) for u in external[:5])
         more = f"（另 {len(external) - 5} 条略）" if len(external) > 5 else ""
-        checks.append(Check("CHK03", "零外网请求", "fail",
-                            f"发现 {len(external)} 条非本机请求，已拦截：{shown}{more}"))
+        problems: list[str] = []
+        if external:
+            problems.append(f"发现 {len(external)} 条非本机请求/WebSocket，已拦截：{shown}{more}")
+        if rtc:
+            problems.append(f"页面构造了 {rtc} 次 RTCPeerConnection（WebRTC 外联尝试）")
+        checks.append(Check("CHK03", "零外网请求", "fail", "；".join(problems)))
     else:
         checks.append(Check("CHK03", "零外网请求", "pass",
-                            f"两趟共 {facts['request_count']} 条请求均指向本地伺服地址，无外网请求"))
+                            f"两趟共 {facts['request_count']} 条请求均指向本地伺服地址，"
+                            "无外网请求、无外部 WebSocket、无 WebRTC 构造"))
 
-    # CHK04 首交互前静音 + 首交互后允许出声（依赖 window.PF 与自动试玩）
+    # CHK04 首交互前静音 + 首交互后允许出声（依赖 window.PF 与自动试玩）。
+    # 渠道要求静音时（channel-rules muteBeforeFirstInteraction，默认 True）：
+    # 缺 window.PF 或探针未安装一律 fail——没有桥/没有探针就无法证明静音合规，
+    # 绝不放行；无音频页面改为断言"不存在未静音的媒体元素"（<audio>/<video>），
+    # 而不是"缺少 AudioContext"，同时覆盖首交互前的媒体 play() 调用。
     pf_present = facts.get("pf_present")
-    auto = facts.get("autoplay") or {}
+    probe_installed = facts.get("probe_installed")
+    mute_required = facts.get("channel_mute_required")
+    auto = facts.get("autoplay") or facts.get("muteLoadTime") or {}
     if not pf_present:
-        checks.append(skip("CHK04", "首交互前静音", "页面未装配 window.PF 桥，无可判定对象"))
+        if mute_required:
+            checks.append(Check(
+                "CHK04", "首交互前静音", "fail",
+                "渠道要求首交互前静音，但页面未装配 window.PF 桥，无法证明静音合规"))
+        else:
+            checks.append(skip("CHK04", "首交互前静音",
+                               "页面未装配 window.PF 桥且渠道未强制静音，无可判定对象"))
+    elif mute_required and probe_installed is not True:
+        checks.append(Check(
+            "CHK04", "首交互前静音", "fail",
+            "渠道要求首交互前静音，但 qacore 探针未安装（__pfprobe 缺失），无法采证"))
     else:
         first_muted = auto.get("firstMutedBeforeInteraction")
         audio_running = auto.get("audioRunningBeforeInteraction")
+        media_unmuted = int(auto.get("mediaUnmutedBeforeInteraction") or 0)
+        media_plays = int(auto.get("mediaPlaysBeforeInteraction") or 0)
         after = auto.get("mutedAfterFirstGesture")
         problems: list[str] = []
         if first_muted is not True:
             problems.append(f"首交互前 PF.isMuted()={first_muted}")
-        if facts.get("autoplay_enabled") and audio_running not in (0, None):
+        if audio_running not in (0, None):
             problems.append(f"首交互前存在 running AudioContext（{audio_running}）")
+        if media_unmuted > 0:
+            problems.append(f"存在 {media_unmuted} 个未静音的媒体元素（<audio>/<video>）")
+        if media_plays > 0:
+            problems.append(f"首交互前发生了 {media_plays} 次媒体播放调用（play()/autoplay）")
         if facts.get("autoplay_enabled") and after is not False:
             problems.append(f"首交互后 PF.isMuted()={after}（应为 False，即解除静音）")
         if problems:
             checks.append(Check("CHK04", "首交互前静音", "fail", "；".join(problems)))
         else:
-            detail = "首交互前 PF.isMuted()=true"
+            detail = "首交互前 PF.isMuted()=true，无未静音媒体元素"
             if facts.get("autoplay_enabled"):
-                detail += f"，无 running AudioContext，首交互后 isMuted()=false（已解除静音，gestures={auto.get('gestures')}）"
+                detail += (f"，无 running AudioContext，首交互后 isMuted()=false"
+                           f"（已解除静音，gestures={auto.get('gestures')}）")
             else:
                 detail += "（未开自动试玩，仅判首交互前）"
             checks.append(Check("CHK04", "首交互前静音", "pass", detail))

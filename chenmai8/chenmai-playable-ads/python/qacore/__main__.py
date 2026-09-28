@@ -11,7 +11,15 @@ import sys
 from . import cli
 
 
+def _force_utf8_stdio() -> None:
+    """Windows 控制台/管道默认非 UTF-8 代码页，固定输出编码避免中文乱码。"""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
+
+
 def main(argv: list[str] | None = None) -> int:
+    _force_utf8_stdio()
     parser = argparse.ArgumentParser(
         prog="qacore",
         description="无头自动质检器：本地伺服产物、双视口仿真、记录请求与截屏、"
