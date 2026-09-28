@@ -26,8 +26,11 @@ librosa==1.0.0
 soundfile==0.14.0         # librosa 已自带，显式钉出版本
 
 # 工具
-ffmpeg==系统安装           # 6.1.1 essentials（含 libass/fribidi/harfbuzz），不走 pip
-pydub==不使用              # 按设计直接调 ffmpeg，不引入 pydub
+# ffmpeg/ffprobe 为系统级依赖（6.1.1 essentials，含 libass/fribidi/harfbuzz），
+# 不走 pip —— B1 修订：此处不再写 `ffmpeg==系统安装`/`pydub==不使用` 等非 pip 行
+# （会令 `pip install -r requirements.txt` 无法重放）；可用性检查用
+# `python scripts/check_ffmpeg.py`（gate_b0 ① 对 pytest 子进程另有 PATH 断言）。
+# pydub 按设计不引入（直接调 ffmpeg）。
 
 # 测试（各模块 eval 为 pytest 脚本）
 pytest==9.1.1
