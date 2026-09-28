@@ -29,3 +29,13 @@ M4 → M5 → M2 → M3 → M1 → M6 → M7（依赖驱动，详见 `specs/READ
 - Python 3.11+；SQLite 单文件起步；YAML 数据驱动（tests/ontology/golden/scenarios 全部文件化）。
 - LLM 调用统一走 `src/m1_core/model_client`（provider 适配，mock 模式全离线跑 EVAL）。
 - 时间纪律：电价判定只允许 M5 BUSINESS 时钟；CI 扫描业务代码无 wall-clock 判价。
+
+## EVAL 运行方式
+
+```bash
+python run_evals.py --module m4     # 在仓库根（本目录）运行；--selftest / --module all 同
+```
+
+runner 以脚本自身位置锚定仓库根（pathlib，不假设其他 cwd）；摘要行输出 stdout（ASCII），
+明细写 `runtime/eval_results.json`（仓库内）。若在仓库的上级目录执行同名命令，
+由该目录下的转发启动器委托本仓库 runner（单一事实源在本仓库，上级目录仅转发）。
