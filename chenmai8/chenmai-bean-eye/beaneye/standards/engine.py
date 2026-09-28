@@ -23,6 +23,18 @@
    模板键字符集 ``[A-Za-z0-9_.]``，M10 按 lang 查表渲染三语文本；
 5. 输出 GradingDecision（含文件 sha256 与 verified:false warnings）。
 全部 grade 未达时 grade = 标准 YAML 的 fail_grade、passed=False。
+
+**W13 修复（passed 阻断）**：标准 YAML 存在任何 ``verified: false`` 键时
+（即 ``Standard.warnings`` 非空），**即使某级阈值全部满足，passed 也不得为
+True**——阈值未经原文核对，不得据此对外宣布「通过」；此时 grade 仍记录
+实际达到的级别名（阈值层级信息不丢），并追加
+``grading.reason.pass_blocked_unverified`` 理由。全部键核对（verified:true）
+后该阻断自动解除。
+
+**W13 修复（sample_g 口径注明）**：标准 YAML 的 ``sample_g``（如 350g 抽样
+基量）v0 不做粒数换算——计数条件按**本盘粒数**直接对比全样上限，因此每份
+判定都追加 ``grading.reason.tray_count_vs_sample_g``（sample_g / bean_count），
+明确「本盘粒数，非 sample_g 当量」，防止误读为 350g 基量的符合性结论。
 """
 
 from __future__ import annotations
@@ -176,6 +188,21 @@ class StandardEngineV1:
             reasons.append(
                 _reason("grading.reason.no_grade_matched", grades=len(std.grades), fail_grade=std.fail_grade)
             )
+
+        # ---- W13 修复：verified:false 时 passed 不得为真（阈值未核对不宣布通过）----
+        if chosen is not None and std.warnings:
+            passed = False
+            reasons.append(
+                _reason("grading.reason.pass_blocked_unverified", warnings=len(std.warnings))
+            )
+        # ---- W13 修复：计数口径注明——本盘粒数，非 sample_g 当量 ----
+        reasons.append(
+            _reason(
+                "grading.reason.tray_count_vs_sample_g",
+                sample_g=f"{std.sample_g:g}",
+                bean_count=len(beans),
+            )
+        )
 
         return GradingDecision(
             standard_id=std.standard_id,

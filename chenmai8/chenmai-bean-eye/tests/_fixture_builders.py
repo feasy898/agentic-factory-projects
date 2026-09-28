@@ -5,7 +5,9 @@
     python -c "import sys; sys.path[:0]=['.','tests']; import _fixture_builders as fb; fb.write_all('tests/fixtures')"
 
 所有取值相互一致（severity_rank 与 configs/taxonomy.yaml 默认序对齐、
-obs_id=mask_id、final_* 与两面观测一致、defect_counts 与逐粒直方一致）。
+obs_id=mask_id、final_* 与两面观测一致、defect_counts 与逐粒直方一致、
+primary/secondary_count 与 taxonomy 主次归属一致、bean_count=豆列表长度、
+color_lab 统一 lab8 标度三通道 0-255——W13 契约校验器配套）。
 """
 
 from __future__ import annotations
@@ -87,7 +89,7 @@ def bean_observation_top_017() -> BeanObservation:
         severity_rank=RANK_BLACK,
         crop_path=f"out/crops/{SCAN_ID}/top_017.png",
         mask=bean_mask_top_017(),
-        color_lab=(35.2, 18.4, 9.1),
+        color_lab=(89.8, 146.4, 137.1),
         eq_diameter_mm=6.0,
     )
 
@@ -110,7 +112,7 @@ def bean_observation_bottom_017() -> BeanObservation:
             source="classic",
             conf=0.96,
         ),
-        color_lab=(52.0, -10.2, 20.1),
+        color_lab=(132.6, 117.8, 148.1),
         eq_diameter_mm=5.96,
     )
 
@@ -135,7 +137,7 @@ def paired_bean_b0002() -> PairedBean:
         severity_rank=RANK_BROKEN,
         crop_path=f"out/crops/{SCAN_ID}/top_002.png",
         mask=bean_mask_top_002(),
-        color_lab=(55.1, 8.2, 18.7),
+        color_lab=(140.5, 136.2, 146.7),
         eq_diameter_mm=5.8,
     )
     bottom = BeanObservation(
@@ -155,7 +157,7 @@ def paired_bean_b0002() -> PairedBean:
             source="classic",
             conf=0.94,
         ),
-        color_lab=(54.6, 7.9, 18.2),
+        color_lab=(139.2, 135.9, 146.2),
         eq_diameter_mm=5.77,
     )
     return PairedBean.from_sides("b0002", top, bottom, pairing_cost=2.4)
@@ -180,7 +182,7 @@ def paired_bean_b0003() -> PairedBean:
             source="classic",
             conf=0.93,
         ),
-        color_lab=(51.4, -9.8, 19.6),
+        color_lab=(131.1, 118.2, 147.6),
         eq_diameter_mm=5.89,
     )
     return PairedBean.from_sides("b0003", None, bottom, pairing_cost=-1.0)
@@ -219,7 +221,7 @@ def measurements() -> Measurements:
         sieve_hist={"13": 120, "14": 150, "15": 60, "16": 20},
         sieve_pass=True,
         eq_diameter_mm_stats=stats_summary(),
-        color_lab_mean=(52.1, -10.5, 20.3),
+        color_lab_mean=(132.9, 117.5, 148.3),
         delta_e_mean=3.2,
         delta_e_hist={"0-2": 90, "2-4": 160, "4-8": 100},
         est_weight_g=196.0,
@@ -266,6 +268,21 @@ def agent_report() -> AgentReport:
     )
 
 
+def measurements_for_batch() -> Measurements:
+    """与 batch_result 的 3 粒豆列表一致的计量（bean_count=本盘粒数口径，W13 契约校验）。"""
+    return Measurements(
+        bean_count=3,
+        sieve_hist={"14": 2, "15": 1},
+        sieve_pass=True,
+        eq_diameter_mm_stats=stats_summary(),
+        color_lab_mean=(132.9, 117.5, 148.3),
+        delta_e_mean=3.2,
+        delta_e_hist={"2-4": 3},
+        est_weight_g=19.6,
+        weight_model="area_linear:v1",
+    )
+
+
 def batch_result() -> BatchResult:
     beans = [paired_bean_b0001(), paired_bean_b0002(), paired_bean_b0003()]
     return BatchResult(
@@ -273,7 +290,7 @@ def batch_result() -> BatchResult:
         sample_id=SAMPLE_ID,
         scan_ids=[SCAN_ID],
         beans=beans,
-        measurements=measurements(),
+        measurements=measurements_for_batch(),
         grading=grading_decision(),
         agent_report=agent_report(),
         timings_s={"segment": 0.9, "classify": 0.2, "pairing": 0.05, "metrology": 0.1},

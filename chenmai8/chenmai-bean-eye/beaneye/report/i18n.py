@@ -119,6 +119,10 @@ STRINGS: dict[str, dict[str, str]] = {
         "grading.reason.secondary_within_limit": "次缺陷未超限",
         "grading.reason.sieve_fail": "目数未达标",
         "grading.reason.sieve_pass": "目数达标",
+        # W13 修复：verified:false 阻断通过 + 计数口径注明（M9 引擎新 reason 键；
+        # 数值明细在 reason 的 k=v 负载里，此处为人读文案）
+        "grading.reason.pass_blocked_unverified": "标准阈值未核对，不予通过判定",
+        "grading.reason.tray_count_vs_sample_g": "按本盘粒数计数，非抽样基量（sample_g）当量",
         "common.yes": "是",
         "common.no": "否",
         "common.dash": "—",
@@ -218,6 +222,9 @@ STRINGS: dict[str, dict[str, str]] = {
         "grading.reason.secondary_within_limit": "Secondary defects within limit",
         "grading.reason.sieve_fail": "Sieve requirement not met",
         "grading.reason.sieve_pass": "Sieve requirement met",
+        # W13 修复：M9 引擎新 reason 键（与 zh/en 键集对等）
+        "grading.reason.pass_blocked_unverified": "Standard thresholds unverified; pass verdict withheld",
+        "grading.reason.tray_count_vs_sample_g": "Counts are per-tray beans, not sample_g equivalent",
         "common.yes": "Yes",
         "common.no": "No",
         "common.dash": "—",
@@ -317,6 +324,9 @@ STRINGS: dict[str, dict[str, str]] = {
         "grading.reason.secondary_within_limit": "Lỗi phụ trong giới hạn",
         "grading.reason.sieve_fail": "Không đạt yêu cầu sàng",
         "grading.reason.sieve_pass": "Đạt yêu cầu sàng",
+        # W13 修复：M9 引擎新 reason 键（与 zh/en 键集对等）
+        "grading.reason.pass_blocked_unverified": "Nguong chua duoc doi chieu, khong cong bo dat",
+        "grading.reason.tray_count_vs_sample_g": "Dem theo so hat cua khau, khong quy doi theo sample_g",
         "common.yes": "Có",
         "common.no": "Không",
         "common.dash": "—",

@@ -96,7 +96,7 @@ def _obs(mid: str, side: str, defect: str, conf: float, cx: float, cy: float, cr
         severity_rank=RANK[defect],
         crop_path=crop,
         mask=_mask(mid, side, cx, cy),
-        color_lab=(52.0, -10.0, 20.0) if defect == "normal" else (36.0, 14.0, 12.0),
+        color_lab=(132.6, 118.0, 148.0) if defect == "normal" else (91.8, 142.0, 140.0),  # lab8 标度
         eq_diameter_mm=6.0,
     )
 
@@ -157,7 +157,7 @@ def synth_result(crop_root: Path, *, with_agent: bool = True, crop_plan: dict[st
         grade="Fine",
         passed=False,
         primary_count=3,  # black sour mold
-        secondary_count=2,  # broken peaberry
+        secondary_count=1,  # broken（peaberry counts_as_defect=false 不计次缺陷，W13）
         defect_counts={"black": 1, "broken": 1, "sour": 1, "peaberry": 1, "mold": 1},
         reasons=[
             "grading.reason.primary_over_limit",
@@ -170,7 +170,7 @@ def synth_result(crop_root: Path, *, with_agent: bool = True, crop_plan: dict[st
         sieve_hist={"13": 3, "14": 4, "15": 3, "16": 2},
         sieve_pass=True,
         eq_diameter_mm_stats=StatsSummary(min=5.0, max=8.1, mean=6.3, median=6.2),
-        color_lab_mean=(52.4, -10.8, 20.6),
+        color_lab_mean=(133.6, 117.2, 148.6),  # lab8 标度
         delta_e_mean=3.42,
         delta_e_hist={"0-2": 4, "2-4": 5, "4-8": 3},
         est_weight_g=32.1,
@@ -461,7 +461,7 @@ def test_passport_with_zero_defects_has_no_cards(tmp_path: Path):
             severity_rank=0,
             crop_path=obs.crop_path,
             mask=obs.mask,
-            color_lab=(52.0, -10.0, 20.0),
+            color_lab=(132.6, 118.0, 148.0),  # lab8 标度（契约单一标度，W13）
             eq_diameter_mm=obs.eq_diameter_mm,
         )
 

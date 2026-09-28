@@ -6,7 +6,8 @@
     .venv/Scripts/python.exe -m pytest tests/test_standards.py -q
 
 表驱动 GradeCase 覆盖（spec：≥20 用例）：
-- CQI：0 主 +5 次 = 过 / 0 主 +6 次 = 不过 / 1 主 = 不过 / peaberry 不计缺陷；
+- CQI：0 主 +5 次 = 层级达 Fine（verified:false → passed=False，W13 ⑤）/
+  0 主 +6 次 = 不过 / 1 主 = 不过 / peaberry 不计缺陷；
 - NY/T：一/二/三级阈值与筛目降级链；DB46：特/一/合格阈值 + 全局色差条件；
 - 引擎横切：sha256、warnings 传递、reasons 模板键格式、BatchResult 不变式、
   未知 id / 非法 YAML（解析 + 语义 + 重复键）的路径行号报错、count_rule。
@@ -56,10 +57,10 @@ REASON_RE = re.compile(r"^[A-Za-z0-9_.]+(:\S.*)?$")
 # ---------------------------------------------------------------------------
 
 
-def _mask(mid: str) -> BeanMask:
+def _mask(mid: str, side: str = "top") -> BeanMask:
     return BeanMask(
         mask_id=mid,
-        side="top",
+        side=side,  # type: ignore[arg-type]
         polygon=[[10.0, 20.0], [16.0, 20.0], [16.0, 26.0], [10.0, 26.0]],
         bbox_mm=(10.0, 20.0, 16.0, 26.0),
         area_mm2=36.0,
@@ -78,8 +79,8 @@ def _obs(side: str, defect: str, conf: float = 0.90) -> BeanObservation:
         defect_conf=conf,
         severity_rank=RANK[defect],  # 三套标准 YAML v0 均用 taxonomy 默认序
         crop_path=f"out/crops/scan_standards/{mid}.png",
-        mask=_mask(mid),
-        color_lab=(52.0, -8.0, 20.0),
+        mask=_mask(mid, side),  # W13 契约：side 必须与 mask.side 一致
+        color_lab=(132.6, 120.0, 148.0),  # lab8 标度（契约单一标度，W13）
         eq_diameter_mm=6.0,
     )
 
@@ -110,7 +111,7 @@ def make_measurements(
         sieve_hist=sieve_hist if sieve_hist is not None else {"15": 90, "16": 60},
         sieve_pass=None,
         eq_diameter_mm_stats=StatsSummary(min=5.9, max=6.2, mean=6.0, median=6.0),
-        color_lab_mean=(52.0, -8.0, 20.0),
+        color_lab_mean=(132.6, 120.0, 148.0),  # lab8 标度
         delta_e_mean=delta_e,
         delta_e_hist={"2-4": bean_count},
         est_weight_g=90.0,
@@ -142,7 +143,12 @@ class GradeCase:
     sieve_hist: dict[str, int] | None = None
     delta_e: float = 3.0
     expect_grade: str = ""
-    expect_passed: bool = True
+    # W13 修复（评审 A/M 项）：出厂三套 YAML 全部 verified:false，引擎对未
+    # 核对阈值一律不给 passed=True（grade 名仍记录实际达到的层级）。默认即
+    # False；全部键置 verified:true 后才可能 passed=True（见
+    # test_all_verified_yields_pass_possible）。显式 expect_passed=False
+    # 的条目保留作审计。
+    expect_passed: bool = False
     expect_primary: int = 0
     expect_secondary: int = 0
     expect_counts: dict[str, int] = field(default_factory=dict)
@@ -242,7 +248,9 @@ def test_severity_pairing_interplay_counts_once():
     d = engine.evaluate(beans, make_measurements(bean_count=1))
     assert d.defect_counts == {"broken": 1}
     assert d.secondary_count == 1 and d.primary_count == 0
-    assert d.passed and d.grade == "Fine"
+    # W13 ⑤：标准阈值 verified:false → 达标也不给 passed=True
+    assert not d.passed and d.grade == "Fine"
+    assert "grading.reason.pass_blocked_unverified" in [r.split(":", 1)[0] for r in d.reasons]
 
 
 # ---------------------------------------------------------------------------
@@ -312,6 +320,36 @@ def test_all_verified_yields_no_warnings(tmp_path: Path):
     assert std.warnings == ()
     d = StandardEngineV1(std).evaluate([], make_measurements())
     assert d.warnings == []
+    # W13 ⑤：全部键核对后阻断解除——0 主 0 次（空盘）可达 Fine 且 passed=True
+    assert d.passed is True and d.grade == "Fine"
+    assert "grading.reason.pass_blocked_unverified" not in [r.split(":", 1)[0] for r in d.reasons]
+
+
+def test_unverified_blocks_pass_and_sample_g_annotation():
+    """W13 ⑤：verified:false 时即使层级达标 passed 也为 False + 阻断理由；
+    每份判定都注明「本盘粒数，非 sample_g 当量」（评审 A 项 sample_g 口径）。"""
+    d = evaluate_case("cqi_fine_robusta", {"normal": 12})  # 0 主 0 次：层级达 Fine
+    assert d.grade == "Fine" and d.passed is False
+    keys = [r.split(":", 1)[0] for r in d.reasons]
+    assert "grading.reason.pass_blocked_unverified" in keys
+    ann = next(r for r in d.reasons if r.startswith("grading.reason.tray_count_vs_sample_g:"))
+    assert "sample_g=350" in ann and f"bean_count={12}" in ann
+    # 同一批豆在全部 verified:true 的临时标准上 → passed=True（阻断解除）
+    import yaml as _yaml
+    raw = _yaml.safe_load((DEFAULT_STANDARDS_DIR / "cqi_fine_robusta.yaml").read_text(encoding="utf-8"))
+    raw["standard"] = "all_verified_probe"
+    raw["grades"][0]["verified"] = True
+    raw["metrology"]["sieve_targets"]["verified"] = True
+    raw["metrology"]["reference_lab_verified"] = True
+    raw["weight"]["verified"] = True
+    import tempfile
+    from pathlib import Path as _P
+    with tempfile.TemporaryDirectory() as td:
+        fp = _P(td) / "all_verified_probe.yaml"
+        fp.write_text(_yaml.safe_dump(raw, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        std = load_standard(fp)
+        d2 = StandardEngineV1(std).evaluate(make_beans({"normal": 12}), make_measurements(bean_count=12))
+    assert d2.passed is True and d2.grade == "Fine"
 
 
 def test_single_unverified_flag_yields_exactly_one_warning(tmp_path: Path):
@@ -329,7 +367,8 @@ def test_engine_satisfies_frozen_protocol():
     assert callable(getattr(engine, "evaluate"))  # StandardEngine Protocol
     d = engine.evaluate([], make_measurements())  # 空盘：0 主 0 次 → Fine
     assert isinstance(d, GradingDecision)
-    assert d.grade == "Fine" and d.passed
+    # W13 ⑤：verified:false 阻断 passed（层级名照常记录）
+    assert d.grade == "Fine" and not d.passed
 
 
 def test_decision_embeds_in_batch_result_invariant():
@@ -364,7 +403,9 @@ def test_reasons_template_key_format_and_content():
     d2 = evaluate_case("nyt_604", {"sour": 6})
     keys2 = [r.split(":", 1)[0] for r in d2.reasons]
     assert keys2[0] == "grading.reason.primary_over_limit"
-    assert keys2[-1] == "grading.reason.no_grade_matched"
+    assert "grading.reason.no_grade_matched" in keys2
+    # W13 ⑤：判定尾部固定注明计数口径（本盘粒数，非 sample_g 当量）
+    assert keys2[-1] == "grading.reason.tray_count_vs_sample_g"
 
 
 def test_evaluate_deterministic():

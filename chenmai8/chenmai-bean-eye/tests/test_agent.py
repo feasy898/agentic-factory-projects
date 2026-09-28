@@ -88,7 +88,7 @@ def _obs(side: str, defect: str, conf: float = 0.9) -> BeanObservation:
         severity_rank=RANK.get(defect, 5),
         crop_path=f"out/crops/scan_agent/{m.mask_id}.png",
         mask=m,
-        color_lab=(52.0, -10.0, 20.0),
+        color_lab=(132.6, 118.0, 148.0),  # lab8 标度（契约单一标度，W13）
         eq_diameter_mm=6.0,
     )
 
@@ -118,7 +118,8 @@ def _make_batch(
             )
         )
     counts = defect_counts_from_beans(beans, include_normal=True)
-    # 未知键（如故意的幻觉键用例）按次缺陷计入分计，保证 BatchResult 可构造
+    # 未知键按次缺陷计入分计（兜底分支；W13 契约收紧后正常路径不会出现盘外
+    # 类别——test_unknown_defect_key_raises 用 model_construct 走防御路径）
     primary = sum(
         n
         for k, n in counts.items()
@@ -128,8 +129,8 @@ def _make_batch(
         n
         for k, n in counts.items()
         if not TAX.is_valid_key(k)
-        or (TAX.get(k).kind == "secondary" and k != "normal")
-    )
+        or (TAX.get(k).kind == "secondary" and TAX.get(k).counts_as_defect)
+    )  # W13 契约同口径：peaberry（counts_as_defect=false）不计次缺陷
     grading = GradingDecision(
         standard_id="cqi_fine_robusta",
         grade="Fine" if primary == 0 else "Below Fine",
@@ -145,7 +146,7 @@ def _make_batch(
         sieve_hist={"14": len(beans)},
         sieve_pass=True,
         eq_diameter_mm_stats=StatsSummary(min=5.2, max=7.1, mean=6.0, median=6.0),
-        color_lab_mean=(52.0, -10.0, 20.0),
+        color_lab_mean=(132.6, 118.0, 148.0),  # lab8 标度
         delta_e_mean=3.1,
         delta_e_hist={"2-4": len(beans)},
         est_weight_g=88.2,
@@ -336,7 +337,65 @@ class TestTemplateThreeLangsAllDefects:
         assert all(c.defect != "normal" for c in rep.causes)
 
     def test_unknown_defect_key_raises(self):
-        batch = _make_batch(["unicorn"])  # 直方里出现知识表外的键
+        """直方里出现知识表外的键 → TemplateAgent 明确报错（防御路径）。
+
+        W13 契约校验（defect 必须在 taxonomy，评审 C 项）后 BeanObservation
+        构造期即拒绝盘外类别；本防御路径改用 model_construct（跳过契约校验）
+        构造盘外批，验证 agent 自身守卫仍在。
+        """
+        ghost = BeanObservation.model_construct(
+            obs_id="top_ghost",
+            side="top",
+            defect="unicorn",
+            defect_conf=0.90,
+            severity_rank=5,
+            crop_path="out/crops/ghost.png",
+            mask=_mask("top").model_copy(update={"mask_id": "top_ghost"}),
+            color_lab=(132.6, 118.0, 148.0),
+            eq_diameter_mm=6.0,
+        )
+        # PairedBean/BatchResult 构造会级联重校验嵌套模型（defect 查 taxonomy），
+        # 盘外批整体走 model_construct（本测试只验 agent 自身守卫，非契约面）
+        bean = PairedBean.model_construct(
+            bean_id="b9001",
+            top=ghost,
+            bottom=None,
+            pairing_cost=-1.0,
+            worst_side="top",
+            final_defect="unicorn",
+            final_severity_rank=5,
+        )
+        batch = BatchResult.model_construct(
+            result_id="res-ghost",
+            sample_id="sample_ghost",
+            scan_ids=["scan_ghost"],
+            beans=[bean],
+            measurements=Measurements(
+                bean_count=1,
+                sieve_hist={"14": 1},
+                sieve_pass=None,
+                eq_diameter_mm_stats=StatsSummary(min=5.2, max=5.2, mean=5.2, median=5.2),
+                color_lab_mean=(132.6, 118.0, 148.0),
+                delta_e_mean=0.0,
+                delta_e_hist={"0-2": 1},
+                est_weight_g=1.0,
+                weight_model="area_linear:v1",
+            ),
+            grading=GradingDecision(
+                standard_id="cqi_fine_robusta",
+                grade="Fine",
+                passed=False,
+                primary_count=0,
+                secondary_count=0,  # 盘外键不参与主/次分计（契约校验同口径）
+                defect_counts={"unicorn": 1},
+                reasons=["agent.eval.ghost"],
+                standard_yaml_sha=STANDARD_SHA,
+            ),
+            agent_report=None,
+            timings_s={},
+            pipeline_versions={},
+        )
+        assert batch.measurements.bean_count == 1
         with pytest.raises(AgentError, match="unicorn"):
             TemplateAgent().explain(batch, "zh")
 

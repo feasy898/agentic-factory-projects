@@ -57,7 +57,7 @@ def _obs_dict(obs_id: str, side: str, cx: float, cy: float, *, defect: str, conf
             "source": "oracle",
             "conf": 1.0,
         },
-        "color_lab": [52.0, -10.0, 20.0],
+        "color_lab": [132.6, 118.0, 148.0],
         "eq_diameter_mm": 2.0 * HEX_R_MM,
     }
 

@@ -7,12 +7,16 @@
 - 不变式（如「每粒只计最严重缺陷」）在模型校验器中强制，违规即 ``ValidationError``。
 - 字段名与类型为冻结契约：只增不改名；发现契约问题上报规划方，不得自行改动。
 - ``defect`` 类字段的合法取值由 ``configs/taxonomy.yaml`` 定义
-  （经 ``beaneye/taxonomy.py`` 加载）；本模块保持纯契约，不依赖配置文件，
-  对 ``defect`` 只做字符串约束。
+  （经 ``beaneye/taxonomy.py`` 加载）。W13 修复：构造期校验 defect 必须在
+  taxonomy 中（原「纯字符串约束」放行了盘外类别）；taxonomy 在首次构造
+  时惰性加载并缓存。注意：契约因此对 ``configs/taxonomy.yaml`` 有运行期
+  依赖（该文件是契约附件 v1.0 的一部分，随仓分发）。
 
 坐标约定：凡带 ``_mm`` 后缀的字段一律为盘面毫米坐标系（M3 标定变换后）；
 ``polygon`` 为 ``[x, y]`` 外轮廓顶点列表；``color_lab`` 为掩码内均值 L*a*b*，
-统一 0-255 标度。
+**单一 Lab 标度 = OpenCV 8-bit LAB（lab8）**：三通道一律 0-255
+（L*255/100，a/b 各 +128；CIE 量纲须先经 metrology 的仿射互转），构造期
+拒绝越界——CIE 值（a/b 可负）混入会把 ΔE 直接放大（W13 修复，钉死标度）。
 """
 
 from __future__ import annotations
@@ -47,12 +51,44 @@ __all__ = [
     "RootCauseAgent",
     "CameraSource",
     "defect_counts_from_beans",
+    "defect_is_countable",
 ]
 
 SCHEMA_VERSION = "1.0"
 
 _SIDE = Literal["top", "bottom"]
 _SHA256_PATTERN = r"^[0-9a-f]{64}$"
+_LAB8_MAX = 255.0  # lab8 单一标度：三通道一律 [0, 255]
+
+
+# ---------------------------------------------------------------------------
+# taxonomy 惰性加载（W13 修复：defect 构造期校验 + 可计性裁决的唯一依据）
+# ---------------------------------------------------------------------------
+
+_TAXONOMY_CACHE: object | None = None
+
+
+def _taxonomy():
+    """加载并缓存 configs/taxonomy.yaml（首次构造契约模型时才读盘）。"""
+    global _TAXONOMY_CACHE
+    if _TAXONOMY_CACHE is None:
+        from beaneye.taxonomy import load_taxonomy
+
+        _TAXONOMY_CACHE = load_taxonomy()
+    return _TAXONOMY_CACHE
+
+
+def defect_is_countable(defect: str) -> bool:
+    """该缺陷类是否计入缺陷计数（taxonomy ``counts_as_defect``）。
+
+    未知类别（不在 taxonomy 中）一律 False——不得参与「最严重缺陷」的
+    可计比较。W13 起供 ``_resolve_worst`` 与 severity 裁决共用，保证
+    契约校验器与 M7 裁决器逐位一致。
+    """
+    tax = _taxonomy()
+    if not tax.is_valid_key(defect):  # type: ignore[attr-defined]
+        return False
+    return bool(tax.get(defect).counts_as_defect)  # type: ignore[attr-defined]
 
 
 class BeanEyeBaseModel(BaseModel):
@@ -166,10 +202,28 @@ class BeanObservation(BeanEyeBaseModel):
     def _check_observation(self) -> Self:
         if self.obs_id != self.mask.mask_id:
             raise ValueError(f"obs_id({self.obs_id!r}) 必须等于 mask.mask_id({self.mask.mask_id!r})")
+        # W13 修复：defect 必须是 taxonomy 合法类别（原仅非空字符串约束）
+        _tax = _taxonomy()
+        if not _tax.is_valid_key(self.defect):
+            raise ValueError(
+                f"defect {self.defect!r} 不在 taxonomy 中；合法取值: {_tax.keys()}"
+            )
+        if self.side != self.mask.side:
+            raise ValueError(
+                f"side({self.side!r}) 必须与 mask.side({self.mask.side!r}) 一致"
+            )
         if self.defect == "normal" and self.severity_rank != 0:
             raise ValueError("defect=normal 时 severity_rank 必须 = 0")
         if self.defect != "normal" and self.severity_rank <= 0:
             raise ValueError(f"缺陷类 {self.defect!r} 的 severity_rank 必须 > 0（0 保留给 normal）")
+        # W13 修复：单一 Lab 标度 = lab8（OpenCV 8-bit），三通道一律 [0,255]；
+        # CIE 量纲（a/b 可负）混入会放大 ΔE，构造期拒绝
+        for i, c in enumerate(self.color_lab):
+            if not (0.0 <= c <= _LAB8_MAX):
+                raise ValueError(
+                    f"color_lab[{i}]={c} 越界：单一 lab8 标度要求三通道 ∈ [0,255]"
+                    "（CIE 量纲请先经 metrology 仿射互转）"
+                )
         return self
 
 
@@ -183,20 +237,29 @@ def _resolve_worst(
 ) -> tuple[str, str, int]:
     """按契约裁决：rank 高者胜；平级取 conf 高者并记 worst_side="both"。
 
+    W13 修复（peaberry 吞次缺陷）：**非缺陷类（counts_as_defect=false，
+    如 peaberry）不参与「最严重缺陷」比较**——若存在可计缺陷面，只在可计
+    面之间裁决（另一面的非缺陷观测保留在字段里，仅不作最终缺陷）；两面
+    皆为非缺陷/normal 时退回全量比较（peaberry 标注语义不丢失）。
+
     返回 ``(worst_side, final_defect, final_severity_rank)``。
     """
     if top is None and bottom is None:
         return "none", "normal", 0
-    if bottom is None:
-        return "top", top.defect, top.severity_rank  # type: ignore[union-attr]
-    if top is None:
-        return "bottom", bottom.defect, bottom.severity_rank
-    rt, rb = top.severity_rank, bottom.severity_rank
-    if rt > rb:
-        return "top", top.defect, rt
-    if rb > rt:
-        return "bottom", bottom.defect, rb
-    winner = top if top.defect_conf >= bottom.defect_conf else bottom
+    sides = [s for s in (top, bottom) if s is not None]
+    countable = [s for s in sides if defect_is_countable(s.defect)]
+    pool = countable or sides  # 全为非缺陷/normal → 保留原裁决（标注不丢）
+    if len(pool) == 1:
+        s = pool[0]
+        side_name = "top" if s is top else "bottom"
+        return side_name, s.defect, s.severity_rank
+    a, b = pool  # len(pool)==2：两面都在且（或不含可计面时）走全量比较
+    ra, rb = a.severity_rank, b.severity_rank
+    if ra > rb:
+        return ("top" if a is top else "bottom"), a.defect, ra
+    if rb > ra:
+        return ("top" if b is top else "bottom"), b.defect, rb
+    winner = a if a.defect_conf >= b.defect_conf else b
     return "both", winner.defect, winner.severity_rank
 
 
@@ -229,6 +292,12 @@ class PairedBean(BeanEyeBaseModel):
             raise ValueError(f"单面豆 pairing_cost 必须 = -1，得到 {self.pairing_cost}")
         if self.top is None and self.bottom is None and self.pairing_cost != -1:
             raise ValueError("两面皆空的占位记录 pairing_cost 必须 = -1")
+        # W13 修复：双面配对代价必须为非负距离（-1 保留给单面/占位）
+        if not single and self.top is not None and self.pairing_cost < 0:
+            raise ValueError(
+                f"双面豆 pairing_cost 必须 >= 0（mm 距离），得到 {self.pairing_cost}；"
+                "-1 只保留给单面/占位记录"
+            )
         return self
 
     @classmethod
@@ -330,6 +399,18 @@ class Measurements(BeanEyeBaseModel):
                 raise ValueError(f"{info.field_name}[{k!r}] 计数必须 >= 0，得到 {n}")
         return v
 
+    @field_validator("color_lab_mean")
+    @classmethod
+    def _check_lab8(cls, v: tuple[float, float, float]) -> tuple[float, float, float]:
+        """W13 修复：与逐粒 color_lab 同一 lab8 标度，三通道 ∈ [0,255]。"""
+        for i, c in enumerate(v):
+            if not (0.0 <= c <= _LAB8_MAX):
+                raise ValueError(
+                    f"color_lab_mean[{i}]={c} 越界：单一 lab8 标度要求三通道 ∈ [0,255]"
+                    "（CIE 量纲请先经 metrology 仿射互转）"
+                )
+        return v
+
 
 # ---------------------------------------------------------------------------
 # M9 定级
@@ -377,6 +458,15 @@ class CauseItem(BeanEyeBaseModel):
     stage: str = Field(min_length=1)  # 采摘/发酵/干燥/仓储/脱壳
     likelihood: float  # 先验/后验强度
     evidence_summary: str = Field(min_length=1)
+
+    @field_validator("defect")
+    @classmethod
+    def _check_defect_in_taxonomy(cls, v: str) -> str:
+        """W13 修复：溯因对象必须是 taxonomy 合法类别（LLM 输出已在上游清洗）。"""
+        _tax = _taxonomy()
+        if not _tax.is_valid_key(v):
+            raise ValueError(f"溯因 defect {v!r} 不在 taxonomy 中；合法取值: {_tax.keys()}")
+        return v
 
 
 class AgentReport(BeanEyeBaseModel):
@@ -431,7 +521,12 @@ class BatchResult(BeanEyeBaseModel):
     @model_validator(mode="after")
     def _check_defect_counts_consistent(self) -> Self:
         """不变式：grading.defect_counts 必须与逐粒 final_defect 直方一致
-        （每粒只计最严重缺陷，一粒至多计一次）。"""
+        （每粒只计最严重缺陷，一粒至多计一次）。
+
+        W13 修复补强：primary_count / secondary_count 必须与豆列表按 taxonomy
+        主/次归属（counts_as_defect=true）的分计一致；measurements.bean_count
+        必须等于豆列表长度（托盘粒数口径）。
+        """
         hist = defect_counts_from_beans(self.beans, include_normal=True)
         for key, n in self.grading.defect_counts.items():
             actual = hist.get(key, 0)
@@ -445,6 +540,32 @@ class BatchResult(BeanEyeBaseModel):
                 raise ValueError(
                     f"存在 final_defect={key!r} 的豆但 defect_counts 缺失该键"
                 )
+        # ---- W13：主/次分计与豆列表一致（peaberry 等 counts_as_defect=false 不计）----
+        _tax = _taxonomy()
+        primary = 0
+        secondary = 0
+        for b in self.beans:
+            if not _tax.is_valid_key(b.final_defect):
+                continue  # 盘外类别不参与主/次分计（计数一致性由 defect_counts 校验兜住）
+            dc = _tax.get(b.final_defect)
+            if not dc.counts_as_defect:
+                continue
+            if dc.kind == "primary":
+                primary += 1
+            elif dc.kind == "secondary":
+                secondary += 1
+        if self.grading.primary_count != primary or self.grading.secondary_count != secondary:
+            raise ValueError(
+                f"primary_count/secondary_count({self.grading.primary_count}/"
+                f"{self.grading.secondary_count}) 与豆列表按 taxonomy 主/次归属的分计"
+                f"({primary}/{secondary})不一致"
+            )
+        # ---- W13：bean_count 与豆列表一致 ----
+        if self.measurements.bean_count != len(self.beans):
+            raise ValueError(
+                f"measurements.bean_count({self.measurements.bean_count}) 与豆列表长度"
+                f"({len(self.beans)})不一致（bean_count=本盘粒数口径）"
+            )
         return self
 
 

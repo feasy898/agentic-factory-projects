@@ -5,6 +5,10 @@
   severity_rank 高者胜；平级取 defect_conf 高者并记 worst_side="both"
   （conf 完全相等时偏向 top，与契约 ``_resolve_worst`` 逐位一致）；
   任一面为 None 取另一面；两面皆 None → ("normal", "none")。
+  W13 修复（peaberry 吞次缺陷）：**非缺陷类（counts_as_defect=false）不参与
+  「最严重缺陷」比较**——存在可计缺陷面时只在可计面之间裁决（与契约
+  ``schemas._resolve_worst`` 同一规则，共用 ``schemas.defect_is_countable``）；
+  两面皆非可计缺陷时退回全量比较，peaberry 标注不丢失。
 - severity_order 默认读 ``configs/taxonomy.yaml``；也可从标准 YAML 读
   （不同标准可不同，见标准 YAML 的 ``severity_order`` 字段）。
 - CQI 计数规则 ``most_severe_per_bean``：一粒豆无论两面各有什么缺陷，
@@ -19,7 +23,7 @@ from pathlib import Path
 
 import yaml
 
-from beaneye.schemas import BeanObservation, PairedBean
+from beaneye.schemas import BeanObservation, PairedBean, defect_is_countable
 from beaneye.taxonomy import Taxonomy, load_taxonomy
 
 __all__ = [
@@ -192,6 +196,17 @@ class SeverityAdjudicator:
                 "bottom",
                 bottom.defect_conf,
                 False,
+            )
+        # W13 修复（与契约 _resolve_worst 逐位一致）：非缺陷类（counts_as_defect
+        # =false，如 peaberry）不参与「最严重缺陷」比较——存在可计面时只在可计
+        # 面之间裁决；两面皆非可计缺陷时退回全量比较（标注不丢）。
+        t_count = defect_is_countable(top.defect)
+        b_count = defect_is_countable(bottom.defect)
+        if t_count and not b_count:
+            return WorstResult(top.defect, "top", self.order.rank(top.defect), "top", top.defect_conf, False)
+        if b_count and not t_count:
+            return WorstResult(
+                bottom.defect, "bottom", self.order.rank(bottom.defect), "bottom", bottom.defect_conf, False
             )
         rt, rb = self.order.rank(top.defect), self.order.rank(bottom.defect)
         if rt > rb:

@@ -73,7 +73,7 @@ def _obs(side: str, defect: str, conf: float) -> BeanObservation:
         severity_rank=RANK[defect],
         crop_path=f"out/crops/scan_severity/{mid}.png",
         mask=_mask(mid, side),
-        color_lab=(52.0, -10.0, 20.0),
+        color_lab=(132.6, 118.0, 148.0),  # lab8 标度（契约单一标度，W13）
         eq_diameter_mm=6.0,
     )
 
@@ -134,6 +134,15 @@ CASES: list[Case] = [
     Case("crit_shell_over_peaberry", "critical_order", ("shell", 0.60), ("peaberry", 0.95), "shell", "top", 6),
     Case("crit_insect_over_elephant", "critical_order", ("elephant", 0.90), ("insect", 0.55), "insect", "bottom", 8),
     Case("crit_immature_over_brocade", "critical_order", ("brocade", 0.70), ("immature", 0.70), "immature", "bottom", 4),
+    # 非缺陷类不参与「最严重缺陷」比较（W13 修复：peaberry 位次再高也不吞
+    # 掉另一面的可计缺陷——"一面花豆、一面破碎"必须计破碎）
+    Case("nondef_peaberry_vs_broken_top", "non_defect_vs_defect", ("peaberry", 0.95), ("broken", 0.60), "broken", "bottom", 1),
+    Case("nondef_broken_vs_peaberry_bottom", "non_defect_vs_defect", ("broken", 0.60), ("peaberry", 0.95), "broken", "top", 1),
+    Case("nondef_peaberry_vs_mold", "non_defect_vs_defect", ("peaberry", 0.99), ("mold", 0.30), "mold", "bottom", 11),
+    # 两面皆非可计缺陷 → 退回全量比较，peaberry 标注不丢失
+    Case("nondef_peaberry_annotation_single", "non_defect_annotation", None, ("peaberry", 0.80), "peaberry", "bottom", 5),
+    Case("nondef_peaberry_vs_normal", "non_defect_annotation", ("peaberry", 0.80), ("normal", 0.99), "peaberry", "top", 5),
+    Case("nondef_peaberry_both_tie_conf", "non_defect_annotation", ("peaberry", 0.70), ("peaberry", 0.90), "peaberry", "both", 5),
     # 并列（两面同缺陷同位次 → worst_side=both，取 conf 高者的缺陷）
     Case("tie_broken_bottom_conf", "tie", ("broken", 0.70), ("broken", 0.90), "broken", "both", 1),
     Case("tie_mold_equal_conf", "tie", ("mold", 0.80), ("mold", 0.80), "mold", "both", 11),
@@ -148,6 +157,8 @@ REQUIRED_CATEGORIES = {
     "tie",
     "single_side",
     "normal_vs_defect",
+    "non_defect_vs_defect",   # W13：非缺陷类不吞可计缺陷
+    "non_defect_annotation",  # W13：peaberry 标注保留
 }
 
 
@@ -350,6 +361,28 @@ def test_multi_defect_bean_not_double_counted():
 def test_effective_counts_drop_peaberry():
     """peaberry 计量不计缺陷（counts_as_defect=false）。"""
     assert effective_defect_counts(BEANS) == {"black": 1, "broken": 1, "sour": 1}
+
+
+def test_peaberry_side_does_not_swallow_countable_defect():
+    """「一面花豆、一面破碎」（W13 修复，评审 A 项）：peaberry 位次(5)高于
+    broken(1)，修复前 final=peaberry 把破碎从计数里吞掉；修复后非缺陷类
+    不参与比较 → final=broken，破碎计入次缺陷，peaberry 仅保留标注。"""
+    beans = [_bean(f"b{i:04d}", ("peaberry", 0.95), ("broken", 0.60)) for i in range(3)]
+    for b in beans:
+        assert (b.final_defect, b.worst_side, b.final_severity_rank) == ("broken", "bottom", 1)
+        assert b.top is not None and b.top.defect == "peaberry"  # 观测保留不丢
+    assert count_defects(beans) == {"broken": 3}
+    assert effective_defect_counts(beans) == {"broken": 3}
+    assert primary_secondary_counts(beans) == (0, 3)  # 次缺陷不再被吞
+
+
+def test_peaberry_annotation_kept_when_no_countable_defect():
+    """两面皆非可计缺陷（peaberry/normal）：退回全量比较，标注不丢失。"""
+    b = _bean("b0001", ("peaberry", 0.80), ("normal", 0.99))
+    assert (b.final_defect, b.worst_side) == ("peaberry", "top")
+    assert count_defects([b]) == {"peaberry": 1}
+    assert effective_defect_counts([b]) == {}  # 不计缺陷
+    assert primary_secondary_counts([b]) == (0, 0)
 
 
 def test_primary_secondary_counts():
