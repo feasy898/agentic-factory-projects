@@ -43,3 +43,6 @@ _vendor/
 
 # Model weight caches
 *.task
+
+# Training local overrides (entry-point name never enters the repo)
+chengshao/training/config/train.local.json

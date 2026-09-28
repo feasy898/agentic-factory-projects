@@ -1,0 +1,37 @@
+{
+  "$comment": "勺上分类器配置（延后项，源：plan/training-plan.md §3，仓库外）：腕部相机勺区 ROI 二分类 has_food，MobileNetV3-Small + 2 层 MLP 头；接口 cs_food.SpoonClassifier 冻结，产物以 ONNX/state_dict 无感替换启发式。漏检（有食物判无）比误检严重——判定阈值向 has_food 偏置，宁可重舀。",
+  "model": {
+    "backbone": "mobilenet_v3_small",
+    "pretrained": true,
+    "head_hidden": 128,
+    "num_classes": 2,
+    "input_size": 224,
+    "dropout": 0.2
+  },
+  "train": {
+    "batch_size": 64,
+    "epochs": 20,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "num_workers": 4,
+    "amp": "fp16",
+    "color_jitter": { "brightness": 0.2, "contrast": 0.2, "saturation": 0.2, "hue": 0.05 },
+    "note": "CPU 预研可跑，GPU 定稿 <0.5 GPU 时（plan/training-plan.md §3）"
+  },
+  "data": {
+    "context_frames": 3,
+    "blur_drop_var": 60.0,
+    "split": [0.7, 0.15, 0.15],
+    "episode_split": true,
+    "split_seed": 2026,
+    "min_frames_total": 3000,
+    "note": "自动标注协议：舀取完成帧→has_food=1、咬合结束帧→has_food=0，各取前后 ±context_frames 帧，模糊帧丢弃；train/val/test 按回合切分 70/15/15 防同回合泄漏；≥3000 帧为目标值（非门禁硬线）"
+  },
+  "thresholds": {
+    "test_acc_min": 0.95,
+    "miss_rate_max": 0.03,
+    "cpu_latency_ms_max": 15.0,
+    "decision_threshold": 0.35,
+    "bias_note": "decision_threshold<0.5：偏向判有食物（宁可重舀）；漏检率<3% 为硬线，误检只记录"
+  }
+}
