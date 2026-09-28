@@ -1,0 +1,358 @@
+{
+  "module": "cs_orchestra",
+  "date": "2026-09-29",
+  "cmd": "python -m chengshao.cs_orchestra.eval --mock 30 --report chengshao\\reports\\orchestra_eval.json",
+  "mode": "mock（全 Mock 零硬件；MockArm+SafetyEnvelope+脚本化用户）",
+  "script": {
+    "bites_per_episode": 15,
+    "injections": {
+      "3": {
+        "first_scoop_empty": true
+      },
+      "7": {
+        "turn_s": 2.5,
+        "turn_delay_s": 0.0
+      },
+      "9": {
+        "reaction_s": 6.0
+      },
+      "12": {
+        "estop": true
+      },
+      "15": {
+        "done": true
+      }
+    }
+  },
+  "metrics": {
+    "episodes": [
+      {
+        "episode": 1,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 44.93,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 2,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 46.68,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 3,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 45.31,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 4,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 44.99,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 5,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 46.4,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 6,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 43.86,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 7,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 48.11,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 8,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 53.51,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 9,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 49.95,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 10,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 48.28,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 11,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 47.2,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 12,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 46.35,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 13,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 45.19,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 14,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 47.63,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 15,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 49.16,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 16,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 50.13,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 17,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 47.35,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 18,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 49.42,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 19,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 56.48,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 20,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 60.46,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 21,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 58.31,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 22,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 59.25,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 23,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 53.72,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 24,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 52.54,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 25,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 46.29,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 26,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 46.75,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 27,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 47.13,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 28,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 48.3,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 29,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 52.8,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      },
+      {
+        "episode": 30,
+        "pass": true,
+        "bites": 15,
+        "sim_s": 363.86,
+        "wall_s": 50.36,
+        "switches": 30,
+        "median_bite_sim_s": 19.74,
+        "failed_checks": []
+      }
+    ],
+    "episodes_passed": 30,
+    "bites_total": 450,
+    "outcomes_total": {
+      "success": 390,
+      "aborted": 30,
+      "rejected": 30
+    },
+    "median_bite_sim_s": 19.74,
+    "max_bite_sim_s": 39.32,
+    "sim_s_total": 10915.8,
+    "wall_s_total": 1489.8,
+    "switches_total": 900
+  },
+  "thresholds": {
+    "episodes_min": 30,
+    "episodes_pass_required": 30,
+    "bites_per_episode": 15,
+    "camera_switches_per_delivered_bite": 2,
+    "exposure_settle_min_s": 0.5,
+    "median_bite_sim_s_max": 20.0,
+    "zone_violation_latches_max": 0,
+    "unexpected_failures_max": 0,
+    "envelope_rejections_max": 0,
+    "estop_bite_outcome": "aborted",
+    "done_bite_outcome": "rejected"
+  },
+  "pass": true,
+  "failures": []
+}

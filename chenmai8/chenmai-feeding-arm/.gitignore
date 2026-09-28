@@ -46,3 +46,6 @@ _vendor/
 
 # Training local overrides (entry-point name never enters the repo)
 chengshao/training/config/train.local.json
+
+# Agent tool runtime dirs
+.mimosa/
