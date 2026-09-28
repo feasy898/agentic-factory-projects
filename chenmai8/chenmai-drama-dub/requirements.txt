@@ -1,6 +1,7 @@
 # 短剧多国出海本地化引擎 —— windev 本机 CPU 依赖（T0 冻结，2026-09-28）
-# Python 3.12.10 / Windows Server 2022 / 安装源: 清华 PyPI 镜像
-#   pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+# Python 3.12.10 / Windows Server 2022 / 安装源: 阿里云 PyPI 镜像
+#   （T4 实测修订：清华镜像对本机 IP 拒绝访问，换
+#   pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ ）
 #
 # ⚠ 两条硬性使用约束（详见 docs/setup_windev.md）：
 # 1) 同进程同时用 torch 与 paddle 时，必须先 import torch 再 import paddle/paddleocr
@@ -24,6 +25,12 @@ pydantic==2.13.5
 numpy==2.3.5              # paddle 依赖约束所钉，勿单独升级
 librosa==1.0.0
 soundfile==0.14.0         # librosa 已自带，显式钉出版本
+
+# 分离（M3，audiosplit 组件引擎）—— 本文件为依赖安装记录，用真实 PyPI 发行名
+# （不在中性名扫描范围，见 scripts/gate_b0.py SCOPE_EXCLUDES）
+audio-separator==0.47.0   # 实测连带: pydub(引擎内部用，业务代码不碰)/onnx-weekly/onnx2torch 等
+onnxruntime==1.30.0       # 引擎 import 期硬依赖（CPU EP；GPU 路径装机换对应版）
+audioread==3.1.0          # 引擎 uvr_lib 兼容层 import 期硬依赖（librosa 1.0 未连带）
 
 # 工具
 # ffmpeg/ffprobe 为系统级依赖（6.1.1 essentials，含 libass/fribidi/harfbuzz），

@@ -42,6 +42,10 @@ routing:
   align:
     default: align-core
     ar: align-proportional
+  # 人声/背景分离设备路由（M3）：cpu=本机默认（分块）；cuda=GPU 路径（可选）
+  separation:
+    default: audiosplit
+    cuda: audiosplit-cuda
   # 口型分流（与 pipeline.yaml lip 参数配合；不合格镜头 none=原画）
   lip:
     default: none
@@ -169,10 +173,25 @@ components:
   audiosplit:
     task: vocal-bgm-separation # 人声/背景分离（卡拉OK系分离模型为默认）
     langs: [multi]
-    device: cpu                # --device cuda 可选
+    device: cpu                # --device cuda 可选（路由见上 separation 段）
     precision: fp32
+    model: mel_band_roformer_karaoke_aufr33_viperx_sdr_10.1956.ckpt  # karaoke 系 mel-band roformer（标称 SDR 12.98）
+    chunk_s: 120               # CPU 默认分块秒数（防内存膨胀；cuda 路径整轨）
+    threads: 16                # torch intra-op 线程（windev-01 实测定值：单窗 65s@64thr → 11.2s@16thr，
+                               # 默认全核反而线程互踩；eval ③ 60s 素材 CPU ≈6.5 分钟 < 10 分钟通过线）
     weights: models/audiosplit/
-    version: TBD-D1
+    version: "2026-09-28 (ckpt 913096801B, sha256 1de20d45…9813; T4 CPU 验收)"  # 权重不入公开仓
+    fallback: []
+    volta_status: pending      # GPU 路径（audiosplit-cuda）未实测；CPU 路径 T4 已验收
+  audiosplit-cuda:
+    task: vocal-bgm-separation # 同一模型 GPU 路径（--device cuda）；待 GPU 机冒烟
+    langs: [multi]
+    device: cuda:0
+    precision: fp32
+    model: mel_band_roformer_karaoke_aufr33_viperx_sdr_10.1956.ckpt
+    chunk_s: null              # 整轨处理
+    weights: models/audiosplit/
+    version: "2026-09-28 (ckpt sha256 1de20d45…9813)"
     fallback: []
     volta_status: pending
   audmark:
