@@ -1,0 +1,31 @@
+{
+  "_comment": "工作区默认配置（base 系：X 前向/朝用户、Y 左、Z 上，单位米）。结构与默认值；现场参数可另配覆盖。cs_sim.EnvelopeValidator 缺省装载本文件。",
+  "frame": "base",
+  "linear_unit": "m",
+  "mouth_point_m": [0.42, 0.0, 0.3],
+  "forbidden_zones": [
+    {
+      "type": "sphere",
+      "name": "face",
+      "center_m": [0.42, 0.0, 0.3],
+      "radius_m": 0.12
+    },
+    {
+      "type": "capsule",
+      "name": "torso",
+      "p1_m": [0.4, 0.0, -0.1],
+      "p2_m": [0.4, 0.0, 0.22],
+      "radius_m": 0.15
+    }
+  ],
+  "speed_limits_mps": {
+    "approach": 0.15,
+    "near_face": 0.1
+  },
+  "near_face_distance_m": 0.15,
+  "bowls_m": [
+    [0.22, -0.18, 0.02],
+    [0.22, 0.0, 0.02],
+    [0.22, 0.18, 0.02]
+  ]
+}

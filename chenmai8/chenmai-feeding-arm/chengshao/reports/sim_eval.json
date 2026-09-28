@@ -1,0 +1,180 @@
+{
+  "module": "cs_sim",
+  "date": "2026-09-28",
+  "cmd": "python -m cs_sim.eval --model auto --report reports/sim_eval.json",
+  "metrics": {
+    "model": {
+      "tier": "mjcf",
+      "n_joints": 6,
+      "joint_names": [
+        "shoulder_pan",
+        "shoulder_lift",
+        "elbow_flex",
+        "wrist_flex",
+        "wrist_roll",
+        "gripper"
+      ],
+      "joint_lower_rad": [
+        -1.919862,
+        -1.745329,
+        -1.69,
+        -1.658063,
+        -2.743847,
+        -0.174533
+      ],
+      "joint_upper_rad": [
+        1.919862,
+        1.745329,
+        1.69,
+        1.658063,
+        2.841206,
+        1.745329
+      ],
+      "file_sha256_16": "d75253eb568e8a72",
+      "engine": "physics-engine native (mjcf)",
+      "note": "loaded and validated at load time"
+    },
+    "validate": {
+      "n_joints": 6,
+      "joint_names": [
+        "shoulder_pan",
+        "shoulder_lift",
+        "elbow_flex",
+        "wrist_flex",
+        "wrist_roll",
+        "gripper"
+      ],
+      "tcp_mid_reach_m": 0.45216474777924376,
+      "tier": "mjcf"
+    },
+    "fk_zero_tcp_m": [
+      0.391362,
+      -1.1e-05,
+      0.226469
+    ],
+    "ik": {
+      "targets": 200,
+      "successes": 199,
+      "success_rate": 0.995,
+      "pos_err_max_m": 0.0004926052716743088,
+      "pos_err_mean_m": 0.0001505177506203426,
+      "pos_err_p95_m": 0.0004300960945983444,
+      "ori_err_max_rad": 0.004851796203736864,
+      "ori_err_mean_rad": 0.00012710907580001446,
+      "restarts_used_max": 27,
+      "restarts_used_mean": 1.3015075376884422,
+      "duration_s": 5.51
+    },
+    "cross_tier_fk": {
+      "skipped": false,
+      "n_q": 150,
+      "chain_builtin": {
+        "max_pos_err_m": 9.136458312637117e-09,
+        "max_ori_err_rad": 6.664001874625058e-08
+      },
+      "chain_urdf_ikpy": {
+        "max_pos_err_m": 3.6894727790187453e-06,
+        "max_ori_err_rad": 1.6197829531822862e-05
+      },
+      "urdf_mujoco": {
+        "max_pos_err_m": 3.6894727791956735e-06,
+        "max_ori_err_rad": 1.6197829531822862e-05
+      },
+      "duration_s": 2.75
+    },
+    "reachability": {
+      "grid": {
+        "x_m": [
+          0.0,
+          0.5
+        ],
+        "y_m": [
+          -0.4,
+          0.4
+        ],
+        "z_m": [
+          -0.05,
+          0.5
+        ],
+        "res_m": 0.03
+      },
+      "n_voxels_total": 9576,
+      "n_voxels_reachable": 5669,
+      "reachable_fraction": 0.5920008354218881,
+      "n_unreachable": 3907,
+      "png": "reports\\reach_map.png",
+      "duration_s": 68.82
+    },
+    "safety_envelope": {
+      "violating_total": 500,
+      "violating_rejected": 500,
+      "violating_rejection_rate": 1.0,
+      "by_type": {
+        "face_zone_intrusion": {
+          "n": 150,
+          "rejected": 150,
+          "violation_kinds_seen": [
+            "speed",
+            "zone"
+          ]
+        },
+        "torso_zone_intrusion": {
+          "n": 100,
+          "rejected": 100,
+          "violation_kinds_seen": [
+            "speed",
+            "zone"
+          ]
+        },
+        "speed_approach_violation": {
+          "n": 125,
+          "rejected": 125,
+          "violation_kinds_seen": [
+            "speed",
+            "zone"
+          ]
+        },
+        "speed_near_face_violation": {
+          "n": 125,
+          "rejected": 125,
+          "violation_kinds_seen": [
+            "speed",
+            "zone"
+          ]
+        }
+      },
+      "benign_total": 100,
+      "benign_accepted": 100,
+      "benign_acceptance_rate": 1.0,
+      "config_source": "chengshao/config/workspace.json (defaults)",
+      "duration_s": 1.08
+    }
+  },
+  "thresholds": {
+    "ik_targets_min": 200,
+    "ik_success_rate_min": 0.98,
+    "ik_pos_err_max_m": 0.005,
+    "ik_ori_err_max_rad": 0.05,
+    "violating_traj_min": 500,
+    "violating_rejection_rate_min": 1.0,
+    "reach_map_png": true,
+    "cross_tier_pos_err_max_m": 0.0005,
+    "cross_tier_ori_err_max_rad": 0.005,
+    "benign_acceptance_rate_min": 1.0
+  },
+  "checks": {
+    "ik_targets_reached": true,
+    "ik_success_rate": true,
+    "ik_pos_err": true,
+    "ik_ori_err": true,
+    "violating_traj_reached": true,
+    "violating_rejection": true,
+    "benign_acceptance": true,
+    "reach_png_written": true,
+    "cross_tier_chain_builtin": true,
+    "cross_tier_chain_urdf_ikpy": true,
+    "cross_tier_urdf_mujoco": true
+  },
+  "pass": true,
+  "wall_time_s": 79.1
+}
