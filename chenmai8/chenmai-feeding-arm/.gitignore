@@ -37,3 +37,9 @@ Thumbs.db
 *.log
 tmp/
 out/
+
+# Upstream reference clones (local only, never enter this repo)
+_vendor/
+
+# Model weight caches
+*.task

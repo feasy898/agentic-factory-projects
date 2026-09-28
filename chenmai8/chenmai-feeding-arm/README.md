@@ -12,12 +12,20 @@
 **仓库结构（建设中）**
 
 ```
-docs/     架构、模块契约、spec + eval
-sim/      仿真与逆运动学、安全包络
-perception/ 口部定位、食物与碗识别
-skills/   舀取技能（数据采集协议与训练脚本）
-orchestration/ 行为树编排
-dashboard/ 护理看板
+chengshao/
+  cs_schema/     数据契约：跨模块数据结构与枚举的唯一事实来源
+  cs_sim/        仿真：模型加载、FK/IK、可达空间、安全包络验证
+  cs_arm/        执行：机械臂接口 + Mock 臂 + 真机通道 + 安全包络执行器
+  cs_mouth/      感知：口部三维估计（单目 / 深度双后端）
+  cs_food/       感知：勺上食物检查、选碗
+  cs_voice/      交互：离线语音识别、意图解析、语音播报
+  cs_orchestra/  编排：行为树（进食全流程 + 安全打断分支）
+  cs_dashboard/  数据：护理看板（HTTP + SQLite + 实时刷新）
+  scripts/       演示、标定、采样与检查脚本
+  assets/        人脸 / 语音 / 勺上帧等样本资产
+  config/        工作区、先验与限位等默认配置
+  tests/         跨模块 pytest
+  reports/       逐模块 eval 报告 JSON（评审证据链）
 ```
 
 > 详细模块规格与验收标准见 `docs/`，逐模块 spec+eval 驱动开发。
