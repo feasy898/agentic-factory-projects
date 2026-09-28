@@ -14,7 +14,16 @@ HOST="${TUNNEL_GPU_HOST:-dev-env-with-gpu}"
 LOCAL="${TUNNEL_LOCAL_PORT:-9001}"
 REMOTE="${TUNNEL_REMOTE_PORT:-9001}"
 REPO_ROOT=$(cd "$(dirname "$0")/.." && pwd)
-LOG="$REPO_ROOT/tmp/tunnel_gpu.log"
+# T10 增补（只增不改行为）：多服务隧道（如 mt :9004）复用本脚本时，非默认端口的
+# 日志/keepalive 锁按端口区分；默认 9001 的文件名与历史完全一致（存量
+# keepalive 单实例锁 ~/.tunnel_keepalive.lock 不受影响，防双实例竞争）。
+if [ "$LOCAL" = "9001" ]; then
+  LOG="$REPO_ROOT/tmp/tunnel_gpu.log"
+  KA_LOCK="$HOME/.tunnel_keepalive.lock"
+else
+  LOG="$REPO_ROOT/tmp/tunnel_gpu.$LOCAL.log"
+  KA_LOCK="$HOME/.tunnel_keepalive.$LOCAL.lock"
+fi
 mkdir -p "$REPO_ROOT/tmp"
 
 health() { curl -sf -m 3 "http://127.0.0.1:$LOCAL/health" 2>/dev/null; }
@@ -72,7 +81,7 @@ do_status() {
 # v2：单实例锁（~/.tunnel_keepalive.lock，防多实例竞争连锁 bind 失败）；
 #     拉起失败不并发叠加，交由下一轮探测重试。
 # 用法: nohup bash ops/tunnel_gpu.sh keepalive >> tmp/tunnel_keepalive.log 2>&1 &
-KA_LOCK="$HOME/.tunnel_keepalive.lock"
+# （KA_LOCK 在文件头按端口取值：9001 用历史锁名，其他端口加端口后缀）
 do_keepalive() {
   if [ -f "$KA_LOCK" ]; then
     other=$(cat "$KA_LOCK" 2>/dev/null)

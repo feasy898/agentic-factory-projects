@@ -6,6 +6,7 @@
 #   服务/批次                  | 解释器              | torch       | transformers | 组件
 #   -------------------------- | ------------------- | ----------- | ------------ | ----
 #   asr_align(:9001, B1/M4)    | /data/xdng/venv-asr | 2.5.1+cu118 | 5.13.0       | asr-core, align-core, emo-tag
+#   mt(:9004, T12/M6)          | /data/xdng/venv     | 2.5.1+cu118 | 4.52.x(T12 核实钉版；不兼容则照 venv-asr 的 .pth 复用法另建 venv-mt) | mt-core
 #   TTS/口型组（B2 常驻预留）  | /data/xdng/venv     | 2.5.1+cu118 | 4.52.1       | dub-tts, alt-tts-b, lip-fast, lip-pro
 #   本机 windev（CPU，OCR 等） | <repo>/.venv        | 2.14.0(cpu) | 无（paddle 组）| cap-ocr, facemesh, cap-clean
 #   两组 transformers（4.52.x 与 5.13）不可共存于同一解释器；安装脚本：
@@ -212,7 +213,7 @@ components:
     precision: fp16
     attn: sdpa
     weights: models/mt-core/
-    version: TBD-D1
+    version: TBD-T12           # T10 预置：gpu-services/mt 服务骨架 + 客户端 pipeline/mt_backends.LocalMtBackend 同批接口契约；部署+冒烟归 T12（真名对照 docs/mt_service_deps.md）
     fallback: [mt-api]
     volta_status: pending
   mt-api:
@@ -221,7 +222,7 @@ components:
     device: remote
     precision: null
     weights: null
-    version: api
+    version: api               # T10 落地：pipeline/mt_backends.ApiMtBackend（env: MT_API_BASE/MT_API_KEY/MT_API_MODEL）
     fallback: []
     volta_status: na
 
