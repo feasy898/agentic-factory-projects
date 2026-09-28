@@ -1,6 +1,6 @@
 # 全量锁定依赖（pip freeze 固化；170 项）。
 # 复现：python -m venv .venv && .venv/Scripts/python -m pip install -r chengshao/requirements.txt
-# 核心钉版本：mujoco==3.14.0 / py_trees==2.6.0 / lerobot==0.6.1 / funasr>=1.3.26（其余随解析固化）
+# 核心钉版本：mujoco==3.14.0 / py_trees==2.6.0 / funasr>=1.3.26（机器人学习栈以本清单锁定的版本行为准，其余随解析固化）
 absl-py==2.5.0
 accelerate==1.15.0
 aiohappyeyeballs==2.7.1

@@ -21,7 +21,10 @@ from typing import Protocol, runtime_checkable
 import cv2
 import numpy as np
 
-from chengshao.cs_schema import SpoonCheck
+try:  # 仓库根运行与包根运行（-m cs_food.*）双形态
+    from chengshao.cs_schema import SpoonCheck
+except ImportError:  # pragma: no cover - 包根直跑形态
+    from cs_schema import SpoonCheck  # type: ignore[no-redef]
 
 from .config import FoodConfig, load_food_config
 

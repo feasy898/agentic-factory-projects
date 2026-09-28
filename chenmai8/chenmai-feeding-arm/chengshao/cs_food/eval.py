@@ -1,15 +1,20 @@
-"""cs_food eval 入口（开发指令 §5.5）::
+"""cs_food eval 入口（开发指令 §5.5；审查 D13/B10 修订）::
 
     python -m chengshao.cs_food.eval [--data DIR] [--report PATH]   # 仓库根运行
     # 等价：PYTHONPATH=chengshao python -m cs_food.eval ...
 
 - 无 --data：跑合成自检集（程序化绘制的勺上帧与基准码场景），验证启发式实现、
-  基准码选碗与 config 装载链路——pre-hardware 阶段判据。
+  基准码选碗与 config 装载链路——pre-hardware 阶段判据。合成集是"实现与
+  阈值自洽"证据，不是食物识别正确性证据：报告记 ``self_check`` 字段，
+  **不写 ``pass``**（审查 B10：pass 只留给有人工标签的真实帧）。
 - --data DIR：对目录内真实帧（脚本舀取运行采集的腕部相机帧）跑启发式，
   基线准确率仅记录不设硬线；学习型分类器 ≥90% 的硬线延后启用。
 
-退出码 0 = pass；证据 JSON 落 --report（默认 reports/food_eval.json），
-字段满足 §10.2：{module, date, cmd, metrics, thresholds, pass}。
+退出码 0 = 本轮执行成功（合成：self_check 全对；真实帧：至少读入 1 帧）；
+证据 JSON 落 --report（默认 reports/food_eval.json），
+字段满足 §10.2：{module, date, cmd, metrics, thresholds, self_check|pass}。
+真实帧读取一律走 ``imread_u``（仓库路径含中文，cv2.imread 会静默返回空，
+审查 D13）。
 """
 
 from __future__ import annotations
@@ -23,6 +28,11 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+
+try:  # 仓库根运行（-m chengshao.cs_food.eval）与包根运行（-m cs_food.eval）双形态
+    from chengshao.cs_mouth.imgio import imread_u
+except ImportError:  # pragma: no cover - 包根直跑形态
+    from cs_mouth.imgio import imread_u  # type: ignore[no-redef]
 
 from .bowls import BowlSelector
 from .config import DEFAULT_BOWL_CONFIG_PATH, DEFAULT_FOOD_CONFIG_PATH
@@ -114,7 +124,7 @@ def _run_real_frames(classifier: HeuristicSpoonClassifier, data_dir: Path) -> di
     latencies_ms: list[float] = []
     food_frames = 0
     for path in files:
-        img = cv2.imread(str(path), cv2.IMREAD_COLOR)
+        img = imread_u(path, cv2.IMREAD_COLOR)
         if img is None:
             raise ValueError(f"帧读取失败: {path}")
         t0 = time.perf_counter_ns()
@@ -154,13 +164,14 @@ def main(argv: list[str] | None = None) -> int:
             "aruco_none_on_empty": True,
             "aruco_ignore_unregistered": True,
         }
-        passed = (
+        self_check = (
             metrics["spoon_accuracy"] >= thresholds["synthetic_spoon_accuracy_min"]
             and metrics["aruco_registered_detected"] >= thresholds["aruco_registered_detected_min"]
             and metrics["aruco_select_correct"]
             and metrics["aruco_none_on_empty"]
             and metrics["aruco_ignore_unregistered"]
         )
+        passed: bool | None = None  # 合成自检不判 pass（审查 B10）
     else:
         if not real_dir.is_dir():
             print(f"--data 目录不存在: {real_dir}", file=sys.stderr)
@@ -169,6 +180,7 @@ def main(argv: list[str] | None = None) -> int:
         # 基线仅记录不设硬线（§5.5：启发式基线只记录；分类器 ≥90% 延后启用）
         thresholds = {"heuristic_baseline": "record-only", "classifier_accuracy_min": "deferred"}
         passed = metrics["frames"] > 0
+        self_check = None
 
     report = {
         "module": "cs_food",
@@ -177,11 +189,19 @@ def main(argv: list[str] | None = None) -> int:
         "source": "real_frames" if real_dir is not None else "synthetic",
         "metrics": metrics,
         "thresholds": thresholds,
-        "pass": bool(passed),
     }
+    if self_check is not None:
+        report["self_check"] = bool(self_check)
+    if passed is not None:
+        report["pass"] = bool(passed)
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"cs_food eval: pass={report['pass']} report={args.report}")
+    outcome = ("self_check=" + str(report["self_check"])) if "self_check" in report else (
+        "pass=" + str(report["pass"]))
+    print(f"cs_food eval: {outcome} report={args.report}")
+    # 合成自检：self_check 全对才 exit 0（它是实现自洽的回归门，但报告不称 pass）
+    if "self_check" in report:
+        return 0 if report["self_check"] else 1
     return 0 if report["pass"] else 1
 
 

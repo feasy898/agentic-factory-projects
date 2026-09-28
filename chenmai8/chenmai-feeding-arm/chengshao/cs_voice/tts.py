@@ -1,6 +1,7 @@
 """TTS：本地离线播报（Windows SAPI，经 pyttsx3）。
 
-- :meth:`Speaker.say`：运行时确认语播报（异步，不阻塞行为树 tick）；
+- :meth:`Speaker.say`：运行时确认语播报（一次性线程实际播放，等结果回传，
+  带 15s 上限；行为树侧如需 fire-and-forget 可自行包一层队列）；
 - :meth:`Speaker.synth_to_wav`：把文本渲染成 wav 文件——无音频输出设备的
   服务器/CI 环境也能验证 TTS 通路，并用于生成内置样本音频。
 
@@ -118,37 +119,54 @@ class Speaker:
 
     # -- 公开接口 ----------------------------------------------------------
 
-    def say(self, text: str) -> bool:
-        """播报确认语（异步投递，立即返回）。
+    def say(self, text: str, timeout_s: float = 15.0) -> bool:
+        """播报确认语，返回**播报线程的实际结果**（审查 D14）。
 
         用原生 SAPI COM 异步播报（SVSFlagsAsync），一次性线程内轮询
         播放状态，10s 硬超时兜底——任何异常环境只丢这条播报，
-        不挂线程池、不影响合成通路。
+        不挂线程池、不影响合成通路。COM 线程先 ``CoInitialize``
+        （SAPI 是 COM 组件，非主线程必须初始化 COM 公寓）；
+        ``say()`` 最多阻塞 ``timeout_s`` 等线程落定后回传真实成败。
         """
         if not text:
             return False
 
-        def play() -> None:
+        def play() -> bool:
             try:
+                import pythoncom
                 import win32com.client
 
-                voice = win32com.client.Dispatch("SAPI.SpVoice")
-                voice.Voice = _sapi_pick_voice(voice, self._voice_hint)
-                voice.Rate = max(-10, min(10, (self._rate - 190) // 15))
-                voice.Speak(text, 1)  # 1 = SVSFlagsAsync
-                deadline = time.monotonic() + 10.0
-                while time.monotonic() < deadline:
-                    if voice.Status.RunningState == 1:  # 1 = SRSLDone
-                        self.available = True
-                        return
-                    time.sleep(0.1)
-                logger.warning("TTS 播报超时未完成（10s），放弃本条")
+                pythoncom.CoInitialize()  # 播放线程自己的 COM 公寓（审查 D14）
+                try:
+                    voice = win32com.client.Dispatch("SAPI.SpVoice")
+                    voice.Voice = _sapi_pick_voice(voice, self._voice_hint)
+                    voice.Rate = max(-10, min(10, (self._rate - 190) // 15))
+                    voice.Speak(text, 1)  # 1 = SVSFlagsAsync
+                    deadline = time.monotonic() + 10.0
+                    while time.monotonic() < deadline:
+                        if voice.Status.RunningState == 1:  # 1 = SRSLDone
+                            self.available = True
+                            return True
+                        time.sleep(0.1)
+                    logger.warning("TTS 播报超时未完成（10s），放弃本条")
+                    return False
+                finally:
+                    pythoncom.CoUninitialize()
             except Exception:  # noqa: BLE001 —— 播放失败不阻塞主链路
                 logger.exception("TTS 播报失败")
+                return False
 
-        threading.Thread(target=play, daemon=True,
+        result: dict = {"ok": False}
+        done = threading.Event()
+
+        def runner() -> None:
+            result["ok"] = play()
+            done.set()
+
+        threading.Thread(target=runner, daemon=True,
                          name="cs-voice-tts-play").start()
-        return True
+        done.wait(timeout=timeout_s)
+        return bool(result["ok"])
 
     def synth_to_wav(self, text: str, path: str | Path,
                      rate: int | None = None) -> bool:

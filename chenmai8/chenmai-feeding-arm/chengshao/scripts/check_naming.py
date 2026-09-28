@@ -9,14 +9,20 @@ CI 式用法（作为 e2e 前置，见开发指令 §10.5）::
 
 规则说明（刻意为之，非疏漏）：
 - 本脚本自身包含禁用词的字面量（否则无法 grep），扫描时豁免本文件；
-- 依赖清单（requirements*.txt / pyproject.toml / uv.lock 等）为 pip freeze /
-  打包器的机器输出，其中生态依赖的发行名不可避免，整体豁免（见下 MANIFEST_NAMES）。
-- _vendor/（上游参考件克隆，gitignore）与 .venv/ 等本地目录不在扫描范围。
+- 依赖清单（requirements*.txt）**不再整体豁免**（审查 E16）：逐行解析出
+  pip 包名本身放行（生态依赖的发行名不可避免，属依赖声明而非内容引用），
+  行内其余文本（版本约束后的杂注、行尾/整行注释、非法requirement 行）仍按
+  全部规则扫描——上游名不得借注释或杂注混入清单；
+- pyproject/uv.lock 等打包器机器输出（MANIFEST_NAMES）仍整体豁免；
+- _vendor/（上游参考件克隆，gitignore）与 .venv/ 等本地目录不在扫描范围；
+- **符号链接不跟随**（v3.1）：仓库内的 symlink（如临时挂进来的外部工程）
+  不是本仓库内容——git 只存链接本身、从不跟随，扫描口径与 git 对齐。
 """
 
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import subprocess
 import sys
@@ -47,17 +53,23 @@ WARNINGS: list[tuple[str, str]] = [
 SKIP_DIRS = {
     ".git", ".venv", "venv", "env", "__pycache__", "_vendor", "node_modules",
     ".pytest_cache", ".ruff_cache", ".mypy_cache", ".idea", ".vscode",
+    ".zcode",  # agent 工具运行时目录（gitignore，非仓库内容）
     "build", "dist", "data", "models",
 }
 
-# 依赖清单（requirements*/pyproject 等）整体豁免：它们是 pip freeze / 打包器的
-# 机器输出，生态依赖的发行名（含传递依赖）不可避免，属依赖声明而非内容引用上游。
-# 构建指令 §2/§4 既要求入库全量 freeze、又要求经 pip 安装参考栈，故均不检查。
+# 打包器机器输出（整体豁免）：pip freeze 之外的锁定/打包格式，逐行语义
+# 解析不可靠（嵌套字符串表、哈希续行等），维持豁免并在此记录。
+# requirements*.txt 不在此列——走 _strip_requirement_name() 的包名白名单。
 MANIFEST_NAMES = {
     "pyproject.toml", "setup.py", "setup.cfg", "uv.lock", "poetry.lock",
     "Pipfile", "Pipfile.lock", "environment.yml",
-    # requirements* 由 _is_manifest() 的前缀规则覆盖
 }
+
+# pip requirement 行的包名头部：name[extras] 后跟版本约束/环境标记/行尾
+_REQ_NAME_RE = re.compile(
+    r"^\s*(?P<name>[A-Za-z0-9][A-Za-z0-9._-]*)\s*(?P<extras>\[[^\]]*\])?\s*"
+    r"(?P<rest>$|[=<>!~;(]|@)"
+)
 
 BINARY_EXTS = {
     ".png", ".jpg", ".jpeg", ".gif", ".bmp", ".ico", ".webp", ".pdf",
@@ -83,6 +95,44 @@ def _is_manifest(path: Path) -> bool:
     return path.name in MANIFEST_NAMES or path.name.startswith("requirements")
 
 
+def _strip_requirement_name(line: str) -> str:
+    """requirements 行：剥掉 pip 包名本身（发行名白名单），其余文本照扫。
+
+    - `huggingface_hub==1.33.0` -> `==1.33.0`（包名放行）；
+    - 整行/行尾注释、`-r`/`--hash` 等选项行、解析不出 requirement 头的行
+      原样返回（全部文本参与扫描）。
+    """
+    stripped = line.strip()
+    if not stripped or stripped.startswith("#") or stripped.startswith("-"):
+        return line
+    m = _REQ_NAME_RE.match(line)
+    if not m:
+        return line
+    return line[: m.start()] + line[m.end():]
+
+
+def _under_symlink(path: Path, root: Path) -> bool:
+    """path（含各级祖先，root 之下）是否经过符号链接/目录联接（junction）。
+
+    Windows 下 Git Bash 的 ``ln -s`` 可能落成 junction，``Path.is_symlink``
+    不识别 junction，故用 realpath 解析结果与字面路径比对（解析后跳出
+    原位即链）。
+    """
+    try:
+        rel = path.relative_to(root)
+    except ValueError:
+        return False
+    cur = root
+    for part in rel.parts:
+        cur = cur / part
+        try:
+            if os.path.realpath(str(cur)) != os.path.abspath(str(cur)):
+                return True
+        except OSError:
+            return True
+    return False
+
+
 def _iter_text_files(root: Path, self_path: Path):
     for path in sorted(root.rglob("*")):
         if not path.is_file():
@@ -93,16 +143,21 @@ def _iter_text_files(root: Path, self_path: Path):
             continue
         if any(part in SKIP_DIRS for part in path.parts):
             continue
+        if _under_symlink(path, root):
+            continue  # 仓库内 symlink 指向的外部内容不是本仓库内容（与 git 口径一致）
         yield path
 
 
-def _match_lines(patterns: list[re.Pattern[str]], path: Path) -> list[tuple[int, str]]:
+def _match_lines(patterns: list[re.Pattern[str]], path: Path,
+                 manifest: bool = False) -> list[tuple[int, str]]:
     hits: list[tuple[int, str]] = []
     try:
         text = path.read_text(encoding="utf-8", errors="replace")
     except OSError:
         return hits
     for lineno, line in enumerate(text.splitlines(), start=1):
+        if manifest and path.name.startswith("requirements"):
+            line = _strip_requirement_name(line)  # 包名白名单：只放行发行名本身
         for pat in patterns:
             m = pat.search(line)
             if m:
@@ -127,13 +182,15 @@ def main(argv: list[str] | None = None) -> int:
 
     for path in _iter_text_files(root, self_path):
         rel = path.relative_to(root).as_posix()
-        if not _is_manifest(path):
-            hits = _match_lines(pat_all, path) + _match_lines(pat_code, path)
-            failures.extend(f"FORBIDDEN {rel}:{ln}: {name!r}" for ln, name in hits)
+        manifest = _is_manifest(path)
+        hits = _match_lines(pat_all, path, manifest=manifest) + _match_lines(
+            pat_code, path, manifest=manifest
+        )
+        failures.extend(f"FORBIDDEN {rel}:{ln}: {name!r}" for ln, name in hits)
 
-            for pat, why in pat_warn:
-                for ln, name in _match_lines([pat], path):
-                    warns.append(f"WARNING  {rel}:{ln}: {name!r} — {why}")
+        for pat, why in pat_warn:
+            for ln, name in _match_lines([pat], path, manifest=manifest):
+                warns.append(f"WARNING  {rel}:{ln}: {name!r} — {why}")
 
     for line in warns:
         print(line)
