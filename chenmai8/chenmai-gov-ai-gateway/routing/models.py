@@ -10,6 +10,7 @@ routing → gateway 的唯一接口形状；决策矩阵为纯函数（M4 实现
     BATCH_STRUCTURED_PII（同请求 ≥3 结构化号码）→ GOVCLOUD
     SINGLE_STRUCTURED_PII                    → INTERNET（mask_required=true）
     WHITELIST_ONLY / NO_FINDING              → INTERNET
+    WHITELIST_HIT（白名单命中留存条，附于 WHITELIST_ONLY 之后）→ INTERNET
 """
 from __future__ import annotations
 
@@ -28,6 +29,7 @@ REASON_CODES: tuple[str, ...] = (
     "BATCH_STRUCTURED_PII",
     "SINGLE_STRUCTURED_PII",
     "WHITELIST_ONLY",
+    "WHITELIST_HIT",
     "NO_FINDING",
 )
 
