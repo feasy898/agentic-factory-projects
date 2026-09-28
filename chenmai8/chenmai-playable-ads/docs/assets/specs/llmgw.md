@@ -25,15 +25,20 @@
 | `PF_LLM_TIMEOUT` | 否 | **30** 秒 | 单次 HTTP 超时 |
 | `PF_LLM_MAX_RETRIES` | 否 | **2** | 单模型最大重试次数（耗尽后降级下一模型） |
 | `PF_LLM_BACKOFF` | 否 | **0.8** 秒 | 指数退避基数：`min(backoff * 2^attempt, 8.0)` 封顶 |
+| `PF_LLM_ALLOW_LOCAL` | 否 | 关 | SSRF 防线放行开关：非回环的非公网地址（私网/链路本地/保留，含云元数据 169.254.x）任何情况下都在发请求前 ConfigError 拒绝；回环地址（127.x/::1）默认同样拒绝，置 1 仅供离线 mock 自测放行（范围仅限回环） |
 
 端点拼接 `endpoint_for(base)`：去尾 `/` → path 为空时补 `/v1` → 追加 `/chat/completions`；
 scheme 必须 http(s)，否则 `ConfigError`。
+SSRF 防线：`chat()` 与请求汇入点 `_post()` 双处在发出任何网络字节前校验 host
+（DNS 解析后逐 IP 断言）：非回环的非公网地址一律 `ConfigError` 拒绝（无放行开关）；
+回环地址默认拒绝，`allow_local=True`（env `PF_LLM_ALLOW_LOCAL`）放行且范围仅限回环。
 
 ## 3. 对外契约（Gateway / chat）
 
 ```python
 gw = Gateway(base_url=None, api_key=None, model=None, fallback_models=None,
-             timeout=None, max_retries=None, backoff=None)   # 缺省逐项回退 env
+             timeout=None, max_retries=None, backoff=None,
+             allow_local=None)   # 缺省逐项回退 env；allow_local=SSRF 防线放行（默认拒绝本地/内网端点）
 resp = gw.chat(messages, images=None, json_schema=None, *, json_mode=False,
                timeout=None, max_retries=None, backoff=None, extra=None)
 text_of(resp) -> str          # choices[0].message.content；缺失抛 LLMError

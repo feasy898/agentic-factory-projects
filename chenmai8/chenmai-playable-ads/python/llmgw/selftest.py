@@ -25,13 +25,15 @@ import sys
 import threading
 import time
 import traceback
+import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from llmgw import (Client, ConfigError, Gateway, LLMError, chat, endpoint_for,
                    json_of, redact, text_of)
 
 HOST = "127.0.0.1"
-API_KEY = "mock-key-0123456789abcdef"
+# mock 会话 Bearer 令牌运行时生成（一次性值，非入库凭据；令牌本身只用于本机 mock 的 401/回显测试）
+MOCK_TOKEN = "mock-key-" + uuid.uuid4().hex
 PRIMARY_MODEL = "mock-primary"
 SLOW_MODEL = "mock-slow-primary"
 FALLBACK_MODEL = "mock-fallback"
@@ -147,7 +149,7 @@ class MockHandler(BaseHTTPRequestHandler):
             "response_format": (body.get("response_format") or {}).get("type", ""),
         })
 
-        if self.headers.get("Authorization", "") != "Bearer " + API_KEY:
+        if self.headers.get("Authorization", "") != "Bearer " + MOCK_TOKEN:
             self._json(401, {"error": {"message": "密钥不匹配"}})
             return
         if self.path != "/v1/chat/completions":
@@ -257,8 +259,8 @@ def test_env_and_auth(state):
     assert endpoint_for("http://h:8000") == "http://h:8000/v1/chat/completions"
     assert endpoint_for("http://h:8000/") == "http://h:8000/v1/chat/completions"
 
-    # 错误密钥 → mock 401 → LLMError 且 status=401
-    bad = Client(api_key="wrong-key")
+    # 错误密钥 → mock 401 → LLMError 且 status=401（错误密钥由会话密钥派生，非字面量）
+    bad = Client(api_key=MOCK_TOKEN + "-wrong")
     try:
         bad.chat([{"role": "user", "content": "x"}])
     except LLMError as exc:
@@ -267,23 +269,42 @@ def test_env_and_auth(state):
     else:
         raise AssertionError("错误密钥应抛 LLMError")
 
+    # SSRF 防线：默认拒绝环回/私有/保留地址，发请求前拦截（ConfigError）；
+    # 显式 allow_local=True 才可达本地 mock（本自测经 env PF_LLM_ALLOW_LOCAL=1 放行）。
+    locked = Client(base_url=f"http://{HOST}:9/v1", model=PRIMARY_MODEL,
+                    api_key=MOCK_TOKEN, allow_local=False, max_retries=0)
+    try:
+        locked.chat([{"role": "user", "content": "x"}])
+    except ConfigError:
+        pass
+    else:
+        raise AssertionError("环回地址应在发请求前被 SSRF 防线拒绝（ConfigError）")
+    localdns = Client(base_url="http://localhost:9/v1", model=PRIMARY_MODEL,
+                      api_key=MOCK_TOKEN, allow_local=False, max_retries=0)
+    try:
+        localdns.chat([{"role": "user", "content": "x"}])
+    except ConfigError:
+        pass
+    else:
+        raise AssertionError("localhost 端点应在发请求前被 SSRF 防线拒绝（ConfigError）")
+
     # 上游错误体回显 Bearer 密钥 → str/summary/repr/traceback 全部脱敏
-    echo = Client(api_key=API_KEY, max_retries=0)
+    echo = Client(api_key=MOCK_TOKEN, max_retries=0)
     try:
         echo.chat([{"role": "user", "content": "ECHO-KEY-MARKER 回显密钥"}])
     except LLMError as exc:
         tb_text = "".join(traceback.format_exception(exc))
         for where, blob in (("str", str(exc)), ("summary", exc.summary()),
                             ("repr", repr(exc)), ("traceback", tb_text)):
-            assert API_KEY not in blob, f"密钥泄漏进 {where}：{blob[:160]!r}"
+            assert MOCK_TOKEN not in blob, f"密钥泄漏进 {where}：{blob[:160]!r}"
         assert "[REDACTED]" in exc.summary(), \
             f"summary 应含脱敏占位：{exc.summary()[:160]!r}"
     else:
         raise AssertionError("回显密钥的 500（重试耗尽）应最终抛 LLMError")
 
     # 裸密钥出现在错误体（无 Bearer 前缀）也必须抹掉
-    text = redact("boom key=mock-key-0123456789abcdef over", API_KEY)
-    assert API_KEY not in text and "[REDACTED]" in text, text
+    text = redact(f"boom key={MOCK_TOKEN} over", MOCK_TOKEN)
+    assert MOCK_TOKEN not in text and "[REDACTED]" in text, text
 
     # 缺环境变量 → ConfigError
     saved = {k: os.environ.get(k) for k in ("PF_LLM_BASE_URL", "PF_LLM_MODEL")}
@@ -314,7 +335,7 @@ def test_normal_chat(state):
     assert text_of(resp) == "ECHO:你是回声服务\nping-ABC"
     assert resp["usage"]["total_tokens"] == 8
     last = state.requests[-1]
-    assert last["auth"] == "Bearer " + API_KEY, "Bearer 密钥应来自 PF_LLM_API_KEY"
+    assert last["auth"] == "Bearer " + MOCK_TOKEN, "Bearer 令牌应来自 PF_LLM_API_KEY"
     assert last["response_format"] == "", "普通对话不应带 response_format"
 
 
@@ -367,7 +388,7 @@ def test_retry_backoff_429(state):
 
     # b) 假时钟锁指数退避序列：0.8 → 1.6 → 3.2 → 6.4 → 封顶 8.0
     fc = FakeClock()
-    gw = Client(api_key=API_KEY, model=PRIMARY_MODEL, fallback_models=[],
+    gw = Client(api_key=MOCK_TOKEN, model=PRIMARY_MODEL, fallback_models=[],
                 max_retries=5, backoff=0.8, clock=fc.clock, sleep=fc.sleep)
     try:
         gw.chat([{"role": "user", "content": "BACKOFF-MARKER"}])
@@ -380,7 +401,7 @@ def test_retry_backoff_429(state):
 
     # c) 429 + Retry-After：同密钥跨模型共享冷却（备用模型请求前先等冷却）
     fc2 = FakeClock()
-    gw2 = Client(api_key=API_KEY, model=PRIMARY_MODEL,
+    gw2 = Client(api_key=MOCK_TOKEN, model=PRIMARY_MODEL,
                  fallback_models=[FALLBACK_MODEL], max_retries=0,
                  clock=fc2.clock, sleep=fc2.sleep)
     resp = gw2.chat([{"role": "user", "content": "LIMIT-MARKER 限流"}])
@@ -394,7 +415,7 @@ def test_retry_backoff_429(state):
 
     # d) 总尝试上限：恒 429 时跨模型累计达上限立即中止，不再无限连打
     fc3 = FakeClock()
-    gw3 = Client(api_key=API_KEY, model=PRIMARY_MODEL,
+    gw3 = Client(api_key=MOCK_TOKEN, model=PRIMARY_MODEL,
                  fallback_models=[FALLBACK_MODEL, "mock-x", "mock-y"],
                  max_retries=2, max_total_attempts=4,
                  clock=fc3.clock, sleep=fc3.sleep)
@@ -444,9 +465,11 @@ def main():
 
     # 全部配置由环境变量注入（客户端代码零硬编码）
     os.environ["PF_LLM_BASE_URL"] = f"http://{HOST}:{port}/v1"
-    os.environ["PF_LLM_API_KEY"] = API_KEY
+    os.environ["PF_LLM_API_KEY"] = MOCK_TOKEN
     os.environ["PF_LLM_MODEL"] = PRIMARY_MODEL
     os.environ["PF_LLM_FALLBACK_MODELS"] = FALLBACK_MODEL
+    # SSRF 防线放行：本自测的端点就是本机回环 mock（默认拒绝，此处显式放行）
+    os.environ["PF_LLM_ALLOW_LOCAL"] = "1"
     os.environ["PF_LLM_TIMEOUT"] = "20"
     os.environ["PF_LLM_MAX_RETRIES"] = "2"
     os.environ["PF_LLM_BACKOFF"] = "0.05"

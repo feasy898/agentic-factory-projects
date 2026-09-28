@@ -16,6 +16,10 @@
     PF_LLM_TIMEOUT           单次 HTTP 超时秒数（默认 30）
     PF_LLM_MAX_RETRIES       单模型最大重试次数（默认 2；耗尽后降级到下一模型）
     PF_LLM_BACKOFF           重试退避基数秒（默认 0.8，指数递增，单次封顶 8s）
+    PF_LLM_ALLOW_LOCAL       SSRF 防线放行开关（默认拒绝）：置 1/true 才允许端点指向
+                             回环地址（127.0.0.0/8、::1），仅供离线 mock 自测使用；
+                             私网/链路本地/保留地址（含云元数据 169.254.x）任何情况下
+                             都会在发请求前被 ConfigError 拒绝
 
 重试 / 降级规则：
     - 可重试错误：网络异常、超时、HTTP 408/409/429/5xx、200 但响应体异常；
@@ -40,9 +44,11 @@ import base64
 import binascii
 import email.utils
 import http.client
+import ipaddress
 import json
 import os
 import re
+import socket
 import time
 import urllib.error
 import urllib.request
@@ -185,6 +191,46 @@ def endpoint_for(base_url):
     return base + "/chat/completions"
 
 
+def _validated_endpoint(endpoint, allow_local=False):
+    """发请求前校验目标 host（SSRF 防线），返回校验通过的端点原文。
+
+    端点来自配置（env/参数），属于"服务端按 URL 发请求"的场景：scheme 必须
+    http(s)；主机名经 DNS 解析（本就要连接该主机），逐 IP 断言——
+    - 非回 loops 的非公网地址（私网、链路本地含云元数据 169.254.x、保留段）
+      一律 ConfigError 拒绝，无任何开关；
+    - 回环地址（127.0.0.0/8、::1）默认同样拒绝；仅 allow_local=True（离线 mock
+      自测显式传参或 env PF_LLM_ALLOW_LOCAL）放行，且放行范围仅限回环——
+      不存在"跳过校验"的路径。
+    """
+    parsed = urlparse(str(endpoint))
+    if parsed.scheme not in ("http", "https"):
+        raise ConfigError(f"网关端点仅允许 http/https，得到 scheme：{parsed.scheme!r}")
+    host = parsed.hostname
+    if not host:
+        raise ConfigError(f"网关端点缺少主机名：{endpoint!r}")
+    try:
+        infos = socket.getaddrinfo(host, parsed.port, proto=socket.IPPROTO_TCP)
+    except socket.gaierror as exc:
+        raise ConfigError(f"网关主机名解析失败：{host}（{exc}）") from None
+    if not infos:
+        raise ConfigError(f"网关主机名解析结果为空：{host}")
+    for info in infos:
+        try:
+            ip = ipaddress.ip_address(info[4][0])
+        except ValueError:
+            continue
+        if ip.is_loopback:
+            if not allow_local:
+                raise ConfigError(
+                    f"网关端点解析到回环地址 {ip}（SSRF 防线默认拒绝；本地 mock 自测"
+                    "请显式 allow_local=True，放行范围仅限回环）")
+        elif not ip.is_global:
+            raise ConfigError(
+                f"网关端点解析到非公网地址 {ip}（SSRF 防线拒绝私网/链路本地/保留地址，"
+                "此项无放行开关）")
+    return endpoint
+
+
 def _check_base64(data):
     compact = "".join(data.split())
     try:
@@ -295,10 +341,16 @@ class Gateway:
 
     def __init__(self, base_url=None, api_key=None, model=None,
                  fallback_models=None, timeout=None, max_retries=None,
-                 backoff=None, max_total_attempts=None, clock=None, sleep=None):
+                 backoff=None, max_total_attempts=None, clock=None, sleep=None,
+                 allow_local=None):
         self.base_url = base_url if base_url is not None else _env("PF_LLM_BASE_URL")
         self.api_key = api_key if api_key is not None else _env("PF_LLM_API_KEY")
         self.model = model if model is not None else _env("PF_LLM_MODEL")
+        # SSRF 防线放行开关：默认拒绝本地/内网端点；离线 mock 自测显式放行。
+        if allow_local is not None:
+            self.allow_local = bool(allow_local)
+        else:
+            self.allow_local = str(_env("PF_LLM_ALLOW_LOCAL", "")).lower() in ("1", "true", "yes", "on")
         if fallback_models is None:
             fallback_models = _env("PF_LLM_FALLBACK_MODELS", "") or ""
         if isinstance(fallback_models, str):
@@ -374,7 +426,7 @@ class Gateway:
         if extra:
             payload.update(extra)
 
-        endpoint = endpoint_for(self.base_url)
+        endpoint = _validated_endpoint(endpoint_for(self.base_url), self.allow_local)
         timeout_s = float(timeout) if timeout is not None else self.timeout
         retries = int(max_retries) if max_retries is not None else self.max_retries
         backoff_s = float(backoff) if backoff is not None else self.backoff
@@ -444,6 +496,9 @@ class Gateway:
         return None, n
 
     def _post(self, endpoint, payload, timeout_s):
+        # SSRF 防线在请求汇入点（sink）再校验一次：chat() 处已提前拦截，
+        # 此处兜底防御任何绕过 chat() 的直接调用。
+        endpoint = _validated_endpoint(endpoint, self.allow_local)
         data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         headers = {"Content-Type": "application/json",
                    "Accept": "application/json"}
