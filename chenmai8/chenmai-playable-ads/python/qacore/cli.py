@@ -18,7 +18,7 @@ from playwright.sync_api import Page, sync_playwright
 from . import checks
 from .autoplay import (PROBE_JS, audio_running, drive_autoplay, has_pf,
                        media_sample, pf_muted, probe_installed, qc_assets,
-                       qc_texts, rtc_count)
+                       qc_text_states, qc_texts, rtc_count)
 from .server import ArtifactServer
 
 VIEWPORT_PORTRAIT = {"width": 390, "height": 844}
@@ -238,12 +238,29 @@ def cmd_run(args) -> int:
 
                     facts_pass: dict = {"probeInstalled": probe_installed(page)}
                     if do_autoplay:
-                        # 教程期文案先采（教程浮层在自动试玩开始数秒后即消失）
+                        # 教程期文案先采（教程浮层在自动试玩开始数秒后即销毁）：
+                        # 字符串集合 + 文案对象 active+visible 实况各采一份
                         texts_early = qc_texts(page)
+                        hook_early, states_early = qc_text_states(page)
                         facts_pass.update(drive_autoplay(page, autoplay_timeout))
                         page.wait_for_timeout(300)
-                        # 结束页文案补采 + 替换素材像素对账（贴图此时必然已就绪）
-                        facts_pass["page_texts"] = sorted(set(texts_early) | set(qc_texts(page)))
+                        # 结束页文案补采 + 替换素材像素对账（贴图此时必然已就绪）。
+                        # page_texts 仍取并集（兼容仅有 texts() 的模板）；text_states
+                        # 是 CHK10 的自证证据：逐文案"是否曾在采样时刻 active+visible"。
+                        texts_final = qc_texts(page)
+                        hook_final, states_final = qc_text_states(page)
+                        ever_visible = {s["text"] for s in states_early + states_final
+                                        if s["active"] and s["visible"]}
+                        ever_visible |= set(facts_pass.get("qcVisibleTexts") or [])
+                        all_texts = (set(texts_early) | set(texts_final)
+                                     | set(facts_pass.get("qcTexts") or [])
+                                     | {s["text"] for s in states_early + states_final})
+                        facts_pass["page_texts"] = sorted(all_texts)
+                        facts_pass["text_states"] = [
+                            {"text": t, "everVisible": t in ever_visible}
+                            for t in sorted(all_texts)]
+                        facts_pass["text_states_hook"] = bool(
+                            facts_pass.get("textStatesHook") or hook_early or hook_final)
                         facts_pass["asset_audit"] = qc_assets(page)
                     else:
                         # 未驱动试玩时，加载后的静音态即"首交互前静音"事实
@@ -304,9 +321,14 @@ def cmd_run(args) -> int:
         "muteLoadTime": mute_facts,
         # CHK10 判定输入（2026-09-29 扩展）：要求的渲染文案 / 替换素材键，
         # 以及模板上报的已渲染文案集合与像素对账结果（仅竖屏趟采集）。
+        # text_states（2026-09-29 自证补强）：每条文案是否曾在采样时刻
+        # active+visible（驱动前/循环逐相位/结束页三次并集）；text_states_hook
+        # 标记模板是否提供 __PF_QC__.textStates——缺失时可见性无证据，CHK10 从严。
         "required_texts": list(args.require_texts or []),
         "required_sprites": list(args.require_sprites or []),
         "page_texts": shots.get("portrait", {}).get("page_texts", []),
+        "text_states": shots.get("portrait", {}).get("text_states", []),
+        "text_states_hook": bool(shots.get("portrait", {}).get("text_states_hook")),
         "asset_audit": shots.get("portrait", {}).get("asset_audit", []),
         "pf_present": pf_present,
         "probe_installed": probe_ok,

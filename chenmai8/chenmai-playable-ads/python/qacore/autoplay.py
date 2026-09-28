@@ -230,6 +230,33 @@ def qc_texts(page: Page) -> list[str]:
     return [str(x) for x in v if isinstance(x, (str, int, float))]
 
 
+def qc_text_states(page: Page) -> tuple[bool, list[dict]]:
+    """模板经 __PF_QC__.textStates() 上报的文案对象实况采样（CHK10 自证补强）。
+
+    返回 (钩子在位, 采样条目)：每条 {text, active, visible} 由模板在调用瞬间
+    读 Text 对象实况——引擎 destroy() 会把 active/visible 置假，退场浮层不再
+    虚报"在屏"。texts() 只能证明"字符串登记过"，本采样把证据升级为"登记的
+    对象此刻真的 active+visible"。钩子缺失/异常时返回 (False, [])。"""
+    try:
+        v = page.evaluate(
+            "() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'function')"
+            " ? window.__PF_QC__.textStates() : null"
+        )
+    except Exception:
+        return False, []
+    if not isinstance(v, list):
+        return False, []
+    entries: list[dict] = []
+    for x in v:
+        if isinstance(x, dict) and isinstance(x.get("text"), (str, int, float)):
+            entries.append({
+                "text": str(x["text"]),
+                "active": x.get("active") is True,
+                "visible": x.get("visible") is True,
+            })
+    return True, entries
+
+
 def qc_assets(page: Page) -> list[dict]:
     """模板经 __PF_QC__.assets() 上报的替换素材像素对账结果。
 
@@ -258,7 +285,11 @@ def has_qc_hooks(page: Page) -> bool:
 
 
 def drive_autoplay(page: Page, timeout_sec: float) -> dict[str, Any]:
-    """自动试玩主循环；返回采集到的事实（不判定 PASS/FAIL，判定在 checks）。"""
+    """自动试玩主循环；返回采集到的事实（不判定 PASS/FAIL，判定在 checks）。
+
+    每轮随相位采样 __PF_QC__.textStates()（CHK10 自证补强）：退场浮层（教程
+    文案在教程结束后即被销毁）只能在它在屏的相位采到 active+visible，故循环
+    内逐轮累积"曾见文案/曾见 active+visible 文案"两个并集，随 facts 返回。"""
     facts: dict[str, Any] = {
         "enabled": True,
         "timeoutSec": timeout_sec,
@@ -276,11 +307,25 @@ def drive_autoplay(page: Page, timeout_sec: float) -> dict[str, Any]:
         "endScreenVisible": None,
         "qcHooksPresent": has_qc_hooks(page),
         "probeInstalled": probe_installed(page),
+        "textStatesHook": False,
+        "qcTexts": [],
+        "qcVisibleTexts": [],
     }
+    seen_texts: set[str] = set()
+    visible_texts: set[str] = set()
     deadline = time.monotonic() + max(1.0, timeout_sec)
     while time.monotonic() < deadline:
         state = _state(page)
         facts["reachedState"] = state
+
+        # 文案对象实况采样（含教程期——退场即销毁，错过相位就再无证据）
+        hook, states = qc_text_states(page)
+        if hook:
+            facts["textStatesHook"] = True
+        for s in states:
+            seen_texts.add(s["text"])
+            if s["active"] and s["visible"]:
+                visible_texts.add(s["text"])
 
         probe = page.evaluate("() => window.__pfprobe || null") or {}
         if facts["pfReadyMs"] is None and probe.get("ready") is not None:
@@ -331,6 +376,16 @@ def drive_autoplay(page: Page, timeout_sec: float) -> dict[str, Any]:
             facts["mediaPlaysBeforeInteraction"] or 0, int(ms.get("playsBeforeFirst") or 0))
     if facts["reachedState"] != "end":
         facts["reachedState"] = _state(page)
+    # 结束页补采一轮文案实况（覆盖"最后一轮循环之后才上屏"的结束页文案）。
+    hook, states = qc_text_states(page)
+    if hook:
+        facts["textStatesHook"] = True
+    for s in states:
+        seen_texts.add(s["text"])
+        if s["active"] and s["visible"]:
+            visible_texts.add(s["text"])
+    facts["qcTexts"] = sorted(seen_texts)
+    facts["qcVisibleTexts"] = sorted(visible_texts)
     try:
         facts["endScreenVisible"] = bool(page.evaluate(
             "() => (window.__PF_QC__ && typeof window.__PF_QC__.endScreenVisible === 'function')"

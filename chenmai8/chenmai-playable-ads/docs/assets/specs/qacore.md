@@ -61,11 +61,16 @@ python -m qacore run <artifact.html> [--channel preview] [--out <report.json>]
   首次手势后采集 `mutedAfterFirstGesture`（应为 false=解除静音）。
 - 结束采集：`pfEndFired/pfEndMs/pfEndWin`（探针）、`reachedState`（`__PF_QC__.state()`）、
   `endScreenVisible`（`__PF_QC__.endScreenVisible()`，无此钩子时为 null）、`gestures` 计数。
-- CHK10 取证（2026-09-29 增，autoplay.py `qc_texts`/`qc_assets`）：竖屏趟在**驱动试玩前**采一次
-  `__PF_QC__.texts()`（教程浮层数秒即消失，必须早采）、驱动到结束页**后再采一次**并集为
-  `page_texts`；`__PF_QC__.assets()`（页面内把渲染贴图与内联用户 PNG 经同一 contain-fit 管线
-  降采样 16×16 比平均绝对差，≤ 模板侧阈值 8 判 replaced）结果记 `asset_audit`。
-  画布文字不进 DOM，innerText 取不到——文案取证必须走模板上报钩子。
+- CHK10 取证（2026-09-29 增，autoplay.py `qc_texts`/`qc_assets`；同日自证补强加
+  `qc_text_states`）：竖屏趟在**驱动试玩前**采一次 `__PF_QC__.texts()`（教程浮层数秒即消失，
+  必须早采）、驱动到结束页**后再采一次**并集为 `page_texts`；`__PF_QC__.assets()`（页面内把
+  渲染贴图与内联用户 PNG 经同一 contain-fit 管线降采样 16×16 比平均绝对差，≤ 模板侧阈值 8 判
+  replaced）结果记 `asset_audit`。画布文字不进 DOM，innerText 取不到——文案取证必须走模板上报钩子。
+  **可见性自证（2026-09-29 补强）**：texts() 只能证明"字符串登记过"，登记后即销毁/隐藏的虚报
+  无法排除——故自动试玩循环内随相位（含教程期）+ 驱动前 + 结束页各采一轮
+  `__PF_QC__.textStates()`（模板侧当场读 Text 对象实况：active + 父容器链 visible 且 alpha>0），
+  记 `text_states`（逐文案 everVisible）与 `text_states_hook`。模板不提供该钩子 → CHK10 从严
+  fail（可见性无证据）。
 - **禁止事项**：不许 mock 被测物——QC 必须以真实浏览器 + 真实 pointer 事件驱动；被测页面必须真实加载
   （本地伺服是真实 HTTP，这不算 mock）。不许把 skip 当 pass 统计。
 
@@ -82,7 +87,7 @@ python -m qacore run <artifact.html> [--channel preview] [--out <report.json>]
 | CHK07 自动试玩到结束页 | 实装 | 无 `__PF_QC__` → fail；需 pf:end 已触发且 ≤45s、终态=end、结束页可见，三者齐备 |
 | CHK08 控制台零错误 | 实装 | 两趟合并：console.error 或 pageerror 任一 → fail |
 | CHK09 本地加载 | 实装 | 竖屏 load_ms ≤ max_load_sec×1000 |
-| CHK10 多语言文案与素材上屏 | 实装（2026-09-29，扩展自"多语言/RTL"） | `--require-text`（可重复）每条须在 `page_texts` 中子串命中；`--require-sprite`（可重复）每键须 `asset_audit` 中 `replaced=true`（像素对账）。两者都未提供 → **skip**（无判定对象不算通过）。make 自动传入：首语言 标题/教程/胜/CTA/分 文案 + 构建旁车清单里的真实嵌入素材键；lose 不要求（自动试玩必胜，无出场机会） |
+| CHK10 多语言文案与素材上屏 | 实装（2026-09-29，扩展自"多语言/RTL"；同日自证补强） | `--require-text`（可重复）每条须在 `page_texts` 中子串命中，**且**在 `text_states` 中有"曾在采样时刻 active+visible"证据（模板无 `__PF_QC__.textStates()` → **fail**：可见性无证据，从严）；`--require-sprite`（可重复）每键须 `asset_audit` 中 `replaced=true`（像素对账）。两者都未提供 → **skip**（无判定对象不算通过）。make 自动传入：首语言 标题/教程/胜/CTA/分 文案 + 构建旁车清单里的真实嵌入素材键；lose 不要求（自动试玩必胜，无出场机会）。自动 pass ≠ 人眼复核：演示上场前须对照报告截图人眼过一遍（docs/demo-checklist.md） |
 
 - 状态机取值 `pass|fail|skip`；**skip 是显式声明"未测"，报告中保留 skip 字样，严禁标成 pass**。
 

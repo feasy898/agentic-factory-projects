@@ -46,8 +46,10 @@ export class Match3Scene extends engine.Scene {
   private readonly pf: PFGlobal;
   /** 用户替换贴图（最小素材路径）：create() 先注册，再走程序化生成（自动跳过已存在键）。 */
   private readonly replacedSprites: ReplacedSprite[];
-  /** 已渲染到画布的文案集合（__PF_QC__.texts() 上报；画布文字不进 DOM）。 */
-  private readonly seenTexts = new Set<string>();
+  /** 已渲染到画布的文案登记表（文案串 → 最新 Text 对象引用；__PF_QC__.texts()/
+   *  textStates() 上报。画布文字不进 DOM，CHK10 靠 textStates() 在采样时刻核验
+   *  对象 active+visible——字符串出现过 ≠ 此刻真的在屏上）。 */
+  private readonly seenTexts = new Map<string, any>();
 
   private board!: Board;
   private texKeys: string[] = [];
@@ -239,9 +241,9 @@ export class Match3Scene extends engine.Scene {
 
   // ---------------------------------------------------------------- HUD
 
-  /** 登记已渲染文案（画布文字不进 DOM，质检经 __PF_QC__.texts() 读取）。 */
+  /** 登记已渲染文案（画布文字不进 DOM，质检经 __PF_QC__.texts()/textStates() 读取）。 */
   private track(t: any): void {
-    if (t) this.seenTexts.add(String(t.text));
+    if (t) this.seenTexts.set(String(t.text), t);
   }
 
   private buildHud(): void {
@@ -844,7 +846,35 @@ export class Match3Scene extends engine.Scene {
   /** __PF_QC__.texts()：已渲染到画布的全部文案集合（画布文字不进 DOM，
    *  qacore 的 CHK10 靠本钩子取证"指定文案确实上屏"）。 */
   textsSeen(): string[] {
-    return Array.from(this.seenTexts);
+    return Array.from(this.seenTexts.keys());
+  }
+
+  /** __PF_QC__.textStates()：采样时刻逐条核验文案对象的 active+visible。
+   *  CHK10 自证补强（2026-09-29）：texts() 只能证明"字符串登记过"，无法排除
+   *  登记后即销毁/隐藏的虚报；本钩子在 qacore 采样瞬间读对象实况——
+   *  active=引擎 update 列表成员（引擎 destroy() 会置 false），visible=对象
+   *  自身与父容器链逐级 visible 且 alpha>0。已销毁对象（如退场的教程浮层）
+   *  因此如实上报为不可见，CHK10 必须在浮层在屏的相位采样到它。 */
+  textStates(): Array<{ text: string; active: boolean; visible: boolean }> {
+    const out: Array<{ text: string; active: boolean; visible: boolean }> = [];
+    this.seenTexts.forEach((obj, text) => {
+      let active = false;
+      let visible = false;
+      try {
+        active = !!obj && obj.active === true;
+        visible = !!obj;
+        for (let n: any = obj; visible && n; n = n.parentContainer ?? null) {
+          if (n.visible === false || (typeof n.alpha === "number" && !(n.alpha > 0))) {
+            visible = false;
+          }
+        }
+      } catch {
+        active = false; // 已销毁引用访问异常 → 如实按不可见上报
+        visible = false;
+      }
+      out.push({ text, active, visible });
+    });
+    return out;
   }
 
   /** __PF_QC__.assets()：替换素材像素对账。对每个替换贴图，把"引擎实际渲染

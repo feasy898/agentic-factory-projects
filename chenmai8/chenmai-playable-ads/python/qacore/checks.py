@@ -192,12 +192,19 @@ def evaluate(facts: dict[str, Any]) -> list[Check]:
         checks.append(Check("CHK09", f"本地加载 ≤{max_load_sec:g}s", "fail",
                             f"load 耗时 {load_ms:.0f}ms 超过阈值 {max_load_sec * 1000:.0f}ms"))
 
-    # CHK10 多语言文案与素材上屏（2026-09-29 实装，扩展自规划项"多语言/RTL"）：
+    # CHK10 多语言文案与素材上屏（2026-09-29 实装，扩展自规划项"多语言/RTL"；
+    # 同日自证补强：字符串命中之外还须采样核验文案对象 active+visible）：
     # - required_texts：每条都须出现在页面渲染文案集合（画布文字不进 DOM，
-    #   由模板经 __PF_QC__.texts() 上报；子串命中即算，如"得分"命中"得分 120"）；
+    #   由模板经 __PF_QC__.texts() 上报；子串命中即算，如"得分"命中"得分 120"），
+    #   且在 facts.text_states 中有"曾在采样时刻 active+visible"的证据——
+    #   字符串登记后即销毁/隐藏的虚报（自证漏洞）由此堵死；教程等退场浮层
+    #   由 qacore 在其在屏相位（自动试玩循环内）采样取证。模板未提供
+    #   __PF_QC__.textStates 时可见性无证据，从严判 fail（同 CHK04 哲学：
+    #   无法证明合规即不合规）。
     # - required_sprites：每键都须页面内像素对账通过（渲染贴图 vs 构建期内联
     #   用户 PNG，16×16 平均绝对差 ≤ 模板侧阈值，证据在 facts.asset_audit）。
-    # 两者都未提供时保持 skip（无判定对象，不算通过）。
+    # 两者都未提供时保持 skip（无判定对象，不算通过）。判定通过≠人眼复核：
+    #   演示上场前仍须对照报告截图人眼过一遍（docs/demo-checklist.md §3）。
     required_texts = [str(s) for s in (facts.get("required_texts") or []) if str(s)]
     required_sprites = [str(s) for s in (facts.get("required_sprites") or []) if str(s)]
     if not required_texts and not required_sprites:
@@ -205,6 +212,9 @@ def evaluate(facts: dict[str, Any]) -> list[Check]:
                            "未提供 --require-text/--require-sprite，无判定对象（locale 仿真属后续）"))
     else:
         texts = facts.get("page_texts") or []
+        states_hook = facts.get("text_states_hook")
+        state_map = {s.get("text"): s for s in (facts.get("text_states") or [])
+                     if isinstance(s, dict)}
         audit = {a.get("spriteKey"): a
                  for a in (facts.get("asset_audit") or []) if isinstance(a, dict)}
         problems: list[str] = []
@@ -215,6 +225,21 @@ def evaluate(facts: dict[str, Any]) -> list[Check]:
             problems.append(
                 f"渲染文案集合（{len(texts)} 条）中未找到：{shown}{more}"
                 + ("" if texts else "；页面未上报任何渲染文案（无 __PF_QC__.texts？）"))
+        if states_hook is False:
+            problems.append(
+                "模板未提供 __PF_QC__.textStates()，文案可见性无法自证"
+                "（上屏证据只有字符串登记，缺 active+visible 采样核验）")
+        elif required_texts:
+            never_visible = [
+                s for s in required_texts
+                if not any(s in t and v.get("everVisible") is True
+                           for t, v in state_map.items() if isinstance(t, str))]
+            if never_visible:
+                shown = "、".join(_clip(m, 24) for m in never_visible[:6])
+                more = f"（另 {len(never_visible) - 6} 条略）" if len(never_visible) > 6 else ""
+                problems.append(
+                    f"这些文案在全部采样（驱动前/自动试玩各相位/结束页）中从未处于 "
+                    f"active+visible 状态：{shown}{more}")
         for key in required_sprites:
             a = audit.get(key)
             if a is None:
@@ -225,10 +250,11 @@ def evaluate(facts: dict[str, Any]) -> list[Check]:
         if problems:
             checks.append(Check("CHK10", "多语言文案与素材上屏", "fail", "；".join(problems)))
         else:
+            vis_note = ("，active+visible 采样核验通过" if states_hook else "")
             checks.append(Check(
                 "CHK10", "多语言文案与素材上屏", "pass",
                 f"渲染文案命中 {len(required_texts)}/{len(required_texts)}"
-                f"（集合共 {len(texts)} 条）"
+                f"（集合共 {len(texts)} 条{vis_note}）"
                 + (f"；替换素材像素对账通过 {len(required_sprites)}/{len(required_sprites)}"
                    if required_sprites else "")))
     return checks
