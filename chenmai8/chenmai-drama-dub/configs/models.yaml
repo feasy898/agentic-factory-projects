@@ -6,6 +6,7 @@
 #   服务/批次                  | 解释器              | torch       | transformers | 组件
 #   -------------------------- | ------------------- | ----------- | ------------ | ----
 #   asr_align(:9001, B1/M4)    | /data/xdng/venv-asr | 2.5.1+cu118 | 5.13.0       | asr-core, align-core, emo-tag
+#   tts(:9002, T12/M7)         | /data/xdng/venv     | 2.5.1+cu118 | 4.52.1       | dub-tts（fp32 常驻 cuda:0）；alt-tts-b 懒加载 cuda:1
 #   mt(:9004, T12/M6)          | /data/xdng/venv     | 2.5.1+cu118 | 4.52.x(T12 核实钉版；不兼容则照 venv-asr 的 .pth 复用法另建 venv-mt) | mt-core
 #   TTS/口型组（B2 常驻预留）  | /data/xdng/venv     | 2.5.1+cu118 | 4.52.1       | dub-tts, alt-tts-b, lip-fast, lip-pro
 #   本机 windev（CPU，OCR 等） | <repo>/.venv        | 2.14.0(cpu) | 无（paddle 组）| cap-ocr, facemesh, cap-clean
@@ -259,6 +260,12 @@ components:
     version: "2026-09-28@ee40fa7"
     fallback: [dub-tts-base, alt-tts-a, alt-tts-b]
     volta_status: ok
+    runtime_notes: >-
+      T12 服务化（:9002，2026-09-29）：fp32 常驻 cuda:0（装载 35.4s，显存 7062MiB，
+      与 :9001 同卡共存）；音色参考与情绪参考分离接口（voice_ref+emo_ref 双路，
+      emo_alpha/duration_factor 透传）——SAPI zh 双参考合成英文句实测 3.55s 产物、
+      emo_ref_used=true 服务端日志确认，热身 3.2-3.4s/句；文本正则前端保持关闭
+      （text_normalization=False）；依赖安装记录 docs/tts_service_deps.md。
   dub-tts-base:
     task: tts                  # 上一代主力（fp16，仅 zh/en）
     langs: [zh, en]
@@ -286,6 +293,11 @@ components:
     version: "2026-09-28@f772e49"
     fallback: []
     volta_status: ok           # 硬约束：需 torch>=2.5（SDPA enable_gqa）；GPU 机已升级 torch 2.5.1+cu118（arch 含 sm_70）
+    runtime_notes: >-
+      T12 起 :9002 备选链懒加载节点（首次显式 engine=alt-tts-b 请求时装载落 cuda:1，
+      与 lip-pro 同卡互斥）；单路参考克隆模式，无独立情绪参考通道——服务如实回
+      emo_ref_used=false；T12 批未做经服务的懒加载合成实测（同卡有并行任务
+      17-19GB，不叠加 ~8GB 权重挤爆同卡），首次实战调用成败见 attempts 回传。
 
   # ---- 口型 ----
   lip-fast:
