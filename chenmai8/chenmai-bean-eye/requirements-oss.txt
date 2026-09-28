@@ -1,0 +1,25 @@
+# BeanEye 啡眼 · OSS 冒烟件依赖（W0b，2026-09-28 按实际安装钉版）
+# 用途：scripts/oss_smoke.py 四件套中的 NN 推理两件（检测器 + 分割器）。
+# 与 requirements.txt（核心依赖，doctor.py 核对对象）分离：本组含大体积 torch，
+# 由需要跑 NN 冒烟的环境自行安装：
+#   .venv/Scripts/python.exe -m pip install -r requirements-oss.txt
+# 权重获取（自动缓存，均被 .gitignore 排除）：
+#   检测器: RF_HOME=<repo>/models → models/rf-detr-seg-nano.pt（134MB，md5 9995497791d0ff1664a1d9ddee9cfd20）
+#   分割器: HF_HOME=<repo>/models/hf → facebook/sam2-hiera-small（transformers 格式 safetensors）
+# 网络注意（2026-09-28 实测 windev-01）：
+#   - HF 权重走镜像: 环境变量 HF_ENDPOINT=https://hf-mirror.com
+#   - 镜像不支持 Xet 协议，必须 HF_HUB_DISABLE_XET=1，否则大文件下载挂起
+#   - torch 2.14.0 来自 PyPI Windows 轮子（CPU 版，无需 pytorch 专用源）
+# 红线（D-5）：继续禁用 AGPL 件（ultralytics 等）；检测/分割权重仅用 COCO 预训练做管线冒烟。
+
+# 检测/分割冒烟（rfdetr 会连带安装 torch/torchvision/supervision 等）
+rfdetr==1.11.0
+
+# SAM2 HF transformers 路线（Sam2Model + Sam2Processor；facebook/sam2-hiera-small）
+transformers==5.17.0
+
+# 以下为上两者的关键传递依赖，实测版本记录（pip 解析于 2026-09-28，重装时建议保持一致）
+torch==2.14.0
+torchvision==0.29.0
+supervision==0.30.5
+huggingface-hub==1.33.0
