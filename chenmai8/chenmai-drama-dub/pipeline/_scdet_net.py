@@ -15,7 +15,6 @@
 
 from __future__ import annotations
 
-import random
 from pathlib import Path
 
 import torch
@@ -136,8 +135,9 @@ class _StackedDDCNN(torch.nn.Module):
         x = functional.relu(x)
         if self.shortcut is not None:
             if self.stochastic_depth_drop_prob != 0.0 and self.training:
-                x = shortcut if random.random() < self.stochastic_depth_drop_prob \
-                    else x + shortcut
+                # 随机深度正则（仅训练态；本仓推理固定 drop_prob=0 且 eval() 不进入）
+                drop = float(torch.rand(1).item()) < self.stochastic_depth_drop_prob
+                x = shortcut if drop else x + shortcut
             else:
                 x = x + shortcut
         return self.pool(x)
