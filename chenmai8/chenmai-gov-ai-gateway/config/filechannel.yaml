@@ -3,3 +3,12 @@
 # ops/name_lint.py 扫描），源码经 importlib 按本配置动态加载、不得硬编码库名。
 pdf_text_reader:
   module: pypdfium2     # PDF 文本层读取与逐字符坐标（坐标级文本抽取）
+# PDF 导出引擎链（T3.2；顺序即回退序，主引擎见 config/app.yaml pdf_engine_module）：
+#   涂删主引擎 → 内容流手术引擎（算子级移除文本对象）→ 栅格兜底（重渲染打码版）。
+# 各引擎模块缺失/不适用时自动回退下一引擎；三坐标全空 = PDF 导出报引擎不可用。
+pdf_content_stream_engine:
+  module: pikepdf       # 内容流解析/算子手术/重写（许可证合规备选，§11 风险 2）
+pdf_raster_engine:
+  reader_module: pypdfium2   # 逐页渲染位图
+  image_module: PIL.Image    # 位图容器与 PDF 重建
+  image_draw_module: PIL.ImageDraw  # 命中框涂黑

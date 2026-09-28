@@ -1,15 +1,19 @@
-"""文件体检/导出服务（T3.3 门面）：体检委托 T3.1 权威管线，导出走删除式重写。
+"""文件体检/导出服务（T3.3 门面，T3.2 收敛导出链）：体检委托 T3.1 权威管线，
+导出走删除式重写 + **导出物零残留硬闸**。
 
 - 体检：委托 :func:`filechannel.inspect.inspect_bytes`（T3.1 文本层权威实现：
   docx 全位面 / xlsx 隐藏面+公式缓存值+批注 / pdf 坐标级 charbox bbox +
   scan_pdf 如实降级）；本门面只加**报告登记表**（内存有界 LRU，file_id →
   FileReport，供 X-Report-Id 关联查询）；
-- 导出：``mode=sanitize`` → 同源体检 → 按种类删除式重写
-  （:mod:`filechannel.sanitize`：docx 删 run 片段 / xlsx 命中删值+隐藏列整列删 /
-  pdf 引擎涂删重写）；X-Report-Id = **导出前体检报告** id；
+- 导出：``mode=sanitize`` → 同源体检 → 按种类删除式重写 + **re-ingest 复核**
+  （:mod:`filechannel.sanitize`：docx 删 run 片段 / xlsx 命中删值+隐藏列整列删+
+  残余隐藏全解除 / pdf 引擎链涂删重写——逐引擎复核不净自动回退，见
+  :mod:`filechannel.pdf_engine`）；X-Report-Id = **导出前体检报告** id，
+  ``method`` = 实际生效的导出方式（响应头 ``X-Sanitize-Method`` 如实标注）；
 - 错误语义（filechannel.errors 文档口径，HTTP 层映射在 gateway/app.py）：
   FileTooLargeError→413、UnsupportedFileType→400、DocumentParseError→422、
-  ExportBlockedError→422（导出特有：命中无法物理定位，宁可阻止不可漏删）。
+  ExportBlockedError→422（导出特有：命中无法定位/零残留复核不净，宁可阻止
+  不可漏删）。
 
 端点鉴权面（与 /internal/* 的差异，审查口径）：/v1/files/* 面向公开前体检的
 操作者与演示页（M9 不做登录），报告中的 raw 是**上传者自带文件**的内容回显，
@@ -26,7 +30,13 @@ from common.logs import get_logger
 from filechannel.errors import UnsupportedFileType
 from filechannel.inspect import inspect_bytes
 from filechannel.models import FileReport
-from filechannel.sanitize import ExportBlockedError, sanitize_docx, sanitize_pdf, sanitize_xlsx
+from filechannel.pdf_engine import PdfRedactionEngine, load_engine_chain
+from filechannel.sanitize import (  # noqa: F401 — ExportBlockedError 门面再导出（gateway 错误映射用）
+    ExportBlockedError,
+    sanitize_docx_verified,
+    sanitize_pdf,
+    sanitize_xlsx_verified,
+)
 
 log = get_logger(__name__)
 
@@ -41,7 +51,6 @@ CONTENT_TYPES: dict[str, str] = {
     "scan_pdf": "application/pdf",
 }
 
-
 class BadModeError(ValueError):
     """导出 mode 不受支持（当前仅 sanitize）。"""
 
@@ -54,6 +63,7 @@ class SanitizeResult:
     report: FileReport
     content_type: str
     download_name: str
+    method: str = ""  # 实际生效的导出方式（X-Sanitize-Method 如实标注）
 
 
 class FileService:
@@ -62,6 +72,10 @@ class FileService:
     def __init__(self, cfg: AppConfig) -> None:
         self._cfg = cfg
         self._pdf_engine_module = str(getattr(cfg, "pdf_engine_module", "") or "")
+        # 引擎链惰性加载（涂删主引擎 → 内容流手术 → 栅格兜底；坐标见
+        # config/app.yaml pdf_engine_module 与 config/filechannel.yaml）
+        self._pdf_engines: list[PdfRedactionEngine] = load_engine_chain(
+            self._pdf_engine_module)
         self._reports: OrderedDict[str, FileReport] = OrderedDict()
 
     # ── 体检（T3.1 权威管线 + 登记表）─────────────────────────────────
@@ -76,28 +90,26 @@ class FileService:
         })
         return report
 
-    # ── 导出（删除式重写）────────────────────────────────────────────
+    # ── 导出（删除式重写 + 零残留硬闸）───────────────────────────────
 
     def export_bytes(self, filename: str, data: bytes, mode: str) -> SanitizeResult:
-        """mode=sanitize：体检 → 删除式重写 → 清理后文件（X-Report-Id = 导出前体检）。"""
+        """mode=sanitize：体检 → 删除式重写 → 导出物 re-ingest 零残留复核。"""
         if mode != "sanitize":
             raise BadModeError(f"不支持的导出 mode: {mode}（当前仅 sanitize）")
         report = self.inspect_bytes(filename, data)
         if report.kind == "docx":
-            out = sanitize_docx(data)
+            out, method = sanitize_docx_verified(data, filename)
         elif report.kind == "xlsx":
-            out = sanitize_xlsx(data)
+            out, method = sanitize_xlsx_verified(data, filename)
         elif report.kind in ("pdf", "scan_pdf"):
-            # scan_pdf（零文本层）D4 前如实降级：文本层零命中 → 无框可涂 → 原样返回
-            if not self._pdf_engine_module:
-                raise ExportBlockedError("pdf 清理引擎未配置（config app.yaml pdf_engine_module）")
-            out = sanitize_pdf(data, report, self._pdf_engine_module)
+            out, method = sanitize_pdf(data, filename, report, self._pdf_engines)
         else:
             raise UnsupportedFileType(f"暂不支持导出种类: {report.kind}")
         return SanitizeResult(
             data=out, report=report,
             content_type=CONTENT_TYPES.get(report.kind, "application/octet-stream"),
             download_name=f"sanitized_{filename}" if filename else "sanitized_file",
+            method=method,
         )
 
     # ── 报告登记表 ───────────────────────────────────────────────────

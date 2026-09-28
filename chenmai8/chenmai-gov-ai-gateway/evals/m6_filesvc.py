@@ -1,16 +1,17 @@
-"""M6 文件通道·文本层验收（T3.1）：解析 → detect 全套 → FileReport 逐 Finding 带位置。
+"""M6 文件通道验收（T3.1 文本层 + T3.2 彻底删除式导出零残留）。
 
 运行::
 
     cd REPO_ROOT && PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.m6_filesvc
 
-范围（任务单 T3.1=文本层；导出/重解析零残留属后续任务，不入本门）：
-被测对象为 :mod:`filechannel.parsers`（docx 全位面 / xlsx 含隐藏列与批注 /
-pdf 坐标级文本层）+ :func:`filechannel.inspect.inspect_bytes`（detect 全套 →
-FileReport 装配、§5.5 风险分级）。与 T3.3 导出链路（filechannel/parse.py +
-service.py，与本模块并行落地）互不依赖。
+范围（T3.1=文本层：解析→detect→FileReport 带位置；T3.2=导出：pdf_engine
+抽象+涂删/内容流手术/栅格兜底三引擎、xlsx 删列（非隐藏）+docx 删值、
+**导出→re-ingest→detect 零命中断言**）：被测对象为
+:mod:`filechannel.parsers` + :func:`filechannel.inspect.inspect_bytes` +
+:mod:`filechannel.sanitize`（经 :class:`filechannel.service.FileService` 门面）
++ :mod:`filechannel.pdf_engine` 引擎链。
 
-通过线（开发指令 §6 M6 文本层部分 / evals.thresholds）：
+通过线（开发指令 §6 M6 / evals.thresholds）：
 
 1. seeded 夹具命中率 100%：M8 生成的 15 份夹具（docx/xlsx/pdf ×
    FILE_FIXTURES_PER_KIND）逐份 inspect，每条可评级 seeded PII（类别一致 +
@@ -27,7 +28,12 @@ service.py，与本模块并行落地）互不依赖。
 7. 风险分级 §5.5 字面口径：HIGH=SENSITIVE_ATTR/批量身份证（BANK_CARD 并入批量，
    阈值同 §5.2 路由批量线）；MID=其它非白名单结构化 PII；LOW=仅白名单/词面；
    NONE=零命中（密级/工作秘密属 BLOCK/ROUTE 语义，不进分级阶梯但仍出 finding）；
-8. 边界：>50MB 拒绝、不支持种类拒绝、畸形文件解析失败（一律异常语义，不崩进程）。
+8. 边界：>50MB 拒绝、不支持种类拒绝、畸形文件解析失败（一律异常语义，不崩进程）；
+9. 导出零残留（T3.2 铁律：对导出物重新走「解析+检测」，seeded PII 命中为 0）：
+   docx 四位面删值 + 白名单保留 + 非命中文本保留；xlsx 隐藏列整列删（导出物
+   重开无任何隐藏维度/隐藏表）+ 批注清空 + 非命中保留；pdf 引擎链三实现
+   （涂删主引擎/内容流手术/栅格兜底）逐引擎零残留 + 引擎不适用自动回退 +
+   门面导出 method 如实标注。
 
 评级分母口径（与 m2_recognizers 同源）：PERSON/ADDRESS/ORG_INTERNAL/OTHER 归
 NER 层、WORK_SECRET 属词表可选层——均不入「必须命中」分母（命中算加分）；
@@ -37,6 +43,7 @@ DATE_BIRTH 仅计数字可判版式（中文数字版式规则层不可判，不
 """
 from __future__ import annotations
 
+import io
 import json
 import random
 import re
@@ -51,12 +58,14 @@ if str(REPO_ROOT) not in sys.path:
 
 from benchmark.generator import numbers as nums  # noqa: E402
 from benchmark.generator.personas import load_corpus_config  # noqa: E402
+from common.config import load_app_config  # noqa: E402
 from evals import thresholds as th  # noqa: E402
 from filechannel import UnsupportedFileType, inspect_bytes  # noqa: E402
 from filechannel.errors import DocumentParseError, FileTooLargeError  # noqa: E402
 from filechannel.inspect import risk_level_of  # noqa: E402
 from filechannel.models import FileFinding, FileReport  # noqa: E402
 from filechannel.parsers import parse_pdf  # noqa: E402
+from filechannel.service import FileService  # noqa: E402
 from masking.normalize import normalize_value  # noqa: E402
 from recognizers.models import EntityClass, Finding  # noqa: E402
 
@@ -557,6 +566,203 @@ def check_limits() -> str:
     return "50MB 上限 / 不支持种类 / 畸形文件 全部异常语义拒绝"
 
 
+# ── 8. 导出零残留（T3.2 铁律：导出→re-ingest→detect 零命中断言）──────
+
+
+def _docx_text(data: bytes) -> str:
+    """docx 全文拉平（正文段落/表格单元格/页眉页脚段落，与 parse_docx 同面）。"""
+    import docx
+
+    doc = docx.Document(io.BytesIO(data))
+    parts = [p.text for p in doc.paragraphs]
+    for table in doc.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                parts.append(cell.text)
+    for section in doc.sections:
+        for part in (section.header, section.footer):
+            parts.extend(p.text for p in part.paragraphs)
+    return "\n".join(parts)
+
+
+def _pdf_text(data: bytes) -> str:
+    """pdf 文本层重抽取（经 config 坐标动态加载读取库，铁律 E）。"""
+    import importlib
+
+    reader_cfg = yaml.safe_load(
+        (REPO_ROOT / "config" / "filechannel.yaml").read_text(encoding="utf-8"))
+    reader = importlib.import_module(str(reader_cfg["pdf_text_reader"]["module"]))
+    doc = reader.PdfDocument(io.BytesIO(data))
+    parts = []
+    for page in doc:
+        tp = page.get_textpage()
+        n = tp.count_chars()
+        parts.append(tp.get_text_range(0, n) if n else "")
+    doc.close()
+    return "".join(parts)
+
+
+def check_export_docx() -> str:
+    """docx 导出：四位面命中 run 片段切除 + 白名单保留 + 非命中文本保留。"""
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    path = OUT_DIR / "selfmade_four_planes.docx"
+    expect = _selfmade_docx(path)
+    data = path.read_bytes()
+    rep0 = inspect_bytes(path.name, data)
+    whitelisted = {ff.finding.raw for ff in rep0.findings if ff.finding.whitelisted}
+
+    svc = FileService(load_app_config())
+    result = svc.export_bytes(path.name, data, "sanitize")
+    assert result.method == "docx-run-delete", result.method
+    text = _docx_text(result.data)
+    for value in expect:
+        if value in whitelisted:
+            assert value in text, f"白名单命中误删: {value}"
+        else:
+            assert value not in text, f"导出物残留原值: {value}"
+    assert "户主" in text and "请于本周五前反馈" in text, "非命中文本被误删"
+    rep2 = svc.inspect_bytes(path.name, result.data)
+    dirty = [ff.finding.raw for ff in rep2.findings if not ff.finding.whitelisted]
+    assert not dirty, dirty[:5]
+    return (f"四位面 {len(expect)} 值删除式切除（白名单 {len(whitelisted)} 处保留），"
+            f"re-inspect 零残留 / method={result.method}")
+
+
+def check_export_xlsx() -> str:
+    """xlsx 导出：隐藏列整列删（非隐藏）+ 隐藏行删 + 批注清空 + 零隐藏维度。"""
+    from openpyxl import load_workbook
+
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    path = OUT_DIR / "selfmade_hidden_comment.xlsx"
+    expect = _selfmade_xlsx(path)
+    data = path.read_bytes()
+
+    svc = FileService(load_app_config())
+    result = svc.export_bytes(path.name, data, "sanitize")
+    assert result.method == "xlsx-cell-column-delete", result.method
+
+    wb = load_workbook(io.BytesIO(result.data))
+    for ws in wb.worksheets:
+        assert ws.sheet_state == "visible", f"存在隐藏工作表: {ws.title}"
+        hidden = ([d.hidden for d in ws.column_dimensions.values()]
+                  + [d.hidden for d in ws.row_dimensions.values()])
+        assert not any(hidden), f"{ws.title} 存在隐藏维度: {hidden}"
+        values = [str(c.value) for row in ws.iter_rows() for c in row
+                  if c.value is not None]
+        comments = [c.comment.text for row in ws.iter_rows() for c in row
+                    if c.comment is not None and c.comment.text]
+        blob = values + comments
+        for value in expect:
+            assert not any(value in v for v in blob), f"导出物残留（含批注面）: {value}"
+    ws = wb["Sheet1"]
+    headers = {str(c.value) for c in ws[1] if c.value is not None}
+    assert {"姓名", "证件号", "其他标识"} <= headers, headers  # 非命中列头保留
+    assert ws["B2"].comment is None, "命中批注未清空"
+    rep2 = svc.inspect_bytes(path.name, result.data)
+    dirty = [ff.finding.raw for ff in rep2.findings if not ff.finding.whitelisted]
+    assert not dirty, dirty[:5]
+    return (f"隐藏列整列删/隐藏行删/批注清空，{len(expect)} 值零残留 + 零隐藏维度"
+            f"（含隐藏表）/ 非命中保留 / method={result.method}")
+
+
+def _selfmade_pdf(path: Path) -> dict[str, str]:
+    """自造引擎链验收 pdf：标题行 + 两行种子值（与夹具生成同源写入库）。"""
+    import importlib
+
+    rng = random.Random(20261001)
+    region, _ = nums.pick_region(rng)
+    ident = nums.gen_id_card(rng, region, nums.gen_birth(rng))
+    mobile = nums.gen_mobile(rng)
+    bank, _name = nums.gen_bank_card(rng)
+
+    pdfmod = importlib.import_module(
+        str(load_corpus_config()["pdf_writer"]["module"]))
+    doc = pdfmod.open()
+    page = doc.new_page(width=595.0, height=842.0)
+    page.insert_text((72.0, 90.0), "行政处罚决定书", fontname="china-s", fontsize=12)
+    page.insert_text((72.0, 120.0), f"当事人张三，公民身份号码{ident}",
+                     fontname="china-s", fontsize=10)
+    page.insert_text((72.0, 140.0), f"联系电话{mobile}，银行账户{bank}",
+                     fontname="china-s", fontsize=10)
+    doc.save(str(path), deflate=True, no_new_id=True)
+    doc.close()
+    return {ident: "ID_CARD", mobile: "PHONE_MOBILE", bank: "BANK_CARD"}
+
+
+def check_export_pdf_engines() -> str:
+    """pdf 导出：引擎链三实现逐引擎零残留 + 门面 method 标注 + 不适用自动回退。"""
+    from filechannel.pdf_engine import EngineNotApplicable, load_engine_chain
+    from filechannel.sanitize import sanitize_pdf
+
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
+    path = OUT_DIR / "selfmade_engine_chain.pdf"
+    seeded = _selfmade_pdf(path)
+    data = path.read_bytes()
+    report = inspect_bytes(path.name, data)
+    assert report.kind == "pdf" and report.pages == 1
+    for value, etype in seeded.items():
+        assert _matches(report, etype, value), f"{etype} 未命中: {value}"
+    assert all(ff.bbox is not None for ff in report.findings), "命中缺 bbox"
+
+    # 引擎入参（引擎契约面：0 起始页索引→render 系命中框 + 命中值串集）
+    page_boxes: dict[int, list[tuple[float, float, float, float]]] = {}
+    needles: set[str] = set()
+    for ff in report.findings:
+        if ff.finding.whitelisted or ff.bbox is None:
+            continue
+        page_boxes.setdefault(ff.page - 1, []).append(ff.bbox)
+        needles.update(v for v in (ff.finding.raw, ff.finding.normalized) if v.strip())
+
+    chain = load_engine_chain(load_app_config().pdf_engine_module)
+    names = [e.name for e in chain]
+    assert names == ["render-redaction", "content-stream", "raster"], names
+    for engine in chain:
+        out = engine.redact(data, page_boxes, needles)
+        rep2 = inspect_bytes(path.name, out)
+        dirty = [ff.finding.raw for ff in rep2.findings if not ff.finding.whitelisted]
+        assert not dirty, (engine.name, dirty[:3])
+        text = _pdf_text(out)
+        if engine.name == "raster":
+            # 栅格兜底 = 重渲染打码版：文本层整体消失，如实降级 scan_pdf
+            assert rep2.kind == "scan_pdf" and rep2.findings == [] and text == "", \
+                (rep2.kind, len(text))
+        else:
+            assert rep2.kind == "pdf", engine.name
+            for value in seeded:
+                assert value not in text, f"[{engine.name}] 重抽取残留: {value}"
+            assert "行政处罚决定书" in text, f"[{engine.name}] 非命中文本被误删"
+
+    # 门面导出：链首引擎接住 + method 如实标注 + X-Sanitize-Method 同源
+    svc = FileService(load_app_config())
+    result = svc.export_bytes(path.name, data, "sanitize")
+    assert result.method == "render-redaction", result.method
+
+    # 自动回退：主引擎模块不可用 → 内容流引擎接住；内容流再缺席 → 栅格兜底
+    from filechannel.pdf_engine import RenderRedactionEngine
+
+    class _Broken:
+        name = "broken-engine"
+
+        def redact(self, _data: bytes, _boxes: dict, _needles: set) -> bytes:
+            raise EngineNotApplicable("注入的不适用引擎（回退测试）")
+
+    out, method = sanitize_pdf(data, path.name, report,
+                               [RenderRedactionEngine("no.such.module"), *chain[1:]])
+    assert method == "content-stream", method  # 主引擎缺席 → 内容流手术接住
+    rep3 = inspect_bytes(path.name, out)
+    assert not [ff for ff in rep3.findings if not ff.finding.whitelisted]
+
+    out2, method2 = sanitize_pdf(data, path.name, report,
+                                 [RenderRedactionEngine("no.such.module"),
+                                  _Broken(), *chain[2:]])
+    assert method2 == "raster", method2  # 内容流再缺席 → 栅格兜底（重渲染打码版）
+    rep4 = inspect_bytes(path.name, out2)
+    assert rep4.kind == "scan_pdf" and rep4.findings == [], (rep4.kind, rep4.pages)
+    return ("三引擎逐个导出 re-inspect 零残留（栅格兜底→scan_pdf 如实降级）；"
+            f"门面 method={result.method}；回退链 主引擎缺席→content-stream→"
+            "content-stream 缺席→raster 全部零残留")
+
+
 # ── 入口 ───────────────────────────────────────────────────────────
 
 
@@ -571,12 +777,15 @@ def main() -> int:
     _record("materials(三路由材料docx/xlsx/pdf命中)", check_materials)
     _record("risk-ladder(§5.5 逐档纯函数)", check_risk_ladder)
     _record("limits(50MB/种类/畸形)", check_limits)
+    _record("export-docx(四位面删值+白名单保留+零残留)", check_export_docx)
+    _record("export-xlsx(隐藏列整列删+零隐藏维度+零残留)", check_export_xlsx)
+    _record("export-pdf(引擎链三实现零残留+回退)", check_export_pdf_engines)
 
     for _, line in RESULTS:
         print(line)
     passed = sum(1 for ok, _ in RESULTS if ok)
     total = len(RESULTS)
-    print(f"M6 FILESVC(text-layer): {passed}/{total} checks passed")
+    print(f"M6 FILESVC(text-layer+export): {passed}/{total} checks passed")
     return 0 if passed == total else 1
 
 

@@ -212,7 +212,9 @@ def create_app(
         """multipart 上传 + ``mode=sanitize`` → 删除式清理后的文件流（§5.6）。
 
         响应头：``X-Report-Id`` = 导出前体检报告 id（FileService 登记表可查）；
-        ``Content-Disposition`` = sanitized_<原文件名>。命中无法物理定位时 422
+        ``X-Sanitize-Method`` = 实际生效的导出方式（如实标注：引擎名/删值/栅格
+        兜底，§6「重打码渲染版在报告中如实标注方式」）；``Content-Disposition``
+        = sanitized_<原文件名>。命中无法物理定位/导出物零残留复核不净时 422
         export_blocked（宁可阻止不可漏删）。
         """
         data = await file.read()
@@ -234,6 +236,7 @@ def create_app(
             return _error_response(500, CODE_INTERNAL_ERROR, "internal error")
         return Response(content=result.data, media_type=result.content_type, headers={
             "X-Report-Id": result.report.file_id,
+            "X-Sanitize-Method": result.method,
             "Content-Disposition": _content_disposition(result.download_name),
         })
 
