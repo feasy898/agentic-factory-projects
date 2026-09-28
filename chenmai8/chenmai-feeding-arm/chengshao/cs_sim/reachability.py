@@ -9,7 +9,7 @@ from __future__ import annotations
 import numpy as np
 
 from .backends import KinematicBackend
-from .ik_solver import solve_dls
+from .ik_solver import solve_dls, solve_with_restarts
 
 __all__ = ["build_grid_points", "sweep_reachability", "render_reach_map_png"]
 
@@ -46,7 +46,10 @@ def build_grid_points(grid: dict) -> np.ndarray:
 def sweep_reachability(backend: KinematicBackend, points: np.ndarray) -> np.ndarray:
     """对点阵逐点做位置级 IK，返回 bool 数组（True=可达）。
 
-    温启动：按输入顺序扫描，上一体素的解作为下一体的初值。
+    温启动：按输入顺序扫描，上一体素的解作为下一体的初值；失败再用确定性
+    多起点重启兜底。v3.1 审查补丁（修复 IK 假收敛）后重校：单一 warm/名义
+    位形尝试会把可达体素大量漏判（200 体素抽样实测：仅 warm 6%，+12 重启
+    兜底 ~50%，32 重启 54%），故加重启兜底。
     """
     lower = backend.joint_lower
     upper = backend.joint_upper
@@ -54,25 +57,28 @@ def sweep_reachability(backend: KinematicBackend, points: np.ndarray) -> np.ndar
     warm = mid.copy()
     flags = np.zeros(len(points), dtype=bool)
     pos_tol = 5e-4  # 与 IK 收敛门槛一致（远小于体素尺寸，避免跨体素误判）
+    fallback_restarts = 12
     for i, p in enumerate(points):
         # 目标姿态：保持当前温启动构型姿态（位置级可达性对姿态不敏感）
         _, rot = backend.fk(warm)
         res = solve_dls(
             backend, p, rot, warm, iters=80, pos_tol_m=pos_tol, pos_only=True, max_step_rad=0.8
         )
-        if res.converged:
-            flags[i] = True
-            warm = np.clip(res.q, lower, upper)
-        else:
-            # 回退：名义位形重启一次
-            res2 = solve_dls(
-                backend, p, rot, mid, iters=120, pos_tol_m=pos_tol, pos_only=True
+        solved = res.converged
+        q_sol = res.q
+        if not solved:
+            # 兜底：确定性多起点重启（逐体素同种子序列，可复现）
+            res2 = solve_with_restarts(
+                backend, p, rot, pos_only=True, restarts=fallback_restarts, rng_seed=1
             )
-            if res2.converged:
-                flags[i] = True
-                warm = np.clip(res2.q, lower, upper)
-            else:
-                warm = mid.copy()
+            if res2 is not None and res2.converged:
+                solved = True
+                q_sol = res2.q
+        if solved:
+            flags[i] = True
+            warm = np.clip(q_sol, lower, upper)
+        else:
+            warm = mid.copy()
     return flags
 
 

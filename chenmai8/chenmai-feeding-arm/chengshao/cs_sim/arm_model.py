@@ -154,6 +154,22 @@ class ArmModel:
         """fk 的矩阵形式（内部/调试用）：(pos (3,), R (3,3))。"""
         return self._backend.fk(np.asarray(q, dtype=float))
 
+    def jac(self, q: list[float]) -> tuple[np.ndarray, np.ndarray]:
+        """雅可比（扩展方法）：返回 (Jp (3,n), Jr (3,n))，world 系，列对齐 q。
+
+        供 eval 的可操作度/奇异判据使用（``np.linalg.svd(Jp)`` 的最小奇异值）。
+        """
+        return self._backend.jacobian(np.asarray(q, dtype=float))
+
+    def link_points(self, q: list[float]) -> list[list[float]]:
+        """连杆近似参考点（扩展方法）：每个关节体原点 + TCP（base 系，米）。
+
+        相邻参考点连线 + 连杆半径（``EnvelopeConfig.link_radius``）近似连杆体，
+        用于连杆胶囊扫掠检查（check_joint_trajectory 内部使用）。
+        """
+        pts = self._backend.link_frames(np.asarray(q, dtype=float))
+        return [[float(p[0]), float(p[1]), float(p[2])] for p in pts]
+
     def validate(self) -> dict:
         """装载校验（load_arm 的"加载并校验"）：结构、数值、自洽性检查。
 

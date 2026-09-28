@@ -56,6 +56,12 @@
       "targets": 200,
       "successes": 199,
       "success_rate": 0.995,
+      "unconverged": 1,
+      "manip_rejects": 0,
+      "manip_sigma_min_threshold": 0.005,
+      "manip_sigma_min": 0.005125031842970416,
+      "manip_sigma_p05": 0.019867503361302708,
+      "manip_sigma_median": 0.07810486531861316,
       "pos_err_max_m": 0.0004926052716743088,
       "pos_err_mean_m": 0.0001505177506203426,
       "pos_err_p95_m": 0.0004300960945983444,
@@ -63,7 +69,27 @@
       "ori_err_mean_rad": 0.00012710907580001446,
       "restarts_used_max": 27,
       "restarts_used_mean": 1.3015075376884422,
-      "duration_s": 5.76
+      "duration_s": 5.75
+    },
+    "ik_mouth_front": {
+      "region": "delivery stop-point neighbourhood (mouth-front workspace)",
+      "box_half_width_m": [
+        0.025,
+        0.05,
+        0.05
+      ],
+      "sphere_margin_m": 0.005,
+      "targets": 60,
+      "successes": 60,
+      "success_rate": 1.0,
+      "unconverged": 0,
+      "manip_rejects": 0,
+      "manip_sigma_min_threshold": 0.02,
+      "manip_sigma_min": 0.058184395185426445,
+      "manip_sigma_median": 0.09254705315103653,
+      "pos_err_max_m": 0.0004583908347691753,
+      "ori_err_max_rad": 0.0013843842035867304,
+      "duration_s": 2.46
     },
     "cross_tier_fk": {
       "skipped": false,
@@ -80,7 +106,7 @@
         "max_pos_err_m": 3.6894727791956735e-06,
         "max_ori_err_rad": 1.6197829531822862e-05
       },
-      "duration_s": 5.54
+      "duration_s": 3.17
     },
     "reachability": {
       "grid": {
@@ -99,11 +125,11 @@
         "res_m": 0.03
       },
       "n_voxels_total": 9576,
-      "n_voxels_reachable": 5669,
-      "reachable_fraction": 0.5920008354218881,
-      "n_unreachable": 3907,
+      "n_voxels_reachable": 5605,
+      "reachable_fraction": 0.5853174603174603,
+      "n_unreachable": 3971,
       "png": "reports\\reach_map.png",
-      "duration_s": 76.13
+      "duration_s": 557.71
     },
     "safety_envelope": {
       "violating_total": 500,
@@ -130,8 +156,7 @@
           "n": 125,
           "rejected": 125,
           "violation_kinds_seen": [
-            "speed",
-            "zone"
+            "speed"
           ]
         },
         "speed_near_face_violation": {
@@ -147,7 +172,106 @@
       "benign_accepted": 100,
       "benign_acceptance_rate": 1.0,
       "config_source": "chengshao/config/workspace.json (defaults)",
-      "duration_s": 1.31
+      "duration_s": 1.2
+    },
+    "adversarial": {
+      "total": 124,
+      "rejected": 124,
+      "rejection_rate": 1.0,
+      "predicted_kind_hits": 124,
+      "predicted_kind_hit_rate": 1.0,
+      "by_category": {
+        "joint_speed_over_limit": {
+          "predicted_kind": "joint_speed",
+          "predicted_zone": null,
+          "n": 60,
+          "rejected": 60,
+          "predicted_kind_hit": 60,
+          "kinds_seen": [
+            "joint_speed",
+            "speed",
+            "link_sweep"
+          ],
+          "rejection_rate": 1.0,
+          "predicted_kind_hit_rate": 1.0
+        },
+        "link_capsule_sweep": {
+          "predicted_kind": "link_sweep",
+          "predicted_zone": "face",
+          "n": 24,
+          "rejected": 24,
+          "predicted_kind_hit": 24,
+          "kinds_seen": [
+            "link_sweep"
+          ],
+          "rejection_rate": 1.0,
+          "predicted_kind_hit_rate": 1.0
+        },
+        "tcp_arc_zone_intrusion": {
+          "predicted_kind": "zone",
+          "predicted_zone": "face",
+          "n": 40,
+          "rejected": 40,
+          "predicted_kind_hit": 40,
+          "kinds_seen": [
+            "link_sweep",
+            "zone"
+          ],
+          "rejection_rate": 1.0,
+          "predicted_kind_hit_rate": 1.0
+        }
+      },
+      "predicted_kinds": {
+        "joint_speed_over_limit": "joint_speed",
+        "link_capsule_sweep": "link_sweep",
+        "tcp_arc_zone_intrusion": "zone(face)"
+      },
+      "duration_s": 9.76
+    },
+    "delivery": {
+      "stop_point_m": [
+        0.25,
+        0.0,
+        0.3
+      ],
+      "stop_distance_m": 0.17,
+      "stop_clearance_m": 0.05,
+      "stop_outside_sphere": true,
+      "exemptions_registered": 0,
+      "spoon_reach_note": "spoon_tip_reach 为保守常量（未实测，偏大取值），D4 臂上件后实测覆盖",
+      "margin": {
+        "stop_distance_m": 0.16999999999999998,
+        "spoon_tip_reach_m": 0.08,
+        "tracking_err_bound_m": 0.02,
+        "sense_err_bound_m": 0.05,
+        "margin_m": 0.019999999999999976,
+        "pass": true
+      },
+      "corridor": {
+        "bowl_m": [
+          0.22,
+          -0.18,
+          0.02
+        ],
+        "waypoints": 20,
+        "speed_mps": 0.05,
+        "cart": {
+          "rejected": false,
+          "min_zone_clearance_m": 0.05,
+          "max_speed_mps": 0.05
+        },
+        "joint": {
+          "tracked": true,
+          "fail_at": -1,
+          "rejected": false,
+          "min_zone_clearance_m": 0.05,
+          "min_link_clearance_m": 0.02,
+          "max_joint_speed_rad_s": 0.2191,
+          "tcp_start_err_m": 0.0,
+          "tcp_end_err_m": 0.0
+        }
+      },
+      "duration_s": 0.07
     }
   },
   "thresholds": {
@@ -155,8 +279,17 @@
     "ik_success_rate_min": 0.98,
     "ik_pos_err_max_m": 0.005,
     "ik_ori_err_max_rad": 0.05,
+    "ik_manip_sigma_min": 0.005,
+    "ik_mouth_front_targets_min": 60,
+    "ik_mouth_front_success_rate_min": 0.95,
+    "ik_mouth_front_manip_sigma_min": 0.02,
     "violating_traj_min": 500,
     "violating_rejection_rate_min": 1.0,
+    "adversarial_traj_min": 120,
+    "adversarial_rejection_rate_min": 1.0,
+    "adversarial_predicted_kind_hit_rate_min": 1.0,
+    "delivery_margin_min_m": 0.005,
+    "delivery_corridor_required": true,
     "reach_map_png": true,
     "cross_tier_pos_err_max_m": 0.0005,
     "cross_tier_ori_err_max_rad": 0.005,
@@ -167,8 +300,19 @@
     "ik_success_rate": true,
     "ik_pos_err": true,
     "ik_ori_err": true,
+    "ik_manip_guard": true,
+    "ik_mouth_front_targets": true,
+    "ik_mouth_front_success": true,
+    "ik_mouth_front_manip": true,
     "violating_traj_reached": true,
     "violating_rejection": true,
+    "adversarial_traj_reached": true,
+    "adversarial_rejection": true,
+    "adversarial_predicted_hits": true,
+    "delivery_stop_outside": true,
+    "delivery_margin": true,
+    "delivery_corridor": true,
+    "delivery_no_exemption": true,
     "benign_acceptance": true,
     "reach_png_written": true,
     "cross_tier_chain_builtin": true,
@@ -176,5 +320,5 @@
     "cross_tier_urdf_mujoco": true
   },
   "pass": true,
-  "wall_time_s": 89.84
+  "wall_time_s": 581.43
 }

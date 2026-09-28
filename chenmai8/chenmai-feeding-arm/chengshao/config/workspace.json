@@ -1,20 +1,36 @@
 {
-  "_comment": "工作区默认配置（base 系：X 前向/朝用户、Y 左、Z 上，单位米）。结构与默认值；现场参数可另配覆盖。cs_sim.EnvelopeValidator 缺省装载本文件。",
+  "_comment": "工作区默认配置（base 系：X 前向/朝用户、Y 左、Z 上，单位米）。结构与默认值；现场参数可另配覆盖。cs_sim.EnvelopeValidator 缺省装载本文件。v3.1 审查修订：躯干胶囊移到口部点后方（x=0.48）；名义送达停点在面部球面之外，不依赖豁免；delivery 段为数值安全余量常量（勺头伸出按实测复测覆盖）。",
   "frame": "base",
   "linear_unit": "m",
-  "mouth_point_m": [0.42, 0.0, 0.3],
+  "mouth_point_m": [
+    0.42,
+    0.0,
+    0.3
+  ],
   "forbidden_zones": [
     {
       "type": "sphere",
       "name": "face",
-      "center_m": [0.42, 0.0, 0.3],
+      "center_m": [
+        0.42,
+        0.0,
+        0.3
+      ],
       "radius_m": 0.12
     },
     {
       "type": "capsule",
       "name": "torso",
-      "p1_m": [0.4, 0.0, -0.1],
-      "p2_m": [0.4, 0.0, 0.22],
+      "p1_m": [
+        0.48,
+        0.0,
+        -0.1
+      ],
+      "p2_m": [
+        0.48,
+        0.0,
+        0.22
+      ],
       "radius_m": 0.15
     }
   ],
@@ -24,8 +40,29 @@
   },
   "near_face_distance_m": 0.15,
   "bowls_m": [
-    [0.22, -0.18, 0.02],
-    [0.22, 0.0, 0.02],
-    [0.22, 0.18, 0.02]
-  ]
+    [
+      0.22,
+      -0.18,
+      0.02
+    ],
+    [
+      0.22,
+      0.0,
+      0.02
+    ],
+    [
+      0.22,
+      0.18,
+      0.02
+    ]
+  ],
+  "joint_speed_limit_rad_s": 1.5,
+  "link_radius_m": 0.03,
+  "delivery": {
+    "stop_clearance_m": 0.05,
+    "spoon_tip_reach_m": 0.08,
+    "tracking_err_bound_m": 0.02,
+    "sense_err_bound_m": 0.05,
+    "_note": "stop=面部球半径0.12+间隙0.05=0.17m（TCP 停点在球外）；余量=0.17-0.08-0.02-0.05=0.02m>0。spoon_tip_reach=夹爪口沿→勺尖保守常量（未实测，取偏大值；D4 臂上件后实测覆盖）"
+  }
 }

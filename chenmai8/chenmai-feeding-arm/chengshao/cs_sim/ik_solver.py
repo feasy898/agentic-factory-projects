@@ -131,8 +131,16 @@ def solve_dls(
     converged = pos_err <= pos_tol_m and (pos_only or ori_err <= ori_tol_rad)
     result = IkResult(q.copy(), pos_err, ori_err, converged, it_used, history=history)
     if best is not None and not result.better_than(best):
-        # 误差回升路径中见过的更优点（如步长越过后回落），取误差最小者
-        result = IkResult(best.q, best.pos_err_m, best.ori_err_rad, converged, best.iters, history=history)
+        # 误差回升路径中见过的更优点（如步长越过后回落），取误差最小者。
+        # converged 必须按"实际返回的这组 q"重算——直接沿用会把末点 q 的
+        # 收敛旗标带到一个位置更差的解上（假收敛：报 converged 却带厘米级
+        # pos_err；v3.1 审查补丁，tests/test_sim.py 回归锁定）。
+        converged_best = (
+            best.pos_err_m <= pos_tol_m and (pos_only or best.ori_err_rad <= ori_tol_rad)
+        )
+        result = IkResult(
+            best.q, best.pos_err_m, best.ori_err_rad, converged_best, best.iters, history=history
+        )
     return result
 
 

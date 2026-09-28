@@ -95,6 +95,13 @@ class KinematicBackend(ABC):
         """返回 (位置雅可比 (3,n), 角速度雅可比 (3,n))，world 系，列对齐 q。"""
 
     @abstractmethod
+    def link_frames(self, q: np.ndarray) -> list[np.ndarray]:
+        """返回沿链的参考点位置（base 系）：每个关节体原点 + TCP，共 n+1 个 (3,)。
+
+        用途：连杆胶囊扫掠检查（相邻参考点连线近似连杆体，叠加连杆半径）。
+        """
+
+    @abstractmethod
     def source_meta(self) -> dict:
         """中性元数据（tier/指纹/说明），供报告记录，不含本地敏感路径。"""
 
@@ -264,6 +271,19 @@ class MujocoBackend(KinematicBackend):
             mujoco.mj_jacBody(self._model, self._data, jacp, jacr, self._ee_body)
         cols = np.asarray(self._dadr, dtype=int)
         return jacp[:, cols].copy(), jacr[:, cols].copy()
+
+    def link_frames(self, q: np.ndarray) -> list[np.ndarray]:
+        import mujoco
+
+        self._set_q(q)
+        mujoco.mj_kinematics(self._model, self._data)
+        pts = []
+        for j in self._jids:  # 各关节所属 body 原点（连杆近似参考点）
+            bid = int(self._model.jnt_bodyid[j])
+            pts.append(np.asarray(self._data.xpos[bid], dtype=float).copy())
+        pos, _ = self.fk(q)
+        pts.append(np.asarray(pos, dtype=float).copy())  # 末点 = TCP
+        return pts
 
     def source_meta(self) -> dict:
         return {
@@ -460,6 +480,14 @@ class IkpyChainBackend(KinematicBackend):
             Jp[:, k] = np.cross(axis_world, pe - T[:3, 3])
             Jr[:, k] = axis_world
         return Jp, Jr
+
+    def link_frames(self, q: np.ndarray) -> list[np.ndarray]:
+        frames = self._chain.forward_kinematics(self._to_full(q), full_kinematics=True)
+        pts = []
+        for i in self._active_idx:  # 各活动关节系原点（连杆近似参考点）
+            pts.append(np.asarray(frames[i], dtype=float)[:3, 3].copy())
+        pts.append(np.asarray(frames[-1], dtype=float)[:3, 3].copy())  # 末点 = TCP
+        return pts
 
     def source_meta(self) -> dict:
         if self._urdf_path is not None:
