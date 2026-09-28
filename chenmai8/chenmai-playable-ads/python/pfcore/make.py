@@ -94,23 +94,122 @@ def _spawn_static_server(root: Path, port: int) -> int:
     return proc.pid
 
 
+def _run_tool(cmd: list[str], timeout: float = 10) -> tuple[int, str]:
+    """跑系统命令（tasklist/taskkill/ps/kill），字节输出按 utf-8 宽容解码。
+
+    不用 text=True：Windows 系统命令的提示信息走本地 OEM 代码页（中文系统为
+    GBK），text 模式的 reader 线程按 utf-8 解码会直接崩（实测
+    UnicodeDecodeError in _readerthread）。统一收字节后 errors='replace'
+    自解码；我们只依赖 ASCII 结构（映像名、退出码），提示语乱码无碍。"""
+    try:
+        proc = subprocess.run(cmd, capture_output=True, timeout=timeout)
+    except (OSError, subprocess.SubprocessError):
+        return -1, ""
+    out = b"\n".join(x for x in (proc.stdout, proc.stderr) if x)
+    return proc.returncode, out.decode("utf-8", errors="replace")
+
+
+def _pid_image_name(pid: int) -> str | None:
+    """查 PID 对应进程映像名（小写）；PID 不存在或查询失败返回 None。
+
+    Windows 用 tasklist /FI（不依赖任何第三方模块）；POSIX 用 ps -o comm=。
+    无匹配 PID 时 tasklist 打印本地化"没有任务匹配"提示（各语言不同，
+    中文系统为 GBK 字节，不能按 'INFO' 前缀判）——只认"首个 CSV 字段以
+    .exe 结尾"的行，其余行一律视为无匹配。查询失败按 None 处理
+    （复用判定从严：验不了身份就不复用）。"""
+    if os.name == "nt":
+        code, out = _run_tool(["tasklist", "/FI", f"PID eq {pid}", "/FO", "CSV", "/NH"])
+        if code != 0:
+            return None
+        for line in out.splitlines():
+            first = line.strip().split(",")[0].strip().strip('"').lower()
+            if first.endswith(".exe"):
+                return first
+        return None
+    code, out = _run_tool(["ps", "-p", str(pid), "-o", "comm="])
+    if code != 0:
+        return None
+    return out.strip().rsplit("/", 1)[-1].lower() or None
+
+
+def _pid_is_our_python(pid: int) -> bool:
+    """进程身份核实：PID 存在且映像名是 python（系统/venv 的 python 同名）。
+
+    防 PID 复用误判：状态文件跨重启残留后，原 PID 可能已被无关进程占用——
+    只有映像名仍为 python 才承认"这是我们上次起的伺服器"。"""
+    if not isinstance(pid, int) or pid <= 0:
+        return False
+    image = _pid_image_name(pid)
+    return image is not None and image.startswith("python")
+
+
+def _kill_pid(pid: int) -> bool:
+    """终止已验明身份的旧伺服器进程（taskkill /F /T）；失败只返回 False 不抛。"""
+    if os.name == "nt":
+        code, _ = _run_tool(["taskkill", "/PID", str(pid), "/F", "/T"])
+    else:
+        code, _ = _run_tool(["kill", "-9", str(pid)])
+    return code == 0
+
+
+def _discard_serve_state(state_file: Path, reason: str) -> None:
+    """清理陈旧/失配的伺服状态文件（跨重启残留、PID 复用、伺服根变更）。"""
+    try:
+        state_file.unlink()
+    except OSError:
+        pass
+    _log(f"伺服状态文件已清理（{reason}）；重新定位/启动静态伺服器")
+
+
 def ensure_server(out_root: Path, demo_dir: Path, preferred_port: int) -> tuple[int, bool]:
     """确保 demo_dir 正被静态伺服，返回 (port, reused)。
 
-    复用判定依据 <out>/.demo-serve.json：端口 TCP 可连即视为上次由 make 启动的
-    伺服器仍在（同一 root，http.server 按请求读盘，直接吃到本次重建后的文件）。
-    该假设写入状态文件注释并在输出中显式提示；端口被未知进程占用时不复用，
-    向后顺延找空闲口。
+    复用判定依据 <out>/.demo-serve.json，且必须通过三重核实才复用：
+      1) 记录的端口 TCP 可连；
+      2) 记录的 PID 存在且映像名为 python（tasklist /FI 核实，防 PID 跨重启
+         被无关进程复用——验不了身份就不复用，spawn 一个新伺服器 ~0.3s）；
+      3) 记录的伺服根 == 本次 demo_dir（http.server 按请求读盘，同根即可
+         直接吃到本次重建后的文件）。
+    任一不满足：状态文件一律清理（跨重启残留清零），需要时杀掉验明正身的
+    旧伺服器再起新。端口被 PID 已死的未知进程占用时绝不 taskkill（可能是
+    无关进程），只向后顺延找空闲口。
     """
     state_file = out_root / SERVE_STATE_NAME
+    state: dict | None = None
     if state_file.is_file():
         try:
-            state = json.loads(state_file.read_text(encoding="utf-8"))
-            port = int(state.get("port", 0))
-            if port > 0 and _port_listening(port):
-                return port, True
+            loaded = json.loads(state_file.read_text(encoding="utf-8"))
+            state = loaded if isinstance(loaded, dict) else None
         except (json.JSONDecodeError, OSError, ValueError):
-            pass
+            state = None
+        if state is None:
+            _discard_serve_state(state_file, "状态文件不可读/不是对象")
+
+    if state is not None:
+        port = state.get("port")
+        pid = state.get("pid")
+        port_ok = isinstance(port, int) and port > 0 and _port_listening(port)
+        identity_ok = _pid_is_our_python(pid if isinstance(pid, int) else -1)
+        root_ok = str(state.get("root") or "") == str(demo_dir)
+        if port_ok and identity_ok and root_ok:
+            return port, True
+        if identity_ok:
+            # 验明正身是我们起的 python 伺服器（端口失守/根目录不符/已僵死）：
+            # 杀旧防累积，等旧口释放（有界 3s），状态清零，重新起伺服正确根目录的新伺服器。
+            reason = ("伺服根目录变更" if port_ok and not root_ok
+                      else "记录端口已不在监听" if not port_ok else "伺服根目录不符")
+            _kill_pid(int(pid))
+            if isinstance(port, int) and port > 0:
+                deadline = time.monotonic() + 3.0
+                while _port_listening(port) and time.monotonic() < deadline:
+                    time.sleep(0.1)
+            _discard_serve_state(state_file, f"{reason}，旧伺服器（PID {pid}）已终止")
+        else:
+            # PID 已死（典型：跨重启残留）或 PID 已被非 python 进程复用：
+            # 状态是陈旧的，清掉；占用端口的若非我们启动的进程则绝不动手，只换口。
+            _discard_serve_state(
+                state_file, "记录 PID 不存在或映像名非 python（跨重启残留/PID 复用）")
+
     port = preferred_port
     for _ in range(20):
         if not _port_listening(port):
@@ -394,7 +493,9 @@ def _make_impl(args: argparse.Namespace, started_epoch: float, t0: float) -> int
     qa_report = qa_pkg["artifact"].with_name("index.report.json")
 
     # CHK10 判定输入（反馈行动 3：评委输入看得见）：首语言的 标题/教程/胜/CTA/分
-    # 文案必须真实上屏；构建真实嵌入的用户替换素材（旁车清单）必须像素对账通过。
+    # 文案必须真实上屏（qacore 侧除子串命中外还采样核验文案对象 active+visible，
+    # 见 qacore/checks.py CHK10 与 docs/demo-checklist.md 的人眼截图复核步骤）；
+    # 构建真实嵌入的用户替换素材（旁车清单）必须像素对账通过。
     # lose 不要求——自动试玩走最优线必胜，lose 文案无出场机会（如实记录）。
     def _locale_text(key: str) -> str:
         table = ((spec.get("i18n") or {}).get("strings") or {}).get(locales[0]) or {}
@@ -544,7 +645,8 @@ def _make_impl(args: argparse.Namespace, started_epoch: float, t0: float) -> int
     _log(f"计时：make 墙钟 {make_wall_sec:.1f}s；spec 修改完成→二维码可扫 {spec_to_qr_sec:.1f}s"
          f"（spec mtime 口径，目标 ≤90s）")
     if serve["reused"]:
-        _log(f"静态伺服：复用端口 {serve['port']} 的上次会话伺服器（.demo-serve.json）")
+        _log(f"静态伺服：复用端口 {serve['port']} 的上次会话伺服器"
+             f"（.demo-serve.json，PID+映像名+伺服根三重核实）")
     else:
         _log(f"静态伺服：已在 0.0.0.0:{serve['port']} 启动（本进程退出后仍存活；"
              f"手机打不开时放行防火墙或改用手机热点）")
