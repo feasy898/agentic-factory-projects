@@ -29,12 +29,13 @@ sys.stdout.reconfigure(encoding="utf-8")
 
 ROOT = Path(__file__).resolve().parents[1]
 
-# 附录A 上游名 → 中性名 的被禁 token（小写、子串匹配；拼接构造避免本文件自命中）
+# 被禁 token（小写、子串匹配），与内部台账附录A 一一对应；映射关系只在台账维护。
+# 一律拼接构造：本文件自身也在公开扫描集内，任何位置（含注释）不得出现连续上游名。
 BANNED_TOKENS = [
     "paddle" + "ocr",
-    "audio-" + "separator",       # 含 python-audio-separator
+    "audio-" + "separator",
     "dem" + "ucs",
-    "qw" + "en",                  # 含 Qwen3-ASR / Qwen3-TTS / qwen0.6b 等
+    "qw" + "en",
     "forced" + "aligner",
     "sense" + "voice",
     "fun" + "asr",
@@ -43,11 +44,11 @@ BANNED_TOKENS = [
     "pyan" + "note",
     "light-" + "asd",
     "media" + "pipe",
-    "trans" + "net",              # 含 TransNetV2
+    "trans" + "net",
     "video-subtitle-" + "remover",
-    "hy-" + "mt",                 # 含 Hy-MT2 / HY-MT1.5
-    "index" + "tts",              # 含 IndexTTS-2.5 / IndexTTS2 / index-tts
-    "vox" + "cpm",                # 含 VoxCPM2
+    "hy-" + "mt",
+    "index" + "tts",
+    "vox" + "cpm",
     "muse" + "talk",
     "latent" + "sync",
     "audio" + "seal",
