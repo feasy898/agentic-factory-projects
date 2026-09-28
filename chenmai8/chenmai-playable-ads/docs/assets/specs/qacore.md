@@ -45,9 +45,11 @@ python -m qacore run <artifact.html> [--channel preview] [--out <report.json>]
 
 ## 4. 探针契约（PROBE_JS，注入页面）
 
-- `window.__pfprobe = { ready,start,end,endWin,first,cta, audio:{created,running} }`（时刻为 `performance.now()`，相对导航起点）。
+- `window.__pfprobe = { ready,start,end,endWin,first,cta, audio:{created,running}, media:{unmuted,playing,playsBeforeFirst}, rtc }`（时刻为 `performance.now()`，相对导航起点）。
 - 监听 5 个 `pf:*` 事件（首个时刻；`pf:end` 记录 `detail.win`）。
 - **包装 `AudioContext`/`webkitAudioContext` 构造器**：跟踪每个实例 state，`running` 集合大小即"正在出声的上下文数"。
+- **包装 `HTMLMediaElement.prototype.play`**（覆盖 `<audio>/<video>/new Audio()`）：首次 pointer 事件前的调用计入 `playsBeforeFirst`；`sampleMedia()` 由 Python 侧每轮调用重采样未静音媒体元素（最坏值粘住）。
+- **包装 `RTCPeerConnection`/`webkitRTCPeerConnection` 构造器**：`rtc` 计数 >0 → CHK03 fail（WebRTC 不经过 route 拦截）。
 
 ## 5. 自动试玩驱动（autoplay.py）
 
@@ -66,8 +68,8 @@ python -m qacore run <artifact.html> [--channel preview] [--out <report.json>]
 |---|---|---|
 | CHK01 包体大小 | 实装 | `artifact_bytes <= 规则库 maxBytes`；规则库无该渠道 → **skip**（不假定） |
 | CHK02 文件数 | skip | 未实装（当前输入为单文件） |
-| CHK03 零外网 | 实装 | 两趟合并：任何非本机请求（已 abort）→ fail |
-| CHK04 首交互前静音 | 实装 | 无 window.PF → skip；有：首交互前 isMuted 必须 true；autoplay 时还要求无 running AudioContext 且首手势后 isMuted=false |
+| CHK03 零外网 | 实装 | 两趟合并：HTTP 由 route abort 记账；WebSocket 由 `route_web_socket("**/*")` 阻断并记账（条目前缀 `websocket:`，实测处理器内 `ws.close()` 会挂死 load 事件，故只记账不 close——未 `connect_to` 的 socket 不会真实连接）；Service Worker 整体禁注册（`service_workers="block"`，实测 SW 无法借道发外链）；RTCPeerConnection 构造计数 >0 → fail（WebRTC 不经过网络层拦截） |
+| CHK04 首交互前静音 | 实装 | 渠道要求静音（channel-rules `muteBeforeFirstInteraction`，默认 true）时：无 window.PF 或探针未装 → **fail**（无法证明静音合规即违规，不再 skip）；有桥：首交互前 isMuted 必须 true、无 running AudioContext、无未静音媒体元素（`<audio>/<video>` 每轮重采样）、无首交互前媒体 `play()`；autoplay 时还要求首手势后 isMuted=false。渠道未强制静音且无桥 → skip |
 | CHK05 横竖屏 | 实装 | 无 canvas → skip；有 canvas：两趟方差均 ≥ 阈值 30 |
 | CHK06 退出接口 | skip | 未实装（stub 注入属后续）；**期望值与真实 API 冲突，修正候选见 channel-adapters §3** |
 | CHK07 自动试玩到结束页 | 实装 | 无 `__PF_QC__` → fail；需 pf:end 已触发且 ≤45s、终态=end、结束页可见，三者齐备 |
@@ -81,10 +83,13 @@ python -m qacore run <artifact.html> [--channel preview] [--out <report.json>]
 
 ```bash
 # 金标层（门禁固化于 scripts/gate_phase0.py 门项 5 / gate_phase1.py 门项 4）
-python/.venv/Scripts/python.exe -m qacore run python/qacore/tests/fixtures/mini.html --channel preview
-#   → exit 0，报告含非空 checks 且 0 fail
+python/.venv/Scripts/python.exe -m qacore run python/qacore/tests/fixtures/mini.html --channel preview --autoplay
+#   → exit 0，报告含非空 checks 且 0 fail；门禁另断言已实装项（CHK01/03/04/05/07/08/09）
+#     零 skip（skip 不算过）、CHK03/08/09 必须 pass
 python/.venv/Scripts/python.exe -m qacore run artifacts/preview/match3.html --channel preview --autoplay
 #   → exit 0（CHK01/03/04/05/07/08/09 全 pass；CHK02/06/10 skip 允许），pf:end ≤ 45000ms
+# 变异样本（门禁固化于 gate_phase0.py 门项 6）：外链 img→恰 CHK03 / 未静音 audio→恰 CHK04 /
+#   超体积→恰 CHK01，各自 qacore exit 1
 ```
 
 ## 8. 变异测试（M8 全量里程碑的验收，第一波 4 个样本）
@@ -100,7 +105,9 @@ python/.venv/Scripts/python.exe -m qacore run artifacts/preview/match3.html --ch
 
 - 后续第二波（对齐规划 §6-M8）：console error 注入（→CHK08）、退出接口缺失（→CHK06 实装后）等。
 - 验收通过线：4/4 mutant 各自精确命中；金标层保持全 pass。
-- 实装状态：**未实装**（变异夹具与 `mutation-test` 子命令列入 M8 全量里程碑）。
+- 实装状态：**MUT-01/02/04 已实装**（2026-09-28 收紧，固化于 `scripts/gate_phase0.py` 门项 6：
+  对 mini.html 夹具的最小变异，断言 qacore exit 1 且恰好命中对应 CHK；MUT-03 结束页不可达与
+  `mutation-test` 独立子命令仍列 M8 全量里程碑）。
 
 ## 9. 重生成注意事项
 

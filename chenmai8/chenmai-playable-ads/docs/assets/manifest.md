@@ -37,7 +37,7 @@
 | ID | 名称 | 形态 | 职责 | eval → 通过线 | 顺序位 | 状态 | spec |
 |---|---|---|---|---|---|---|---|
 | `DATA-channel-rules` | 渠道规则库 | JSON（`channel-rules/channel-rules.json`，rulesVersion 1.0.0） | 渠道合规知识单一来源：包形态/结构/大小线/退出接口/静音要求；打包器配置来源、质检 CHK01 上限来源 | `node packages/packager/bin.mjs channels` → 结构校验过并列出渠道 | 3 | frozen（preview/applovin/meta/mintegral）；unity/google/tiktok planned | [channel-adapters](specs/channel-adapters.md) |
-| `EVAL-gate-phase0` | Phase 0 验收门 | `scripts/gate_phase0.py` | 5 项验收固化（含本机 spike 对照依赖） | `python scripts/gate_phase0.py` → `GATE PHASE0: PASS（5/5）` | 8 | frozen（**正在收紧中，以实际运行为最终真源**） | [REGENERATE](REGENERATE.md) |
+| `EVAL-gate-phase0` | Phase 0 验收门 | `scripts/gate_phase0.py` | 6 项验收固化：CLI 子命令+最小成功/失败命令、spike 六渠道按入库期望清单（specs-eval/spike-manifest.json，本机无对照工程标 SKIP-ENV）、llmgw selftest 解析 6 条 [PASS]、qacore skip 不算过（CHK03/08/09 必须 pass）+ 三变异样本恰好命中、超时按进程树清理 | `python scripts/gate_phase0.py` → `GATE PHASE0: PASS（6/6）`（实测约 25s） | 8 | frozen（**正在收紧中，以实际运行为最终真源**） | [REGENERATE](REGENERATE.md) |
 | `EVAL-gate-phase1` | Phase 1 验收门 | `scripts/gate_phase1.py` | 4 项验收固化：M1 三连 / M2 测试 / M4 三渠道断言 / M3 自动试玩 | `python scripts/gate_phase1.py` → `GATE PHASE1: PASS（4/4）`（实测约 46s） | 8 | frozen | [REGENERATE](REGENERATE.md) |
 
 ## 重生成依赖图（顺序位即拓扑序）
@@ -51,4 +51,4 @@ M5-assetkit(10，暂缓，仅边界)
 ```
 
 - 1→2→(3,6)→4→5→7→8 为已实现链；9（编排器打通全链）是下一个关键缺口。
-- 公开环境验收以 `EVAL-gate-phase1` 为准；`EVAL-gate-phase0` 门项 3 依赖仅本机存在的对照工程（`_vendor/`，不入库）。
+- 公开环境验收以 `EVAL-gate-phase1` 为准；`EVAL-gate-phase0` 门项 3 对照产物仅本机存在（`_vendor/`，不入库），缺失时该项标 SKIP-ENV 不算失败——期望清单已入库（specs-eval/spike-manifest.json），任何机器可按其重建对照轨并复验。
