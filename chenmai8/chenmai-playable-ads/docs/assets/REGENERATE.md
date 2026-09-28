@@ -90,18 +90,24 @@ python scripts/gate_phase0.py    # 本机门禁：GATE PHASE0: PASS（5/5），�
 
 1. **隔离**：建独立工作目录，拷入 `docs/assets/` 全部 spec + 被测模块的 `test/`（含夹具/testsupport，
    **冻结一字不改**）与 package.json 骨架；**不拷贝原实现 `src/`**。
-2. **盲实现**：实现者只准看 spec 与冻结测试，明确禁止看原实现；允许跑测试自验。
+2. **环境前置由 spec 声明（第二批试验教训，硬性条款）**：冻结测试对目录形状/根路径反推/junction/
+   venv glue/node_modules 依赖的一切假设，必须**事先写进该模块 spec**（范例：packager.md §6 测试环境前置）；
+   **禁止实现者自创 junction/venv glue 或临时挪文件凑路径**——工作流门因环境假设瞬时失败的，判 spec 缺口，
+   回炉补 spec，而不是记实现失败。
+3. **盲实现**：实现者只准看 spec 与冻结测试，明确禁止看原实现；允许跑测试自验。
 3. **裁定**：跑模块自验收 + coverage + 门禁相关门项；判据 = 冻结测试全绿 + 通过线达标
    （coverage 门另验：故意压低于线必须 exit 1，防"空过"）。
-4. **缺口回炉**：实现的 bug → 修原实现/包脚本；spec 歧义或缺失（实现者靠测试反推的点）→ 补 spec；
-   流程问题 → 改本 SOP。三类各自单独 commit。
+4. **缺口回炉**：实现的 bug → 修原实现/包脚本；spec 歧义或缺失（实现者靠测试反推的点、环境假设未成文）→
+   补 spec；流程问题 → 改本 SOP。三类各自单独 commit。
 5. **记录**：试验结果（模块/日期/首跑结果/回炉清单）追加到本节与 §9 变更史。
 
 已登记试验：
 
-| 日期 | 模块 | 首跑结果 | 回炉清单 |
-|---|---|---|---|
-| 2026-09-28 | M2 engine-bridge | 26/26 全绿，覆盖率 96.3% | coverage include 路径 bug 修复；spec 补时序/告警/locale 回退；本 SOP 建立 |
+| 批次 | 日期 | 模块 | 结果 | 回炉清单 |
+|---|---|---|---|---|
+| 1 | 2026-09-28 | M2 engine-bridge | 首跑 26/26 全绿，覆盖率 96.3%（通过） | coverage include 路径 bug 修复；spec 补时序/告警/locale 回退；本 SOP 建立 |
+| 2 | 2026-09-28 | M6 llmgw | 盲实现再生成功 | spec 补 schema 序列化形态/attempts 0 基与退避关系/错误类型速查/json_of 非 dict/模块级 chat() 参数表/最小 eval 环境 |
+| 2 | 2026-09-28 | M4 packager | 自测 3 次过；工作流门一次瞬时失败后主会话复跑 3 次全绿——**判定通过，暴露环境脆弱性** | spec 补：规则库三渠道内容全量、golden 夹具内容、**测试环境前置成文（run.mjs 路径假设/esbuild/venv SKIP 语义）**、manifest zip 形状与 specVersion 位置、MRAID 大小写与 maxFiles 语义；exit code 统一；SOP 增环境前置硬性条款 |
 
 ## 6. 演示兜底（demo-prebuilt）
 

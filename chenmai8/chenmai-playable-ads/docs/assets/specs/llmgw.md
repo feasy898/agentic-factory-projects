@@ -42,13 +42,40 @@ chat(messages, ...)           # 模块级便捷入口（临时 Gateway）
 Client = Gateway              # 别名
 ```
 
-- `messages`：非空序列，每项含 `role`/`content`（原样透传，逐项浅拷贝）。
-- **json_schema 提示注入**：system 插入位置 = 首条已是 system 则 index 1，否则 index 0；文案固定为
-  `"只输出一个 JSON 对象：不要解释、不要 markdown 围栏，字段与类型必须符合以下 JSON Schema：\n" + schema`。
-  `json_schema is not None 或 json_mode=True` 时请求体加 `response_format={"type":"json_object"}`
-  （json_object 协议本身不携带 schema，提示注入是通用兼容做法）。
+**模块级 `chat()` 便捷函数参数表（冻结）**：`chat(messages, images=None, json_schema=None, **call_kwargs)`，
+其中 `call_kwargs` 逐项透传 `Gateway().chat(...)`：
+
+| 参数 | 类型/默认 | 语义 |
+|---|---|---|
+| `messages` | 非空序列 | 必填，规则同 Gateway.chat |
+| `images` | None / 图片列表 | 见 §3.1 |
+| `json_schema` | None / dict | 开 JSON 模式 + 提示注入 |
+| `json_mode` | False | 仅开 JSON 模式不注 schema |
+| `timeout` | None → env(30) | 逐次覆盖 |
+| `max_retries` | None → env(2) | 逐次覆盖 |
+| `backoff` | None → env(0.8) | 逐次覆盖 |
+| `extra` | None / dict | 透传请求体（如 temperature） |
+
+- 行为 = **每次调用临时构造 `Gateway()`**（配置每次现读 env），再发起一次 chat；不共享连接/状态。
+
+- `messages`：**非空**序列，每项含 `role`/`content`（原样透传，逐项浅拷贝）；空/非序列 → `ValueError`，
+  元素缺 role/content → `ValueError`（带下标）。
+- **json_schema 提示注入（schema 的请求内形态 = 文本序列化）**：system 消息插入位置 = 首条已是 system 则
+  index 1，否则 index 0；内容精确形态 ＝ 固定中文前缀 + `json.dumps(json_schema, ensure_ascii=False)`
+  （紧凑单行、无缩进、保持 dict 原键序）：
+
+  ```
+  只输出一个 JSON 对象：不要解释、不要 markdown 围栏，字段与类型必须符合以下 JSON Schema：
+  {"type": "object", "required": ["ok"], ...}
+  ```
+
+  `json_schema is not None 或 json_mode=True` 时请求体加 `response_format={"type":"json_object"}`。
+  **schema 只走提示注入、不进 response_format**（json_object 协议本身不携带 schema 字段——通用兼容做法；
+  mock selftest 的 `schema_seen` 断言即验证提示随请求到达）。
 - **JSON 剥围栏（json_of 容错）**：strip 后以 ``` 开头 → `strip("`")` → lstrip → 若前 4 字符小写为 "json"
   则去掉 → `json.loads`；失败抛 LLMError（含原文前 200 字）。
+  **json_of 不校验返回类型**：解析成功即**原样返回**——助手输出合法 JSON 数组/字符串/数字时会得到非 dict，
+  dict 期望由调用方自行校验（仅解析失败抛 LLMError）。
 - `extra`：透传请求体额外字段（如 temperature）。
 
 ### 3.1 图片输入的三种形状（+1 透传）
@@ -74,11 +101,20 @@ Client = Gateway              # 别名
 
 - 全链失败：`LLMError("全部模型均失败：主 → 备...")`，属性 `{status, model, attempts[]}`；
   `attempts` 每项 `{model, attempt, status, error}`；`summary()` 输出人读清单。
+- **attempts 序号基与退避指数的精确关系（冻结）**：`attempt` 为 **0 基**（0..max_retries，0 = 首次尝试）。
+  第 `attempt` 次 `_Transient` 失败后，若不是最后一次（`attempt == max_retries` 则不再 sleep、直接降级），
+  睡眠 `min(backoff * 2**attempt, 8.0)` 秒——默认 backoff=0.8 时等待序列为 **0.8s(attempt0 失败后) →
+  1.6s(attempt1 失败后) → 3.2s…** 封顶 8s。`_SkipModel`(404) 首次即记录 attempt=0 并降级（不 sleep）；
+  `_Fatal` 记录后立即抛出（不 sleep）。
 - 错误信息提取：响应体 JSON 的 `error.message`（dict 或 str）优先，否则截 200 字节原文。
 
-## 5. 行为规格（边界）
+## 5. 行为规格（边界——错误类型速查）
 
-- 缺 BASE_URL/MODEL → `ConfigError`（模块级 `chat` 亦同）。
+- `messages` 空或非序列、元素缺 role/content → **`ValueError`**（参数校验，非 LLMError）。
+- 缺 `PF_LLM_BASE_URL` / `PF_LLM_MODEL` → **`ConfigError`**（chat() 时抛；模块级 `chat` 亦同）。
+- `PF_LLM_BASE_URL` 非 http(s) → **`ConfigError`**（`endpoint_for` 内抛）。
+- **数值型 env 非法**（`PF_LLM_TIMEOUT`/`PF_LLM_MAX_RETRIES`/`PF_LLM_BACKOFF` 不是数字）→ 构造 `Gateway`
+  时抛**原生 `ValueError`**（`float()`/`int()` 未捕获直传）——如实记录：它不是 `ConfigError`/`LLMError`。
 - 401（密钥错）→ `_Fatal` → `LLMError(status=401, attempts=[...])`。
 - 客户端超时后服务端写回失败 → 服务端 `handle_error` 静默（selftest 的慢模型路由即此场景）。
 - 响应非 dict 或 `choices` 空 → `_Transient`（视为服务端异常，可重试）。
@@ -103,6 +139,10 @@ python/.venv/Scripts/python.exe -m llmgw.selftest     # → 6 项全过，打印
 
 ## 7. 重生成注意事项
 
+- **最小 eval 环境（第二批再生试点实录）**：llmgw 零第三方依赖，再生试点目录**不含 `.venv`、不含
+  gate_phase0** 也能裁定——eval 只需 `python -m llmgw.selftest`（任一 Python 3 可跑，实测 3.12.10；
+  `from llmgw import ...` 是包内相对导入，须以包形态运行：`python/` 在 cwd 或包父目录入 sys.path）。
+  本 spec 中写 `python/.venv/Scripts/python.exe` 全路径是**本机约定，非环境依赖**。
 - 零第三方依赖：重建时只允许标准库（保持 `pip -r requirements.txt` 之外无新增）。
 - selftest 的 mock 用 `ThreadingHTTPServer` + 端口 0（系统分配）；路由按请求内容（RETRY-MARKER /
   IMAGE-MARKER / response_format / 慢模型名）而非 path。

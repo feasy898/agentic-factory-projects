@@ -22,7 +22,9 @@ node packages/packager/bin.mjs channels [--rules <path>]     # 列出规则库�
 ```
 
 - Node ≥22；`--out` 缺省 = `<cwd>/artifacts`；rules 缺省 = 仓库根 `channel-rules/channel-rules.json`。
-- 退出码：0 成功；1 构建失败（含超规/外链/结构违规——stderr 一行人读原因）；2 参数错误/未知命令。
+- 退出码（**统一裁定，消除歧义**）：**0** 成功；**1** 构建失败——含超规/外链/结构违规/**未知或未冻结渠道**
+  （`channelRule` 抛错、被 main 的 catch 统一接住，stderr 输出 `[packager] 失败: <原因>` 并列出现有渠道）；
+  **2** 仅限 CLI 用法层：未知子命令、多余位置参数、参数解析错误。渠道拼写错误**不是** exit 2。
 - 成功时 stdout 末行输出 JSON：`{ok:true, artifact, totalBytes, maxBytes}`。
 
 ## 3. 对外契约
@@ -36,6 +38,32 @@ node packages/packager/bin.mjs channels [--rules <path>]     # 列出规则库�
   maxBytes>0, maxFiles>0, exit{protocol, call}, runtime{muteBeforeFirstInteraction, injectRelativeScripts?,
   forbidMraid?}, allowedUrlWhitelist? }`。zip 的 `structure` 必须含 entry；实现还要求 zip 恰为
   `[bundle, entry]` 两项（否则抛错）。
+
+### 3.1.1 规则库当前内容全量（rulesVersion 1.0.0，再生时逐字节对照 `channel-rules/channel-rules.json`）
+
+公共 `defaults`：`externalUrlPolicy: "forbid"`；`allowedUrlSchemes: ["data:", "blob:"]`；
+`muteBeforeFirstInteraction: true`；`allowRelativeRuntimeScripts: true`；`updated: "2026-09-28"`。
+
+| 字段 | `applovin` | `meta` | `mintegral` | `preview` |
+|---|---|---|---|---|
+| package.format | `single-html` | `single-html` | `zip` | `single-html` |
+| package.entry | `index.html` | `index.html` | `Template.html` | `index.html` |
+| package.structure | —（无此键） | — | **`["build.js", "Template.html"]`** | — |
+| maxBytes | **5242880**（5MB） | **3145728**（3MB 内部从严） | **5242880** | **5242880** |
+| maxFiles | 1 | 1 | **100** | 1 |
+| exit.protocol / call | `mraid` / `mraid.open(url)` | `fb-playable` / `FbPlayableAd.onComplete()` | `mraid` / `mraid.open(url)` | `window-open` / `window.open(url)` |
+| exit.waitReadyBeforeRender | `true` | `false` | `true` | `false` |
+| runtime.injectRelativeScripts | **`["mraid.js"]`** | `[]` | **`["mraid.js"]`** | `[]` |
+| runtime.forbidMraid | `false` | **`true`** | `false` | `false` |
+| allowedUrlWhitelist | `[]` | `[]` | `[]` | `[]` |
+
+**mraid.js 注入片段原文**（`injectRelativeScripts` 命中且 HTML 尚无该引用时，插到 `<head…>` 开标签之后）：
+
+```html
+<script src="mraid.js"></script>
+```
+
+已存在判定正则：`src\s*=\s*["']mraid.js`（即已引用则不重复注入）。相对引用无 scheme，**不算外链**。
 - **有效大小上限** = `min(渠道 maxBytes, spec.channels.overrides.<channel>.maxBytes)`——**override 只许收紧
   不许放宽**。
 
@@ -51,6 +79,16 @@ node packages/packager/bin.mjs channels [--rules <path>]     # 列出规则库�
 manifest 字段：`packager("@pf/packager"), rulesVersion, channel, locale, project, specPath, dist, maxBytes,
 packageFiles[], files[{path,bytes,sha256,role}], warnings[]`。role ∈ `package|entry-in-zip|bundle-in-zip`；
 `totalBytes` 只累计 role=package。
+
+**files[] / packageFiles 形状（按通道，冻结）**：
+
+| 通道 | files[] | packageFiles[] |
+|---|---|---|
+| single-html | `[{path:"index.html", bytes, sha256, role:"package"}]`（1 项） | `["index.html"]` |
+| zip | **3 项**：`[{path:"<projectId>-<locale>.zip", role:"package"}, {path:"Template.html", role:"entry-in-zip"}, {path:"build.js", role:"bundle-in-zip"}]` | **仅 1 项**：`["<projectId>-<locale>.zip"]`（zip 内条目不进 packageFiles） |
+
+**specVersion 位置**：打包器读的是**顶格** `spec.specVersion`（`loadSpecFields`），不在 `meta` 内；
+连同 `meta.projectId`（正则 `/^[A-Za-z0-9][A-Za-z0-9._-]*$/`）是打包器仅取的两个 spec 结构字段。
 
 ### 3.3 HTML 内联引擎（识别写法精确清单，冻结）
 
@@ -70,12 +108,32 @@ packageFiles[], files[{path,bytes,sha256,role}], warnings[]`。role ∈ `package
 - **外链扫描**：正则 `\bhttps?://[^\s"'<>\\)\]}]+`（大小写不敏感）；白名单 = spec `flow.endScreen.landingUrl`
   （前缀匹配）+ 规则 `allowedUrlWhitelist`；HTML 与 bundle 文本分别扫描，命中即构建失败。
 - **MRAID 禁用**：`forbidMraid` 渠道（meta）产物中出现 `\bmraid\b[^;]{0,40}` 全词命中即失败（启发式）。
+  大小写规范：正则带 `gi` 标志 → **大小写不敏感**（`MRAID`/`Mraid`/`mraid` 都命中）；`\b` 全词边界以
+  `[A-Za-z0-9_]` 为词字符——`MRAID_TEST` 这类下划线接续的标识符**不**命中，`window.mraid` 命中。
+- **maxFiles 语义**：仅 **zip 通道强制**，且按 **zip 内条目数**计数（`entries.length > maxFiles` → 失败）；
+  single-html 渠道打包器不检查 maxFiles（其"恰 1 个包文件"由门禁/使用方对产物目录断言）。
 
 ### 3.4 自研 zip（zip.mjs，冻结）
 
 - 写：deflate level 9（收益不足即回退 store）；**固定 DOS 时间戳 2026-01-01**（同输入字节可复现）；
   UTF-8 文件名 flag 0x0800；重名拒绝；条目名含目录须用 `/`。
 - 读：`readZip` 仅供自验收（central directory + inflateRaw；仅支持 method 0/8、无 data descriptor、无 zip64）。
+
+### 3.5 评测夹具 golden-match3.json（打包器视角的最小内容集，冻结）
+
+文件：`specs-eval/golden-match3.json`。打包器实际消费的字段只有 4 个，再生评测时缺失任一即失败：
+
+| 字段 | 值 | 用途 |
+|---|---|---|
+| `specVersion` | `"1.0.0"` | **顶格**（不在 meta 内），仅校验存在且为 string |
+| `meta.projectId` | `"golden-match3"` | 产物目录名 + zip 文件名（`golden-match3-en.zip`） |
+| `flow.endScreen.landingUrl` | `"https://example.com/playable-lp"` | 外链白名单唯一前缀（自验收 `externalUrls()` 也硬编码此值） |
+| `channels.overrides.applovin.maxBytes` | `5242880` | 收紧校验（与规则上限相等，实测 effectiveMaxBytes 取 min 逻辑） |
+| `channels.overrides.meta.maxBytes` | `3145728`（+`ctaStyle:"endcard"`，打包器不消费 ctaStyle） | meta 3MB 线来源之一（min(规则, override)） |
+
+其余字段（seed 20260930 / 6 语言含 ar / nearWin 等）为全产线共用，打包器不读。夹具 dist
+（`test/fixture/match3-dist/`：index.html + css/style.css + js/game.js + img/*.png）**已入库**，
+PNG 为纯色占位（零依赖生成器 `gen-pngs.mjs` 的一次性产物，仅在改夹具时重跑）。
 
 ## 4. 行为规格（失败路径）
 
@@ -101,7 +159,36 @@ meta 产物混 MRAID → 拒、未知渠道（google）→ 拒。
   `pack-manifest.json` 不计入包内文件）。
 - **禁止事项**：不许为过验收放宽外链正则或把失败降级为警告。
 
-## 6. 重生成注意事项（实测坑）
+## 6. 测试环境前置（冻结 run.mjs 的路径假设与 glue——再生试验瞬时失败的根因区，成文于第二批试验）
+
+自验收 `test/run.mjs` **从自身位置反推仓库根**：`REPO_ROOT = <run.mjs>/../../..`。因此隔离再生目录**必须**
+具备以下形状，缺一即瞬时失败（这不是测试的 bug，是冻结契约的一部分——**环境前置由 spec 声明，禁止实现者
+自创 junction/venv glue**）：
+
+```
+<root>/packages/packager/bin.mjs            # BIN（build 以 cwd=REPO_ROOT 子进程运行）
+<root>/packages/packager/src/*.mjs          # 被测实现（html.mjs import "esbuild" → 需 root node_modules）
+<root>/packages/packager/test/run.mjs       # 冻结测试（<root> = 此文件的上一级再两级）
+<root>/packages/packager/test/fixture/match3-dist/**   # 夹具 dist（已入库，含 PNG）
+<root>/specs-eval/golden-match3.json        # SPEC（内容见 §3.5）
+<root>/channel-rules/channel-rules.json     # 规则库（bin.mjs 默认路径从自身位置反推同一 <root>）
+<root>/package.json + node_modules/         # npm ci 一次（esbuild 0.28.2 从根解析；packager 自身零依赖）
+<root>/tmp/packager-selftest/               # OUT（测试开头 rmSync 清空重建）
+<root>/python/.venv/Scripts/python.exe      # 可选 glue（见下）
+```
+
+- **esbuild**：`packages/packager` 无自己的 node_modules，`src/html.mjs` 的 `import "esbuild"` 沿目录向上解析
+  → 必须先在 `<root>` 执行 `npm ci`（或最小化 `npm i -g`/等价方式让 Node 能解析 `esbuild`）。缺它 = 所有
+  build 立即失败。
+- **第 22 断言（python zipfile 交叉验证）的 venv 依赖与 SKIP 语义**：该断言查
+  `<root>/python/.venv/Scripts/python.exe`——
+  - venv **存在**：执行内联脚本（testzip CRC + 条目名 + Template.html 引用 build.js），失败 → FAIL exit 1；
+  - venv **不存在**：打印 `[SKIP ] mintegral: python zipfile 交叉验证（未找到 venv python）`，**不注册断言**
+    （既不计 pass 也不计 fail），整体仍可 exit 0——即无 venv 时 21 条断言 + 1 SKIP，有 venv 时 22 条。
+    SKIP 是显式声明，不是放行 bug。
+- 工作流/CI 门跑此测试前先核对上述形状（瞬时失败先查路径假设与 node_modules，再查实现）。
+
+## 7. 重生成注意事项（实测坑）
 
 - esbuild 是根工作区 devDependency（0.28.2 钉版）；本包自身零第三方运行时依赖。
 - zip 时间戳固定是实现可复现断言的前提——改 `zip.mjs` 时间字段会破坏"重复构建字节一致"。
