@@ -1,0 +1,282 @@
+{
+  "module": "cs_voice",
+  "date": "2026-09-28",
+  "cmd": "python -m cs_voice.eval --input chengshao/assets/voice_samples --report chengshao/reports/voice_eval.json",
+  "metrics": {
+    "n_total": 20,
+    "n_correct": 20,
+    "accuracy": 1.0,
+    "per_intent": {
+      "next": {
+        "total": 4,
+        "correct": 4
+      },
+      "pause": {
+        "total": 4,
+        "correct": 4
+      },
+      "done": {
+        "total": 4,
+        "correct": 4
+      },
+      "select": {
+        "total": 4,
+        "correct": 4
+      },
+      "unknown": {
+        "total": 4,
+        "correct": 4
+      }
+    },
+    "latency": {
+      "mean_s": 0.377,
+      "p50_s": 0.372,
+      "p95_s": 0.457,
+      "max_s": 0.457,
+      "cold_first_s": 0.411
+    },
+    "asr": {
+      "backend": "funasr",
+      "model_load_s": 56.7
+    },
+    "tts": {
+      "available": true,
+      "synth_ok": true,
+      "duration_s": 2.95,
+      "voice": "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Speech\\Voices\\Tokens\\TTS_MS_ZH-CN_HUIHUI_11.0"
+    },
+    "offline": {
+      "outbound_connect_attempts": 0,
+      "targets": [],
+      "note": "程序化证据=eval 期间零外联；拔网线复测属人工步骤，未执行"
+    }
+  },
+  "thresholds": {
+    "min_correct": 18,
+    "min_accuracy": 0.9,
+    "max_latency_s": 2.5
+  },
+  "pass": true,
+  "details": [
+    {
+      "file": "next_1.wav",
+      "expected": "next",
+      "dish_expected": null,
+      "transcribed": "下一口",
+      "predicted": "next",
+      "dish_predicted": null,
+      "confidence": 0.95,
+      "latency_s": 0.38,
+      "ok": true
+    },
+    {
+      "file": "next_2.wav",
+      "expected": "next",
+      "dish_expected": null,
+      "transcribed": "请下一口",
+      "predicted": "next",
+      "dish_predicted": null,
+      "confidence": 0.95,
+      "latency_s": 0.358,
+      "ok": true
+    },
+    {
+      "file": "next_3.wav",
+      "expected": "next",
+      "dish_expected": null,
+      "transcribed": "再来一口",
+      "predicted": "next",
+      "dish_predicted": null,
+      "confidence": 0.95,
+      "latency_s": 0.345,
+      "ok": true
+    },
+    {
+      "file": "next_4.wav",
+      "expected": "next",
+      "dish_expected": null,
+      "transcribed": "该下一口了",
+      "predicted": "next",
+      "dish_predicted": null,
+      "confidence": 0.95,
+      "latency_s": 0.387,
+      "ok": true
+    },
+    {
+      "file": "pause_1.wav",
+      "expected": "pause",
+      "dish_expected": null,
+      "transcribed": "等一下",
+      "predicted": "pause",
+      "dish_predicted": null,
+      "confidence": 0.95,
+      "latency_s": 0.352,
+      "ok": true
+    },
+    {
+      "file": "pause_2.wav",
+      "expected": "pause",
+      "dish_expected": null,
+      "transcribed": "请等一下",
+      "predicted": "pause",
+      "dish_predicted": null,
+      "confidence": 0.95,
+      "latency_s": 0.357,
+      "ok": true
+    },
+    {
+      "file": "pause_3.wav",
+      "expected": "pause",
+      "dish_expected": null,
+      "transcribed": "暂停一下",
+      "predicted": "pause",
+      "dish_predicted": null,
+      "confidence": 0.95,
+      "latency_s": 0.371,
+      "ok": true
+    },
+    {
+      "file": "pause_4.wav",
+      "expected": "pause",
+      "dish_expected": null,
+      "transcribed": "先等一下",
+      "predicted": "pause",
+      "dish_predicted": null,
+      "confidence": 0.95,
+      "latency_s": 0.439,
+      "ok": true
+    },
+    {
+      "file": "done_1.wav",
+      "expected": "done",
+      "dish_expected": null,
+      "transcribed": "吃饱了",
+      "predicted": "done",
+      "dish_predicted": null,
+      "confidence": 0.95,
+      "latency_s": 0.34,
+      "ok": true
+    },
+    {
+      "file": "done_2.wav",
+      "expected": "done",
+      "dish_expected": null,
+      "transcribed": "我吃饱了",
+      "predicted": "done",
+      "dish_predicted": null,
+      "confidence": 0.95,
+      "latency_s": 0.354,
+      "ok": true
+    },
+    {
+      "file": "done_3.wav",
+      "expected": "done",
+      "dish_expected": null,
+      "transcribed": "真的吃饱了",
+      "predicted": "done",
+      "dish_predicted": null,
+      "confidence": 0.95,
+      "latency_s": 0.34,
+      "ok": true
+    },
+    {
+      "file": "done_4.wav",
+      "expected": "done",
+      "dish_expected": null,
+      "transcribed": "吃不下了",
+      "predicted": "done",
+      "dish_predicted": null,
+      "confidence": 0.95,
+      "latency_s": 0.36,
+      "ok": true
+    },
+    {
+      "file": "select_1.wav",
+      "expected": "select",
+      "dish_expected": "芋泥",
+      "transcribed": "或想吃芋泥",
+      "predicted": "select",
+      "dish_predicted": "芋泥",
+      "confidence": 0.9,
+      "latency_s": 0.398,
+      "ok": true
+    },
+    {
+      "file": "select_2.wav",
+      "expected": "select",
+      "dish_expected": "南瓜粥",
+      "transcribed": "来点南瓜粥",
+      "predicted": "select",
+      "dish_predicted": "南瓜粥",
+      "confidence": 0.9,
+      "latency_s": 0.372,
+      "ok": true
+    },
+    {
+      "file": "select_3.wav",
+      "expected": "select",
+      "dish_expected": "椰子冻",
+      "transcribed": "换椰子冻",
+      "predicted": "select",
+      "dish_predicted": "椰子冻",
+      "confidence": 0.9,
+      "latency_s": 0.393,
+      "ok": true
+    },
+    {
+      "file": "select_4.wav",
+      "expected": "select",
+      "dish_expected": "南瓜粥",
+      "transcribed": "我想吃南瓜粥",
+      "predicted": "select",
+      "dish_predicted": "南瓜粥",
+      "confidence": 0.9,
+      "latency_s": 0.379,
+      "ok": true
+    },
+    {
+      "file": "noise_1.wav",
+      "expected": "unknown",
+      "dish_expected": null,
+      "transcribed": "今天天气怎么样",
+      "predicted": "unknown",
+      "dish_predicted": null,
+      "confidence": 0.3,
+      "latency_s": 0.403,
+      "ok": true
+    },
+    {
+      "file": "noise_2.wav",
+      "expected": "unknown",
+      "dish_expected": null,
+      "transcribed": "帮我查一下明天几点开会",
+      "predicted": "unknown",
+      "dish_predicted": null,
+      "confidence": 0.3,
+      "latency_s": 0.401,
+      "ok": true
+    },
+    {
+      "file": "noise_3.wav",
+      "expected": "unknown",
+      "dish_expected": null,
+      "transcribed": "그",
+      "predicted": "unknown",
+      "dish_predicted": null,
+      "confidence": 0.3,
+      "latency_s": 0.355,
+      "ok": true
+    },
+    {
+      "file": "noise_4.wav",
+      "expected": "unknown",
+      "dish_expected": null,
+      "transcribed": "",
+      "predicted": "unknown",
+      "dish_predicted": null,
+      "confidence": 0.3,
+      "latency_s": 0.457,
+      "ok": true
+    }
+  ]
+}

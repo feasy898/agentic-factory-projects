@@ -1,0 +1,122 @@
+[
+  {
+    "file": "next_1.wav",
+    "text": "下一口",
+    "intent": "next",
+    "dish": null
+  },
+  {
+    "file": "next_2.wav",
+    "text": "请下一口",
+    "intent": "next",
+    "dish": null
+  },
+  {
+    "file": "next_3.wav",
+    "text": "再来一口",
+    "intent": "next",
+    "dish": null
+  },
+  {
+    "file": "next_4.wav",
+    "text": "该下一口了",
+    "intent": "next",
+    "dish": null
+  },
+  {
+    "file": "pause_1.wav",
+    "text": "等一下",
+    "intent": "pause",
+    "dish": null
+  },
+  {
+    "file": "pause_2.wav",
+    "text": "请等一下",
+    "intent": "pause",
+    "dish": null
+  },
+  {
+    "file": "pause_3.wav",
+    "text": "暂停一下",
+    "intent": "pause",
+    "dish": null
+  },
+  {
+    "file": "pause_4.wav",
+    "text": "先等一下",
+    "intent": "pause",
+    "dish": null
+  },
+  {
+    "file": "done_1.wav",
+    "text": "吃饱了",
+    "intent": "done",
+    "dish": null
+  },
+  {
+    "file": "done_2.wav",
+    "text": "我吃饱了",
+    "intent": "done",
+    "dish": null
+  },
+  {
+    "file": "done_3.wav",
+    "text": "真的吃饱了",
+    "intent": "done",
+    "dish": null
+  },
+  {
+    "file": "done_4.wav",
+    "text": "吃不下了",
+    "intent": "done",
+    "dish": null
+  },
+  {
+    "file": "select_1.wav",
+    "text": "我想吃芋泥",
+    "intent": "select",
+    "dish": "芋泥"
+  },
+  {
+    "file": "select_2.wav",
+    "text": "来点南瓜粥",
+    "intent": "select",
+    "dish": "南瓜粥"
+  },
+  {
+    "file": "select_3.wav",
+    "text": "换椰子冻",
+    "intent": "select",
+    "dish": "椰子冻"
+  },
+  {
+    "file": "select_4.wav",
+    "text": "我想吃南瓜粥",
+    "intent": "select",
+    "dish": "南瓜粥"
+  },
+  {
+    "file": "noise_1.wav",
+    "text": "今天天气怎么样",
+    "intent": "unknown",
+    "dish": null
+  },
+  {
+    "file": "noise_2.wav",
+    "text": "帮我查一下明天几点开会",
+    "intent": "unknown",
+    "dish": null
+  },
+  {
+    "file": "noise_3.wav",
+    "text": "",
+    "intent": "unknown",
+    "dish": null
+  },
+  {
+    "file": "noise_4.wav",
+    "text": "",
+    "intent": "unknown",
+    "dish": null
+  }
+]
