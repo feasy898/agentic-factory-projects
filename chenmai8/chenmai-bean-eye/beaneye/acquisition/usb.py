@@ -115,11 +115,17 @@ class UsbSource(Source):
                     f"或运行  python -m beaneye.acquisition.usb --list-cams  探测设备号。"
                 )
             self._apply_props(cap)
+            self._verify_resolution(side, cap)
             self._caps[side] = cap
         self._warmup()
 
     def _apply_props(self, cap: cv2.VideoCapture) -> None:
-        """分辨率 / fourcc / 对焦 / 曝光（可配，设置失败不致命只记警告）。"""
+        """分辨率 / fourcc / 对焦 / 曝光。
+
+        W13 修复：分辨率设置后必须经 :meth:`_verify_resolution` 读回核对——
+        UVC 设备可能静默忽略请求分辨率（停在默认档），设置失败不再「只记
+        警告」而不留痕迹。
+        """
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, float(self.width))
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, float(self.height))
         if self.fourcc:
@@ -129,6 +135,18 @@ class UsbSource(Source):
         if self.exposure is not None:
             cap.set(cv2.CAP_PROP_EXPOSURE, float(self.exposure))
 
+    def _verify_resolution(self, side: str, cap: cv2.VideoCapture) -> None:
+        """cap.get 读回实际分辨率，与请求不符即 AcquisitionError（W13 修复）。"""
+        actual = (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH)), int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
+        if actual != (self.width, self.height):
+            cap.release()
+            raise AcquisitionError(
+                f"{'上' if side == 'top' else '下'}相机（设备号 "
+                f"{self.top_index if side == 'top' else self.bottom_index}）实际分辨率 "
+                f"{actual[0]}x{actual[1]} 与请求 {self.width}x{self.height} 不符"
+                "（UVC 可能静默忽略了分辨率设置）；请核对 configs/camera.yaml 与设备能力。"
+            )
+
     def _warmup(self) -> None:
         for _ in range(self.warmup_frames):
             for cap in self._caps.values():
@@ -136,10 +154,40 @@ class UsbSource(Source):
 
     # ------------------------------------------------------------------
     def _read(self, side: str) -> np.ndarray:
-        cap = self._caps[side]
-        ok, frame = cap.read()
+        """读一帧；失败时关闭并重开该路相机一次再试（W13 修复：热插拔恢复）。
+
+        原实现读失败只抛错不释放、不重开，USB 抖动后永远失败；现在第一遍
+        读失败即 release → 重新 VideoCapture → 核对分辨率 → 重读，仍失败
+        才抛 :class:`AcquisitionError`。
+        """
+        cap = self._caps.get(side)
+        index = self.top_index if side == "top" else self.bottom_index
+        ok, frame = (False, None)
+        if cap is not None:
+            ok, frame = cap.read()
         if not ok or frame is None:
-            raise AcquisitionError(f"{side} 相机读帧失败（设备号 {self.top_index if side == 'top' else self.bottom_index}）")
+            # ---- 关-开恢复一次 ----
+            if cap is not None:
+                try:
+                    cap.release()
+                except Exception:  # noqa: BLE001 — release 失败不阻断重开
+                    pass
+                self._caps.pop(side, None)
+            cap2 = cv2.VideoCapture(index, cv2.CAP_DSHOW)
+            if not cap2.isOpened():
+                cap2.release()
+                raise AcquisitionError(
+                    f"{side} 相机读帧失败且重开失败（设备号 {index}）；请检查 USB 连接后重试。"
+                )
+            self._apply_props(cap2)
+            self._verify_resolution(side, cap2)
+            ok, frame = cap2.read()
+            if not ok or frame is None:
+                cap2.release()
+                raise AcquisitionError(
+                    f"{side} 相机关-开恢复后仍读帧失败（设备号 {index}）；请检查 USB 连接。"
+                )
+            self._caps[side] = cap2
         return frame
 
     def capture_pair(self, sample_id: str, tray_id: str) -> TrayScan:

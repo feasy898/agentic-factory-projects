@@ -11,7 +11,10 @@
 
 ArUco 四角码用与 scripts/oss_smoke.py 相同的已验证 API
 （getPredefinedDictionary(DICT_4X4_50) + generateImageMarker），
-使 Mock 帧未来可直接喂给 M3 标定。
+使 Mock 帧未来可直接喂给 M3 标定。码位几何（盘边长/码边长/四码中心）
+以 configs/tray.yaml 为唯一真源——Mock、打印板（make_aruco.py）、
+标定配置三者同坐标，Mock 帧对默认配置标定 px_per_mm 误差 <1%
+（回归锚点见 tests/test_acquisition.py）。
 """
 
 from __future__ import annotations
@@ -24,18 +27,30 @@ import numpy as np
 from beaneye.schemas import TrayScan
 
 from beaneye.acquisition.source import Source
+from beaneye.calibration.config import load_tray_config
 
 __all__ = ["MockSource", "TRAY_MM"]
 
-TRAY_MM = 300.0  # 盘面边长（mm），与 configs/tray.yaml 的规划一致
+# ---------------------------------------------------------------------------
+# 码位几何单一真源（W13 修复）：四角 ArUco 的盘面布局只认 configs/tray.yaml。
+# 此前 Mock 自行内缩到 45mm 而配置是 30mm，跨距 210mm 会被标定配到 240mm，
+# 「检测点对配置点」的自洽门照样放行约 +14% 尺度误差——现同源后不会发生。
+# ---------------------------------------------------------------------------
+_CFG = load_tray_config()          # 仓库默认 configs/tray.yaml（缺失即抛 TrayConfigError）
+TRAY_MM = _CFG.tray_mm             # 盘面边长（mm）
+MARKER_MM = _CFG.marker_mm         # 码边长（mm）
+CENTERS_MM: dict[int, tuple[float, float]] = dict(_CFG.centers_mm)
+
+# 画布外缘（mm）：模拟相机视野略大于盘面。码中心在 tray.yaml 的 (30,30)mm
+# （码贴盘角），其 side/4 静区伸出盘外 15mm——外缘 ≥15mm 即静区完整落 canvas，
+# 取代旧「中心内缩 marker/4」的布局（该布局与 tray.yaml 不一致，已废止）。
+_MARGIN_MM = 20.0
 
 # 罗布斯塔生豆近似色（BGR）与缺陷色
 _BEAN_BGR = (96, 120, 150)      # 浅褐绿生豆
 _BEAN_JITTER = 28               # 逐豆明度抖动幅度
 _BLACK_BGR = (24, 22, 20)       # 黑豆（主缺陷）
 _BACKGROUND = (188, 192, 198)   # 亚克力浅灰（BGR）
-
-_MARKER_MM = 60.0               # 四角 ArUco 边长（mm），对齐规划 tray.yaml
 
 
 class MockSource(Source):
@@ -78,6 +93,8 @@ class MockSource(Source):
         self.height = int(height)
         self.seed = int(seed)
         self.defect_rate = float(defect_rate)
+        # 采集几何（单一真源 tray.yaml）：画布 = 盘面 + 四周外缘，盘面居中。
+        self.px_per_mm = min(self.width, self.height) / (TRAY_MM + 2.0 * _MARGIN_MM)
 
     # ------------------------------------------------------------------
     def capture_pair(self, sample_id: str, tray_id: str) -> TrayScan:
@@ -94,7 +111,7 @@ class MockSource(Source):
         """采样一盘布局：mm 坐标 + 半径 + 是否黑豆（top/bottom 共享布局）。"""
         n = max(0, int(round(self.n_beans * rng.uniform(0.8, 1.2))))
         # 避开四角 ArUco 区（码+静区外缘 = marker*1.5 = 90mm）
-        margin_mm = _MARKER_MM * 1.5 + 10.0
+        margin_mm = MARKER_MM * 1.5 + 10.0
         lo, hi = margin_mm, TRAY_MM - margin_mm
         beans: list[dict] = []
         tries = 0
@@ -111,8 +128,8 @@ class MockSource(Source):
     def _render(self, rng: np.random.Generator, layout: list[dict], side: str) -> np.ndarray:
         """渲染单面：底噪 + 豆 + 四角 ArUco + 全局亮度扰动。"""
         w, h = self.width, self.height
-        px_per_mm = min(w, h) / TRAY_MM
-        ox = (w - TRAY_MM * px_per_mm) / 2.0  # 盘面居中偏移
+        px_per_mm = self.px_per_mm
+        ox = (w - TRAY_MM * px_per_mm) / 2.0  # 盘面居中偏移（画布外缘各 _MARGIN_MM）
         oy = (h - TRAY_MM * px_per_mm) / 2.0
 
         img = np.empty((h, w, 3), dtype=np.uint8)
@@ -147,22 +164,16 @@ class MockSource(Source):
     ) -> None:
         """四角 ArUco（id=0..3，角位序 TL,TR,BR,BL），M3 标定直接可用。
 
-        几何与贴码方式对齐 scripts/oss_smoke.py 的已验证路径：
-        码中心 = 角内缩 marker/2，外扩 side//4 白色静区。
+        码心 mm 坐标取 ``CENTERS_MM``（configs/tray.yaml，单一几何真源，
+        与打印板 make_aruco.py / 标定配置完全同源）。码外 1/4 边长白静区
+        伸出盘外约 15mm，由画布外缘 ``_MARGIN_MM=20mm`` 完整保住
+        （W2 实测坑：静区被裁则检测失败——用视野外缘而非内缩码心解决）。
         """
         dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
-        side_px = max(16, int(round(_MARKER_MM * px_per_mm)))
+        side_px = max(16, int(round(MARKER_MM * px_per_mm)))
         half_px = side_px // 2
         pad = max(4, side_px // 4)
-        # 码中心内缩 marker/4：保证 side//4 白色静区完整落在画布内
-        # （码贴边会被裁掉静区导致检测失败 —— W2 实测坑，勿改回 marker/2）
-        _c = _MARKER_MM / 2 + _MARKER_MM / 4
-        centers_mm = {
-            0: (_c, _c),
-            1: (TRAY_MM - _c, _c),
-            2: (TRAY_MM - _c, TRAY_MM - _c),
-            3: (_c, TRAY_MM - _c),
-        }
+        centers_mm = CENTERS_MM
         h, w = img.shape[:2]
         tile_side = 2 * (half_px + pad)
         for mid, (mx, my) in centers_mm.items():

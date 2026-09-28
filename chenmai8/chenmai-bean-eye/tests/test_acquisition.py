@@ -120,8 +120,10 @@ class TestMockSequence:
     def test_mock_frames_carry_detectable_aruco(self, tmp_path: Path) -> None:
         """四角 ArUco（id=0..3）在双面帧上可检测 —— Mock 帧可直接喂 M3 标定。
 
-        回归锚点：码中心必须内缩 marker/4 保住 side//4 静区（W2 实测坑：
-        贴边会裁掉静区导致检测失败）。512px 为最小可检分辨率。
+        回归锚点（W13 更新）：码心取 configs/tray.yaml 的 centers_mm（贴盘角
+        30mm），side/4 静区伸出盘外由画布外缘（20mm 视野边）完整保住
+        （W2 实测坑：静区被裁则检测失败——用视野外缘而非内缩码心解决）。
+        512px 为最小可检分辨率。
         """
         import cv2
 
@@ -135,6 +137,35 @@ class TestMockSequence:
                 ids = detector.detectMarkers(cv2.cvtColor(img, cv2.COLOR_BGR2GRAY))[1]
                 found = sorted(int(i[0]) for i in ids) if ids is not None else []
                 assert found == [0, 1, 2, 3], f"{width}px {side_key}: 检出 {found}"
+
+    def test_mock_frame_calibrates_against_default_tray_config(self, tmp_path: Path) -> None:
+        """Mock 帧对默认配置标定：px_per_mm 相对误差 <1%（W13 修复①的回归锚点）。
+
+        码位几何单一真源 = configs/tray.yaml（Mock / make_aruco / 标定同坐标）。
+        修复前 Mock 自行内缩到 45mm 而配置是 30mm，跨距 210mm 被配到 240mm，
+        本测试会以 ~14% 尺度误差失败——「检测点对配置点」的自洽门（2mm）挡
+        不住这种布局漂移，必须靠这条端到端断言。
+        """
+        from beaneye.calibration import calibrate, load_tray_config
+
+        src = MockSource(tmp_path, n_beans=30, seed=7)  # 默认 2048×2048
+        scan = src.capture_pair("s", "t")
+        img = imread_bgr(scan_paths(scan, tmp_path)["top"])
+
+        cal = calibrate(img, load_tray_config())
+        ppm_rel = abs(cal.px_per_mm - src.px_per_mm) / src.px_per_mm
+        assert ppm_rel < 0.01, (
+            f"Mock 帧标定 px_per_mm 相对误差 {ppm_rel * 100:.2f}% ≥ 1%——"
+            "Mock 布局与 configs/tray.yaml 已漂移（码位几何单一真源被破坏）"
+        )
+        # 四码中心反投影 ≤1mm（合成空盘检测残差口径，比 0.5mm 主通过线放宽）
+        from beaneye.calibration import px_to_mm
+
+        errs = [
+            float(np.linalg.norm(np.asarray(px_to_mm(cal.centers_px[m], cal.H)) - np.asarray(c)))
+            for m, c in load_tray_config().centers_mm.items()
+        ]
+        assert max(errs) <= 1.0, f"Mock 帧码中心反投影最大误差 {max(errs):.3f}mm > 1mm"
 
 
 # ---------------------------------------------------------------------------
@@ -180,6 +211,118 @@ class TestUsbNoDevice:
         assert cfg["top_index"] == 0 and cfg["bottom_index"] == 1
         assert (cfg["width"], cfg["height"]) == (3840, 2160)
         assert cfg["warmup_frames"] >= 0
+
+
+# ---------------------------------------------------------------------------
+# UsbSource 注入测试（W13 修复⑧：读失败关-开恢复 + 分辨率读回核对，机器无关）
+# ---------------------------------------------------------------------------
+
+
+class _FakeCap:
+    """cv2.VideoCapture 替身：可编程 isOpened/set/get/read 行为。
+
+    ``fail_reads`` 预算按**设备号跨实例共享**（同设备号的前 N 次 read 失败，
+    之后全部成功）——这样「重开后的新实例读到成功帧」可被真实模拟。
+    """
+
+    calls: list[str] = []
+    _fail_budget: dict[int, int] = {}
+
+    def __init__(self, behavior: dict, index: int = 0) -> None:
+        self._b = behavior
+        self._index = index
+        self.released = False
+        self.read_calls = 0
+        self.w = behavior.get("reported_wh", (640, 480))[0]
+        self.h = behavior.get("reported_wh", (640, 480))[1]
+        type(self).calls.append(f"open{index}")
+
+    def isOpened(self) -> bool:
+        return not self.released and self._b.get("opens", True)
+
+    def set(self, prop: int, value: float) -> bool:
+        type(self).calls.append(f"set{self._index}")
+        return True
+
+    def get(self, prop: int) -> float:
+        if prop == 3:  # CAP_PROP_FRAME_WIDTH
+            return float(self.w)
+        if prop == 4:  # CAP_PROP_FRAME_HEIGHT
+            return float(self.h)
+        return 0.0
+
+    def grab(self) -> bool:
+        return True
+
+    def read(self) -> tuple[bool, object]:
+        self.read_calls += 1
+        type(self).calls.append(f"read{self._index}#{self.read_calls}")
+        budget = type(self)._fail_budget.get(self._index, 0)
+        if budget > 0:
+            type(self)._fail_budget[self._index] = budget - 1
+            return False, None
+        return True, np.zeros((self.h, self.w, 3), dtype=np.uint8)
+
+    def release(self) -> None:
+        self.released = True
+        type(self).calls.append(f"release{self._index}")
+
+
+def _install_fake_cv2(monkeypatch, behavior_by_index: dict[int, dict]) -> list[str]:
+    """把 usb 模块可见的 cv2.VideoCapture 换成替身工厂，返回调用日志。"""
+    import beaneye.acquisition.usb as usb
+
+    _FakeCap.calls = []
+    _FakeCap._fail_budget = {i: b.get("fail_reads", 0) for i, b in behavior_by_index.items()}
+
+    def factory(index: int, backend: int = None):  # noqa: ANN001
+        return _FakeCap(behavior_by_index.get(index, {}), index)
+
+    monkeypatch.setattr(usb.cv2, "VideoCapture", factory)
+    return _FakeCap.calls
+
+
+class TestUsbRecoveryInjected:
+    def test_read_failure_reopens_once_and_succeeds(self, monkeypatch, tmp_path: Path) -> None:
+        """读帧失败 → release + 重开 + 重读成功（热插拔恢复，W13 ⑧）。
+
+        fail_reads=1：top 同设备号的前 1 次读失败（构造后的首读），重开后的
+        实例读到成功帧；构造期只 warmup(grab) 不 read，不触发。
+        """
+        calls = _install_fake_cv2(monkeypatch, {0: {"reported_wh": (3840, 2160), "fail_reads": 1},
+                                                1: {"reported_wh": (3840, 2160)}})
+        src = UsbSource(tmp_path, top_index=0, bottom_index=1, warmup_frames=0)
+        scan = src.capture_pair("s", "t")
+        assert scan.source == "usb"
+        assert any(c.startswith("release0") for c in calls), "读失败后必须先 release"
+        assert calls.count("open0") == 2, f"top 相机应重开一次，实际 opens={calls.count('open0')}"
+        src.close()
+
+    def test_persistent_read_failure_raises_acquisition_error(self, monkeypatch, tmp_path: Path) -> None:
+        """重开后仍读失败 → AcquisitionError（不再无限重试）。"""
+        _install_fake_cv2(monkeypatch, {0: {"reported_wh": (3840, 2160), "fail_reads": 99},
+                                        1: {"reported_wh": (3840, 2160)}})
+        src = UsbSource(tmp_path, top_index=0, bottom_index=1, warmup_frames=0)
+        with pytest.raises(AcquisitionError, match="仍读帧失败"):
+            src.capture_pair("s", "t")
+        src.close()
+
+    def test_resolution_mismatch_raises_acquisition_error(self, monkeypatch, tmp_path: Path) -> None:
+        """UVC 静默忽略请求分辨率（get 读回不符）→ AcquisitionError（W13 ⑧）。"""
+        _install_fake_cv2(monkeypatch, {0: {"reported_wh": (1920, 1080)},   # 请求 3840x2160
+                                        1: {"reported_wh": (3840, 2160)}})
+        with pytest.raises(AcquisitionError, match="实际分辨率 1920x1080"):
+            UsbSource(tmp_path, top_index=0, bottom_index=1, warmup_frames=0)
+
+    def test_resolution_match_opens_normally(self, monkeypatch, tmp_path: Path) -> None:
+        """分辨率读回与请求一致 → 正常构造 + capture_pair 出 TrayScan。"""
+        _install_fake_cv2(monkeypatch, {0: {"reported_wh": (3840, 2160), "reads": 0},
+                                        1: {"reported_wh": (3840, 2160), "reads": 0}})
+        src = UsbSource(tmp_path, top_index=0, bottom_index=1, warmup_frames=1)
+        scan = src.capture_pair("s", "t")
+        assert scan.calibration is None
+        assert src.resolutions() == {"top": (3840, 2160), "bottom": (3840, 2160)}
+        src.close()
 
 
 # ---------------------------------------------------------------------------
