@@ -18,7 +18,7 @@
 docs/      架构、数据 schema、模块契约、spec + eval
 pipeline/  管线编排与任务队列（音频/翻译/配音/口型/字幕/合规）
 configs/   管线常量、组件注册表（引擎路由与降级链）、角色音色映射
-dubmt/     时长可控翻译模型（数据合成与训练脚本）
+isomt-lora/ 时长可控翻译模型（数据合成与训练脚本）
 review/    Web 审校台
 tests/     契约与模块验收测试（pytest）
 ```

@@ -90,7 +90,7 @@ components:
 
   # ---- 说话人 / 视觉 ----
   voxdia:
-    task: speaker-embedding    # 说话人嵌入 + 谱聚类（CAM++ 系中文优化，免注册）
+    task: speaker-embedding    # 说话人嵌入 + 谱聚类（声纹嵌入系中文优化，免注册）
     langs: [zh]
     device: cuda:0
     precision: fp16
