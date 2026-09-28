@@ -1,4 +1,6 @@
 # Python 依赖（钉当前最新稳定版本，2026-09-28 安装验证于 Python 3.12.10 / win64）
+# 注：llmgw 网关仅用标准库（urllib/json/base64），不引入任何厂商 SDK——
+# 曾误钉的 openai==3.19.2 已删（仓库内零 import，2026-09-28 git grep 核实）。
 playwright==1.63.0
 fastapi==0.141.1
 uvicorn==0.54.0
@@ -8,4 +10,3 @@ jsonschema==4.26.0
 pillow==12.3.0
 fonttools==4.66.0
 qrcode==8.2
-openai==3.19.2

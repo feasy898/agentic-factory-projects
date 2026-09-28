@@ -20,17 +20,29 @@
 重试 / 降级规则：
     - 可重试错误：网络异常、超时、HTTP 408/409/429/5xx、200 但响应体异常；
       同一模型指数退避重试至多 max_retries 次，仍失败则降级到下一模型；
+    - 429（限流）：除按指数退避外，读取 Retry-After 响应头，把"到限流冷却点"
+      设为同密钥全模型共享（换备用模型也要先等完冷却，避免 一次限流放大成
+      模型数 × (max_retries+1) 次连打）；
+    - 单次 chat() 调用的总尝试次数有上限（max_total_attempts，默认 8，
+      环境变量 PF_LLM_MAX_TOTAL_ATTEMPTS），跨模型累计，达上限立即抛 LLMError；
     - 404（模型不存在）：不重试，直接降级到下一模型；
     - 其余 4xx（如 400/401 参数或密钥问题）：换模型也无益，立即抛 LLMError。
+
+密钥卫生：
+    - 上游错误响应体先抹掉 Bearer 密钥（含显式 key 与通用 Bearer token 两种
+      形态）再进入 LLMError 消息 / attempts 记录 / summary() / __repr__，
+      防止上游回显密钥后经异常文本、错误上报泄漏。
 
 仅依赖 Python 标准库（urllib/json/base64），零第三方依赖。
 """
 
 import base64
 import binascii
+import email.utils
 import http.client
 import json
 import os
+import re
 import time
 import urllib.error
 import urllib.request
@@ -45,11 +57,16 @@ __all__ = [
     "text_of",
     "json_of",
     "endpoint_for",
+    "redact",
 ]
 
 _RETRYABLE_STATUS = frozenset({408, 409, 429, 500, 502, 503, 504})
 _SKIP_MODEL_STATUS = frozenset({404})  # 模型不存在：不重试，直接降级
 _BACKOFF_CAP = 8.0
+_RETRY_AFTER_CAP = 60.0  # Retry-After 单次冷却上限（防异常大值挂死调用方）
+
+# 通用 Bearer token 形态（错误体脱敏兜底；密钥本体在构造时已按显式 key 抹除）
+_BEARER_TOKEN_RE = re.compile(r"(?i)\bbearer\s+[A-Za-z0-9._~+/=-]{8,}")
 
 
 class ConfigError(RuntimeError):
@@ -80,6 +97,12 @@ class LLMError(RuntimeError):
             )
         return "\n".join(lines)
 
+    def __repr__(self):
+        # 消息在构造前已按密钥脱敏（见 redact）；repr 再过一遍通用 Bearer
+        # 兜底正则，防调用方把未脱敏文本手工塞进 LLMError 后被 repr 带出。
+        return (f"{type(self).__name__}({redact(str(self))!r}, "
+                f"status={self.status!r}, model={self.model!r})")
+
 
 class _AttemptError(Exception):
     """内部：单次尝试失败的分类。"""
@@ -106,6 +129,43 @@ def _env(name, default=None):
     if value is None or value == "":
         return default
     return value
+
+
+def redact(text, api_key=None):
+    """抹掉文本中的 Bearer 密钥：显式 key（含 Bearer 前缀形态与裸 key）与
+    通用 Bearer token 兜底。错误响应体进入 LLMError 前必须经过本函数，
+    防上游回显密钥后经异常文本/错误上报带出。"""
+    if not text:
+        return text
+    out = str(text)
+    if api_key:
+        out = out.replace("Bearer " + api_key, "Bearer [REDACTED]")
+        out = out.replace(api_key, "[REDACTED]")
+    return _BEARER_TOKEN_RE.sub("Bearer [REDACTED]", out)
+
+
+def _parse_retry_after(value):
+    """解析 Retry-After 头（秒数或 HTTP 日期），返回秒数；无法解析返回 None。
+    日期形态按墙钟 time.time() 换算，作为粗粒度冷却足够。"""
+    if value is None:
+        return None
+    value = str(value).strip()
+    if not value:
+        return None
+    try:
+        return max(0.0, float(value))
+    except ValueError:
+        pass
+    try:
+        dt = email.utils.parsedate_to_datetime(value)
+    except (TypeError, ValueError):
+        return None
+    if dt is None:
+        return None
+    try:
+        return max(0.0, dt.timestamp() - time.time())
+    except Exception:
+        return None
 
 
 def endpoint_for(base_url):
@@ -184,8 +244,8 @@ def _apply_images(messages, images):
     return out
 
 
-def _extract_error_message(raw, fallback):
-    """从错误响应体里尽量提取可读信息。"""
+def _extract_error_message(raw, fallback, api_key=None):
+    """从错误响应体里尽量提取可读信息；进入异常文本前先抹掉密钥。"""
     try:
         obj = json.loads(raw.decode("utf-8"))
     except (UnicodeDecodeError, json.JSONDecodeError):
@@ -193,12 +253,12 @@ def _extract_error_message(raw, fallback):
     if isinstance(obj, dict):
         err = obj.get("error")
         if isinstance(err, dict) and err.get("message"):
-            return str(err["message"])
+            return redact(str(err["message"]), api_key)
         if isinstance(err, str) and err:
-            return err
+            return redact(err, api_key)
     if raw:
-        return f"{fallback}: {raw[:200].decode('utf-8', 'replace')}"
-    return fallback
+        return redact(f"{fallback}: {raw[:200].decode('utf-8', 'replace')}", api_key)
+    return redact(fallback, api_key)
 
 
 def text_of(response):
@@ -235,7 +295,7 @@ class Gateway:
 
     def __init__(self, base_url=None, api_key=None, model=None,
                  fallback_models=None, timeout=None, max_retries=None,
-                 backoff=None):
+                 backoff=None, max_total_attempts=None, clock=None, sleep=None):
         self.base_url = base_url if base_url is not None else _env("PF_LLM_BASE_URL")
         self.api_key = api_key if api_key is not None else _env("PF_LLM_API_KEY")
         self.model = model if model is not None else _env("PF_LLM_MODEL")
@@ -251,6 +311,16 @@ class Gateway:
                                else _env("PF_LLM_MAX_RETRIES", 2))
         self.backoff = float(backoff if backoff is not None
                              else _env("PF_LLM_BACKOFF", 0.8))
+        # 单次 chat() 调用跨模型的总尝试上限（防 限流×多模型 连打放大）。
+        self.max_total_attempts = max(
+            1, int(max_total_attempts if max_total_attempts is not None
+                   else _env("PF_LLM_MAX_TOTAL_ATTEMPTS", 8)))
+        # 时钟/睡眠可注入（自测用假时钟断言退避与冷却，不真等）。
+        self._clock = clock if clock is not None else time.monotonic
+        self._sleep = sleep if sleep is not None else time.sleep
+        # 429 限流冷却点（monotonic 时刻）；同密钥（同一 Gateway 实例）下
+        # 全部模型共享，换备用模型也要等完冷却。
+        self._cooldown_until = 0.0
 
     @property
     def model_chain(self):
@@ -310,39 +380,68 @@ class Gateway:
         backoff_s = float(backoff) if backoff is not None else self.backoff
 
         attempts = []
+        total_attempts = 0
         for model in self.model_chain:
             payload["model"] = model
-            outcome = self._attempt_model(endpoint, payload, model,
-                                          timeout_s, retries, backoff_s,
-                                          attempts)
+            # 单次调用总尝试上限：跨模型累计，达上限不再继续降级——
+            # 否则一次限流会放大成 模型数 × (max_retries+1) 次连打。
+            if total_attempts >= self.max_total_attempts:
+                last_status = attempts[-1]["status"] if attempts else None
+                raise LLMError(
+                    f"已达单次调用总尝试上限（{total_attempts}/"
+                    f"{self.max_total_attempts}），中止后续模型降级",
+                    status=last_status, model=model, attempts=attempts)
+            outcome, n = self._attempt_model(
+                endpoint, payload, model, timeout_s, retries, backoff_s,
+                attempts,
+                attempt_budget=self.max_total_attempts - total_attempts)
+            total_attempts += n
             if outcome is not None:
                 return outcome
         raise LLMError("全部模型均失败：" + " → ".join(self.model_chain),
                        attempts=attempts)
 
+    def _wait_cooldown(self):
+        """等待 429 限流冷却（同密钥全模型共享）；无冷却或已过点则立即返回。"""
+        wait = self._cooldown_until - self._clock()
+        if wait > 0:
+            self._sleep(wait)
+
     def _attempt_model(self, endpoint, payload, model, timeout_s, retries,
-                       backoff_s, attempts):
-        for attempt in range(retries + 1):
+                       backoff_s, attempts, attempt_budget=None):
+        """对单个模型重试；返回 (响应 dict 或 None, 本次尝试次数)。
+
+        attempt_budget：本模型最多可尝试的次数（跨模型总上限分摊）；
+        None 表示不限制（retries+1 次）。"""
+        n = 0
+        max_attempts = retries + 1
+        if attempt_budget is not None:
+            max_attempts = max(0, min(max_attempts, int(attempt_budget)))
+        for attempt in range(max_attempts):
+            self._wait_cooldown()
             try:
-                return self._post(endpoint, payload, timeout_s)
+                return self._post(endpoint, payload, timeout_s), n + 1
             except _Fatal as exc:
+                n += 1
                 attempts.append({"model": model, "attempt": attempt,
                                  "status": exc.status, "error": str(exc)})
                 raise LLMError(f"请求被拒绝（HTTP {exc.status}）：{exc}",
                                status=exc.status, model=model,
                                attempts=attempts) from None
             except _SkipModel as exc:
+                n += 1
                 attempts.append({"model": model, "attempt": attempt,
                                  "status": exc.status,
                                  "error": "模型不可用：" + str(exc)})
-                return None
+                return None, n
             except _Transient as exc:
+                n += 1
                 attempts.append({"model": model, "attempt": attempt,
                                  "status": exc.status, "error": str(exc)})
-                if attempt == retries:
-                    return None
-                time.sleep(min(backoff_s * (2 ** attempt), _BACKOFF_CAP))
-        return None
+                if attempt == max_attempts - 1:
+                    return None, n
+                self._sleep(min(backoff_s * (2 ** attempt), _BACKOFF_CAP))
+        return None, n
 
     def _post(self, endpoint, payload, timeout_s):
         data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
@@ -361,7 +460,16 @@ class Gateway:
                 detail = exc.read()
             except Exception:
                 detail = b""
-            msg = _extract_error_message(detail, f"HTTP {exc.code}")
+            msg = _extract_error_message(detail, f"HTTP {exc.code}", self.api_key)
+            if exc.code == 429:
+                # 限流：读取 Retry-After，把冷却点设为同密钥全模型共享——
+                # 换备用模型也会先等完冷却（见 _wait_cooldown）。
+                headers = getattr(exc, "headers", None)
+                delay = _parse_retry_after(
+                    headers.get("Retry-After") if headers is not None else None)
+                if delay is not None:
+                    self._cooldown_until = self._clock() + min(delay,
+                                                               _RETRY_AFTER_CAP)
             if exc.code in _RETRYABLE_STATUS:
                 raise _Transient(exc.code, msg) from None
             if exc.code in _SKIP_MODEL_STATUS:
@@ -377,7 +485,8 @@ class Gateway:
             raise _Transient(status, "响应体不是合法 JSON") from None
         if not isinstance(body, dict) or not body.get("choices"):
             desc = body.get("error") if isinstance(body, dict) else body
-            raise _Transient(status, f"响应缺少 choices：{desc!r}")
+            raise _Transient(status, redact(f"响应缺少 choices：{desc!r}",
+                                            self.api_key))
         return body
 
 

@@ -29,6 +29,7 @@ from llmgw.client import (
     chat,
     endpoint_for,
     json_of,
+    redact,
     text_of,
 )
 
@@ -41,6 +42,7 @@ __all__ = [
     "text_of",
     "json_of",
     "endpoint_for",
+    "redact",
 ]
 
 __version__ = "0.1.0"

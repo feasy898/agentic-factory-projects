@@ -1,13 +1,16 @@
 """llmgw.selftest —— 全离线自测（标准库 http.server 起本地 mock 服务）。
 
 mock 服务模拟 chat-completions 端点（POST /v1/chat/completions），
-按请求内容路由；全程仅访问 127.0.0.1，零外网依赖。覆盖 5 项：
+按请求内容路由；全程仅访问 127.0.0.1，零外网依赖。覆盖 6 项：
 
-    ① 普通对话：system+user 消息回声、choices/usage 结构、Bearer 密钥校验
+    ① 普通对话：system+user 消息回声、choices/usage 结构、Bearer 密钥校验、
+      上游回显密钥时错误文本（str/summary/repr/traceback）已脱敏
     ② JSON 模式：response_format=json_object + json_schema 提示注入与解析
     ③ 图片输入：base64 → data URL，mock 端解码比对字节一致
-    ④ 重试：mock 首次返回 500、再次返回 200，客户端自动重试成功
+    ④ 重试/退避/限流：500 重试成功；假时钟断言指数退避 0.8/1.6/…封顶 8s；
+      429 读 Retry-After 且同密钥跨模型共享冷却；跨模型总尝试上限
     ⑤ 超时降级：主模型慢响应触发客户端超时 → 降级到备用模型成功
+    （另含 0 号项：环境变量驱动 + 鉴权 + 端点拼接 + ConfigError）
 
 运行（在 python/ 目录下）：
     .venv/Scripts/python.exe -m llmgw.selftest
@@ -21,10 +24,11 @@ import os
 import sys
 import threading
 import time
+import traceback
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 from llmgw import (Client, ConfigError, Gateway, LLMError, chat, endpoint_for,
-                   json_of, text_of)
+                   json_of, redact, text_of)
 
 HOST = "127.0.0.1"
 API_KEY = "mock-key-0123456789abcdef"
@@ -35,6 +39,21 @@ SLOW_SECONDS = 3.0
 
 IMAGE_BYTES = b"PF-MOCK-PNG-\x89PNG-bytes-0123"
 IMAGE_B64 = base64.b64encode(IMAGE_BYTES).decode("ascii")
+
+
+class FakeClock:
+    """假时钟：sleep 只记账并推进 now，退避/冷却断言不真等。"""
+
+    def __init__(self, now=100.0):
+        self.now = float(now)
+        self.sleeps: list[float] = []
+
+    def clock(self):
+        return self.now
+
+    def sleep(self, seconds):
+        self.sleeps.append(float(seconds))
+        self.now += float(seconds)
 
 
 # ---------------------------------------------------------------- mock 服务
@@ -95,10 +114,12 @@ class MockHandler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):  # 静音访问日志
         pass
 
-    def _json(self, status, obj):
+    def _json(self, status, obj, extra_headers=None):
         raw = json.dumps(obj, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
+        for k, v in (extra_headers or {}).items():
+            self.send_header(k, v)
         self.send_header("Content-Length", str(len(raw)))
         self.end_headers()
         self.wfile.write(raw)
@@ -154,13 +175,35 @@ class MockHandler(BaseHTTPRequestHandler):
             time.sleep(SLOW_SECONDS)
             reply("slow-finished-but-too-late")
             return
-        # 路由④：首次 500、再次成功——测重试
+        # 路由④a：首次 500、再次成功——测重试
         if "RETRY-MARKER" in joined:
             n = state.bump("retry")
             if n == 1:
                 self._json(500, {"error": {"message": "mock 临时故障（第 1 次）"}})
             else:
                 reply("retry-ok-attempt-%d" % n)
+            return
+        # 路由④b：恒 500——假时钟测指数退避序列
+        if "BACKOFF-MARKER" in joined:
+            self._json(500, {"error": {"message": "mock 恒定故障（退避测量）"}})
+            return
+        # 路由④c：首个请求 429 + Retry-After: 1.5，其后 200——测限流冷却
+        if "LIMIT-MARKER" in joined:
+            if state.bump("limit") == 1:
+                self._json(429, {"error": {"message": "mock 限流"}},
+                           extra_headers={"Retry-After": "1.5"})
+            else:
+                reply("limit-ok-after-429")
+            return
+        # 路由④d：恒 429 + Retry-After: 0.01——测总尝试上限
+        if "CAP-MARKER" in joined:
+            self._json(429, {"error": {"message": "mock 持续限流"}},
+                       extra_headers={"Retry-After": "0.01"})
+            return
+        # 路由①b：500 错误体回显 Authorization——测错误文本脱敏
+        if "ECHO-KEY-MARKER" in joined:
+            self._json(500, {"error": {"message": "上游回显: "
+                                       + self.headers.get("Authorization", "")}})
             return
         # 路由③：图片字节校验
         if "IMAGE-MARKER" in joined:
@@ -223,6 +266,24 @@ def test_env_and_auth(state):
         assert exc.attempts, "LLMError 应携带尝试记录"
     else:
         raise AssertionError("错误密钥应抛 LLMError")
+
+    # 上游错误体回显 Bearer 密钥 → str/summary/repr/traceback 全部脱敏
+    echo = Client(api_key=API_KEY, max_retries=0)
+    try:
+        echo.chat([{"role": "user", "content": "ECHO-KEY-MARKER 回显密钥"}])
+    except LLMError as exc:
+        tb_text = "".join(traceback.format_exception(exc))
+        for where, blob in (("str", str(exc)), ("summary", exc.summary()),
+                            ("repr", repr(exc)), ("traceback", tb_text)):
+            assert API_KEY not in blob, f"密钥泄漏进 {where}：{blob[:160]!r}"
+        assert "[REDACTED]" in exc.summary(), \
+            f"summary 应含脱敏占位：{exc.summary()[:160]!r}"
+    else:
+        raise AssertionError("回显密钥的 500（重试耗尽）应最终抛 LLMError")
+
+    # 裸密钥出现在错误体（无 Bearer 前缀）也必须抹掉
+    text = redact("boom key=mock-key-0123456789abcdef over", API_KEY)
+    assert API_KEY not in text and "[REDACTED]" in text, text
 
     # 缺环境变量 → ConfigError
     saved = {k: os.environ.get(k) for k in ("PF_LLM_BASE_URL", "PF_LLM_MODEL")}
@@ -294,14 +355,57 @@ def test_image_input(state):
         raise AssertionError("非法 base64 应抛 ValueError")
 
 
-def test_retry_on_500(state):
-    """④ 首次 500 → 自动重试成功。"""
+def test_retry_backoff_429(state):
+    """④ 重试/退避/限流：500 重试成功；假时钟锁退避序列；429 共享冷却；总尝试上限。"""
+    # a) 首次 500 → 自动重试成功（真时钟，退避钉 0.05s 不拖慢自测）
     before = state.count("retry")
     resp = chat([{"role": "user", "content": "RETRY-MARKER 试一下"}],
                 max_retries=3, backoff=0.05)
     assert text_of(resp) == "retry-ok-attempt-2", text_of(resp)
     assert state.count("retry") == before + 2, \
         "应恰好两次请求（第 1 次 500 + 第 2 次成功）"
+
+    # b) 假时钟锁指数退避序列：0.8 → 1.6 → 3.2 → 6.4 → 封顶 8.0
+    fc = FakeClock()
+    gw = Client(api_key=API_KEY, model=PRIMARY_MODEL, fallback_models=[],
+                max_retries=5, backoff=0.8, clock=fc.clock, sleep=fc.sleep)
+    try:
+        gw.chat([{"role": "user", "content": "BACKOFF-MARKER"}])
+    except LLMError:
+        pass
+    else:
+        raise AssertionError("恒 500 应最终抛 LLMError")
+    assert fc.sleeps == [0.8, 1.6, 3.2, 6.4, 8.0], \
+        f"退避序列应 [0.8, 1.6, 3.2, 6.4, 8.0]（封顶 8s），得到 {fc.sleeps}"
+
+    # c) 429 + Retry-After：同密钥跨模型共享冷却（备用模型请求前先等冷却）
+    fc2 = FakeClock()
+    gw2 = Client(api_key=API_KEY, model=PRIMARY_MODEL,
+                 fallback_models=[FALLBACK_MODEL], max_retries=0,
+                 clock=fc2.clock, sleep=fc2.sleep)
+    resp = gw2.chat([{"role": "user", "content": "LIMIT-MARKER 限流"}])
+    assert resp.get("model") == FALLBACK_MODEL, \
+        f"429 后应降级到备用模型，得到 {resp.get('model')}"
+    assert text_of(resp) == "limit-ok-after-429", text_of(resp)
+    assert any(abs(s - 1.5) < 1e-9 for s in fc2.sleeps), \
+        f"主→备模型切换应先等 Retry-After=1.5s 共享冷却，sleeps={fc2.sleeps}"
+    assert fc2.sleeps.index(1.5) == 0, \
+        f"冷却应发生在降级请求之前，sleeps={fc2.sleeps}"
+
+    # d) 总尝试上限：恒 429 时跨模型累计达上限立即中止，不再无限连打
+    fc3 = FakeClock()
+    gw3 = Client(api_key=API_KEY, model=PRIMARY_MODEL,
+                 fallback_models=[FALLBACK_MODEL, "mock-x", "mock-y"],
+                 max_retries=2, max_total_attempts=4,
+                 clock=fc3.clock, sleep=fc3.sleep)
+    try:
+        gw3.chat([{"role": "user", "content": "CAP-MARKER 上限"}])
+    except LLMError as exc:
+        assert len(exc.attempts) == 4, \
+            f"达总尝试上限应恰好 4 次尝试，实际 {len(exc.attempts)}"
+        assert "上限" in str(exc), f"错误信息应说明触发了上限：{exc}"
+    else:
+        raise AssertionError("恒 429 超总尝试上限应抛 LLMError")
 
 
 def test_timeout_fallback(state):
@@ -323,7 +427,15 @@ def test_timeout_fallback(state):
 
 # ---------------------------------------------------------------- 主流程
 
+def _force_utf8_stdio() -> None:
+    """Windows 管道/控制台默认非 UTF-8 代码页，固定输出编码避免中文乱码。"""
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
+
+
 def main():
+    _force_utf8_stdio()
     server = MockServer((HOST, 0))
     port = server.server_address[1]
     thread = threading.Thread(target=server.serve_forever,
@@ -342,11 +454,11 @@ def main():
     print(f"mock 服务已启动：http://{HOST}:{port}/v1/chat/completions（仅本机，无外网）")
     try:
         state = server.state
-        _check("0 环境变量驱动/鉴权/端点拼接", lambda: test_env_and_auth(state))
+        _check("0 环境变量驱动/鉴权/端点拼接/错误脱敏", lambda: test_env_and_auth(state))
         _check("1 普通对话", lambda: test_normal_chat(state))
         _check("2 JSON 模式", lambda: test_json_mode(state))
         _check("3 图片 base64 输入", lambda: test_image_input(state))
-        _check("4 500→重试成功", lambda: test_retry_on_500(state))
+        _check("4 重试/退避/限流（假时钟）", lambda: test_retry_backoff_429(state))
         _check("5 超时→降级模型", lambda: test_timeout_fallback(state))
     finally:
         server.shutdown()
