@@ -125,7 +125,12 @@
     "required_texts": ["宝石消消乐（试玩演示）", ...],  // CHK10 输入：要求的渲染文案（CLI --require-text）
     "required_sprites": ["piece-0"],                    // CHK10 输入：要求的替换素材键（CLI --require-sprite）
     "page_texts": ["..."],                              // 模板 __PF_QC__.texts() 上报的已渲染文案（竖屏趟，
-                                                        //   驱动前+结束后两次并集；画布文字不进 DOM）
+                                                        //   驱动前+循环各相位+结束后并集；画布文字不进 DOM）
+    "text_states": [ { "text": "...", "everVisible": true } ],  // CHK10 可见性自证（2026-09-29 增）：
+                                                        //   采样时刻 __PF_QC__.textStates() 逐文案
+                                                        //   active+visible 核验的"曾见"并集
+    "text_states_hook": true,                           // 模板是否提供 __PF_QC__.textStates（缺失时
+                                                        //   CHK10 对 required_texts 从严 fail）
     "asset_audit": [ { "texKey": "gem-0", "spriteKey": "piece-0",
                        "mad": 0, "replaced": true } ]   // 替换素材像素对账（渲染贴图 vs 内联用户 PNG）
   }
@@ -134,7 +139,9 @@
 
 - 注意：`facts` 中**不含** autoplay 明细（单独在判定前抽出，不落盘到 facts）——两趟视口与试玩事实的完整采集结构见 [qacore spec](qacore.md)。
 - CHK10（多语言文案与素材上屏）2026-09-29 实装：required_* 全缺 → skip（同旧"未实装"形态）；
-  文案子串命中 + 素材对账 replaced 全真 → pass；任一缺口 → fail。
+  文案子串命中 + **text_states 中每条文案曾有 active+visible 采样证据**（模板无
+  `__PF_QC__.textStates` 时无证据即 fail，从严）+ 素材对账 replaced 全真 → pass；任一缺口 → fail。
+  自动 pass ≠ 人眼复核：演示上场前须对照报告截图人眼过一遍（docs/demo-checklist.md §3）。
 - **缺口**：报告尚无正式 JSON Schema（CHK 字段表即本节；schema 化列入 M8 后续）。
 
 ## 5. 二维码指向与计时（2026-09-28 随 `make` 实现，冻结）
@@ -144,13 +151,17 @@
   100.64/10 > 其他 > 198.18/15 兜底——默认路由常落在 TUN 虚拟网卡上，不可直接采信），
   `--serve-host` 可显式覆盖。
 - 伺服：`make` 以分离子进程启动 `python -m http.server <port> --bind 0.0.0.0 --directory
-  <out>/demo-prebuilt`（缺省端口 8618，被未知进程占用时向后顺延；状态记 `<out>/.demo-serve.json`，
-  端口仍可连则复用上次会话的伺服器）。汇总页 `index.html` 与二维码同源。
+  <out>/demo-prebuilt`（缺省端口 8618，被未知进程占用时向后顺延；状态记 `<out>/.demo-serve.json`；
+  复用前三重核实：记录端口 TCP 可连 + 记录 PID 存在且映像名为 python（tasklist /FI，防 PID
+  跨重启被无关进程复用）+ 伺服根与本次一致——任一不满足即清状态文件，验明正身的旧 python
+  伺服器杀旧起新（spawn ~0.3s），占用者是未知进程时绝不 taskkill 只换口）。汇总页 `index.html`
+  与二维码同源。
 - "可扫"判定 = qr.png 落盘 **且** 伺服端口 TCP 监听实测通过（本模块不向 loopback/私网发起
   HTTP 请求，健康检查只做 TCP connect）。
 - 计时口径（实测打印两行，并写入 pipeline-report.json）：
   1. **make 墙钟**：编排入口 → 二维码可扫（演示计时器口径，目标 ≤90s；
-     留档实测 41.8s：构建+三渠道包+qacore 自动试玩+兜底目录）；
+     留档实测 28.9s：构建+三渠道包+qacore 自动试玩+兜底目录；接通复审复核值，
+     旧草案期 41.8s 已被真实链路取代）；
   2. **spec 修改完成 → 二维码可扫**：以 spec 文件 mtime 为"改完 spec"的客观代理。
 
 ### 5.1 pfcore serve（2026-09-29 反馈行动 2，冻结）
