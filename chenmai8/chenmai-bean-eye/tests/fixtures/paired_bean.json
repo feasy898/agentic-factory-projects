@@ -1,0 +1,113 @@
+{
+  "bean_id": "b0001",
+  "top": {
+    "obs_id": "top_017",
+    "side": "top",
+    "defect": "black",
+    "defect_conf": 0.92,
+    "severity_rank": 12,
+    "crop_path": "out/crops/scan_synth_0001/top_017.png",
+    "mask": {
+      "mask_id": "top_017",
+      "side": "top",
+      "polygon": [
+        [
+          10.0,
+          20.0
+        ],
+        [
+          12.5,
+          22.0
+        ],
+        [
+          14.0,
+          25.5
+        ],
+        [
+          11.0,
+          27.0
+        ],
+        [
+          8.5,
+          23.5
+        ]
+      ],
+      "bbox_mm": [
+        8.5,
+        20.0,
+        14.0,
+        27.0
+      ],
+      "area_mm2": 28.3,
+      "centroid_mm": [
+        11.2,
+        23.6
+      ],
+      "source": "classic",
+      "conf": 0.97
+    },
+    "color_lab": [
+      35.2,
+      18.4,
+      9.1
+    ],
+    "eq_diameter_mm": 6.0
+  },
+  "bottom": {
+    "obs_id": "bottom_017",
+    "side": "bottom",
+    "defect": "normal",
+    "defect_conf": 0.99,
+    "severity_rank": 0,
+    "crop_path": "out/crops/scan_synth_0001/bottom_017.png",
+    "mask": {
+      "mask_id": "bottom_017",
+      "side": "bottom",
+      "polygon": [
+        [
+          10.2,
+          20.3
+        ],
+        [
+          12.6,
+          22.1
+        ],
+        [
+          13.9,
+          25.4
+        ],
+        [
+          11.1,
+          26.9
+        ],
+        [
+          8.7,
+          23.6
+        ]
+      ],
+      "bbox_mm": [
+        8.7,
+        20.3,
+        13.9,
+        26.9
+      ],
+      "area_mm2": 27.9,
+      "centroid_mm": [
+        11.3,
+        23.7
+      ],
+      "source": "classic",
+      "conf": 0.96
+    },
+    "color_lab": [
+      52.0,
+      -10.2,
+      20.1
+    ],
+    "eq_diameter_mm": 5.96
+  },
+  "pairing_cost": 1.8,
+  "worst_side": "top",
+  "final_defect": "black",
+  "final_severity_rank": 12
+}

@@ -1,0 +1,29 @@
+{
+  "bean_count": 350,
+  "sieve_hist": {
+    "13": 120,
+    "14": 150,
+    "15": 60,
+    "16": 20
+  },
+  "sieve_pass": true,
+  "eq_diameter_mm_stats": {
+    "min": 5.1,
+    "max": 8.2,
+    "mean": 6.4,
+    "median": 6.3
+  },
+  "color_lab_mean": [
+    52.1,
+    -10.5,
+    20.3
+  ],
+  "delta_e_mean": 3.2,
+  "delta_e_hist": {
+    "0-2": 90,
+    "2-4": 160,
+    "4-8": 100
+  },
+  "est_weight_g": 196.0,
+  "weight_model": "area_linear:v1"
+}

@@ -1,0 +1,15 @@
+{
+  "report_id": "6f1c0d2a-9b3e-4f57-8a21-4c9d7e501ab2",
+  "langs": [
+    "zh",
+    "en",
+    "vi"
+  ],
+  "html_paths": {
+    "zh": "out/reports/6f1c0d2a.zh.html",
+    "en": "out/reports/6f1c0d2a.en.html",
+    "vi": "out/reports/6f1c0d2a.vi.html"
+  },
+  "qr_payload": "https://verify.beaneye.example/r/6f1c0d2a-9b3e-4f57-8a21-4c9d7e501ab2|e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}
