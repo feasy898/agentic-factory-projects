@@ -11,6 +11,8 @@ upstreams:
   # 真实互联网上游（D 期接入）：base_url / api_key_env / models 由部署方按合同
   # 环境填写；真实上游产品名不预置在示例里（公开仓库卫生，审查 §E）。
 ai_label: "本内容由AI生成"
+# 拦截代答/拒答文案库（T2.2 outguard；相对路径按仓库根解析；缺失回落内置默认）
+outguard_texts: config/outguard_texts.yaml
 thresholds: {batch_pii_to_govcloud: 3}
 # 语义审核模型（D4 接入）：HF/魔搭路径只允许写在这里，README/代码不出现模型名
 moderation_model: ""

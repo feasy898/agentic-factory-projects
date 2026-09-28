@@ -28,28 +28,22 @@ from common.logs import get_logger
 from masking.mapper import SessionMapper
 from masking.remap import StreamRestorer
 from masking.toolbuf import ToolCallBuffer
+# AI 标识的常量/辅助函数自 T2.2 起归属 outguard 包（outguard/label.py 权威实现）；
+# 此处再导出保持既有引用（evals.t0_stream 等）不变。
+from outguard.label import (  # noqa: F401 — 再导出（权威实现在 outguard/label.py）
+    AI_ANNOTATION_TYPE,
+    ANNOTATIONS_FIELD,
+    ai_annotations,
+    ai_label_tail,
+)
 
 log = get_logger(__name__)
 
 #: SSE 结束哨兵（OpenAI 协议）
 SSE_DONE = "[DONE]"
 
-#: AI 生成标识的注解类型与元数据字段名（§5.6 annotations 字段；字段只增不改名）
-AI_ANNOTATION_TYPE = "ai_generated"
-ANNOTATIONS_FIELD = "annotations"
-
 #: ``data:`` 行前缀（SSE 规范，冒号后可有可无一个空格）
 _DATA_PREFIX = "data:"
-
-
-def ai_label_tail(label: str) -> str:
-    """标识行文本（作为内容尾部一行注入；含前导换行）。"""
-    return "\n" + label
-
-
-def ai_annotations(label: str) -> list[dict[str, str]]:
-    """AI 标识元数据字段值（与非流式 annotations 字段同形）。"""
-    return [{"type": AI_ANNOTATION_TYPE, "text": label}]
 
 
 def format_sse(payload_json: str) -> str:

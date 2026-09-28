@@ -62,6 +62,8 @@ class AppConfig(BaseModel):
     # 原值才能还原（见 masking/session_store.py 模块文档）
     audit_db: str = "data/audit.db"
     session_db: str = "data/session_map.db"
+    # 拦截代答/拒答文案库（T2.2 outguard；相对路径按仓库根解析；缺失回落内置默认）
+    outguard_texts: str = "config/outguard_texts.yaml"
 
 
 def _override_from_env(data: dict[str, Any], env: Mapping[str, str]) -> dict[str, Any]:

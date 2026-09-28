@@ -5,7 +5,8 @@
     POST /v1/chat/completions   OpenAI 兼容（``stream=true`` 走 SSE 流式）；鉴权
                                 Authorization: Bearer <dept_key>；响应附
                                 x-anongw-route / x-anongw-request-id / x-anongw-session-id；
-                                流式成功另附 x-anongw-ai-label: 1（§6 M5，AI 生成标识头）
+                                成功回答另附 x-anongw-ai-label: 1（§6 M5，AI 生成标识头，
+                                流式随 SSE 头、非流式同头）
     GET  /v1/models             路由目标清单（脱敏视图，仅名字）
     POST /internal/detect       {text} → findings（调试；需部门 Key）
     POST /internal/anonymize    {text, session_id} → 占位符版本（调试/演示对比屏；需部门 Key）
@@ -83,6 +84,7 @@ def create_app(
     dept_key_digests: dict[str, str] | None = None,
     audit_store: AuditSink | None = None,
     session_registry: Any | None = None,
+    outguard: Any | None = None,
 ) -> FastAPI:
     """构造网关应用。生产入口不传参（读 config/ 与环境）；测试可全量注入。
 
@@ -92,6 +94,9 @@ def create_app(
     - ``session_registry`` 缺省 → :class:`masking.session_store.SessionStore`
       （LRU+SQLite ``masking_map``+TTL，路径 ``cfg.session_db``，TTL ``cfg.session_ttl_h``），
       lifespan 启动 TTL 清理协程、关闭时收尾；
+    - ``outguard``（T2.2）缺省 → :class:`outguard.service.OutguardService.from_config`
+      （文案库 ``cfg.outguard_texts``）；注入自定义复检后端时构造 OutguardService
+      传入（P1 语义审核模型采样执行入口）；
     - 注入形态（evals）不接管生命周期，由注入方自行 close。
     """
     cfg = cfg or load_app_config()
@@ -108,7 +113,8 @@ def create_app(
     if registry is None:
         registry = SessionStore(mask_key.encode("utf-8"), resolve_db_path(cfg.session_db),
                                 ttl=timedelta(hours=cfg.session_ttl_h))
-    service = GatewayService(cfg, mask_key, audit_store=audit, registry=registry)
+    service = GatewayService(cfg, mask_key, audit_store=audit, registry=registry,
+                             outguard=outguard)
 
     @asynccontextmanager
     async def lifespan(_: FastAPI):

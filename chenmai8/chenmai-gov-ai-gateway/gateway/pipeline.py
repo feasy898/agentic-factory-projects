@@ -1,10 +1,11 @@
-"""网关主链路（T0.4 非流式 + T0.5 流式）：detect → mask → route → 转发 → 还原 → audit v0。
+"""网关主链路（T0.4 非流式 + T0.5 流式）：detect → mask → route → 转发 → 还原 → outguard → audit。
 
 请求处理顺序（开发指令 §3 数据流）::
 
     1 auth(dept key，app 层) → 2 detect(recognizers.rule v0) → 3 mask(会话稳定占位符)
     → 4 route(routing.engine v0) → 5 转发(gateway.provider，非流式/流式两形态)
-    → 6 还原(占位符→原值) → 7 audit(零明文硬闸；直构=内存表，app 默认=SQLite 写队列)
+    → 6 还原(占位符→原值) → 7 outguard(输出侧：复检钩子 + AI 生成标识；BLOCK 时
+      代答/拒答文案，outguard 包) → 8 audit(零明文硬闸；直构=内存表，app 默认=SQLite 写队列)
 
 非流式与流式共用 :meth:`GatewayService._prepare`（detect+mask+route，纯前置）；
 差异只在转发与还原形态：
@@ -55,10 +56,14 @@ from gateway.provider import (
 )
 from masking.mapper import SessionMapper, SessionRegistry
 from masking.toolbuf import restore_arguments
+from outguard.fallback import DEFAULT_BLOCK_DEFAULT
+from outguard.label import HEADER_AI_LABEL, apply_message_label
+from outguard.models import ModerationVerdict
+from outguard.service import OutguardService
 from recognizers.models import Finding
 from recognizers.rule.detect import detect
 from routing.engine import decide
-from routing.models import RouteDecision
+from routing.models import RouteDecision, RouteReason
 
 log = get_logger(__name__)
 
@@ -69,14 +74,18 @@ CODE_PAYLOAD_TOO_LARGE = "payload_too_large"
 CODE_INTERNAL_ERROR = "internal_error"
 CODE_UPSTREAM_ERROR = "upstream_error"
 
+#: 输出侧复检钩子命中（flagged）时的 reasons code 与审计 flag（outguard.moderation）
+CODE_OUTPUT_MODERATION = "OUTPUT_MODERATION"
+FLAG_OUTPUT_FLAGGED = "output_flagged"
+
 #: 上游不可达时返回的 HTTP 状态码
 STATUS_UPSTREAM_UNAVAILABLE = 502
 
-#: BLOCK 拦截的固定提示文案（§5.6 错误语义；代答/拒答模板由输出侧任务接管）
-BLOCK_MESSAGE = "涉密/涉敏内容已拦截，请通过保密渠道办理或删除敏感标识后重试"
+#: BLOCK 兜底拒答文案（兼容导出；运行时文案取 outguard 文案库——T2.2 起模板按
+#: 决定性 reason code 回退、代答命中拼尾，见 outguard/fallback.py）
+BLOCK_MESSAGE = DEFAULT_BLOCK_DEFAULT
 
-#: AI 生成标识响应头（§6 M5：x-anongw-ai-label: 1；流式响应随 SSE 头下发）
-HEADER_AI_LABEL = "x-anongw-ai-label"
+# HEADER_AI_LABEL（§6 M5：x-anongw-ai-label: 1）自 outguard.label 导入使用。
 
 #: 审计预览中密级词（BLOCK_FLAG 命中）的固定占位文案（拦截语义，不进明文面）
 CLASSIFIED_REDACTED = "〔密级·已拦截〕"
@@ -211,6 +220,7 @@ class _Prepared:
     masked_contents: dict[tuple[int, int], str]
     aux_masked: dict[str, str]
     prompt_preview: str
+    prompt_masked: str                       # 同 preview 但不做密级词占位（代答匹配输入）
     mapper: SessionMapper
     decision: RouteDecision
     headers: dict[str, str]
@@ -229,6 +239,7 @@ class GatewayService:
         audit_store: AuditSink | None = None,
         registry: Any = None,
         session_capacity: int = 1024,
+        outguard: OutguardService | None = None,
     ) -> None:
         self.cfg = cfg
         # 注意：审计/会话存储都可能实现 __len__，不能用 `or` 兜底（空表为 falsy 会被替换）。
@@ -239,6 +250,9 @@ class GatewayService:
         # 缺省进程内 LRU（直构形态）。
         self.registry = (registry if registry is not None
                          else SessionRegistry(mask_key.encode("utf-8"), capacity=session_capacity))
+        # outguard（T2.2 输出侧）：AI 标识 + 拦截文案库 + 复检钩子；
+        # 缺省按 config 构造（文案库 config/outguard_texts.yaml，缺失回落内置默认）。
+        self.outguard = outguard if outguard is not None else OutguardService.from_config(cfg)
         self._upstreams_by_name = {u.name: u for u in cfg.upstreams}
         self._upstream_for: dict[str, str] = {}
         for upstream in cfg.upstreams:
@@ -268,9 +282,12 @@ class GatewayService:
             )
             return GatewayResult(status_code, payload, headers)
 
-        # ── BLOCK：拦截（403 语义），上游不感知 ──
+        # ── BLOCK：拦截（403 语义），上游不感知；文案=reason 模板+代答（outguard）──
         if decision.route == "BLOCK":
-            payload = ApiError.content_blocked(BLOCK_MESSAGE, reasons=decision.reasons).model_dump()
+            payload = ApiError.content_blocked(
+                self.outguard.block_reply(decision, prep.prompt_masked),
+                reasons=decision.reasons,
+            ).model_dump()
             return finish(403, payload, upstream_name=None, response_preview="", flags=[])
 
         upstream = self._resolve_upstream(decision)
@@ -299,6 +316,19 @@ class GatewayService:
         # 6) 还原：占位符 → 原值（正文 + 工具参数；预览保留占位符版本）
         response_preview = self._first_choice_content(data)
         self._restore_choices(data, prep.mapper)
+
+        # 7) 输出侧复检钩子（§6 M5 moderate(response)；P0 空后端恒 safe 零影响）：
+        #    flagged → 按 content_blocked 拦截本次响应（上游已消费，审计如实记 flag）
+        flagged = self._moderate_response(data)
+        if flagged is not None:
+            return finish(403, flagged, upstream_name=upstream.name,
+                          response_preview=response_preview, flags=[FLAG_OUTPUT_FLAGGED])
+
+        # 8) AI 生成标识（§5.6 非流式方式）：首 choice message 尾注 + annotations
+        #    元数据 + 响应头；错误信封（上方各分支）不加——不是 AI 生成内容
+        if self.outguard.ai_label:
+            headers = {**headers, HEADER_AI_LABEL: "1"}
+            self._apply_ai_label(data, self.outguard.ai_label)
         return finish(200, data, upstream_name=upstream.name,
                       response_preview=response_preview, flags=[])
 
@@ -324,9 +354,13 @@ class GatewayService:
             )
             return GatewayStreamResult(status_code=status_code, headers=headers, payload=payload)
 
-        # ── BLOCK：拦截（403 语义），上游不感知；流式同样先拦再谈 ──
+        # ── BLOCK：拦截（403 语义），上游不感知；流式同样先拦再谈；
+        #    文案=reason 模板+代答（outguard），与非流式同源 ──
         if decision.route == "BLOCK":
-            payload = ApiError.content_blocked(BLOCK_MESSAGE, reasons=decision.reasons).model_dump()
+            payload = ApiError.content_blocked(
+                self.outguard.block_reply(decision, prep.prompt_masked),
+                reasons=decision.reasons,
+            ).model_dump()
             return finish(403, payload, upstream_name=None, flags=[])
 
         upstream = self._resolve_upstream(decision)
@@ -369,7 +403,7 @@ class GatewayService:
                           flags=[f"upstream_status_{stream.status_code}"])
 
         # 200：进入 SSE 组合管线（还原 + 工具 hold + AI 标识）；审计随流收尾落账
-        ai_label = (self.cfg.ai_label or "").strip() or None
+        ai_label = self.outguard.ai_label or None
         if ai_label:
             headers = {**headers, HEADER_AI_LABEL: "1"}
         preview_parts: list[str] = []
@@ -496,12 +530,19 @@ class GatewayService:
             "x-anongw-request-id": request_id,
             "x-anongw-session-id": session_id,
         }
-        prompt_preview = self._prompt_preview(messages, segments_by_message,
-                                              masked_contents, findings_by_segment)
+        prompt_preview = self._last_user_text(messages, segments_by_message,
+                                              masked_contents, findings_by_segment,
+                                              redact_block_flags=True)
+        # 代答匹配输入（outguard.block_reply）：同源但**不**做密级词占位——
+        # 密级词正属代答语义（涉密咨询），占位后关键词就匹配不上了；
+        # 该文本只做匹配、不回显不入库（403 message 是 YAML 固定文案）。
+        prompt_masked = self._last_user_text(messages, segments_by_message,
+                                             masked_contents, findings_by_segment,
+                                             redact_block_flags=False)
         return _Prepared(
             findings=findings, segments_by_message=segments_by_message,
             masked_contents=masked_contents, aux_masked=aux_masked,
-            prompt_preview=prompt_preview,
+            prompt_preview=prompt_preview, prompt_masked=prompt_masked,
             mapper=mapper, decision=decision, headers=headers,
             used_values=used_values, used_surfaces=used_surfaces,
         )
@@ -576,22 +617,26 @@ class GatewayService:
         return out
 
     @staticmethod
-    def _prompt_preview(messages: list[dict[str, Any]], segments_by_message: dict[int, list[_Segment]],
+    def _last_user_text(messages: list[dict[str, Any]], segments_by_message: dict[int, list[_Segment]],
                         masked_contents: dict[tuple[int, int], str],
-                        findings_by_segment: dict[tuple[int, int], list[Finding]]) -> str:
-        """审计预览：最后一条 user 消息的脱敏全文（无 user 消息则最后一条；≤500 由审计侧裁）。
+                        findings_by_segment: dict[tuple[int, int], list[Finding]],
+                        *, redact_block_flags: bool) -> str:
+        """最后一条 user 消息的脱敏全文（无 user 消息则最后一条；≤500 由审计侧裁）。
 
-        密级词（BLOCK_FLAG 命中）以 :data:`CLASSIFIED_REDACTED` 占位——拦截语义
-        的表面形式不进审计明文面（审查 §B：U5 黑名单含密级词）。
+        ``redact_block_flags=True``（审计预览口径）：密级词（BLOCK_FLAG 命中）以
+        :data:`CLASSIFIED_REDACTED` 占位——拦截语义的表面形式不进审计明文面
+        （审查 §B：U5 黑名单含密级词）。``False``（代答匹配口径）保留占位后的
+        原字面（密级词不脱敏、不外发，仅用于 outguard 关键词匹配）。
         """
         target = next((i for i in range(len(messages) - 1, -1, -1)
                        if str(messages[i].get("role", "")) == "user"), len(messages) - 1)
         parts: list[str] = []
         for segment in segments_by_message.get(target, []):
             text = masked_contents.get((target, segment.piece_index), segment.text)
-            for f in findings_by_segment.get((target, segment.piece_index), []):
-                if f.action_hint == "BLOCK_FLAG" and f.raw:
-                    text = text.replace(f.raw, CLASSIFIED_REDACTED)
+            if redact_block_flags:
+                for f in findings_by_segment.get((target, segment.piece_index), []):
+                    if f.action_hint == "BLOCK_FLAG" and f.raw:
+                        text = text.replace(f.raw, CLASSIFIED_REDACTED)
             parts.append(text)
         return "\n".join(parts)
 
@@ -628,6 +673,39 @@ class GatewayService:
                     if isinstance(fn, dict) and isinstance(fn.get("arguments"), str):
                         # 非流式直接整体还原（§6 M3 工具条目；实现归 masking.toolbuf）
                         fn["arguments"] = restore_arguments(mapper, fn["arguments"])
+
+    # ── 输出侧（T2.2 outguard）：复检钩子 + AI 标识 ──────────────
+    def _moderate_response(self, data: dict[str, Any]) -> dict[str, Any] | None:
+        """输出侧复检钩子（§6 M5 moderate(response)）：flagged → content_blocked 信封。
+
+        复检对象：还原后的首 choice 正文（P0 空后端恒 safe；P1 语义审核模型
+        采样执行，注入 OutguardService.moderator 即生效，此处接线不再变更）。
+        ``flagged`` → 403 信封 reasons code=OUTPUT_MODERATION（detail 带风险类目），
+        message 取文案库 OUTPUT_MODERATION 模板；无正文（纯工具调用响应）不复检。
+        """
+        content = self._first_choice_content(data)
+        if not content:
+            return None
+        verdict: ModerationVerdict = self.outguard.moderate(content)
+        if verdict.verdict != "flagged":
+            return None
+        detail = "输出侧复检命中：" + ("、".join(verdict.categories)
+                                       if verdict.categories else (verdict.detail or "flagged"))
+        reason = RouteReason(code=CODE_OUTPUT_MODERATION, detail=detail)
+        decision = RouteDecision(route="BLOCK", reasons=[reason])
+        return ApiError.content_blocked(
+            self.outguard.block_reply(decision), reasons=[reason],
+        ).model_dump()
+
+    @staticmethod
+    def _apply_ai_label(data: dict[str, Any], label: str) -> None:
+        """AI 生成标识（§5.6 非流式方式，原地改写）：首 choice message 尾注 + annotations。"""
+        choices = data.get("choices")
+        if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
+            return
+        message = choices[0].get("message")
+        if isinstance(message, dict):
+            apply_message_label(message, label)
 
     # ── 审计 ─────────────────────────────────────────────────────
     def _audit(self, *, request_id: str, session_id: str, dept: str,
