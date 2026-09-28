@@ -68,7 +68,7 @@ from gateway.pipeline import (
     GatewayService,
 )
 from masking.session_store import SessionStore
-from recognizers.rule.detect import detect
+from recognizers.pipeline import detect_full
 
 log = get_logger(__name__)
 
@@ -320,7 +320,7 @@ def create_app(
         text = body.get("text") if isinstance(body, dict) else None
         if not isinstance(text, str):
             return _error_response(400, CODE_BAD_REQUEST, "'text' must be a string")
-        found = detect(text)
+        found = detect_full(text)
         numbered = [f.model_copy(update={"fid": f"f_{i:04d}"}) for i, f in enumerate(found, start=1)]
         return JSONResponse({"findings": [f.model_dump() for f in numbered]})
 
@@ -342,7 +342,7 @@ def create_app(
         text = body["text"]
         spans = [
             (f.start, f.end, f.type, f.normalized)
-            for f in detect(text)
+            for f in detect_full(text)
             if f.action_hint == "MASK" and not f.whitelisted
         ]
         mapper = service.registry.get(session_id)

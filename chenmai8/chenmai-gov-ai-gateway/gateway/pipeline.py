@@ -2,7 +2,8 @@
 
 请求处理顺序（开发指令 §3 数据流）::
 
-    1 auth(dept key，app 层) → 2 detect(recognizers.rule v0) → 3 mask(会话稳定占位符)
+    1 auth(dept key，app 层) → 2 detect(recognizers：规则层 + 语义层注入检测，
+      :func:`recognizers.pipeline.detect_full`) → 3 mask(会话稳定占位符)
     → 4 route(routing.engine v0) → 5 转发(gateway.provider，非流式/流式两形态)
     → 6 还原(占位符→原值) → 7 outguard(输出侧：复检钩子 + AI 生成标识；BLOCK 时
       代答/拒答文案，outguard 包) → 8 audit(零明文硬闸；直构=内存表，app 默认=SQLite 写队列)
@@ -60,8 +61,8 @@ from outguard.fallback import DEFAULT_BLOCK_DEFAULT
 from outguard.label import HEADER_AI_LABEL, apply_message_label
 from outguard.models import ModerationVerdict
 from outguard.service import OutguardService
-from recognizers.models import Finding
-from recognizers.rule.detect import detect
+from recognizers.models import EntityClass, Finding
+from recognizers.pipeline import detect_full
 from routing.engine import decide
 from routing.models import RouteDecision, RouteReason
 
@@ -81,6 +82,9 @@ FLAG_OUTPUT_FLAGGED = "output_flagged"
 #: 上游不可达时返回的 HTTP 状态码
 STATUS_UPSTREAM_UNAVAILABLE = 502
 
+#: §5.2 R2：INJECTION 决定性拦截的审计 flag（「记录 flag=injection」）
+FLAG_INJECTION = "injection"
+
 #: BLOCK 兜底拒答文案（兼容导出；运行时文案取 outguard 文案库——T2.2 起模板按
 #: 决定性 reason code 回退、代答命中拼尾，见 outguard/fallback.py）
 BLOCK_MESSAGE = DEFAULT_BLOCK_DEFAULT
@@ -89,6 +93,16 @@ BLOCK_MESSAGE = DEFAULT_BLOCK_DEFAULT
 
 #: 审计预览中密级词（BLOCK_FLAG 命中）的固定占位文案（拦截语义，不进明文面）
 CLASSIFIED_REDACTED = "〔密级·已拦截〕"
+
+#: 审计预览中注入指令（BLOCK_FLAG 命中）的固定占位文案（同上，按类型区分标注）
+INJECTION_REDACTED = "〔注入·已拦截〕"
+
+
+def _block_flags(decision: RouteDecision) -> list[str]:
+    """BLOCK 审计 flags：决定性理由为 INJECTION 时记 ``flag=injection``（§5.2 R2）。"""
+    if decision.reasons and decision.reasons[0].code == "INJECTION":
+        return [FLAG_INJECTION]
+    return []
 
 
 class ChatBodyError(ValueError):
@@ -173,8 +187,8 @@ def _aux_texts(body: dict[str, Any]) -> list[str]:
     for message in body.get("messages") or []:
         if not isinstance(message, dict):
             continue
-        for field in ("tool_calls", "function_call"):
-            value = message.get(field)
+        for key in ("tool_calls", "function_call"):
+            value = message.get(key)
             if isinstance(value, dict):
                 texts.extend(_iter_string_leaves(value))
             elif isinstance(value, list):
@@ -288,7 +302,8 @@ class GatewayService:
                 self.outguard.block_reply(decision, prep.prompt_masked),
                 reasons=decision.reasons,
             ).model_dump()
-            return finish(403, payload, upstream_name=None, response_preview="", flags=[])
+            return finish(403, payload, upstream_name=None, response_preview="",
+                          flags=_block_flags(decision))
 
         upstream = self._resolve_upstream(decision)
         if upstream is None:
@@ -361,7 +376,8 @@ class GatewayService:
                 self.outguard.block_reply(decision, prep.prompt_masked),
                 reasons=decision.reasons,
             ).model_dump()
-            return finish(403, payload, upstream_name=None, flags=[])
+            return finish(403, payload, upstream_name=None,
+                          flags=_block_flags(decision))
 
         upstream = self._resolve_upstream(decision)
         if upstream is None:
@@ -454,8 +470,10 @@ class GatewayService:
     def _prepare(self, body: dict[str, Any], *, session_id: str,
                  request_id: str) -> _Prepared:
         messages = body.get("messages") or []
-        # 2) detect：逐消息逐段检测 + 出站辅助面（tools/历史 tool_calls/非 text 段）；
-        #    fid 按 消息→段→span位置→辅助面 顺序编放（请求内自增）
+        # 2) detect：逐消息逐段检测（规则层 + 语义层注入检测全检测面）+ 出站辅助面
+        #    （tools/历史 tool_calls/非 text 段）；fid 按 消息→段→span位置→辅助面 顺序编放
+        #    （请求内自增）。语义层 INJECTION 命中（BLOCK_FLAG）同样从段/辅助面进 findings，
+        #    经下方 decide R2 整单拦截（藏于工具描述的注入指令同权，§5.2）。
         findings: list[Finding] = []
         findings_by_segment: dict[tuple[int, int], list[Finding]] = {}
         segments_by_message: dict[int, list[_Segment]] = {}
@@ -465,13 +483,13 @@ class GatewayService:
             segments_by_message[msg_index] = segments
             for segment in segments:
                 local: list[Finding] = []
-                for found in detect(segment.text):
+                for found in detect_full(segment.text):
                     seq += 1
                     local.append(found.model_copy(update={"fid": f"f_{seq:04d}"}))
                 findings_by_segment[(msg_index, segment.piece_index)] = local
                 findings.extend(local)
 
-        # 辅助检测面：同样字符串全量过 detect（密级词藏在 tools description /
+        # 辅助检测面：同样字符串全量过全检测面（密级词/注入指令藏在 tools description /
         # 历史 tool_calls.arguments / 非 text 段也必须触发整单拦截，审查 §A4）。
         # 相同原文只检一次（fid 不重复、审计计数不翻倍）。
         aux_findings: dict[str, list[Finding]] = {}
@@ -479,7 +497,7 @@ class GatewayService:
             if text in aux_findings:
                 continue
             local: list[Finding] = []
-            for found in detect(text):
+            for found in detect_full(text):
                 seq += 1
                 local.append(found.model_copy(update={"fid": f"f_{seq:04d}"}))
             aux_findings[text] = local
@@ -636,7 +654,9 @@ class GatewayService:
             if redact_block_flags:
                 for f in findings_by_segment.get((target, segment.piece_index), []):
                     if f.action_hint == "BLOCK_FLAG" and f.raw:
-                        text = text.replace(f.raw, CLASSIFIED_REDACTED)
+                        marker = (INJECTION_REDACTED if f.type is EntityClass.INJECTION
+                                  else CLASSIFIED_REDACTED)
+                        text = text.replace(f.raw, marker)
             parts.append(text)
         return "\n".join(parts)
 
