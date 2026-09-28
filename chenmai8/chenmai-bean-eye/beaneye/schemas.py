@@ -346,6 +346,10 @@ class GradingDecision(BeanEyeBaseModel):
     secondary_count: int = Field(ge=0)
     defect_counts: dict[str, int]  # taxonomy key → 粒数(每粒只计一次)
     reasons: list[str]  # 人读判定理由(三语模板键)
+    # v1.1 增补（契约只增不改名）：标准 YAML 的 verified:false 等核对告警，
+    # M10 护照页脚"标准阈值核对中"角标引用（开发指令 M9/M10 spec 命名了
+    # GradingDecision.warnings 但 v1.0 冻结版缺失，2026-09-28 W9 增补）。
+    warnings: list[str] = Field(default_factory=list)
     standard_yaml_sha: str = Field(pattern=_SHA256_PATTERN)
 
     @field_validator("defect_counts")
