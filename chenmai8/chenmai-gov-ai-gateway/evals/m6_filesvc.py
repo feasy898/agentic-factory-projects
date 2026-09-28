@@ -22,7 +22,8 @@
    ``header:`` ``footer:``）；
 4. pdf 坐标级：逐 Finding bbox 齐备、在页内（render 系原点左上），并与解析层
    charbox 并集复核全等、与库级「按框取文」回读文本一致；
-5. 零文本层 pdf → kind=scan_pdf、零命中（OCR 路径 D4 接入前的如实降级）；
+5. 零文本层 pdf → kind=scan_pdf（T4.1 起 OCR 路径接入 filechannel.ocr：空白页
+   重建文本为空 → 仍零命中；含字扫描件命中面归 evals.m6_ocr）；
 6. 三路由材料（data/fixtures/materials，与 ops/e2e_smoke 同源）材料化为
    docx/xlsx/pdf 后逐 span 命中；
 7. 风险分级 §5.5 字面口径：HIGH=SENSITIVE_ATTR/批量身份证（BANK_CARD 并入批量，
@@ -352,7 +353,7 @@ def check_pdf_coords(fixtures: list[dict]) -> str:
 
 
 def check_scan_pdf() -> str:
-    """零文本层 pdf → scan_pdf 如实降级（OCR 路径 D4 接入前零命中）。"""
+    """零文本层 pdf → scan_pdf 如实降级（空白页 OCR 重建零文本 → 零命中）。"""
     import importlib
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)

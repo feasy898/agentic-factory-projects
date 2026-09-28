@@ -45,6 +45,7 @@ FILE_EXPORT_RESIDUAL_ALLOWED = 0       # 导出物重解析 seeded PII 命中数
 FILE_GRADED_SEEDED_MIN = 80            # T3.1 文本层：15 份夹具可评级 seeded 命中总数下限
 OCR_ID_CARD_RECALL_MIN = 0.90          # 扫描件身份证召回（D4）
 OCR_SEEDED_SCANS = 3
+OCR_IDS_PER_SCAN = 4                   # 每份扫描件 seeded 身份证数（T4.1）
 
 # ── M7 审计 ────────────────────────────────────────────────────────
 AUDIT_E2E_REQUESTS = 20                # 混合请求数（行数断言；T5.1 全量口径用）

@@ -8,7 +8,8 @@
 - 导出：``mode=sanitize`` → 同源体检 → 按种类删除式重写 + **re-ingest 复核**
   （:mod:`filechannel.sanitize`：docx 删 run 片段 / xlsx 命中删值+隐藏列整列删+
   残余隐藏全解除 / pdf 引擎链涂删重写——逐引擎复核不净自动回退，见
-  :mod:`filechannel.pdf_engine`）；X-Report-Id = **导出前体检报告** id，
+  :mod:`filechannel.pdf_engine` / scan_pdf 重打码渲染版=渲染→黑框覆盖→整页
+  重栅格化，零残留复核即再 OCR，T4.1）；X-Report-Id = **导出前体检报告** id，
   ``method`` = 实际生效的导出方式（响应头 ``X-Sanitize-Method`` 如实标注）；
 - 错误语义（filechannel.errors 文档口径，HTTP 层映射在 gateway/app.py）：
   FileTooLargeError→413、UnsupportedFileType→400、DocumentParseError→422、
@@ -35,6 +36,7 @@ from filechannel.sanitize import (  # noqa: F401 — ExportBlockedError 门面�
     ExportBlockedError,
     sanitize_docx_verified,
     sanitize_pdf,
+    sanitize_scan_pdf,
     sanitize_xlsx_verified,
 )
 
@@ -101,7 +103,11 @@ class FileService:
             out, method = sanitize_docx_verified(data, filename)
         elif report.kind == "xlsx":
             out, method = sanitize_xlsx_verified(data, filename)
-        elif report.kind in ("pdf", "scan_pdf"):
+        elif report.kind == "scan_pdf":
+            # 扫描件：无文本层可删 → 重打码渲染版（渲染→黑框覆盖→整页重栅格化），
+            # 零残留复核=再 OCR（T4.1）；method 如实标注 scan-raster-redaction
+            out, method = sanitize_scan_pdf(data, filename, report, self._pdf_engines)
+        elif report.kind == "pdf":
             out, method = sanitize_pdf(data, filename, report, self._pdf_engines)
         else:
             raise UnsupportedFileType(f"暂不支持导出种类: {report.kind}")

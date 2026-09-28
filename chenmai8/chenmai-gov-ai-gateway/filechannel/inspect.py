@@ -9,7 +9,8 @@
    接入后零改动生效）；语义审核（``SemanticAdapter.moderate``）不产出 Finding，
    不进 FileReport（§5.5 形状无该位面）；
 4. 装配：fid 全文自增（``f_0001`` 起，§5.1「请求内自增」的文件内口径）；pdf 命中
-   回填 span 的 charbox 并集 bbox，docx/xlsx 回填 location；
+   回填 span 的 charbox 并集 bbox、scan_pdf 命中回填 OCR 重建框（T4.1），
+   docx/xlsx 回填 location；
 5. 风险分级（§5.5 字面口径）：
    - HIGH：含非白名单 SENSITIVE_ATTR，或非白名单 ID_CARD+BANK_CARD ≥ 批量线
      （config.app.thresholds.batch_pii_to_govcloud，与 §5.2「批量名单」同源）；
@@ -95,9 +96,9 @@ def inspect_bytes(filename: str, data: bytes, *,
         for found in detect_all(seg.text):
             counter += 1
             found.fid = f"f_{counter:04d}"  # 文件内自增（§5.1）
-            bbox = None
-            if parsed.text_layer is not None:
-                bbox = parsed.text_layer.union(seg.page, found.start, found.end)
+            # bbox：pdf 文本层=charbox 并集；scan_pdf=OCR 重建层（T4.1）；
+            # docx/xlsx 恒 None（location 承担定位）
+            bbox = parsed.locate(seg.page, found.start, found.end)
             file_findings.append(FileFinding(
                 page=seg.page, bbox=bbox, location=seg.location, finding=found))
 

@@ -11,7 +11,9 @@
   （data_only=True 读取，仅在与字面值不同时补一段）+ 单元格批注；
 - **pdf 文本层**（模块名经 ``config/filechannel.yaml`` 配置、importlib 动态加载，
   铁律 E）：逐页坐标级文本抽取（textpage 全文 + 逐字符 charbox），供体检报告
-  按命中 span 回填 bbox；整页零文本 → ``kind="scan_pdf"``（OCR 路径 D4）。
+  按命中 span 回填 bbox；整页零文本 → ``kind="scan_pdf"`` → **OCR 路径**
+  （:mod:`filechannel.ocr`：渲染 300dpi 位图 → OCR 引擎 → 重建可检测文本 +
+  命中框，T4.1 接入）。
 
 统一产物：:class:`Segment` 列表。``location`` 形如
 （:class:`filechannel.models.FileFinding` 文档串约定）：
@@ -20,7 +22,8 @@
   ``header:1:para:2`` / ``footer:1:table:1:r1:c1``（段落/表序号均 1 起始）；
 - xlsx：``Sheet1!B3`` / ``Sheet1!B3#comment``（批注）/ ``Sheet1!C2#cached``
   （公式缓存值与公式文本同格并存时的补段）；
-- pdf：location 恒 ``None``——定位由 ``page`` + ``bbox`` 承担（§5.5 原生形状）。
+- pdf/scan_pdf：location 恒 ``None``——定位由 ``page`` + ``bbox`` 承担
+  （§5.5 原生形状；scan_pdf 的 bbox 来自 OCR 重建层，:mod:`filechannel.ocr`）。
 
 与 :mod:`filechannel.parse`（T3.3 导出链路的引擎面子集）并存：本模块是 T3.1
 文本层权威实现（docx 全位面 / xlsx 缓存值 / pdf 坐标级 charbox）；两条链路的
@@ -37,12 +40,16 @@ import io
 from dataclasses import dataclass, field
 from functools import lru_cache
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import yaml
 
 from common.config import REPO_ROOT
 from filechannel.errors import DocumentParseError, UnsupportedFileType
 from filechannel.models import FileKind
+
+if TYPE_CHECKING:
+    from filechannel.ocr import OcrTextLayer
 
 #: pdf 读取库坐标（铁律 E：库名只进 config/，源码动态加载）
 FILECHANNEL_CONFIG_PATH = REPO_ROOT / "config" / "filechannel.yaml"
@@ -112,6 +119,17 @@ class ParsedDocument:
     pages: int
     segments: list[Segment] = field(default_factory=list)
     text_layer: PdfTextLayer | None = None  # 仅 pdf 提供（坐标级定位）
+    ocr_layer: OcrTextLayer | None = None   # 仅 scan_pdf 提供（OCR 重建层）
+
+    def locate(self, page: int, start: int, end: int) -> BBox | None:
+        """span → render 系 bbox（扫描件走 OCR 层，文本层走 charbox 并集）。"""
+        if self.ocr_layer is not None:
+            box = self.ocr_layer.union(page, start, end)
+            if box is not None:
+                return box
+        if self.text_layer is not None:
+            return self.text_layer.union(page, start, end)
+        return None
 
 
 # ── docx ───────────────────────────────────────────────────────────
@@ -205,8 +223,12 @@ def parse_xlsx(data: bytes) -> ParsedDocument:
 
 
 @lru_cache(maxsize=1)
-def _load_pdf_reader() -> object:
-    """按 config/filechannel.yaml 动态加载 pdf 读取库（铁律 E：源码零库名）。"""
+def load_pdf_reader() -> object:
+    """按 config/filechannel.yaml 动态加载 pdf 读取库（铁律 E：源码零库名）。
+
+    文本层抽取（:func:`parse_pdf`）与扫描件 OCR 页面渲染
+    （:func:`filechannel.ocr.ocr_page_lines`）共用同一读取库坐标。
+    """
     cfg = yaml.safe_load(FILECHANNEL_CONFIG_PATH.read_text(encoding="utf-8")) or {}
     group = cfg.get("pdf_text_reader") or {}
     module_name = str(group.get("module", "")).strip()
@@ -221,9 +243,17 @@ def _load_pdf_reader() -> object:
             f"(见 {FILECHANNEL_CONFIG_PATH.name})") from exc
 
 
+#: 兼容别名（T3.1 原私有名；包内历史调用面）
+_load_pdf_reader = load_pdf_reader
+
+
 def parse_pdf(data: bytes) -> ParsedDocument:
-    """pdf 文本层逐页抽取：整页文本 + 逐字符 charbox；零文本层 → kind=scan_pdf。"""
-    pdfium = _load_pdf_reader()
+    """pdf 解析：文本层逐页抽取（整页文本+逐字符 charbox）。
+
+    整页零文本层 → ``kind=scan_pdf`` → OCR 路径（:mod:`filechannel.ocr`）：
+    渲染位图 → OCR 引擎 → 重建可检测文本段 + 命中框层（T4.1）。
+    """
+    pdfium = load_pdf_reader()
     try:
         doc = pdfium.PdfDocument(io.BytesIO(data))
     except Exception as exc:  # noqa: BLE001
@@ -247,13 +277,26 @@ def parse_pdf(data: bytes) -> ParsedDocument:
                 fallback.add(len(page_texts) - 1)
     finally:
         doc.close()
-    kind: FileKind = "pdf"
-    if not any(t.strip() for t in page_texts):
-        kind = "scan_pdf"  # 文本层为零 → 扫描件（OCR 路径 D4 接入；如实标注）
     layer = PdfTextLayer(page_texts, boxes, sizes, fallback)
-    segments = [Segment(t, i + 1) for i, t in enumerate(page_texts) if t.strip()]
-    return ParsedDocument(kind, pages=len(page_texts), segments=segments,
-                          text_layer=layer)
+    if any(t.strip() for t in page_texts):
+        segments = [Segment(t, i + 1) for i, t in enumerate(page_texts) if t.strip()]
+        return ParsedDocument("pdf", pages=len(page_texts), segments=segments,
+                              text_layer=layer)
+    # 扫描件：零文本层 → OCR 重建（延迟导入：文本层 pdf 零 OCR 开销、避免环导入）
+    from filechannel.ocr import ocr_page_lines  # noqa: PLC0415
+
+    ocr_layer = ocr_page_lines(data)
+    if len(ocr_layer.pages) != len(page_texts):
+        raise DocumentParseError(
+            f"scan_pdf OCR 页数不一致: ocr={len(ocr_layer.pages)} "
+            f"text-layer={len(page_texts)}")
+    segments = []
+    for i in range(len(ocr_layer.pages)):
+        text = ocr_layer.page_text(i)
+        if text.strip():
+            segments.append(Segment(text, i + 1))
+    return ParsedDocument("scan_pdf", pages=len(page_texts), segments=segments,
+                          text_layer=layer, ocr_layer=ocr_layer)
 
 
 # ── 分发 ───────────────────────────────────────────────────────────

@@ -10,7 +10,11 @@
   解除全部残余隐藏行列与隐藏工作表（不留任何以隐藏形态存在的数据面）；
 - pdf：按体检报告命中框/命中值走 :mod:`filechannel/pdf_engine` 引擎链——
   逐引擎「涂删 → 导出物 re-ingest → detect 复核」，复核不净或引擎不适用即
-  **自动回退下一引擎**，链尽仍不净报 :class:`ExportBlockedError`。
+  **自动回退下一引擎**，链尽仍不净报 :class:`ExportBlockedError`；
+- scan_pdf：无文本层可删，「彻底删除式」唯一可行形态=**重打码渲染版**
+  （§6 M6：渲染 → 黑框覆盖命中框 → 整页重栅格化为纯图像 PDF，杜绝底层文字）
+  —— :func:`sanitize_scan_pdf`；零残留复核 = 导出物 re-ingest（体检管线对
+  scan_pdf 走 OCR 路径，即「**再 OCR 零残留**」，T4.1）。
 
 零残留硬闸（export→re-ingest→detect 零命中断言）：``*_verified`` 三个入口对
 清理产物就地重跑 :func:`filechannel.inspect.inspect_bytes`（与体检同一条权威
@@ -38,6 +42,10 @@ SANITIZE_MAX_PASSES = 3
 METHOD_DOCX = "docx-run-delete"
 METHOD_XLSX = "xlsx-cell-column-delete"
 METHOD_PDF_UNTOUCHED = "pdf-noop"
+METHOD_SCAN_PDF = "scan-raster-redaction"
+
+#: scan_pdf 重打码渲染版复核不净时的外扩重试量（pt；栅格引擎自带 1pt 内衬外再扩）
+SCAN_PDF_RETRY_PAD_PT = 2.0
 
 
 class ExportBlockedError(RuntimeError):
@@ -262,7 +270,8 @@ def sanitize_pdf(data: bytes, filename: str, report: FileReport,
     """pdf 删除式导出：引擎链逐引擎「涂删 → re-ingest 复核 → 不净回退」。
 
     - 存在非白名单命中但**无定位框** → :class:`ExportBlockedError`（宁可阻止
-      不可漏删；scan_pdf OCR 坐标 D4 前不会出现此形态——文本层零命中无框可涂）；
+      不可漏删；scan_pdf 不走本函数——service 按 kind 分派到
+      :func:`sanitize_scan_pdf` 重打码渲染版）；
     - 零命中 → 原样返回（如实标注 ``pdf-noop``）；
     - 每个引擎产物就地重跑体检管线复核，非白名单零命中才被采信；引擎不适用
       （:class:`EngineNotApplicable`）或复核不净 → 换下一引擎；链尽 →
@@ -295,4 +304,51 @@ def sanitize_pdf(data: bytes, filename: str, report: FileReport,
             return candidate, engine.name
         failures.append(f"{engine.name}: 导出复核仍有 {len(residue)} 处命中")
     raise ExportBlockedError("pdf 引擎链全部未通过零残留复核（"
+                             + "；".join(failures) + "）——导出已阻止（宁可阻止不可漏删）")
+
+
+# ── scan_pdf：重打码渲染版（渲染→黑框覆盖→整页重栅格化）──────────────
+
+
+def _expand_boxes(page_boxes: dict[int, list[tuple[float, float, float, float]]],
+                  pad_pt: float) -> dict[int, list[tuple[float, float, float, float]]]:
+    """命中框整体外扩（页内不裁剪——栅格引擎自行夹取页边界）。"""
+    if pad_pt <= 0:
+        return page_boxes
+    return {p: [(x0 - pad_pt, y0 - pad_pt, x1 + pad_pt, y1 + pad_pt)
+                for (x0, y0, x1, y1) in boxes]
+            for p, boxes in page_boxes.items()}
+
+
+def sanitize_scan_pdf(data: bytes, filename: str, report: FileReport,
+                      engines: list[Any]) -> tuple[bytes, str]:
+    """scan_pdf 导出：重打码渲染版（渲染 → 黑框覆盖命中框 → 整页重栅格化）。
+
+    §6 M6：扫描件无文本层可删，删除式不可行即输出「重打码渲染版」——命中框
+    涂黑后整页重渲染为**纯图像 PDF**（零文本层，杜绝底层文字），导出方式在
+    ``method``（响应头 ``X-Sanitize-Method``）如实标注。零残留复核 =
+    导出物 re-ingest 走体检管线（scan_pdf 即 **再 OCR 零残留**，T4.1）；
+    首次复核不净 → 外扩 :data:`SCAN_PDF_RETRY_PAD_PT` 重试一次；仍不净 →
+    :class:`ExportBlockedError`（宁可阻止不可漏删）。
+    """
+    raster = next((e for e in engines if getattr(e, "name", "") == "raster"), None)
+    page_boxes, needles, unlocated = _pdf_targets(report)
+    if unlocated:
+        raise ExportBlockedError(f"{unlocated} 处命中无法物理定位，导出已阻止"
+                                 "（宁可阻止不可漏删）")
+    if not page_boxes:
+        return data, METHOD_PDF_UNTOUCHED  # 零命中：原样返回（如实标注）
+    if raster is None:
+        raise ExportBlockedError(
+            "scan_pdf 打码引擎不可用（config filechannel.yaml pdf_raster_engine.*）")
+    failures: list[str] = []
+    for pad in (0.0, SCAN_PDF_RETRY_PAD_PT):
+        candidate = raster.redact(data, _expand_boxes(page_boxes, pad), needles)
+        residue = _dirty_findings(_reinspect(filename, candidate))
+        if not residue:
+            log.info("filechannel.sanitize.scan_pdf_done",
+                     extra={"pad_pt": pad, "bytes_out": len(candidate)})
+            return candidate, METHOD_SCAN_PDF
+        failures.append(f"外扩{pad:.0f}pt 后再 OCR 仍有 {len(residue)} 处命中")
+    raise ExportBlockedError("scan_pdf 重打码渲染版未通过再 OCR 零残留复核（"
                              + "；".join(failures) + "）——导出已阻止（宁可阻止不可漏删）")
