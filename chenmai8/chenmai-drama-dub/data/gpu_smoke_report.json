@@ -28,7 +28,7 @@
     "duration_s": 4.702
    },
    "error": null,
-   "env_note": "engine default path (use_bf16=False); torch 2.5.1+cu118 / transformers 4.52.1; text_normalization=False (WeTextProcessing/pynini not installable from CN pip); bigvgan weights pre-placed at model_dir/hf_cache/bigvgan via hf-mirror; emotion assets (conformer_shaw + emo-text-encoder-0.6b) auto-cached on first load; 8s mono ref wav"
+   "env_note": "engine default path (use_bf16=False); torch 2.5.1+cu118 / transformers 4.52.1; text_normalization=False（可选文本正则化前端依赖在境内 pip 源不可得，关闭不影响骨干路径）; 声码器权重经 HF 镜像预置于模型目录缓存; emotion assets (conformer_shaw + emo-text-encoder-0.6b) auto-cached on first load; 8s mono ref wav"
   },
   {
    "item": "1-dub-tts-fp16",
@@ -53,7 +53,7 @@
     "frames": 50
    },
    "error": null,
-   "env_note": "diffusers==0.30.2 + transformers 4.52.1 + mmpose/mmcv 2.2.0 (mmdet version guard relaxed to <2.3.0, GPU-side env only) + S3FD detector weights placed locally; v1.5 unet fp16; input 2s 704x1216 25fps clip, output re-encoded h264 + aac"
+   "env_note": "扩散模型工具链 0.30.2 + transformers 4.52.1 + 姿态估计视觉框架 2.2.0（其检测子版本约束放宽至 <2.3.0，仅 GPU 侧环境）+ 人脸检测器权重本地预置; v1.5 unet fp16; input 2s 704x1216 25fps clip, output re-encoded h264 + aac"
   },
   {
    "item": "3-alt-tts-b",
@@ -83,11 +83,152 @@
    },
    "error": null,
    "env_note": "validated under transformers==5.13.0 (native arch support needs >=5.13); venv later downgraded to 4.52.1 for TTS/lip engines -> deployment must pin transformers>=5.13 for this component (separate venv or resolver split); input sample was English speech, correctly transcribed"
+  },
+  {
+   "item": "6-asr-core-zh",
+   "model": "asr-core",
+   "dtype": "fp16",
+   "ok": true,
+   "seconds": 0.647,
+   "artifact_path": null,
+   "transcript": "你别走，把话说清楚，我到底哪里做错了？",
+   "words": [
+    {
+     "w": "你",
+     "s": 0.08,
+     "e": 0.24
+    },
+    {
+     "w": "别",
+     "s": 0.24,
+     "e": 0.48
+    },
+    {
+     "w": "走",
+     "s": 0.48,
+     "e": 0.8
+    },
+    {
+     "w": "把",
+     "s": 1.2,
+     "e": 1.36
+    },
+    {
+     "w": "话",
+     "s": 1.36,
+     "e": 1.6
+    },
+    {
+     "w": "说",
+     "s": 1.6,
+     "e": 1.84
+    },
+    {
+     "w": "清",
+     "s": 1.84,
+     "e": 2.08
+    },
+    {
+     "w": "楚",
+     "s": 2.08,
+     "e": 2.48
+    },
+    {
+     "w": "我",
+     "s": 2.88,
+     "e": 3.12
+    },
+    {
+     "w": "到",
+     "s": 3.12,
+     "e": 3.36
+    },
+    {
+     "w": "底",
+     "s": 3.36,
+     "e": 3.44
+    },
+    {
+     "w": "哪",
+     "s": 3.44,
+     "e": 3.68
+    },
+    {
+     "w": "里",
+     "s": 3.68,
+     "e": 3.92
+    },
+    {
+     "w": "做",
+     "s": 3.92,
+     "e": 4.08
+    },
+    {
+     "w": "错",
+     "s": 4.08,
+     "e": 4.32
+    },
+    {
+     "w": "了",
+     "s": 4.32,
+     "e": 4.48
+    }
+   ],
+   "aligner": "align-core",
+   "input": {
+    "file": "zh_dialogue.wav",
+    "sha256": "53f3898cc2035266c37914137a03ebca1405c68954e25a5f48669be1144a1ab7",
+    "duration_s": 5.263,
+    "note": "windev SAPI zh-CN 声库合成中文对白 → ffmpeg 16k 单声道；scp 至 GPU 机后经其 127.0.0.1:9001 调用（venv-asr 常驻服务）"
+   },
+   "emo": {
+    "label": "neutral",
+    "score": 1.0
+   },
+   "segments": [
+    {
+     "i": 0,
+     "start": 0.02,
+     "end": 0.835
+    },
+    {
+     "i": 1,
+     "start": 1.12,
+     "end": 2.505
+    },
+    {
+     "i": 2,
+     "start": 2.78,
+     "end": 4.565
+    }
+   ],
+   "timing": {
+    "total_s": 0.8,
+    "asr_s": 0.647,
+    "align_s": 0.063,
+    "emo_s": 0.083
+   },
+   "error": null,
+   "env_note": "asr_align 常驻服务（venv-asr: torch 2.5.1+cu118 / transformers 5.13.0），GPU 机本地 curl 直连；转写逐字命中（16/16），字级时间戳单调且落在 0.08s 栅格"
   }
  ],
  "summary": {
   "all_ok": false,
-  "ok_count": 4,
-  "total": 5
+  "ok_count": 5,
+  "total": 6,
+  "note": "fp16 失败项为引擎级限制的阴性结果，如实保留（见第 2 项）；四引擎各有一条 ok:true 且产物可核即视为冒烟收口"
+ },
+ "asr_align_deploy_note": {
+  "date": "2026-09-28",
+  "what": "asr_align(:9001) 已用独立 venv /data/xdng/venv-asr 常驻拉起并独立冒烟通过",
+  "verify_ssh": "ssh dev-env-with-gpu: pid=$(cat /data/xdng/logs/asr_align.pid) 进程 cmdline='/data/xdng/venv-asr/bin/python -u /data/xdng/asr_align/service.py --port 9001'; GPU 机本地 curl http://127.0.0.1:9001/health → loaded {asr-core:true, align-core:true, emo-tag:true}, torch 2.5.1+cu118, cuda_available true",
+  "venv_asr": {
+   "torch": "2.5.1+cu118",
+   "transformers": "5.13.0",
+   "python": "3.11.6",
+   "emo_framework": "1.4.16"
+  },
+  "artifact_verify_respot": "2026-09-28 ssh 复测 4 冒烟产物 sha256/size 与本报告 artifact_verify 逐项一致；两 wav 时长经 venv-asr soundfile 实测 4.702s / 13.44s（与回填值一致）",
+  "detail": "见 data/asr_align_deploy_report.json（部署与验收全记录）"
  }
 }
