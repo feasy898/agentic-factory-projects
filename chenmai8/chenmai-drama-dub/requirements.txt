@@ -32,6 +32,15 @@ audio-separator==0.47.0   # 实测连带: pydub(引擎内部用，业务代码�
 onnxruntime==1.30.0       # 引擎 import 期硬依赖（CPU EP；GPU 路径装机换对应版）
 audioread==3.1.0          # 引擎 uvr_lib 兼容层 import 期硬依赖（librosa 1.0 未连带）
 
+# 视觉（M5，facemesh/shot-cut/voxdia 组件）—— 真实发行名只在本文件登记
+# （公开文本零上游名；运行时/架构经 pipeline/_facemesh_face.py、_scdet_net.py、
+# _voxdia_net.py 中性名动态装载/自实现，T7 冻结）
+mediapipe==1.0.1          # facemesh 运行时（仅 tasks API；连带 matplotlib/sounddevice/
+                          # contourpy/cycler/fonttools/kiwisolver/pyparsing，随装）
+scikit-learn==1.9.1       # 谱聚类（SpectralClustering）；m5 直接 import，显式钉版
+scipy==1.18.1             # 特征值间隙（scipy.linalg.eigh）；m5 直接 import，显式钉版
+                          # （audio-separator 链曾连带，现由 m5 直接依赖升为显式）
+
 # 工具
 # ffmpeg/ffprobe 为系统级依赖（6.1.1 essentials，含 libass/fribidi/harfbuzz），
 # 不走 pip —— B1 修订：此处不再写 `ffmpeg==系统安装`/`pydub==不使用` 等非 pip 行

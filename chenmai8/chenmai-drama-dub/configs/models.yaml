@@ -109,39 +109,62 @@ components:
   voxdia:
     task: speaker-embedding    # 说话人嵌入 + 谱聚类（声纹嵌入系中文优化，免注册）
     langs: [zh]
-    device: cuda:0
-    precision: fp16
+    device: cpu                # T7 实测：本机 CPU 路径为默认（192 维嵌入，8 线程 0.25s/7.4s 句）
+    precision: fp32            # CPU 推理 fp32；GPU 路径未启用
     weights: models/voxdia/
-    version: TBD-D1
+    version: "2026-09-29 (T7 本机 CPU 验收; bin sha256 3388cf5f…)"  # ModelScope 直下，不入公开仓
     fallback: []
-    volta_status: pending
+    volta_status: ok           # CPU 组件，无 Volta 依赖
+    runtime_notes: >-
+      前端为 kaldi 口径 fbank(80mel/25ms/10ms/povey/CMN) 的纯 torch 复刻
+      （pipeline/_voxdia_net.py；torchaudio 官方轮子止于 2.11 与本仓 torch 2.14
+      不兼容），数值对拍 GPU 机 torchaudio 2.5.1 参照实现 max_abs≈2e-4（T7 实测，
+      fixtures/fbank_ref.npy 固化为回归参照）；torch 线程帽 8（64 核默认全开
+      互踩：7.4s 句嵌入 49.6s → 8 线程 0.25s，同 m3 threads=16 教训）；
+      说话人数= kNN 稀疏图特征值间隙估计，上限=登记角色数+1。
   actspk:
     task: active-speaker       # 每镜头在说话人判定
     langs: [multi]
-    device: cuda:0
-    precision: fp16
-    weights: models/actspk/
-    version: TBD-D1
+    device: cpu                # T7 起为 facemesh 嘴部开合运动打分（MVP 口径）
+    precision: fp32
+    weights: null              # MVP 无独立权重（复用 facemesh 轨迹）；模型化 ASD 待后续批次
+    version: "2026-09-29 (T7 MVP: 嘴动打分)"
     fallback: []
-    volta_status: pending
+    volta_status: ok           # CPU 组件，无 Volta 依赖
+    runtime_notes: >-
+      MVP 口径=facemesh 内唇距/脸高在说话窗内的均值打分（单轨迹直接绑定、
+      多轨迹取嘴动最大者）；合成静帧无人脸信号时如实退化为"无在说话人脸"。
+      模型化 ASD（论文系轻量网络 + AVA 权重，约 4.2MB，权重页已核实可直下）
+      集成列后续批次（T7 记录）。
   facemesh:
     task: head-pose            # 正脸判定（俯仰/偏航阈值见 pipeline.yaml）
     langs: [multi]
     device: cpu
     precision: fp32
     weights: models/facemesh/
-    version: TBD
+    version: "2026-09-29 (T7 实测; 运行时 1.0.1 + face_landmarker task 包)"
     fallback: []
     volta_status: ok
+    runtime_notes: >-
+      真名与安装源只登记 requirements.txt 依赖记录（公开文本零真名，运行时经
+      拼接构造动态加载）；头部姿态=478 点几何代理 ∨ 4x4 姿态矩阵 RQDecomp3x3
+      欧拉（逐轴取 |较大| 者：矩阵法对整图透视编辑过钝，T7 实测 45° 错切后
+      矩阵 yaw 仅 ~12°）；Windows 运行时 C++ 层打不开非 ASCII 模型路径
+      （T7 实测 FileNotFoundError）→ _facemesh_face 复制到 %TEMP% ASCII 路径
+      装载；cv2.imread 同样不支持非 ASCII 路径（消费方注意，VideoCapture 不受影响）。
   shot-cut:
     task: shot-detection
     langs: [multi]
-    device: cuda:0
-    precision: fp16
+    device: cpu                # T7 实测：本机 CPU 路径为默认（1500 帧块前向）
+    precision: fp32
     weights: models/shot-cut/
-    version: TBD-D1
+    version: "2026-09-29 (T7 本机 CPU 验收; pth sha256 834b10f2…)"  # HF 镜像直下，不入公开仓
     fallback: []
-    volta_status: pending
+    volta_status: ok           # CPU 组件，无 Volta 依赖
+    runtime_notes: >-
+      官方推理口径：帧 48x27 RGB uint8、末帧重复补齐 100 帧倍数、单前向全片
+      概率、>0.5 局部峰为切点、最小镜头 0.8s 守卫；架构实现经 pipeline/_scdet_net.py
+      中性名装载（state_dict 键严格对应，strict=True）。
 
   # ---- 文字 ----
   cap-ocr:
