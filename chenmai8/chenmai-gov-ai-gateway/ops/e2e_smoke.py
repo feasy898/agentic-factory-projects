@@ -22,8 +22,11 @@
 - U2 流式：同 prompt，SSE 逐 delta 拼接后同 U1 断言（外加流式 AI 生成标识尾注）；
   再以 mock 默认 1–7 字符随机切块模式重放 20 次，逐次全等断言（覆盖占位符被
   切进相邻两个 SSE chunk 的还原）；
-- U3 三路由：普通材料（messages 全文逐字原样）→INTERNET/:8901；批量名单（≥3
-  结构化号码，全文=脱敏版）→GOVCLOUD/:8902；机密★材料→403 且两 mock 均零新增；
+- U3 三路由（材料化）：三份 seeded 材料物化为夹具文件（data/fixtures/materials/，
+  确定性/幂等）后**从夹具加载**发送——普通公文（零命中，messages 全文逐字原样）
+  →INTERNET/:8901；低保名单（低保对象敏感个人信息 + ≥3 身份证：人名×3/身份证×3/
+  手机×1 全量占位符化，全文=脱敏版）→GOVCLOUD/:8902；机密★材料→403 且两 mock
+  均零新增；
 - U4 工具调用：tools 定义 + arguments 中文含人名/PII → 上游 messages 与
   tool_arguments **全文 = 原文脱敏版**、客户端收到还原版（JSON 全等、占位符
   零残留）；U4b：历史 assistant.tool_calls.arguments 藏密级词 → 403 整单拦截、
@@ -52,6 +55,7 @@ import subprocess
 import sys
 import threading
 import time
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -119,9 +123,78 @@ U_TEXT = (f"居民{PERSON}（身份证{ID_A}、{ID_B}），联系电话{PHONE_A}
 U_RESTORED = (f"居民{PERSON}（身份证{ID_A}、{ID_B}），联系电话{PHONE_A}、"
               f"{PHONE_B}、{PHONE_C}，请核对其低保申领材料并回电。")
 
-ORDINARY_TEXT = "本周全镇防汛演练安排在周四上午九点，请各村网格员提前到场并做好记录。"
-BATCH_TEXT = f"低保名单：{ID_A}；{ID_C}；{ID_D}；联系人电话{PHONE_A}"
-CLASSIFIED_TEXT = f"机密★干部考察纪要：考察对象{PERSON}，联系电话{PHONE_BLOCKED}，内部资料注意保密。"
+# ── seeded 三路由材料（§9 U3 / §10 场景 2 演示同源；材料化入 fixtures）─────
+# 三份材料以**夹具文件**为载体：每轮运行前确定性物化到 data/fixtures/materials/
+# （幂等），U3 从夹具文件加载后发送——断言对象是夹具内容本身，不是脚本内常量。
+MATERIALS_DIR = REPO_ROOT / "data" / "fixtures" / "materials"
+
+
+@dataclass(frozen=True)
+class SeededMaterial:
+    """一份 seeded 三路由材料：夹具文件名 + 原文 + 期望脱敏面（验收契约）。"""
+
+    filename: str
+    text: str
+    #: 期望被脱敏的表面形式 (表面原文, 类别, 归一化值)——手工声明，不回读被测检测器
+    spans: tuple[tuple[str, EntityClass, str], ...] = ()
+
+
+ORDINARY_MATERIAL = SeededMaterial(
+    "ordinary_flood_drill_notice.txt",
+    "某镇人民政府办公室\n"
+    "关于开展全镇防汛演练的通知\n"
+    "\n"
+    "各村（居）委会：\n"
+    "为检验防汛应急预案的可操作性，定于本周四上午九点在镇政府大院开展防汛演练，\n"
+    "请各村网格员提前到场并做好记录，演练结束后将情况汇总报镇党政办。\n"
+    "\n"
+    "特此通知。",
+)
+
+# 低保名单：敏感个人信息（低保对象/低保户 → SENSITIVE_ATTR）+ ≥3 身份证（批量名单）
+# 双判定 → GOVCLOUD；期望脱敏面 = 人名×3 + 身份证×3 + 手机号×1（全量占位符化）。
+ROSTER_MATERIAL = SeededMaterial(
+    "low_income_roster_202610.txt",
+    f"某县民政局低保对象名单（2026年10月·节选）\n"
+    f"\n"
+    f"经入户核查与县级联审，现将本月新增低保户名单公示如下：\n"
+    f"一、李四，公民身份号码{ID_A}，联系电话{PHONE_A}；\n"
+    f"二、王五，公民身份号码{ID_C}；\n"
+    f"三、赵六，公民身份号码{ID_D}。\n"
+    f"对名单有异议的，请在公示期内向县民政局社会救助科反映。",
+    spans=(
+        ("李四", EntityClass.PERSON, "李四"),
+        ("王五", EntityClass.PERSON, "王五"),
+        ("赵六", EntityClass.PERSON, "赵六"),
+        (ID_A, EntityClass.ID_CARD, ID_A),
+        (ID_C, EntityClass.ID_CARD, ID_C),
+        (ID_D, EntityClass.ID_CARD, ID_D),
+        (PHONE_A, EntityClass.PHONE_MOBILE, PHONE_A),
+    ),
+)
+
+CLASSIFIED_MATERIAL = SeededMaterial(
+    "classified_cadre_minutes.txt",
+    f"机密★某县干部考察纪要（内部资料·注意保密）\n"
+    f"\n"
+    f"考察对象：{PERSON}，联系电话{PHONE_BLOCKED}。\n"
+    f"考察组意见：该同志政治素质过硬、工作实绩突出，建议进一步培养使用。\n"
+    f"本纪要不得外传，请按规定归档管理。",
+)
+
+MATERIALS: tuple[SeededMaterial, ...] = (
+    ORDINARY_MATERIAL, ROSTER_MATERIAL, CLASSIFIED_MATERIAL,
+)
+
+
+def materialize_materials() -> None:
+    """三份 seeded 材料物化为夹具文件（确定性、幂等），回读校验字节内容一致。"""
+    MATERIALS_DIR.mkdir(parents=True, exist_ok=True)
+    for mat in MATERIALS:
+        path = MATERIALS_DIR / mat.filename
+        path.write_text(mat.text, encoding="utf-8", newline="\n")
+        if path.read_text(encoding="utf-8") != mat.text:
+            raise RuntimeError(f"material fixture round-trip mismatch: {path}")
 
 TOOL_TEXT = f"查询{PERSON}名下低保发放记录，证件号{ID_D}，联系电话{PHONE_A}"
 TOOL_RESTORED = f"查询{PERSON}名下低保发放记录，证件号{ID_D}，联系电话{PHONE_A}"
@@ -146,14 +219,16 @@ TOOLS = [{
 RAW_VALUES: tuple[str, ...] = (
     ID_A, ID_B, ID_C, ID_D,
     PHONE_A, PHONE_B_RAW, PHONE_B, PHONE_C_RAW, PHONE_C, PHONE_BLOCKED,
-    PERSON, "机密★", "内部资料", "注意保密",
+    PERSON, "李四", "王五", "赵六",
+    "机密★", "内部资料", "注意保密", "不得外传",
 )
 
 U1_EXPECTED_PLACEHOLDERS = {"〔身份证·": 2, "〔手机号·": 3, "〔人名·": 1}
-U3_BATCH_EXPECTED_PLACEHOLDERS = {"〔身份证·": 3, "〔手机号·": 1}
+U3_ROSTER_EXPECTED_PLACEHOLDERS = {"〔身份证·": 3, "〔手机号·": 1, "〔人名·": 3}
 
 #: 夹具 → 上游应收「原文脱敏版」的手工 span 声明（审查 §B 全文 diff 期望侧：
-#: 该脱敏什么=验收契约，不回读被测检测器，避免同源假绿）。
+#: 该脱敏什么=验收契约，不回读被测检测器，避免同源假绿）。U3 低保名单材料的
+#: 期望脱敏面声明在 ROSTER_MATERIAL.spans（与夹具同源存放）。
 U1_SPANS: list[tuple[str, EntityClass, str]] = [
     (PERSON, EntityClass.PERSON, PERSON),
     (ID_A, EntityClass.ID_CARD, ID_A),
@@ -161,12 +236,6 @@ U1_SPANS: list[tuple[str, EntityClass, str]] = [
     (PHONE_A, EntityClass.PHONE_MOBILE, PHONE_A),
     (PHONE_B_RAW, EntityClass.PHONE_MOBILE, PHONE_B),
     (PHONE_C_RAW, EntityClass.PHONE_MOBILE, PHONE_C),
-]
-U3_BATCH_SPANS: list[tuple[str, EntityClass, str]] = [
-    (ID_A, EntityClass.ID_CARD, ID_A),
-    (ID_C, EntityClass.ID_CARD, ID_C),
-    (ID_D, EntityClass.ID_CARD, ID_D),
-    (PHONE_A, EntityClass.PHONE_MOBILE, PHONE_A),
 ]
 U4_SPANS: list[tuple[str, EntityClass, str]] = [
     (PERSON, EntityClass.PERSON, PERSON),
@@ -353,7 +422,8 @@ def _expected_masked(ctx: dict[str, Any], session: str, text: str,
                      spans: list[tuple[str, EntityClass, str]]) -> str:
     """夹具 → 上游应收到的「原文脱敏版」（审查 §B 全文 diff 的期望侧）。
 
-    - 替换哪些表面形式由调用方手工声明（U1/U3_BATCH/U4_SPANS）＝验收契约，
+    - 替换哪些表面形式由调用方手工声明（U1/U4_SPANS、ROSTER_MATERIAL.spans）
+      ＝验收契约，
       不回读被测检测器（同源假绿）；
     - 占位符取网关同会话 mapper 的 §5.3.1 冻结算法结果——HMAC 同
       key/session/类别/归一化值 → 同占位符，与网关实际写入必然一致；
@@ -581,43 +651,56 @@ def case_u2(ctx: dict[str, Any]) -> str:
     return f"200 SSE；首传 + {U2_REPLAYS} 次随机切块重放全等；上游 messages 全文=原文脱敏版；AI 标识尾注在位"
 
 
-# ── U3 三路由（§9 U3）─────────────────────────────────────────────────
+# ── U3 三路由（§9 U3；材料化：seeded 材料从 data/fixtures/ 夹具加载）──────
+def _load_material(filename: str) -> str:
+    """加载 seeded 材料夹具（main() 已物化；缺失即 FAIL 而非静默回退常量）。"""
+    path = MATERIALS_DIR / filename
+    if not path.is_file():
+        raise AssertionError(f"material fixture missing: {path}")
+    return path.read_text(encoding="utf-8")
+
+
 def case_u3(ctx: dict[str, Any]) -> str:
     client: httpx.Client = ctx["client"]
     base1, base2 = ctx["mock_internet"], ctx["mock_govcloud"]
     b1, b2 = _mock_count(base1), _mock_count(base2)
 
-    # ① 普通材料 → INTERNET / :8901（无敏感面 → messages 逐字原文）
+    # ① 普通公文（夹具）→ INTERNET / :8901（零敏感命中 → messages 逐字原文）
+    ordinary = _load_material(ORDINARY_MATERIAL.filename)
     status, headers, frames, raw = _send_chat(
-        client, _plain_body(ORDINARY_TEXT), "sess_e2e_u3a", ctx)
+        client, _plain_body(ordinary), "sess_e2e_u3a", ctx)
     if status != 200 or headers.get("x-anongw-route") != "INTERNET":
         raise AssertionError(f"ordinary: {status} route={headers.get('x-anongw-route')}")
     content = json.loads(raw)["choices"][0]["message"]["content"]
-    _plain_answer_ok(content, f"{ECHO_MARKER}internet_mock\n{ORDINARY_TEXT}", streaming=False)
+    _plain_answer_ok(content, f"{ECHO_MARKER}internet_mock\n{ordinary}", streaming=False)
     if _mock_count(base1) != b1 + 1 or _mock_count(base2) != b2:
         raise AssertionError("ordinary forward split wrong")
-    _assert_upstream_messages(_mock_last_record(base1), ORDINARY_TEXT, "mock:8901 ordinary")
+    _assert_upstream_messages(_mock_last_record(base1), ordinary, "mock:8901 ordinary")
 
-    # ② 批量名单 → GOVCLOUD / :8902
+    # ② 低保名单（夹具：敏感个人信息 + ≥3 身份证）→ GOVCLOUD / :8902，脱敏深度 =
+    #    上游 messages 全文 == 「原文脱敏版」逐字全等 + 占位符计数精确 + bytes 零原值
+    roster = _load_material(ROSTER_MATERIAL.filename)
     status, headers, frames, raw = _send_chat(
-        client, _plain_body(BATCH_TEXT, model=None), "sess_e2e_u3b", ctx)
+        client, _plain_body(roster, model=None), "sess_e2e_u3b", ctx)
     if status != 200 or headers.get("x-anongw-route") != "GOVCLOUD":
-        raise AssertionError(f"batch: {status} route={headers.get('x-anongw-route')}")
+        raise AssertionError(f"roster: {status} route={headers.get('x-anongw-route')}")
     content = json.loads(raw)["choices"][0]["message"]["content"]
-    _plain_answer_ok(content, f"{ECHO_MARKER}govcloud_local\n{BATCH_TEXT}", streaming=False)
-    if ID_A not in content:
-        raise AssertionError("batch client restore failed")
+    _plain_answer_ok(content, f"{ECHO_MARKER}govcloud_local\n{roster}", streaming=False)
+    for value in ("李四", "王五", "赵六", ID_A, ID_C, ID_D, PHONE_A):
+        if value not in content:
+            raise AssertionError(f"roster client restore missing: {value}")
     if _mock_count(base2) != b2 + 1 or _mock_count(base1) != b1 + 1:
-        raise AssertionError("batch forward split wrong")
+        raise AssertionError("roster forward split wrong")
     up = _mock_last_record(base2)
-    _assert_placeholder_counts(up["last_user_content"], U3_BATCH_EXPECTED_PLACEHOLDERS)
-    _assert_upstream_messages(up, _expected_masked(ctx, "sess_e2e_u3b", BATCH_TEXT, U3_BATCH_SPANS),
-                              "mock:8902")
+    _assert_placeholder_counts(up["last_user_content"], U3_ROSTER_EXPECTED_PLACEHOLDERS)
+    _assert_upstream_messages(
+        up, _expected_masked(ctx, "sess_e2e_u3b", roster, ROSTER_MATERIAL.spans), "mock:8902")
     _assert_no_raw(_mock_text(base2), RAW_VALUES, "mock:8902")
 
-    # ③ 机密★材料 → 403 拦截，两 mock 均零新增
+    # ③ 机密★材料（夹具）→ 403 拦截，两 mock 均零新增
+    classified = _load_material(CLASSIFIED_MATERIAL.filename)
     status, headers, frames, raw = _send_chat(
-        client, _plain_body(CLASSIFIED_TEXT), "sess_e2e_u3c", ctx)
+        client, _plain_body(classified), "sess_e2e_u3c", ctx)
     if status != 403:
         raise AssertionError(f"classified: {status} body={raw[:200]!r}")
     err = json.loads(raw)["error"]
@@ -630,8 +713,11 @@ def case_u3(ctx: dict[str, Any]) -> str:
     if _mock_count(base1) != b1 + 1 or _mock_count(base2) != b2 + 1:
         raise AssertionError("blocked request reached an upstream")
     _assert_no_raw(_mock_text(base1) + _mock_text(base2),
-                   (PHONE_BLOCKED, PERSON, "机密★", "内部资料", "注意保密"), "mocks")
-    return "普通→8901 / 批量→8902（全文=脱敏版）/ 机密★→403（reasons[0]=CLASSIFICATION_MARK）；上游零原值"
+                   (PHONE_BLOCKED, PERSON, "李四", "王五", "赵六",
+                    "机密★", "内部资料", "注意保密", "不得外传"), "mocks")
+    return ("材料化三路由：普通公文→8901 逐字原文 / 低保名单→8902（人名×3+身份证×3"
+            "+手机号×1 全量脱敏，全文=脱敏版）/ 机密★→403（reasons[0]=CLASSIFICATION_MARK）；"
+            "上游零原值")
 
 
 # ── U4 工具调用（§9 U4）───────────────────────────────────────────────
@@ -812,6 +898,9 @@ def main() -> int:
     ctx: dict[str, Any] = {"chat_sent": 0}
     mocks: list[subprocess.Popen] = []
     try:
+        # §9 步骤 0：三份 seeded 材料物化为夹具文件（确定性、幂等，U3 从夹具加载）
+        materialize_materials()
+        print(f"[e2e_smoke] 材料夹具就绪: {MATERIALS_DIR}", flush=True)
         # §9 步骤 1–2：拉起两 mock 子进程 + 网关（真实端口），并复位缓冲
         mocks.append(_start_mock(MOCK_PORT_INTERNET))
         mocks.append(_start_mock(MOCK_PORT_GOVCLOUD))
