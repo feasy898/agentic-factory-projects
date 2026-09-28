@@ -1,0 +1,294 @@
+# =====================================================================
+# BeanEye 溯因根因知识表（M11 TemplateAgent 唯一数据源）· v1
+# ---------------------------------------------------------------------
+# 语义：
+#   defects.<key>.causes      环节归因候选（stage + likelihood 先验），
+#                             加载后按 likelihood 降序排列，逐条输出为
+#                             AgentReport.causes 里的 CauseItem。
+#   defects.<key>.evidence    证据句模板（三语），支持占位符：
+#                               {count}  该缺陷粒数
+#                               {share}  占整盘豆数百分比（如 20.0%）
+#                               {total}  整盘豆数
+#                               {name}   缺陷名（taxonomy 三语名）
+#                               {stage}  当前归因环节名（三语）
+#   defects.<key>.advice      改进建议（三语，各 ≥1 条，缺一即加载失败）
+#   defects.<key>.citations   引用的标准条目 / 知识库 chunk id
+#   general                   好豆批（无缺陷）或所有批次的通用建议与引用
+#   stage_names               环节名的 en/vi 译名（zh 即环节键本身）
+# 约定：
+#   - stages 固定为加工五环节：采摘 / 发酵 / 干燥 / 仓储 / 脱壳。
+#   - defects 必须覆盖 configs/taxonomy.yaml 的全部缺陷类（12 类，不含
+#     normal）；多余或缺失的键都在加载期报错（RootCauseConfigError）。
+#   - 越南语文本沿用 taxonomy 的无变音占位风格（vi_verified=false），
+#     标准/术语核对（D1）后统一回填。
+# =====================================================================
+version: 1
+
+stages: [采摘, 发酵, 干燥, 仓储, 脱壳]
+
+stage_names:
+  采摘: {en: harvest, vi: thu hoach}
+  发酵: {en: fermentation, vi: len men}
+  干燥: {en: drying, vi: say kho}
+  仓储: {en: storage, vi: bao quan}
+  脱壳: {en: hulling, vi: xat kho}
+
+# 三语证据句模板（整库共用；占位符见文件头说明）
+evidence:
+  zh: "检出 {count} 粒{name}（占 {share}），证据指向{stage}环节。"
+  en: "Detected {count} {name} bean(s) ({share} of {total}); evidence points to the {stage} stage."
+  vi: "Phat hien {count} {name} ({share} trong {total} hat); bang chung chi vao giai doan {stage}."
+
+defects:
+
+  black:
+    causes:
+      - {stage: 发酵, likelihood: 0.45}
+      - {stage: 采摘, likelihood: 0.30}
+      - {stage: 干燥, likelihood: 0.15}
+    advice:
+      zh:
+        - "只采全红熟果，落地果与干枯果单独处理，不得混入商品批"
+        - "发酵控时控温（≤36h），避免厌氧过度产黑"
+        - "带果不过夜堆闷，进场后 24h 内完成脱果脱胶并上床干燥"
+      en:
+        - "Harvest only fully red cherries; keep ground-dropped and dried cherries out of the lot"
+        - "Control fermentation time and temperature (<=36 h) to avoid anaerobic blackening"
+        - "Do not pile cherries overnight; de-pulp, demucilage and move to drying beds within 24 h"
+      vi:
+        - "Chi thu hai qua chin deu; loai qua roi dat va qua kho khoi lo hang"
+        - "Kiem soat thoi gian va nhiet do len men (duoi 36h), tranh len men qua muc"
+        - "Khong chat dong qua dem; xat bo cui va dua di phoi trong 24h sau thu mua"
+    citations: ["std:cqi_fine_robusta#defect.black", "kb:rootcause.black"]
+
+  sour:
+    causes:
+      - {stage: 发酵, likelihood: 0.55}
+      - {stage: 干燥, likelihood: 0.25}
+      - {stage: 采摘, likelihood: 0.10}
+    advice:
+      zh:
+        - "缩短湿法发酵时间，发酵完成后立即清水冲洗终止发酵"
+        - "脱胶后 6h 内上床干燥，摊薄（≤2cm）并勤翻动"
+        - "病果与落果不入批，减少外源产酸菌污染"
+      en:
+        - "Shorten wet fermentation; wash with clean water immediately afterwards to stop it"
+        - "Move to drying beds within 6 h after demucilaging; spread thin (<=2 cm) and turn often"
+        - "Exclude diseased and dropped cherries to reduce acid-forming contamination"
+      vi:
+        - "Rut ngan thoi gian len men; rua bang nuoc sach ngay sau khi len men"
+        - "Dua di phoi trong 6h sau khi loai chat nhay; phoi mong va dao thuong xuyen"
+        - "Khong dua qua benh va qua roi vao lo de giam nhiem tao axit"
+    citations: ["std:cqi_fine_robusta#defect.sour", "kb:rootcause.sour"]
+
+  mold:
+    causes:
+      - {stage: 干燥, likelihood: 0.45}
+      - {stage: 仓储, likelihood: 0.40}
+      - {stage: 采摘, likelihood: 0.10}
+    advice:
+      zh:
+        - "干燥至含水率 10–12% 再入仓，逐批用水分仪复测"
+        - "仓内垫高防潮、通风除湿，豆袋不直接接触地面与墙面"
+        - "沾泥果先清洗再干燥；霉变批立即隔离，防止交叉污染"
+      en:
+        - "Dry to 10-12% moisture and re-check every lot with a moisture meter before storage"
+        - "Store on pallets with ventilation; keep bags off floors and walls"
+        - "Wash muddy cherries before drying; quarantine moldy lots immediately"
+      vi:
+        - "Say den do am 10-12% roi moi nhap kho; do lai bang may do am tung lo"
+        - "Ke kho cao, thoang gio, tranh doi bao truc tiep xuc mat dat va tuong"
+        - "Qua ban rua sach truoc khi say; cach ly rieng lo hat moc ngay lap tuc"
+    citations: ["std:cqi_fine_robusta#defect.mold", "kb:rootcause.mold"]
+
+  insect:
+    causes:
+      - {stage: 采摘, likelihood: 0.60}
+      - {stage: 仓储, likelihood: 0.35}
+    advice:
+      zh:
+        - "田间及时清理落果与残株，降低虫口基数"
+        - "采收后 48h 内完成脱果，阻断果内幼虫继续蛀食"
+        - "仓房加装防虫网并定期熏蒸或低温储藏；成品复筛剔除蛀孔粒"
+      en:
+        - "Remove dropped cherries and crop residues promptly to cut field pest pressure"
+        - "De-pulp within 48 h of harvest to stop larvae boring inside cherries"
+        - "Screen storerooms, fumigate or chill regularly; re-sieve green beans to drop bored beans"
+      vi:
+        - "Don dep qua roi va tac phan du trong ruong de giam sau hai"
+        - "Xat bo cui trong 48h sau thu hai de chan sau trong qua tiep tuc pha hat"
+        - "Luoi chan sau trong kho, xat mo dinh ky hoac bao quan lanh; sang loc lai thanh pham"
+    citations: ["std:cqi_fine_robusta#defect.insect", "kb:rootcause.insect"]
+
+  dried:
+    causes:
+      - {stage: 采摘, likelihood: 0.55}
+      - {stage: 干燥, likelihood: 0.30}
+    advice:
+      zh:
+        - "严格按熟度分批采收，禁止抢青，减少瘪果入批"
+        - "旱季加强灌溉与树体营养管理，降低僵果率"
+        - "干燥温度 ≤40℃ 并摊薄匀干，避免高温急干致皱缩僵化"
+      en:
+        - "Pick by ripeness in batches; no green picking, keep shrivelled cherries out"
+        - "Irrigate and feed trees properly in dry seasons to reduce empty beans"
+        - "Dry below 40C spread thin and evenly; avoid rapid high-heat shrivelling"
+      vi:
+        - "Thu hai dung dot theo do chin, tranh thu hai qua xanh"
+        - "Tuoi nuoc du trong mua han de giam ty le hat xop"
+        - "Nhiet do say duoi 40C, phoi mong deu, tranh say qua nong lam hat nhan lai"
+    citations: ["std:cqi_fine_robusta#defect.dried", "kb:rootcause.dried"]
+
+  broken:
+    causes:
+      - {stage: 脱壳, likelihood: 0.70}
+      - {stage: 干燥, likelihood: 0.20}
+    advice:
+      zh:
+        - "校准脱壳机刀距与转速，按豆径分档进料，避免打击过猛"
+        - "过干批次（含水率 <10%）先回潮均湿再脱壳，减少脆裂"
+        - "脱壳后立即用分级筛 + 风选剔除碎粒，不回混主批"
+      en:
+        - "Calibrate huller gap and drum speed; feed beans pre-sieved by size grade"
+        - "Re-humidify over-dried lots (<10% moisture) before hulling to reduce cracking"
+        - "Remove fragments right after hulling with grading sieves and air separation"
+      vi:
+        - "Chinh xac khe ho may xat va toc do; phan loai kich thuoc truoc khi xat"
+        - "Hat qua kho (do am duoi 10%) nen lam am lai truoc khi xat"
+        - "Sau khi xat, dung mat ray phan cap va gio de loai hat vo ngay"
+    citations: ["std:cqi_fine_robusta#defect.broken", "kb:rootcause.broken"]
+
+  brocade:
+    causes:
+      - {stage: 干燥, likelihood: 0.50}
+      - {stage: 发酵, likelihood: 0.30}
+      - {stage: 仓储, likelihood: 0.15}
+    advice:
+      zh:
+        - "摊晒均匀、定时翻动，避免局部回潮与正午强光暴晒斑驳"
+        - "发酵标准化：豆层厚度/时间固定，脱胶冲洗充分均匀"
+        - "干燥后回温均湿再入仓，减少仓内结露花斑"
+      en:
+        - "Spread evenly and turn on schedule; avoid uneven re-wetting and harsh midday sun"
+        - "Standardize fermentation: fixed layer depth and time; wash demucilage evenly"
+        - "Equilibrate beans after drying before storage to avoid condensation blotches"
+      vi:
+        - "Phoi deu, dao thuong xuyen, tranh phoi nang gat va am cuc bo"
+        - "Chuan hoa do day lop va thoi gian len men; rua chat nhay that sach deu"
+        - "Thu nhiet deu truoc khi nhap kho de tranh ngung tu tao vet loang"
+    citations: ["std:cqi_fine_robusta#defect.brocade", "kb:rootcause.brocade"]
+
+  shell:
+    causes:
+      - {stage: 采摘, likelihood: 0.45}
+      - {stage: 脱壳, likelihood: 0.30}
+      - {stage: 干燥, likelihood: 0.15}
+    advice:
+      zh:
+        - "贝壳豆多为生长畸形：花期/膨果期水肥均衡，降低畸形果率"
+        - "按粒型分级，贝壳豆单独归集，可作特色批次"
+        - "脱壳前预分选剔除畸形豆，减少入机破损"
+      en:
+        - "Shell beans are mostly growth malformations; balance water and nutrients at bloom and fill"
+        - "Grade by bean form and collect shell beans separately as a specialty lot"
+        - "Pre-sort malformed beans before hulling to reduce breakage"
+      vi:
+        - "Hat mai thuong la mat can sinh truong; can bang tuoi bon trong thoi ky phat trien qua"
+        - "Phan loai theo kich thuoc; thu hat mai rieng lam lo dac biet"
+        - "Sang loc truoc khi xat de giam vo hat trong may"
+    citations: ["std:cqi_fine_robusta#defect.shell", "kb:rootcause.shell"]
+
+  elephant:
+    causes:
+      - {stage: 采摘, likelihood: 0.50}
+      - {stage: 脱壳, likelihood: 0.30}
+      - {stage: 干燥, likelihood: 0.15}
+    advice:
+      zh:
+        - "象豆为粒型变异：按品种特性单独分选归集"
+        - "脱壳机按大豆径调整机距，避免强行挤压破碎"
+        - "补齐大目数筛片（≥18 目），象豆不混入主批拉偏分布"
+      en:
+        - "Elephant beans are a size variant; sort and collect them separately by variety trait"
+        - "Widen huller gap for large beans; avoid forcing and crushing"
+        - "Add large-mesh sieve screens (>=18) so elephant beans stay out of the main lot"
+      vi:
+        - "Hat voi la bien the kich thuoc; sang loc rieng theo dac tinh giong"
+        - "Chinh khe ho may xat cho hat to, tranh nen vo hat"
+        - "Bo sung mat ray kich thuoc lon hon 18 de hat voi khong tron lo chinh"
+    citations: ["std:cqi_fine_robusta#defect.elephant", "kb:rootcause.elephant"]
+
+  peaberry:
+    causes:
+      - {stage: 采摘, likelihood: 0.55}
+      - {stage: 脱壳, likelihood: 0.25}
+    advice:
+      zh:
+        - "花豆（胡椒粒豆）为正常粒型变异，计量不计缺陷，无需工艺整改"
+        - "用 12–14 目筛单独归集，可作精品花豆批次增值"
+        - "与平豆混批会拉低目数分布，先分选再合并报告"
+      en:
+        - "Peaberry is a normal size variant, not counted as a defect; no process change needed"
+        - "Collect peaberries with 12-14 mesh screens as a premium specialty lot"
+        - "Mixing with flat beans skews the sieve profile; sort first, then merge reports"
+      vi:
+        - "Peaberry la bien the kich thuoc binh thuong, khong tinh la khuyet tat"
+        - "Dung mat ray 12-14 de thu rieng peaberry, tang gia tri lo dac biet"
+        - "Tron voi hat phet se lam sai phan bo kich thuoc; sang loc truoc khi gop bao cao"
+    citations: ["std:cqi_fine_robusta#defect.peaberry", "kb:rootcause.peaberry"]
+
+  immature:
+    causes:
+      - {stage: 采摘, likelihood: 0.65}
+      - {stage: 发酵, likelihood: 0.15}
+      - {stage: 干燥, likelihood: 0.10}
+    advice:
+      zh:
+        - "严格按熟度分批采收，禁止抢青；浮水选剔除浮豆"
+        - "未熟豆单独低价处理，不与主批混合拉低整体品质"
+        - "采收季前统一培训采果标准（只采全红果）"
+      en:
+        - "Pick strictly by ripeness in batches; no green picking; float-sort to drop floaters"
+        - "Handle immature beans as a separate low-grade lot; never blend into the main batch"
+        - "Train pickers on ripeness standards (fully red only) before the season"
+      vi:
+        - "Thu hai dung dot theo do chin, tranh thu hai qua xanh; loai hat noi bang cach phai nuoc"
+        - "Xu ly hat non rieng, khong tron vao lo chinh"
+        - "Dao tao nhan luc tieu chuan qua chin truoc moc thu hai"
+    citations: ["std:cqi_fine_robusta#defect.immature", "kb:rootcause.immature"]
+
+  faded:
+    causes:
+      - {stage: 仓储, likelihood: 0.45}
+      - {stage: 干燥, likelihood: 0.30}
+      - {stage: 发酵, likelihood: 0.15}
+    advice:
+      zh:
+        - "避光、低温、干燥仓储，先进先出周转，防止陈化褪色"
+        - "摊晒避开正午强光长时间直晒，过度曝晒致白化"
+        - "控制水洗时长与水温，减少表层色素流失"
+      en:
+        - "Store dark, cool and dry with first-in-first-out rotation to prevent ageing fade"
+        - "Avoid long harsh midday sun on drying beds; over-exposure bleaches beans"
+        - "Control washing duration and water temperature to limit pigment loss"
+      vi:
+        - "Bao quan tranh anh sang, nhiet do thap; quay lo theo nhap truoc xuat truoc"
+        - "Tranh phoi nang gat qua lau buoi trua de tranh hat bi nhat mau"
+        - "Kiem soat thoi gian va nhiet do khi rua xa de giam mat sac to"
+    citations: ["std:cqi_fine_robusta#defect.faded", "kb:rootcause.faded"]
+
+general:
+  advice:
+    zh:
+      - "只采全红熟果，落地果与病果不入批"
+      - "发酵控时控温；脱胶后及时上床干燥至含水率 10–12% 并均湿回温"
+      - "仓储垫高防潮避光通风；脱壳机距按豆径校准并复筛"
+    en:
+      - "Harvest only fully red cherries; keep ground and diseased cherries out of the lot"
+      - "Control fermentation; dry promptly to 10-12% moisture and equilibrate before storage"
+      - "Store on pallets, dark, dry and ventilated; calibrate huller gap by bean size and re-sieve"
+    vi:
+      - "Chi thu hai qua chin deu; loai qua roi dat va qua benh khoi lo"
+      - "Kiem soat len men; say som den do am 10-12% roi thu nhiet deu truoc khi nhap kho"
+      - "Bao quan ke cao, thoang gio, tranh anh sang; chinh khe ho may xat va sang loc lai"
+  citations: ["std:cqi_fine_robusta#grading", "kb:rootcause.general"]
