@@ -1,0 +1,9 @@
+# 合成语料生成依赖坐标（benchmark/generator 专用）。
+# 铁律 E（公开仓库卫生）：第三方库模块名只允许出现在 config/（本文件默认档不被
+# ops/name_lint.py 扫描），源码经 importlib 按本配置动态加载、不得硬编码库名。
+personas:
+  module: faker        # 合成人名/单位/职业语料库（synthetic persona corpus provider）
+  factory: Faker       # 语料工厂类名
+  locale: zh_CN
+pdf_writer:
+  module: fitz         # PDF 写入与文本抽取（seeded 夹具生成/导出物复核共用）

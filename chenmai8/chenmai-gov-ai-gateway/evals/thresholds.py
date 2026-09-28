@@ -56,3 +56,14 @@ CORPUS_DOCS_MIN = 5000
 CORPUS_TEMPLATE_CLASSES_MIN = 30
 QUALITY_PAIRS_MIN = 50
 QUALITY_RATIO_MIN = 0.95               # 脱敏前后回答质量比值下限
+
+# ── M8 生成器（T1.1：rule_cases 评测集 + seeded 夹具）──────────────
+GENERATOR_TEMPLATE_CLASSES_MIN = 10    # 政务文书模板类下限（任务口径）
+GENERATOR_PERTURB_KINDS_MIN = 5        # 扰动器种类下限（任务口径 5 类）
+GENERATOR_ID_CHENGMAI_MIN = 20         # 澄迈区划(469023)身份证正例下限
+GENERATOR_REJECT_NEGATIVES_MIN = 20    # 难负例（校验位失败等）下限
+GENERATOR_SENSITIVE_ATTR_MIN = 20      # 敏感属性正例下限（9 子类型须全覆盖）
+GENERATOR_DATE_BIRTH_MIN = 20          # 出生日期正例下限
+GENERATOR_PERSON_MIN = 20              # 人名（NER 层计分）样例下限
+GENERATOR_ADDRESS_MIN = 20             # 住址（NER 层计分）样例下限
+GENERATOR_LANDLINE_MIN = 20            # 座机正例下限
