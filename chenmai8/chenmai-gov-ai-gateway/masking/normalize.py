@@ -7,10 +7,12 @@ from __future__ import annotations
 
 from recognizers.models import EntityClass
 
-# 全角数字 ０-９ → 0-9；全角空格/常见全角符号在翻译表中一并处理
-_FW_DIGITS = {0xFF10 + i: str(i) for i in range(10)}
-_FW_SPACE = {0x3000: " ", 0xFF0D: "-", 0xFF0E: ".", 0xFF03: "#"}  # － ． ＃
-_TRANSLATE = {**_FW_DIGITS, **_FW_SPACE}
+# 全角 ASCII 可打印区（０-９、Ａ-Ｚ、ａ-ｚ与常见符号）→ 半角；全角空格一并处理。
+# §5.3.2「全角→半角」的完整实现：车牌/信用代码等含字母值的全角写法必须归一
+# （基准字符集 0xFF01-0xFF5E ↔ 0x21-0x7E，另含全角空格 0x3000）。
+_FW_ASCII = {0xFF01 + i: chr(0x21 + i) for i in range(94)}
+_FW_SPACE = {0x3000: " "}
+_TRANSLATE = {**_FW_ASCII, **_FW_SPACE}
 
 #: 数字串类实体：删内部空格/连字符/点号/间隔点等分隔符
 _DIGIT_TYPES = frozenset({
