@@ -54,6 +54,7 @@ from gateway.provider import (
     open_stream_chat,
 )
 from masking.mapper import SessionMapper, SessionRegistry
+from masking.toolbuf import restore_arguments
 from recognizers.models import Finding
 from recognizers.rule.detect import detect
 from routing.engine import decide
@@ -625,7 +626,8 @@ class GatewayService:
                         continue
                     fn = call.get("function")
                     if isinstance(fn, dict) and isinstance(fn.get("arguments"), str):
-                        fn["arguments"] = mapper.restore(fn["arguments"])
+                        # 非流式直接整体还原（§6 M3 工具条目；实现归 masking.toolbuf）
+                        fn["arguments"] = restore_arguments(mapper, fn["arguments"])
 
     # ── 审计 ─────────────────────────────────────────────────────
     def _audit(self, *, request_id: str, session_id: str, dept: str,

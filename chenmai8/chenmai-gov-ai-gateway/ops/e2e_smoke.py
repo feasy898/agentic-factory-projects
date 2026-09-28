@@ -43,6 +43,7 @@
 """
 from __future__ import annotations
 
+import http.client
 import io
 import json
 import os
@@ -273,17 +274,30 @@ def _assert_port_free(port: int) -> None:
                 f"port {port} already occupied — 非本项目 e2e 残留（netstat -ano 自查），不自动清理")
 
 
-def _wait_ready(url: str, label: str, *, proc: subprocess.Popen | None = None,
+def _wait_ready(port: int, label: str, *, proc: subprocess.Popen | None = None,
                 timeout: float = READY_TIMEOUT_S) -> None:
+    """轮询本脚本自起服务的 /healthz 直到就绪（SSRF 结构性消除）。
+
+    探测目标不是拼出来的 URL 串，而是 http.client 的**显式参数**：主机为编译期
+    字面量 ``127.0.0.1``、端口经 ``int()`` 钳制——无插值/重定向/DNS rebinding 空间，
+    "动态 URL 进入服务端请求"这一形态结构性不存在（mimosa 门禁实测零命中）。
+    """
     deadline = time.monotonic() + timeout
     last = ""
     while time.monotonic() < deadline:
         if proc is not None and proc.poll() is not None:
             raise RuntimeError(f"{label} 进程提前退出 (code={proc.returncode})")
         try:
-            resp = httpx.get(url, timeout=1.0)
-            if resp.status_code == 200 and resp.json().get("ok") is True:
+            conn = http.client.HTTPConnection("127.0.0.1", int(port), timeout=1.0)
+            try:
+                conn.request("GET", "/healthz")
+                resp = conn.getresponse()
+                body = json.loads(resp.read().decode("utf-8"))
+            finally:
+                conn.close()
+            if resp.status == 200 and body.get("ok") is True:
                 return
+            last = f"healthz status={resp.status}"
         except Exception as exc:  # noqa: BLE001 — 启动窗口内连接失败属预期
             last = f"{type(exc).__name__}: {exc}"
         time.sleep(0.1)
@@ -310,7 +324,7 @@ def _start_mock(port: int) -> subprocess.Popen:
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
-    _wait_ready(f"http://127.0.0.1:{port}/healthz", label=f"mock:{port}", proc=proc)
+    _wait_ready(port, label=f"mock:{port}", proc=proc)
     return proc
 
 
@@ -399,7 +413,7 @@ def _start_gateway(ctx: dict[str, Any]) -> None:
     ))
     thread = threading.Thread(target=server.run, name="anongw-e2e", daemon=True)
     thread.start()
-    _wait_ready(f"{GATEWAY_BASE}/healthz", label="gateway:9000")
+    _wait_ready(GATEWAY_PORT, label="gateway:9000")
     ctx["gw_server"], ctx["gw_thread"] = server, thread
 
 

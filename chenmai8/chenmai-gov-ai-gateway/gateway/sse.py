@@ -4,9 +4,9 @@
 1. :func:`iter_sse_data_lines` —— 字节流 → 事件 ``data:`` 载荷。按 ``\\n`` 切行并
    **跨 chunk 缓冲半行**（上游任意字节切块——含把多字节 UTF-8 切成两半——都不破行）；
    同一事件的多行 ``data:`` 按空行组帧、用换行拼接（SSE 规范）；
-2. :class:`StreamToolBuffer` —— 流式工具调用参数**增量累积，finish 前不发**；
-   finish 时整体还原后作为单个 delta 发出（§6 M3 工具条目，参数级 JSON 还原由
-   脱敏任务补全，v0 为串级还原）；
+2. :class:`masking.toolbuf.ToolCallBuffer` —— 流式工具调用参数**增量累积，
+   finish 前不发**；finish 时整体还原后作为单个 delta 发出（§6 M3 工具条目；
+   T2.3 起实现归属 masking 包「工具还原」，本模块只做管线编排）；
 3. :func:`compose_chat_stream` —— 主组合：逐事件透传 + 文本增量过
    :class:`masking.remap.StreamRestorer` + finish 时注入 AI 生成标识
    （文本尾注 delta + 元数据 ``annotations`` 字段，§5.6 流式注入方式）。
@@ -27,6 +27,7 @@ from collections.abc import AsyncIterator, Callable
 from common.logs import get_logger
 from masking.mapper import SessionMapper
 from masking.remap import StreamRestorer
+from masking.toolbuf import ToolCallBuffer
 
 log = get_logger(__name__)
 
@@ -119,54 +120,11 @@ def _data_payload(raw_line: bytes) -> str | None:
     return payload
 
 
-class StreamToolBuffer:
-    """流式 tool_calls 增量缓冲：arguments 按 index 累积，finish 前不发出。
+class StreamToolBuffer(ToolCallBuffer):
+    """兼容别名：流式工具参数缓冲还原的实现已下沉 masking 包（masking.toolbuf）。
 
-    §6 M3：``流式下 tool_call.arguments 增量累积，finish 前不发，finish 时
-    整体还原后作为单个 delta 发出``（首个 delta 声明的 id/type/name 一并保留）。
+    保留导出名以免破坏既有引用；新代码请直接用 :class:`masking.toolbuf.ToolCallBuffer`。
     """
-
-    def __init__(self) -> None:
-        # index → {"id","name","args": [片段…]}；其余 delta 字段原样保留
-        self._calls: dict[int, dict] = {}
-        self.held_events = 0  # 观测/测试用：累计吞掉的含参增量数
-
-    def feed(self, tool_calls: list) -> None:
-        """吞下 delta.tool_calls 增量（不产生输出）。"""
-        for call in tool_calls:
-            if not isinstance(call, dict):
-                continue
-            index = call.get("index")
-            key = index if isinstance(index, int) else 0
-            slot = self._calls.setdefault(key, {"id": "", "name": "", "args": [], "extra": {}})
-            if isinstance(call.get("id"), str) and call["id"]:
-                slot["id"] = call["id"]
-            fn = call.get("function")
-            if isinstance(fn, dict):
-                if isinstance(fn.get("name"), str) and fn["name"]:
-                    slot["name"] = fn["name"]
-                if isinstance(fn.get("arguments"), str) and fn["arguments"]:
-                    slot["args"].append(fn["arguments"])
-                    self.held_events += 1
-            for k, v in call.items():
-                if k not in ("index", "id", "function"):
-                    slot["extra"][k] = v
-
-    def finalize(self, mapper: SessionMapper) -> list[dict]:
-        """finish 时整体还原，返回每工具一个的完整 delta（``tool_calls`` 形状）。"""
-        deltas: list[dict] = []
-        for index in sorted(self._calls):
-            slot = self._calls[index]
-            arguments = mapper.restore("".join(slot["args"]))
-            call: dict = {"index": index, "type": "function",
-                          "id": slot["id"], "function": {"name": slot["name"], "arguments": arguments}}
-            call.update(slot["extra"])
-            deltas.append(call)
-        self._calls.clear()
-        return deltas
-
-    def __bool__(self) -> bool:
-        return bool(self._calls)
 
 
 async def compose_chat_stream(
