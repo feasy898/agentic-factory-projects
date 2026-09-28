@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>qacore fixture mini</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #10203a; }
+  body {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+    color: #fff; font-family: sans-serif;
+  }
+  canvas { background: #24405f; border-radius: 8px; }
+</style>
+</head>
+<body>
+  <canvas id="stage" width="320" height="240"></canvas>
+  <p id="label">qacore fixture：一块画布与一句文字</p>
+  <script>
+    const ctx = document.getElementById("stage").getContext("2d");
+    ctx.fillStyle = "#ff8a3d";
+    ctx.fillRect(24, 24, 120, 80);
+    ctx.beginPath();
+    ctx.arc(232, 128, 44, 0, Math.PI * 2);
+    ctx.fillStyle = "#39a7ff";
+    ctx.fill();
+    ctx.fillStyle = "#ffd54d";
+    ctx.font = "bold 22px sans-serif";
+    ctx.fillText("MINI", 128, 210);
+  </script>
+</body>
+</html>
