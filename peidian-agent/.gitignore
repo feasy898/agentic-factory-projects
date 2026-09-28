@@ -1,0 +1,11 @@
+runtime/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+golden/holdout/
+**/*holdout*/
+runs/acceptance/
+*.db
+*.sqlite3
