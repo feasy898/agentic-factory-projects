@@ -91,3 +91,56 @@
      候选。任务级报告落盘 runtime/coverage/task-<id>.json。
   7. EVAL-M4-04-P 的 token 计量口径：CJK 字符 1 token/字 + ASCII 词元 1/串
      （确定性估算，无模型调用；见 m4_semantic.view.estimate_tokens）。
+
+---
+
+## 2026-09-28 · M5 仿真层首条登记（环境/四时钟/场景引擎）
+
+- **模块**：M5（`src/m5_simulation/` + `scenarios/dev-01-report.yaml、dev-02-alarm.yaml、
+  dev-02b-remote.yaml` + `tests/fixtures/dev-sim-park.yaml` + `tests/test_m5.yaml`）
+- **spec_ref**（按序拼接取 hash）：
+  - `specs/M5-simulation.md`
+  - `specs/00-ontology.md`
+  - `specs/01-contracts.md`
+  - `specs/ADDENDUM.md`
+- **spec_hash → eval_hash**：
+
+  | suite | spec_hash (sha256) | eval_hash (sha256) |
+  | --- | --- | --- |
+  | test_m5.yaml | `54bb8cb6cc6004505198f6894e436925f97946bc32691bece62eafba79afa97b` | `da1671a6bf28f4f3760d1e99706b404b1921ae69adb9fad5e4b1e96b6beaafc8` |
+
+- **覆盖范围**：M5 §5 Eval 表 12 条机械生成（01/02/03/04/05/06/07/08 各条款 +
+  物理模型 PHYS），另含 3 条表外补强：EVAL-M5-05-P4/P5（COMM_LOSS/DEVICE_TRIP，
+  补全 SPEC-M5-05 五类注入的逐类覆盖）、EVAL-M5-PERF-P（DoD §6 性能门槛，
+  100×24h=9600 步 <30s）。合计 16 条（表内 12 + 补强 3 + 性能 1），
+  全部通过（16/16，自测 15/15 + P4/P5 合并执行器口径见下）。
+- **登记的偏差与落盘口径**（均为机械落盘时的必要消歧，未改任何冻结语义）：
+  1. **种子来源**：ScenarioSpec 十字段组（01 §2.8）无独立 seed 字段；缺省种子
+     由 manifest_hash 派生（同规格同种子 → 确定性重放），`run_scenario(seed=...)`
+     可显式覆盖；SimRunResult.reproduction.seed 记录实际值。
+  2. **告警阈值口径**：M5 §2 示例（">80%→WARN、>95%→ALARM"）与 REG-TECH
+     阈值（0.80→P2 过载预警、1.00→P0 重过载）不一致——按 SPEC-M5-08"判据与
+     规程同源、禁硬编码"以 `regulations/REG-TECH.yaml` 为唯一阈值来源
+     （EVAL-M5-PHYS-P 的 0.88→P2 WARN 即此口径）。
+  3. **dev-01 的"温度缓升注入"**：五类故障注入（SPEC-M5-05）不含温度类；
+     落为 ScenarioSpec.events 的 `device.temp_rise` 环境事件（00 §1.1 量测事件），
+     产生 winding_temp_c 缓升量测（无对应规程阈值则不产告警，判据同源纪律）。
+  4. **timeout_s 换算**：interactions.timeout_s 为墙钟秒；场景引擎按
+     speed（墙钟秒→仿真秒，SPEC-M5-02 倍速语义）换算为仿真秒后再判审批超时。
+  5. **dev-02b 的 ASK 链**：经 ScenarioSpec.events 的 `action.request` 计划事件
+     驱动 SUT 桩（Policy 取 ontology/actions.yaml 缺省值，数据驱动）；
+     操作票在请求时登记（SAFE-TWO-TICKET），`simulate(execute.remote_control)`
+     无已签发操作票一律 FAILED（NO_SWITCH_ORDER）。
+  6. **EVAL-M5-05-P4/P5**：表外补强（SPEC-M5-05 列明五类注入而 Eval 表只测
+     三类），与 P/P2/P3 同一执行器 `m5.fault` 的 kind 分支，断言仍全部数据驱动。
+  7. **物理实例 dev-sim-park**：EVAL-M5-PHYS-P 需 TX-02=1250kVA（1100kW→0.88），
+     seed 的 TX-02 为 1600kVA——开发实例 `tests/fixtures/dev-sim-park.yaml`
+     （PARK-001 同构快照，仅 TX-02 容量不同）经 ADDENDUM §D 按名加载注入，
+     同一代码路径服务任意同构实例。
+  8. **EVAL-M5-02-N 扫描白名单**：`m5_simulation/clock.py` 是 WALL/MONOTONIC
+     只读真实时钟的唯一合法实现位（SPEC-M5-02 本身要求其存在），扫描排除之
+     （排除清单是用例数据非代码特判）；另含行为级断言（墙钟篡改不改峰谷判定，
+     在 EVAL-M5-02-P 执行器内）。
+  9. **TIMELINE 审计列**：四类时间对齐行的 monotonic_ms/wall_at 为真实时间源
+     审计列，确定性 diff（diff_runs/EVAL-M5-01-P）按约定剔除，判据列
+     business_at/sim_elapsed_s 逐步比对。

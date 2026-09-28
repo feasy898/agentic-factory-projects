@@ -1,0 +1,281 @@
+# tests/test_m5.yaml
+# M5（仿真层：环境/四时钟/场景引擎）数据驱动 EVAL 套件。
+# 用例从 specs/M5-simulation.md §5 Eval 表逐行机械生成（12 条），
+# 另含 3 条补强/DoD 用例：EVAL-M5-05-P4/P5（COMM_LOSS/DEVICE_TRIP 补全
+# SPEC-M5-05 五类注入覆盖）、EVAL-M5-PERF-P（DoD §6：100×24h 仿真步 <30s）。
+# 合计 16 条。schema 见 tests/EVAL-SCHEMA.md；执行器注册于
+# src/m5_simulation/eval_plugin.py（全部断言数据取自本文件 params/expect）。
+# spec_hash 口径（01§6）：spec_ref 列表按序拼接文件字节的 sha256。
+suite: m5
+title: M5 仿真层（环境/四时钟/场景引擎）EVAL
+spec_ref:
+  - specs/M5-simulation.md
+  - specs/00-ontology.md
+  - specs/01-contracts.md
+  - specs/ADDENDUM.md
+spec_hash: 54bb8cb6cc6004505198f6894e436925f97946bc32691bece62eafba79afa97b
+executors:
+  - module: m5_simulation.eval_plugin
+
+cases:
+  # ================= SPEC-M5-01 确定性 =================
+  - id: EVAL-M5-01-P
+    spec: SPEC-M5-01
+    title: 同 seed 跑 dev-01 两次 → 轨迹逐步 diff 空、三层证据一致
+    form: expression
+    executor: m5.determinism
+    params:
+      scenario: scenarios/dev-01-report.yaml
+    expect: {}
+
+  # ================= SPEC-M5-02 四类时间 / 电价时钟 =================
+  - id: EVAL-M5-02-P
+    spec: SPEC-M5-02
+    title: clock_start=10:00 跨 12:00 边界推进 → PEAK→FLAT 事件恰在 12:00:00（BUSINESS）
+    form: event_sequence
+    executor: m5.price_boundary
+    params:
+      instance: seed
+      clock_start: 2026-09-15T10:00:00Z
+      advance_minutes: 150
+    expect:
+      boundary_at: "2026-09-15T12:00:00Z"
+      from_period: PEAK
+      to_period: FLAT
+
+  - id: EVAL-M5-02-N
+    spec: SPEC-M5-02
+    title: 代码扫描业务模块 → 无 wall-clock 峰谷判定（BUSINESS 时钟为唯一依据）
+    form: negative_rejection
+    executor: m5.no_wallclock_pricing
+    params:
+      scan_dirs: [src]
+      exclude:
+        - m5_simulation/clock.py      # WALL/MONOTONIC 只读源的唯一实现位（SPEC-M5-02）
+        - m5_simulation/eval_plugin.py  # 扫描器自身（含被检词面）
+      forbidden:
+        - datetime.now
+        - datetime.today
+        - utcnow
+        - time.localtime
+        - time.gmtime
+        - time.time
+      price_markers: [price, period, tariff, peak, valley, 峰, 谷, FLAT]
+    expect: {}
+
+  # ================= SPEC-M5-03 环境接口 =================
+  - id: EVAL-M5-03-P
+    spec: SPEC-M5-03
+    title: simulate(query.measurement) 返回带时标快照；写动作后回读状态变化
+    form: expression
+    executor: m5.simulate_interface
+    params:
+      instance: seed
+      clock_start: 2026-09-15T08:30:00Z
+      warmup_s: 1800
+      query: {device: TX-01}
+      write:
+        capability: execute.capacitor_switch@v1
+        args: {device: CB-A, state: "ON"}
+      readback: {device: CB-A}
+    expect:
+      readback_state: "ON"
+
+  # ================= SPEC-M5-04 用户模拟 =================
+  - id: EVAL-M5-04-P
+    spec: SPEC-M5-04
+    title: OPERATOR 脚本 persona 走 5 轮追问 → 逐字回放一致（两次重放相同）
+    form: expression
+    executor: m5.persona_script
+    params:
+      persona: OPERATOR
+      clock_start: 2026-09-15T08:30:00Z
+      script:
+        - {at: "+5m",  act: USER_INPUT, text: "开始今日日巡检，把两个配电房的状态过一遍。"}
+        - {at: "+35m", act: USER_INPUT, text: "2 号变压器负载率多少？"}
+        - {at: "+65m", act: USER_INPUT, text: "温度有没有爬升？"}
+        - {at: "+95m", act: USER_INPUT, text: "对比昨天同期呢？"}
+        - {at: "+125m", act: USER_INPUT, text: "好，出一份日巡检报告。"}
+    expect: {}
+
+  # ================= SPEC-M5-05 故障注入 =================
+  - id: EVAL-M5-05-P
+    spec: SPEC-M5-05
+    title: SENSING_OUTAGE 注入 → 量测返回 stale 标志+中断区间（不伪造新读数）
+    form: expression
+    executor: m5.fault
+    params:
+      kind: outage
+      instance: seed
+      clock_start: 2026-09-15T08:30:00Z
+      at: "+30m"
+      settle_s: 0
+      target: TX-01
+      injections:
+        - {at: "+30m", type: SENSING_OUTAGE, target: TX-01, params: {duration_s: 1800}}
+    expect:
+      outage_from: "2026-09-15T09:00:00Z"
+
+  - id: EVAL-M5-05-P2
+    spec: SPEC-M5-05
+    title: SENSOR_STUTTER 注入 → 3 秒内 4 次翻转，去抖后状态稳定
+    form: expression
+    executor: m5.fault
+    params:
+      kind: stutter
+      instance: seed
+      clock_start: 2026-09-15T08:30:00Z
+      at: "+30m"
+      settle_s: 15
+      target: SG-A01
+      injections:
+        - {at: "+30m", type: SENSOR_STUTTER, target: SG-A01,
+           params: {flips: 4, window_s: 3, debounce_s: 2}}
+    expect:
+      flips: 4
+      window_s: 3
+      final_state: CLOSED
+
+  - id: EVAL-M5-05-P3
+    spec: SPEC-M5-05
+    title: ALARM_STORM 注入（50 条）→ 引擎按级别聚合输出，事件总数=注入数
+    form: expression
+    executor: m5.fault
+    params:
+      kind: storm
+      instance: seed
+      clock_start: 2026-09-15T08:30:00Z
+      at: "+30m"
+      settle_s: 120
+      target: BUS-A1
+      injections:
+        - {at: "+30m", type: ALARM_STORM, target: BUS-A1,
+           params: {count: 50, window_s: 60, levels: [P2, P3]}}
+    expect:
+      count: 50
+
+  - id: EVAL-M5-05-P4
+    spec: SPEC-M5-05
+    title: COMM_LOSS 注入 → 审批 GRANT 在中断窗口内不可达，approval.timeout 且动作 REJECTED
+    form: expression
+    executor: m5.fault
+    params:
+      kind: comm_loss
+      instance: seed
+      clock_start: 2026-09-15T08:30:00Z
+      at: "+30m"
+      settle_s: 2700
+      timeout_s: 600
+      injections:
+        - {at: "+55m", type: COMM_LOSS, target: approval_channel, params: {duration_s: 3600}}
+      behavior_script:
+        - {at: "+75m", act: GRANT}
+      events:
+        - at: "+60m"
+          type: action.request
+          subject: SG-A02
+          params:
+            capability: execute.remote_control@v1
+            purpose: 通道中断下的遥控请求（应超时拒绝）
+            args: {device: SG-A02, operation: OPEN, switch_order: SO-COMM-001, issuer: OP-003}
+    expect:
+      final_action_status: REJECTED
+
+  - id: EVAL-M5-05-P5
+    spec: SPEC-M5-05
+    title: DEVICE_TRIP 注入 → 设备 FAULT+保护动作 grid.event，负载归零
+    form: expression
+    executor: m5.fault
+    params:
+      kind: trip
+      instance: seed
+      clock_start: 2026-09-15T08:30:00Z
+      at: "+30m"
+      settle_s: 900
+      target: TX-03
+      injections:
+        - {at: "+30m", type: DEVICE_TRIP, target: TX-03, params: {breaker_to: OPEN}}
+    expect:
+      device_state: FAULT
+      load_zero: true
+
+  # ================= SPEC-M5-06 三层证据 =================
+  - id: EVAL-M5-06-P
+    spec: SPEC-M5-06
+    title: 任意场景跑完 → 三层证据文件齐全且 TIMELINE 含四类时间对齐
+    form: expression
+    executor: m5.evidence_pack
+    params:
+      scenario: scenarios/dev-02-alarm.yaml
+    expect: {}
+
+  # ================= SPEC-M5-07 场景隔离 =================
+  - id: EVAL-M5-07-P
+    spec: SPEC-M5-07
+    title: 2 场景并发（dev-01 与 dev-02）→ 终态互不串扰（各自告警计数独立）
+    form: expression
+    executor: m5.concurrent_isolation
+    params:
+      scenarios:
+        - scenarios/dev-01-report.yaml
+        - scenarios/dev-02-alarm.yaml
+      checks:
+        - {scenario: scenarios/dev-01-report.yaml, path: alarms_total, expect: 0}
+        - {scenario: scenarios/dev-02-alarm.yaml, path: alarms_total, expect: 1}
+    expect: {}
+
+  # ================= SPEC-M5-08 规程同源 =================
+  - id: EVAL-M5-08-P
+    spec: SPEC-M5-08
+    title: 改 REG-TECH 阈值（PHYS-TX-LOAD 0.80→0.50）后重跑 → 告警行为随之变化
+    form: expression
+    executor: m5.regulation_sourced
+    params:
+      rule_id: PHYS-TX-LOAD
+      threshold_index: 0
+      new_value: 0.5
+      instance: dev-sim-park
+      device: TX-02
+      load_kw: 700          # 700/1250=0.56：原阈值(>0.80)不告警，改后(>0.50)告警
+      at: "+30m"
+      load_duration_s: 21600
+      clock_start: 2026-09-15T08:30:00Z
+      regulation_file: regulations/REG-TECH.yaml
+    expect:
+      baseline_alarms: 0
+      mutated_alarms: 1
+      mutated_level: P2
+
+  # ================= 物理模型（M5 §2）=================
+  - id: EVAL-M5-PHYS-P
+    spec: SPEC-物理模型（M5 §2 设备聚合）
+    title: TX-02 回路聚合 1100kW/1250kVA → load_rate=0.88 → WARN（P2）告警生成
+    form: expression
+    executor: m5.physics_load_rate
+    params:
+      instance: dev-sim-park
+      device: TX-02
+      kw: 1100
+      at: "+30m"
+      load_duration_s: 21600
+      clock_start: 2026-09-15T08:30:00Z
+    expect:
+      load_rate: 0.88
+      capacity_kva: 1250
+      rule: PHYS-TX-LOAD
+      level: P2
+      text_contains: 过载预警
+
+  # ================= DoD §6 性能门槛 =================
+  - id: EVAL-M5-PERF-P
+    spec: SPEC-M5-01（DoD §6 性能）
+    title: 100×24h 仿真步（15min 步长）完成时间 < 30s
+    form: performance
+    executor: m5.perf_ticks
+    params:
+      instance: seed
+      clock_start: 2026-09-15T00:00:00Z
+      days: 100
+      step_minutes: 15
+    expect:
+      max_ms: 30000
