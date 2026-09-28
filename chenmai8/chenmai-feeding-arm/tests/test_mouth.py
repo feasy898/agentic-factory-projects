@@ -35,6 +35,8 @@ pytestmark = pytest.mark.skipif(
 def test_prior_defaults_and_config(tmp_path):
     p = MouthPrior()
     assert p.distance_m == MOUTH_PRIOR_DEFAULT_M == 0.42
+    assert p.mode == "fixed"  # 契约 v1.1：缺省 fixed（顶部相机回退路径）
+    assert p.ipd_m == pytest.approx(0.063)
     assert p.error_band_m == (0.03, 0.05)
     # JSON 往返
     f = tmp_path / "prior.json"
@@ -43,6 +45,15 @@ def test_prior_defaults_and_config(tmp_path):
     assert p2 == p
     # 缺失文件回退缺省（容错，不抛）
     assert MouthPrior.load(tmp_path / "nope.json") == MouthPrior()
+
+
+def test_prior_mode_validation():
+    from chengshao.cs_mouth.prior import PRIOR_MODES
+
+    p = MouthPrior.load().with_updates(mode="ipd")
+    assert p.mode in PRIOR_MODES
+    with pytest.raises(ValueError):
+        MouthPrior.from_dict({"mode": "lidar"})
 
 
 def test_prior_intrinsics_scaling():
@@ -125,6 +136,40 @@ def test_pose_json_roundtrip():
 def test_backend_validation():
     with pytest.raises(ValueError):
         MouthEstimator(backend="lidar")
+
+
+# ---- 腕部双职（契约 v1.1） ------------------------------------------------------
+def test_wrist_ipd_mode_source_and_geometry():
+    """cam_pose 提供时走 IPD 估距且 source="wrist"；缺省调用行为不变。"""
+    est_fixed = MouthEstimator(backend="mono")  # 未传 cam_pose / provider → 现状行为
+    base = est_fixed.from_bgr(draw_cartoon_face())
+    assert base.source == "mono"
+
+    prior = MouthPrior.load().with_updates(mode="ipd")
+    est = MouthEstimator(backend="mono", prior=prior)
+    img = draw_cartoon_face()
+    T_bf = np.eye(4)
+    T_fc = prior.matrix_base_cam()
+    pose = est.from_bgr(img, cam_pose=(T_bf, T_fc))
+    assert pose.valid and pose.source == "wrist"
+    # 相机系（=基座系口径，单位外参）下的深度为 IPD 估距值，必须落在合理量程
+    assert 0.10 <= pose.z <= 0.80
+    # pose_provider 途径：等价生效
+    est2 = MouthEstimator(backend="mono", prior=prior, pose_provider=lambda: (T_bf, T_fc))
+    pose2 = est2.from_bgr(img)
+    assert pose2.valid and pose2.source == "wrist"
+    assert (pose2.x, pose2.y, pose2.z) == pytest.approx((pose.x, pose.y, pose.z))
+
+
+def test_wrist_ipd_unreliable_frame_is_invalid():
+    """IPD 不可靠（过远/过小）按失效帧处理：construct 极小 fx 使 ipd_px 不足。"""
+    from chengshao.cs_mouth.prior import IPD_PX_MIN
+
+    prior = MouthPrior.load().with_updates(mode="ipd", fx=1.0, fy=1.0)  # 极小内参
+    est = MouthEstimator(backend="mono", prior=prior)
+    pose = est.from_bgr(draw_cartoon_face(), cam_pose=(np.eye(4), prior.matrix_base_cam()))
+    assert pose.valid is False and pose.confidence == 0.0
+    assert IPD_PX_MIN > 0  # 常量存在性自检
 
 
 # ---- 合成样本质量（bootstrap 依赖） --------------------------------------------

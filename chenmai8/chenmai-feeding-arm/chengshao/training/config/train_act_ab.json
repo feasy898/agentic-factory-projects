@@ -1,0 +1,42 @@
+{
+  "$comment": "策略训练消融组 B（与 train_act.json 仅差 chunk/n_action 与输出目录）：双卡用法 = 两组消融并行（组 A chunk 100 vs 组 B chunk 50，或 v1 vs 含纠错数据 v2），单卡显存远小于 32GB（plan/training-plan.md §2.1）。",
+  "policy": {
+    "type": "act",
+    "chunk_size": 50,
+    "n_action_steps": 50,
+    "kl_weight": 10,
+    "hidden_dim": 512,
+    "lr": 1e-05,
+    "lr_scheduler": "cosine",
+    "amp": "fp16",
+    "amp_note": "V100=sm_70 支持 fp16；不支持 bf16，禁止开启（plan/training-plan.md §2.1）"
+  },
+  "dataset": {
+    "repo_id": "cs/spoon_scooping_v1",
+    "fps": 30,
+    "cams": [
+      "scene",
+      "wrist"
+    ],
+    "action_dim": 6,
+    "resolution": [
+      640,
+      480
+    ],
+    "note": "action_dim=6 = 5 臂关节 + 夹爪（契约 v1.1），与 cs_schema.N_ARM_JOINTS 一致"
+  },
+  "train": {
+    "batch_size": 8,
+    "steps": 100000,
+    "save_freq": 20000,
+    "log_freq": 500,
+    "num_workers": 4,
+    "seed": 1000
+  },
+  "runtime": {
+    "output_dir": "data/runs/act_v1_ab",
+    "wandb_enable": false,
+    "wandb_note": "离线红线：wandb 必须为 false（build_train_cmd 强校验）",
+    "train_cmd": null
+  }
+}

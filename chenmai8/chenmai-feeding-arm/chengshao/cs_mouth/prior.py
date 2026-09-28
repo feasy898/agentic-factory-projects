@@ -1,8 +1,14 @@
 """MouthPrior：mono 后端的先验尺度与相机参数（config/mouth_prior.json）。
 
-开发指令 §1/§5.3：v3 无深度相机，mono 为主路径——口部距离 z 固定取先验
-（默认 0.42m），横向/纵向误差 ±3–5cm 由交互设计吸收；距离核查（静态卷尺
-三点实测）超线时只修本文件、不阻塞。
+开发指令 §1/§5.3：v3 无深度相机，mono 为主路径。两种先验模式（契约 v1.1）：
+
+- ``mode="fixed"``（顶部相机回退路径）：口部距离 z 固定取 ``distance_m``
+  （默认 0.42m），横向/纵向误差 ±3–5cm 由交互设计吸收；距离核查（静态
+  卷尺三点实测）超线时只修本配置、不阻塞。
+- ``mode="ipd"``（腕部双职主模式）：近距 20–50cm，用瞳距先验估距
+  ``Z = fx × ipd_m / ipd_px``（``ipd_m`` 默认 0.063m；ipd_px 取左右虹膜
+  关键点 468/473 的像素距）；相机位姿经 ``cam_pose=(T_base_flange,
+  T_flange_cam)`` 提供（FK × 腕部手眼外参），不依赖顶部相机。
 
 本类只承载几何/标定结构与缺省值；行为阈值（张嘴/转头/皱眉）在 cs_schema
 冻结常量中，不在此重复。
@@ -23,6 +29,17 @@ DEFAULT_MODEL_URL = (
     "face_landmarker/float16/latest/face_landmarker.task"
 )
 
+# 先验模式受控词表（v1.1；与 MouthSource 的映射见 estimator）
+PRIOR_MODES: tuple[str, ...] = ("fixed", "ipd")
+
+# IPD 估距的合理量程（米）：出界按失效帧处理（近距双职场景）
+IPD_Z_RANGE_M: tuple[float, float] = (0.10, 0.80)
+IPD_PX_MIN = 20.0  # ipd_px 低于此值视为不可靠（过远/过小），按失效帧处理
+
+# 左右虹膜中心关键点索引（canonical face mesh，478 点：468-472 右虹膜、473-477 左虹膜）
+IRIS_CENTER_R = 468
+IRIS_CENTER_L = 473
+
 # 缺省 cam→base 外参。约定（开发指令 §1 冻结）：
 # base 系 X 朝用户 / Y 朝左 / Z 朝上；相机系 OpenCV（X 右 / Y 下 / Z 前向）。
 # 旋转行：cam_z→base_x（光轴指向用户）、cam_x→-base_y、cam_y→-base_z；
@@ -39,7 +56,9 @@ _DEFAULT_T_BASE_CAM = [
 class MouthPrior:
     """mono 先验尺度 + 内外参 + 模型路径。JSON 往返兼容（config/mouth_prior.json）。"""
 
-    distance_m: float = 0.42  # 口部距离先验（米）
+    mode: str = "fixed"  # 先验模式（v1.1）："fixed"（顶部固定距离）| "ipd"（腕部瞳距估距）
+    distance_m: float = 0.42  # mode=fixed 的口部距离先验（米）
+    ipd_m: float = 0.063  # mode=ipd 的瞳距先验（米，成人 ≈63mm）
     mouth_height_m: float = 0.25  # 坐姿口部相对底盘高度缺省（米，首帧失效时的名义值）
     error_band_m: tuple[float, float] = (0.03, 0.05)  # mono 已知误差带 ±3–5cm
     calib_closed_ratio: float = 0.11  # 口径比标定：闭嘴簇上限（实测闭嘴 ≈0.057–0.10）
@@ -69,7 +88,10 @@ class MouthPrior:
         clean = {k: v for k, v in d.items() if k in known}
         if "error_band_m" in clean:
             clean["error_band_m"] = tuple(clean["error_band_m"])
-        return cls(**clean)
+        prior = cls(**clean)
+        if prior.mode not in PRIOR_MODES:
+            raise ValueError(f"mode 必须取 {PRIOR_MODES}，收到 {prior.mode!r}")
+        return prior
 
     def save(self, path: str | Path = DEFAULT_CONFIG_PATH) -> None:
         p = Path(path)
@@ -122,6 +144,20 @@ class MouthPrior:
         if m.shape != (4, 4):
             raise ValueError("T_base_cam 必须为 4×4")
         return m
+
+    @staticmethod
+    def compose_cam_pose(T_base_flange, T_flange_cam):
+        """v1.1 腕部双职：T_base_cam = T_base_flange(FK) × T_flange_cam(手眼外参)。
+
+        两输入均可为 4×4 list/ndarray；返回 4×4 ndarray。
+        """
+        import numpy as np
+
+        a = np.asarray(T_base_flange, dtype=float)
+        b = np.asarray(T_flange_cam, dtype=float)
+        if a.shape != (4, 4) or b.shape != (4, 4):
+            raise ValueError("cam_pose 两元素都必须是 4×4 齐次矩阵")
+        return a @ b
 
 
 def default_prior() -> MouthPrior:

@@ -1,4 +1,4 @@
-"""MouthEstimator：口部三维估计（接口契约 §3.2 冻结签名）。
+"""MouthEstimator：口部三维估计（接口契约 §3.2；v1.1 增补腕部双职路径）。
 
 mono 主路径管线（每帧）::
 
@@ -8,8 +8,13 @@ mono 主路径管线（每帧）::
       静帧上 blendshape jawOpen 实测不区分张闭嘴，见 assets/face_samples/README）
     → frown = blendshape mouthFrown 左右均值（browDown 在微笑时误报，弃用）
     → 头姿 yaw/pitch/roll = 面部变换矩阵欧拉分解（yaw 绕相机竖直轴，转头判 |yaw|）
-    → mono: 先验距离缩放（相机系射线 × prior.distance_m）；depth: 关键点像素查深度
-    → cam→base（prior.T_base_cam）→ MouthPose（base 系）
+    → mono 距离（prior.mode 切换，契约 v1.1）:
+        fixed: 相机系射线 × prior.distance_m（顶部相机回退路径）
+        ipd:   Z = fx × prior.ipd_m / ipd_px（腕部双职：瞳距先验，近距 20–50cm）
+    → depth: 关键点像素查深度
+    → cam→base：fixed/depth 用 prior.T_base_cam；
+      v1.1 传 cam_pose=(T_base_flange, T_flange_cam) 时 T_base_cam = FK × 手眼外参
+    → MouthPose（base 系）；提供 cam_pose 的帧 source="wrist"（契约 v1.1）
 
 失效帧行为（契约 §3.1）：valid=False，x/y/z 沿用上一有效值（无历史时用名义位姿
 [prior.distance_m, 0, prior.mouth_height_m]），confidence=0。
@@ -21,12 +26,12 @@ from __future__ import annotations
 
 import math
 import time
-from typing import Literal
+from typing import Callable, Literal
 
 import numpy as np
 
 from ._schema import MouthPose, MouthSource
-from .prior import MouthPrior
+from .prior import IPD_PX_MIN, IPD_Z_RANGE_M, IRIS_CENTER_L, IRIS_CENTER_R, MouthPrior
 
 # ---- 人脸关键点索引（canonical face mesh，478 点） ---------------------------
 _LIP_UPPER_INNER = 13  # 上内唇中心
@@ -43,7 +48,16 @@ _N_LANDMARKS_EXPECTED = 478
 class MouthEstimator:
     """口部三维估计器。backend="mono"（演示主路径）| "depth"（延后保留）。
 
-    契约签名（§3.2）：``__init__(backend="mono", prior: MouthPrior)``；
+    契约签名（§3.2；v1.1 向后兼容扩展——新增参数全部可选、缺省行为不变）::
+
+        __init__(backend="mono", prior: MouthPrior,
+                 pose_provider: Callable[[], tuple] | None = None)
+        from_bgr(img, depth=None, *, cam_pose=None)
+
+    - ``pose_provider``：无参函数，返回 ``(T_base_flange, T_flange_cam)``（4×4）；
+      提供后每次 ``from_bgr`` 未显式传 ``cam_pose`` 时自动取用（行为树接 FK 用）。
+    - ``cam_pose``：单帧覆盖的 ``(T_base_flange, T_flange_cam)``；提供该参数（或
+      pose_provider 生效）时走 IPD 估距、``source="wrist"``（腕部双职契约 v1.1）。
     prior 缺省时从 config/mouth_prior.json 装载（便利重载，不改变契约用法）。
     """
 
@@ -51,19 +65,45 @@ class MouthEstimator:
         self,
         backend: Literal["mono", "depth"] = "mono",
         prior: MouthPrior | None = None,
+        pose_provider: Callable[[], tuple] | None = None,
     ) -> None:
         if backend not in BACKENDS:
             raise ValueError(f"backend 必须取 {BACKENDS}，收到 {backend!r}")
         self.backend = backend
         self.prior = prior if prior is not None else MouthPrior.load()
+        self.pose_provider = pose_provider
         self._landmarker = None  # 惰性初始化（首次 from_bgr 时加载模型）
 
     # ---- 对外主入口 ----------------------------------------------------------
-    def from_bgr(self, img: np.ndarray, depth: np.ndarray | None = None) -> MouthPose:
-        """BGR 图（+可选深度图，与 RGB 对齐、单位米或毫米）→ MouthPose（base 系）。"""
+    def from_bgr(
+        self,
+        img: np.ndarray,
+        depth: np.ndarray | None = None,
+        *,
+        cam_pose: tuple | None = None,
+    ) -> MouthPose:
+        """BGR 图（+可选深度图，与 RGB 对齐、单位米或毫米）→ MouthPose（base 系）。
+
+        v1.1：``cam_pose=(T_base_flange, T_flange_cam)`` 启用腕部双职路径（IPD 估距 +
+        FK 位姿换算，``source="wrist"``）；缺省 None 时行为与 v1.0 完全一致。
+        """
         if img is None or getattr(img, "ndim", 0) != 3:
             return self._invalid_pose(time.time_ns(), "输入图像为空或非 3 通道")
         ts = time.time_ns()
+
+        # v1.1：解析相机位姿（单帧参数优先，其次 pose_provider）
+        T_pose = cam_pose if cam_pose is not None else (
+            self.pose_provider() if self.pose_provider is not None else None
+        )
+        if T_pose is not None:
+            if self.backend != "mono":
+                raise ValueError("cam_pose（腕部双职）仅支持 backend='mono'")
+            T_base_cam = self.prior.compose_cam_pose(T_pose[0], T_pose[1])
+            use_ipd = True
+        else:
+            T_base_cam = None
+            use_ipd = self.backend == "mono" and self.prior.mode == "ipd"
+
         work = self._prepare(img)
         result = self._detect(work)
         if result is None:
@@ -85,15 +125,22 @@ class MouthEstimator:
         frown = self._blendshape_frown(blendshapes)
         head_yaw, head_pitch, head_roll = head_from_matrix
 
-        # 三维：mono=先验距离缩放；depth=像素查深
+        # 三维：mono=固定先验 / IPD 瞳距估距（v1.1）；depth=像素查深
+        source = MouthSource(self.backend)
         if self.backend == "mono":
-            pos_cam = self._mono_ray_to_cam(u, v, w, h)
+            if use_ipd:
+                pos_cam = self._ipd_ray_to_cam(pl, u, v, w, h)
+                if pos_cam is None:
+                    return self._invalid_pose(ts, "IPD 估距不可靠（过远/过小/出量程）")
+                source = MouthSource.WRIST
+            else:
+                pos_cam = self._mono_ray_to_cam(u, v, w, h)
         else:
             pos_cam = self._depth_lookup(u, v, depth)
             if pos_cam is None:
                 return self._invalid_pose(ts, "深度缺失/越界")
 
-        pos_base = self._to_base(pos_cam)
+        pos_base = self._to_base(pos_cam, T_base_cam)
         conf = self._confidence(u, v, w, h, eye_px=eye_px)
         self._last_valid_pos = pos_base
         return MouthPose(
@@ -107,7 +154,7 @@ class MouthEstimator:
             head_yaw=head_yaw,
             head_pitch=head_pitch,
             head_roll=head_roll,
-            source=MouthSource(self.backend),
+            source=source,
             confidence=conf,
         )
 
@@ -200,10 +247,33 @@ class MouthEstimator:
         return float(min(1.0, max(0.0, (a + b) / 2.0)))
 
     def _mono_ray_to_cam(self, u: float, v: float, w: int, h: int) -> np.ndarray:
-        """mono：口中心像素射线 × 先验距离（相机系）。"""
+        """mono（fixed 模式）：口中心像素射线 × 固定先验距离（相机系）。"""
         fx, fy, cx, cy = self.prior.intrinsics_for(w, h)
         ray = np.array([(u - cx) / fx, (v - cy) / fy, 1.0])
         return ray * (self.prior.distance_m / float(np.linalg.norm(ray)))
+
+    def _ipd_ray_to_cam(self, pl: np.ndarray, u: float, v: float,
+                        w: int, h: int) -> np.ndarray | None:
+        """mono（v1.1 ipd 模式，腕部双职）：瞳距先验估距（相机系）。
+
+        Z = fx × ipd_m / ipd_px，ipd_px = 左右虹膜中心（468/473）像素距；
+        射线方向仍由口中心像素给出。距离出 [IPD_Z_RANGE_M] 量程或 ipd_px
+        过小（< IPD_PX_MIN，过远/分辨率不足）时返回 None（按失效帧处理）。
+        """
+        fx, fy, cx, cy = self.prior.intrinsics_for(w, h)
+        iris = np.asarray(
+            [[pl[IRIS_CENTER_R][0] * w, pl[IRIS_CENTER_R][1] * h],
+             [pl[IRIS_CENTER_L][0] * w, pl[IRIS_CENTER_L][1] * h]],
+            dtype=float,
+        )
+        ipd_px = float(np.linalg.norm(iris[0] - iris[1]))
+        if ipd_px < IPD_PX_MIN:
+            return None
+        z = float(fx) * float(self.prior.ipd_m) / ipd_px
+        if not (IPD_Z_RANGE_M[0] <= z <= IPD_Z_RANGE_M[1]):
+            return None
+        ray = np.array([(u - cx) / fx, (v - cy) / fy, 1.0])
+        return ray * (z / float(np.linalg.norm(ray)))
 
     def _depth_lookup(self, u: float, v: float, depth: np.ndarray | None) -> np.ndarray | None:
         """depth 后端：口中心 5×5 窗口中值查深 → 像素反演（相机系）。
@@ -227,8 +297,9 @@ class MouthEstimator:
         fx, fy, cx, cy = self.prior.intrinsics_for(dw, dh)
         return np.array([(u - cx) * z / fx, (v - cy) * z / fy, z])
 
-    def _to_base(self, pos_cam: np.ndarray) -> np.ndarray:
-        T = self.prior.matrix_base_cam()
+    def _to_base(self, pos_cam: np.ndarray, T_base_cam: np.ndarray | None = None) -> np.ndarray:
+        """cam→base：v1.1 传入 T_base_cam（腕部双职 FK×手眼）时用之，否则用 prior 配置。"""
+        T = self.prior.matrix_base_cam() if T_base_cam is None else T_base_cam
         return (T @ np.array([pos_cam[0], pos_cam[1], pos_cam[2], 1.0]))[:3]
 
     def _confidence(self, u: float, v: float, w: int, h: int, eye_px: float) -> float:

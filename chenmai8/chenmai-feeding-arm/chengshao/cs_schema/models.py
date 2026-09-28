@@ -57,7 +57,7 @@ class MouthPose(_ContractModel):
     head_yaw: float = Field(description="头部偏航（rad）")
     head_pitch: float = Field(description="头部俯仰（rad）")
     head_roll: float = Field(description="头部翻滚（rad）")
-    source: MouthSource = Field(description="坐标来源：depth / mono")
+    source: MouthSource = Field(description="坐标来源：depth / mono / wrist（v1.1）")
     confidence: float = Field(ge=0.0, le=1.0, description="检测置信度（0-1）")
 
     @model_validator(mode="after")
@@ -70,13 +70,13 @@ class MouthPose(_ContractModel):
 class ArmState(_ContractModel):
     """机械臂全量状态（回读）。
 
-    7 关节 = 6 个臂关节 + 1 个末端夹爪关节，统一编入数组；
+    6 关节 = 5 个臂关节 + 1 个末端夹爪关节（契约 v1.1），统一编入数组；
     ee_pos 由 FK 算出（base 系，米）；ee_quat 为单位四元数 [w, x, y, z]。
     """
 
     ts_ns: int = Field(ge=0, description="采样时间戳（ns）")
     joint_names: list[str] = Field(
-        min_length=N_ARM_JOINTS, max_length=N_ARM_JOINTS, description="关节名（7，唯一）"
+        min_length=N_ARM_JOINTS, max_length=N_ARM_JOINTS, description=f"关节名（{N_ARM_JOINTS}，唯一）"
     )
     joint_pos: list[float] = Field(
         min_length=N_ARM_JOINTS, max_length=N_ARM_JOINTS, description="关节角（rad）"
@@ -112,7 +112,7 @@ class ArmCommand(_ContractModel):
     mode: CommandMode = Field(description="目标空间：joints / cartesian")
     target: list[float] = Field(
         description=(
-            "joints：7 关节目标（rad）；"
+            f"joints：{N_ARM_JOINTS} 关节目标（rad）；"
             "cartesian：base 系 3 位置（姿态保持）或 3 位置 + 4 四元数全量"
         )
     )

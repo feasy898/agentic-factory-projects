@@ -25,12 +25,14 @@ from chengshao.cs_schema import (
     DEFAULT_DISH_REGISTRY,
     EE_POS_LEN,
     EE_QUAT_LEN,
+    IPD_DEFAULT_M,
     N_ARM_JOINTS,
     SCHEMA_VERSION,
     ArmCommand,
     ArmState,
     BiteOutcome,
     BiteRecord,
+    CameraRole,
     CommandFrame,
     CommandMode,
     IntentKind,
@@ -112,7 +114,8 @@ def test_every_contract_model_has_named_fixture():
 @pytest.mark.parametrize(
     ("enum_cls", "frozen_values"),
     [
-        (MouthSource, ("depth", "mono")),
+        (MouthSource, ("depth", "mono", "wrist")),  # v1.1：追加 wrist（腕部双职）
+        (CameraRole, ("scene", "wrist_mouth")),  # v1.1：新增角色词表
         (CommandMode, ("joints", "cartesian")),
         (CommandFrame, ("base",)),
         (ViolationKind, ("none", "face_in_zone", "speed", "torque", "watchdog")),
@@ -127,8 +130,12 @@ def test_enum_values_equal_frozen_literals(enum_cls, frozen_values):
 def test_enum_accepts_frozen_literal_strings():
     # 字符串字面量可直接构造枚举，也可作为字段输入（校验后成为枚举成员）
     assert MouthSource("mono") is MouthSource.MONO
+    assert MouthSource("wrist") is MouthSource.WRIST
+    assert CameraRole("wrist_mouth") is CameraRole.WRIST_MOUTH
     pose = MouthPose.model_validate(_mouth_pose(source="mono"))
     assert pose.source is MouthSource.MONO
+    pose_w = MouthPose.model_validate(_mouth_pose(source="wrist"))
+    assert pose_w.source is MouthSource.WRIST
     assert pose.model_dump(mode="json")["source"] == "mono"
     with pytest.raises(ValidationError):
         MouthPose.model_validate(_mouth_pose(source="stereo"))
@@ -204,7 +211,7 @@ def test_arm_state_rejects_wrong_ee_pos_length():
 
 
 def test_arm_state_rejects_duplicate_joint_names():
-    names = ["joint1", "joint1", "joint3", "joint4", "joint5", "joint6", "gripper"]
+    names = ["joint1", "joint1", "joint3", "joint4", "joint5", "gripper"]
     with pytest.raises(ValidationError):
         ArmState.model_validate(_arm_state(joint_names=names))
 
@@ -411,9 +418,11 @@ def test_load_unknown_fixture_raises():
 
 
 def test_frozen_dimension_constants():
-    assert N_ARM_JOINTS == 7  # 6 臂关节 + 夹爪
+    # 契约 v1.1：6 = 5 臂关节 + 夹爪，与参考模型（6 舵机）/cs_sim 模型直接一致
+    assert N_ARM_JOINTS == 6
     assert EE_POS_LEN == 3
     assert EE_QUAT_LEN == 4
+    assert IPD_DEFAULT_M == pytest.approx(0.063)  # v1.1：瞳距先验（腕部双职）
 
 
 def test_default_dish_registry_is_nonempty_and_unique():
@@ -423,6 +432,7 @@ def test_default_dish_registry_is_nonempty_and_unique():
 
 
 def test_schema_version_frozen():
-    assert SCHEMA_VERSION == "1.0.0"
-    assert cs_schema.SCHEMA_VERSION == "1.0.0"
+    # v1.1（2026-09-28）：N_ARM_JOINTS 7→6 修订 + MouthSource.WRIST / CameraRole 追加
+    assert SCHEMA_VERSION == "1.1.0"
+    assert cs_schema.SCHEMA_VERSION == "1.1.0"
     assert cs_schema.CONTRACT_FROZEN_DATE == "2026-09-28"

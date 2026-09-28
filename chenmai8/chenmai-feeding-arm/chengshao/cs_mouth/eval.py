@@ -18,6 +18,11 @@
 
 --static-distance：静态距离核查（§5.9 真机阶段）——读 config/static_distance.json
 （卷尺实测距离表），输出 |先验-实测| 记录；文件缺失时退出码 2（未执行，非失败）。
+
+--wrist-view（契约 v1.1，腕部双职）：对 assets/face_samples/wrist_view/ 下的
+近距腕部视角样本跑 ipd 模式（Z = fx×ipd_m/ipd_px，cam_pose=缺省摆位），
+输出检出率与估距误差（labels.json 每帧可带 dist_m 实测距离）；目录缺失时
+退出码 2（样本可后补，接口先冻结）。真机阶段补齐样本后此入口进硬门槛。
 """
 
 from __future__ import annotations
@@ -82,10 +87,14 @@ def run_eval(argv: list[str] | None = None) -> int:
     parser.add_argument("--skip-synth", action="store_true", help="不附加程序合成帧")
     parser.add_argument("--force-bootstrap", action="store_true", help="强制重建 bundled 变体与 labels")
     parser.add_argument("--static-distance", action="store_true", help="静态距离核查模式（§5.9）")
+    parser.add_argument("--wrist-view", action="store_true",
+                        help="腕部双职 ipd 模式验收（契约 v1.1；样本缺失时退出码 2）")
     args = parser.parse_args(argv)
 
     if args.static_distance:
         return _run_static_distance(args)
+    if args.wrist_view:
+        return _run_wrist_view(args)
 
     input_dir = Path(args.input)
     report_path = Path(args.report)
@@ -273,6 +282,121 @@ def _fail(report_path: Path, args, reason: str) -> int:
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"cs_mouth.eval: FAIL — {reason}", file=sys.stderr)
     return 1
+
+
+def _run_wrist_view(args) -> int:
+    """腕部双职 ipd 模式验收（契约 v1.1）：近距样本检出率 + IPD 估距误差。
+
+    样本目录 ``assets/face_samples/wrist_view/``（labels.json 同主集格式，
+    每帧可带 ``dist_m`` 实测距离用于估距误差）。目录/标签缺失时退出码 2
+    （样本可后补，接口先冻结；真机阶段补齐后进硬门槛）。
+    """
+    input_dir = Path(args.input) / "wrist_view"
+    if not input_dir.is_dir() or not (input_dir / "labels.json").is_file():
+        msg = (
+            f"未找到腕部视角样本 {input_dir}（含 labels.json）。"
+            "样本可后补：真机阶段用腕部相机在 20/30/40/50cm 各拍近距人脸"
+            "（含俯仰角变化与亮暗切换），接口已按契约 v1.1 冻结。"
+        )
+        print(f"cs_mouth.eval --wrist-view: {msg}", file=sys.stderr)
+        Path(args.report).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.report).write_text(
+            json.dumps({
+                "module": "cs_mouth",
+                "mode": "wrist_view_ipd",
+                "date": date.today().isoformat(),
+                "cmd": f"{sys.executable} -m cs_mouth.eval --wrist-view (cwd={os.getcwd()})",
+                "metrics": {},
+                "thresholds": {},
+                "pass": False,
+                "not_executed": True,
+                "error": msg,
+            }, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+        return 2
+
+    try:
+        labels = json.loads((input_dir / "labels.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        return _fail(Path(args.report), args, f"wrist_view/labels.json 不可读：{exc}")
+    frames = [f for f in labels.get("frames", []) if (input_dir / f["file"]).is_file()]
+    if not frames:
+        return _fail(Path(args.report), args, "wrist_view 无可用标注帧")
+
+    # ipd 模式：cam_pose 用缺省摆位（真机阶段换 FK×腕部手眼实标定值）
+    prior = MouthPrior.load().with_updates(mode="ipd")
+    est = MouthEstimator(backend="mono", prior=prior)
+    T_base_flange = np.eye(4)  # 离线样本无 FK；单位阵 = 相机系即基座系口径
+    T_flange_cam = prior.matrix_base_cam()
+    cam_pose = (T_base_flange, T_flange_cam)
+
+    detect_hits = 0
+    errs: list[float] = []
+    n_dist = 0
+    for fr in frames:
+        img = imread_u(input_dir / fr["file"])
+        if img is None:
+            continue
+        try:
+            pose = est.from_bgr(img, cam_pose=cam_pose)
+        except Exception:  # noqa: BLE001 —— 单帧异常计为未检出
+            continue
+        if pose.valid:
+            detect_hits += 1
+            if isinstance(fr.get("dist_m"), (int, float)):
+                # 相机系 z（ipd 估距）= 基座系口径下的深度分量（缺省摆位下逐点对应）
+                errs.append(abs(pose.z - float(fr["dist_m"])))
+                n_dist += 1
+
+    n_total = len(frames)
+    detect_rate = detect_hits / n_total if n_total else None
+    err_max = max(errs) if errs else None
+    err_mean = float(np.mean(errs)) if errs else None
+    thresholds = {
+        "detect_rate_min": 0.95,
+        "ipd_err_max_m_max": 0.04,
+        "dist_labeled_frames_min": 8,  # 估距误差判据至少要有的带距离帧数
+    }
+    checks = {
+        "detect": detect_rate is not None and detect_rate >= thresholds["detect_rate_min"],
+        "ipd_error": (
+            n_dist >= thresholds["dist_labeled_frames_min"]
+            and err_max is not None
+            and err_max <= thresholds["ipd_err_max_m_max"]
+        ),
+    }
+    passed = all(checks.values())
+    report = {
+        "module": "cs_mouth",
+        "mode": "wrist_view_ipd",
+        "date": date.today().isoformat(),
+        "cmd": f"{sys.executable} -m cs_mouth.eval --wrist-view (cwd={os.getcwd()})",
+        "metrics": {
+            "frames": n_total,
+            "detect_hits": detect_hits,
+            "detect_rate": detect_rate,
+            "dist_labeled_frames": n_dist,
+            "ipd_err_max_m": err_max,
+            "ipd_err_mean_m": err_mean,
+            "prior_mode": prior.mode,
+            "ipd_m": prior.ipd_m,
+        },
+        "thresholds": thresholds,
+        "checks": checks,
+        "pass": passed,
+        "note": (
+            "腕部双职（契约 v1.1）：ipd 瞳距先验估距，预期 ±2-4cm；离线样本用缺省摆位"
+            "外参，真机阶段切换 FK×腕部手眼实标定后以 --live 复测"
+        ),
+    }
+    Path(args.report).parent.mkdir(parents=True, exist_ok=True)
+    Path(args.report).write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print(
+        f"cs_mouth.eval(wrist-view): detect={_fmt(detect_rate)} "
+        f"ipd_err_max={_fmt(err_max)}m (n_dist={n_dist}) -> {'PASS' if passed else 'FAIL'} ({args.report})"
+    )
+    return 0 if passed else 1
 
 
 def _run_static_distance(args) -> int:

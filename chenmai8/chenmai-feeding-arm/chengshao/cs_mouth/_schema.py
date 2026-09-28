@@ -9,8 +9,10 @@ from __future__ import annotations
 
 try:  # 包根 cwd：chengshao/ 在 sys.path
     from cs_schema import (  # type: ignore
+        CameraRole,
         FROWN_ASK_THRESHOLD,
         HEAD_YAW_TURN_THRESHOLD_RAD,
+        IPD_DEFAULT_M,
         JAW_OPEN_THRESHOLD,
         MOUTH_PRIOR_DEFAULT_M,
         MouthPose,
@@ -18,8 +20,10 @@ try:  # 包根 cwd：chengshao/ 在 sys.path
     )
 except ImportError:  # 仓库根 cwd：pytest / 从仓库根导入
     from chengshao.cs_schema import (  # type: ignore
+        CameraRole,
         FROWN_ASK_THRESHOLD,
         HEAD_YAW_TURN_THRESHOLD_RAD,
+        IPD_DEFAULT_M,
         JAW_OPEN_THRESHOLD,
         MOUTH_PRIOR_DEFAULT_M,
         MouthPose,
@@ -27,8 +31,10 @@ except ImportError:  # 仓库根 cwd：pytest / 从仓库根导入
     )
 
 __all__ = [
+    "CameraRole",
     "FROWN_ASK_THRESHOLD",
     "HEAD_YAW_TURN_THRESHOLD_RAD",
+    "IPD_DEFAULT_M",
     "JAW_OPEN_THRESHOLD",
     "MOUTH_PRIOR_DEFAULT_M",
     "MouthPose",
