@@ -365,7 +365,9 @@ def test_qr_decodes_to_payload_and_checksum(tmp_path: Path, synth: BatchResult, 
 
 @pytest.mark.parametrize("lang", LANGS)
 def test_html_wellformed_xhtml(passport, lang: str):
-    doc = xml.dom.minidom.parseString(_read(passport.html_paths[lang]))
+    content = _read(passport.html_paths[lang])
+    assert "<!ENTITY" not in content, "护照 HTML 不应包含实体定义（输入校验）"
+    doc = xml.dom.minidom.parseString(content)
     root = doc.documentElement
     assert root.tagName == "html"
     assert root.getAttribute("lang") == lang

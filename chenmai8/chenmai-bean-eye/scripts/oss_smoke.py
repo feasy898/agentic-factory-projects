@@ -53,6 +53,18 @@ os.environ.setdefault("HF_ENDPOINT", "https://hf-mirror.com")  # HF 直连不稳
 os.environ.setdefault("HF_HUB_DISABLE_XET", "1")
 
 # 合成 COCO 类样图下载源（按序尝试；样图仅用于冒烟推理）
+# SSRF 加固：仅允许清单内 https 主机（扫描规则：动态 URL 必须校验 scheme+host）
+_SAMPLE_ALLOWED_HOSTS = {"raw.githubusercontent.com", "images.cocodataset.org"}
+
+
+def _validate_sample_url(url: str) -> None:
+    from urllib.parse import urlparse
+
+    parsed = urlparse(url)
+    if parsed.scheme != "https" or (parsed.hostname or "") not in _SAMPLE_ALLOWED_HOSTS:
+        raise ValueError(f"样本 URL 不在允许清单（scheme/host 校验失败）: {url}")
+
+
 SAMPLE_IMAGE_URLS = [
     # COCO 验证集照片（第三方代码仓内置副本，repo 为 Apache-2.0）
     "https://raw.githubusercontent.com/tensorflow/models/master/research/object_detection/test_images/image1.jpg",
@@ -78,6 +90,7 @@ def _ensure_sample_image() -> Path:
     last_err: Exception | None = None
     for url in SAMPLE_IMAGE_URLS:
         try:
+            _validate_sample_url(url)
             resp = requests.get(url, timeout=60)
             resp.raise_for_status()
             if len(resp.content) < 10_000:

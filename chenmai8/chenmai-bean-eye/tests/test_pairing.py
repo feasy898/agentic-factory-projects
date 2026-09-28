@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import json
 import math
-import random
+import numpy as np
 import time
 from pathlib import Path
 
@@ -286,7 +286,7 @@ OFFSET_MM = (5.0, 0.0)  # 标定误差场景：bottom 整体平移
 SEED = 20260928
 
 
-def _sample_tray_positions(rng: random.Random, n: int, min_spacing: float) -> list[tuple[float, float]]:
+def _sample_tray_positions(rng: np.random.Generator, n: int, min_spacing: float) -> list[tuple[float, float]]:
     """盘面 [10,290]² 拒绝采样：任意两豆间距 ≥ min_spacing。"""
     pts: list[tuple[float, float]] = []
     attempts = 0
@@ -310,7 +310,7 @@ def _build_scenario(
     真值表每条：{idx, both, side}——both=两面都在（配对目标），
     side=被留下的那一面（单面真值）。
     """
-    rng = random.Random(seed)
+    rng = np.random.default_rng(seed)
     positions = _sample_tray_positions(rng, N_BEANS, MIN_SPACING_MM)
     s = JITTER_SIGMA_MM / math.sqrt(2.0)  # 每面各向同性抖动
     top_obs: list[BeanObservation] = []
@@ -330,12 +330,12 @@ def _build_scenario(
                       "side": "top" if has_top else "bottom"})
         if has_top:
             top_obs.append(synth_obs(f"top_{i:04d}", "top",
-                                     x + rng.gauss(0.0, s), y + rng.gauss(0.0, s),
+                                     x + rng.normal(0.0, s), y + rng.normal(0.0, s),
                                      defect=defect))
         if has_bottom:
             bottom_obs.append(synth_obs(f"bottom_{i:04d}", "bottom",
-                                        x + offset_mm[0] + rng.gauss(0.0, s),
-                                        y + offset_mm[1] + rng.gauss(0.0, s),
+                                        x + offset_mm[0] + rng.normal(0.0, s),
+                                        y + offset_mm[1] + rng.normal(0.0, s),
                                         defect=defect))
 
     n_pseudo = N_PSEUDO_PER_SIDE
@@ -492,7 +492,7 @@ DENSE_SEED = 20260929
 
 def _dense_grid_positions(n_per_side: int, pitch: float, sigma: float, seed: int):
     """居中抖动网格：n×n，间距 pitch，逐轴高斯抖动 σ。"""
-    rng = random.Random(seed)
+    rng = np.random.default_rng(seed)
     span = (n_per_side - 1) * pitch
     x0 = (300.0 - span) / 2.0
     pts = []
@@ -500,8 +500,8 @@ def _dense_grid_positions(n_per_side: int, pitch: float, sigma: float, seed: int
         for j in range(n_per_side):
             pts.append(
                 (
-                    x0 + i * pitch + rng.gauss(0.0, sigma),
-                    x0 + j * pitch + rng.gauss(0.0, sigma),
+                    x0 + i * pitch + rng.normal(0.0, sigma),
+                    x0 + j * pitch + rng.normal(0.0, sigma),
                 )
             )
     return pts
@@ -538,18 +538,18 @@ def _build_dense_scenario(seed: int, *, offset=(0.0, 0.0), persp_deg=0.0, persp_
     positions = _dense_grid_positions(DENSE_GRID_N, DENSE_PITCH_MM, DENSE_JITTER_SIGMA_MM, seed)
     bottom_raw, _H = _persp_rotate(positions, persp_deg, persp_k) if persp_deg or persp_k else (positions, None)
     s = DENSE_JITTER_SIGMA_MM / math.sqrt(2.0)
-    rng = random.Random(seed + 1)
+    rng = np.random.default_rng(seed + 1)
     top_obs, bottom_obs, truth = [], [], []
     for i, ((xt, yt), (xb, yb)) in enumerate(zip(positions, bottom_raw)):
         has_top = rng.random() > 0.05
         has_bottom = rng.random() > 0.05
         truth.append({"idx": i, "both": has_top and has_bottom})
         if has_top:
-            top_obs.append(synth_obs(f"top_{i:04d}", "top", xt + rng.gauss(0, s), yt + rng.gauss(0, s)))
+            top_obs.append(synth_obs(f"top_{i:04d}", "top", xt + rng.normal(0.0, s), yt + rng.normal(0.0, s)))
         if has_bottom:
             bottom_obs.append(
                 synth_obs(f"bottom_{i:04d}", "bottom",
-                          xb + offset[0] + rng.gauss(0, s), yb + offset[1] + rng.gauss(0, s))
+                          xb + offset[0] + rng.normal(0.0, s), yb + offset[1] + rng.normal(0.0, s))
             )
     rng.shuffle(top_obs)
     rng.shuffle(bottom_obs)
