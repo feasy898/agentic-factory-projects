@@ -148,11 +148,100 @@ RESULTS: list[tuple[str, str, str]] = []   # (用例名, 状态 PASS/FAIL/DEFER,
 
 
 # ── 通用小工具 ────────────────────────────────────────────────────────
+def _decode_console(raw: bytes) -> str:
+    """控制台工具输出解码：netstat/wmic/PowerShell 在中文 Windows 上输出 GBK
+    （cp936/gb18030），而本脚本在 PYTHONUTF8=1 下直接 text=True 会按 UTF-8
+    解码并炸掉 subprocess 读线程（0xBB 起始字节）——先 UTF-8、再 gb18030、
+    最后 replace 兜底（仓库路径含中文，解码错表会让「本项目进程」识别失效）。"""
+    for enc in ("utf-8", "gb18030"):
+        try:
+            return raw.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    return raw.decode("utf-8", errors="replace")
+
+
+def _run_console(cmd: list[str], timeout: float) -> str | None:
+    """跑控制台工具并解码 stdout；启动失败/超时/非零退出返回 None。"""
+    try:
+        r = subprocess.run(cmd, capture_output=True, timeout=timeout)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    if r.returncode != 0:
+        return None
+    return _decode_console(r.stdout or b"")
+
+
+def _find_listener_pids(port: int) -> list[int]:
+    """``netstat -ano`` 找出监听该端口的 PID（Windows；失败返回空表）。"""
+    out = _run_console(["netstat", "-ano", "-p", "TCP"], timeout=10)
+    if out is None:
+        return []
+    pids: set[int] = set()
+    for line in out.splitlines():
+        parts = line.split()
+        # 形如：TCP  127.0.0.1:8901  0.0.0.0:0  LISTENING  1234
+        if len(parts) >= 5 and parts[0] == "TCP" and parts[3].upper() == "LISTENING" \
+                and parts[1].rsplit(":", 1)[-1] == str(port):
+            try:
+                pids.add(int(parts[4]))
+            except ValueError:
+                continue
+    return sorted(pids)
+
+
+def _pid_cmdline(pid: int) -> str:
+    """进程命令行（wmic 优先、PowerShell CIM 兜底；均失败返回空串）。"""
+    probes = (
+        ["wmic", "process", "where", f"processid={pid}", "get", "commandline", "/value"],
+        ["powershell", "-NoProfile", "-Command",
+         f'(Get-CimInstance Win32_Process -Filter "ProcessId={pid}").CommandLine'],
+    )
+    for cmd in probes:
+        out = _run_console(cmd, timeout=15)
+        if out is None:
+            continue
+        if cmd[0] == "wmic":
+            for ln in out.splitlines():
+                if ln.strip().startswith("CommandLine="):
+                    return ln.partition("=")[2].strip()
+        else:
+            text = out.strip()
+            if text:
+                return text
+    return ""
+
+
 def _assert_port_free(port: int) -> None:
+    """端口空闲直接放行；被占时清理**确认为本项目**的 e2e 残留进程（审查 §D）。
+
+    只有命令行同时包含本仓库路径与 mock_upstream/e2e_smoke 标识的监听进程才
+    taskkill——无关占用者一概不碰，清理后仍被占即报错拒绝运行。
+    """
+    with socket.socket() as sock:
+        sock.settimeout(0.3)
+        if sock.connect_ex(("127.0.0.1", port)) != 0:
+            return
+    killed: list[int] = []
+    for pid in _find_listener_pids(port):
+        cmdline = _pid_cmdline(pid)
+        if not cmdline:
+            continue
+        if str(REPO_ROOT) in cmdline and ("mock_upstream" in cmdline or "e2e_smoke" in cmdline):
+            try:
+                subprocess.run(["taskkill", "/F", "/PID", str(pid)],
+                               capture_output=True, timeout=15)
+                killed.append(pid)
+            except (OSError, subprocess.TimeoutExpired):
+                continue
+    if killed:
+        print(f"[e2e_smoke] 清理残留进程: port {port} <- pid {killed}", flush=True)
+        time.sleep(0.5)  # Windows 端口释放有滞后，稍候复查
     with socket.socket() as sock:
         sock.settimeout(0.3)
         if sock.connect_ex(("127.0.0.1", port)) == 0:
-            raise RuntimeError(f"port {port} already occupied — 残留进程未退出？")
+            raise RuntimeError(
+                f"port {port} already occupied — 非本项目 e2e 残留（netstat -ano 自查），不自动清理")
 
 
 def _wait_ready(url: str, label: str, *, proc: subprocess.Popen | None = None,
@@ -603,6 +692,10 @@ def case_u6(ctx: dict[str, Any]) -> str:
 
 
 def main() -> int:
+    # 直跑（不经 gate_d0）也可能落在 GBK 控制台——自带 UTF-8 重配（审查 §D）
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
     ctx: dict[str, Any] = {"chat_sent": 0}
     mocks: list[subprocess.Popen] = []
     try:
