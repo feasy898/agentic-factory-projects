@@ -1,0 +1,264 @@
+{
+  "$comment": "资产包总表。模块按『逻辑模块』组织（物理位置在 physicalLocations 标注）：五个核心（M1 规格 / M2 桥 / M3 模板插件 / M4 打包器 / M8 质检）+ 两个合并逻辑模块（模型适配器 = M6+M7+M11；编排器 = M9+M10）+ 一个构建时函数（M5 素材处理）+ 数据文件（channel-rules，非模块）+ 两个验收门脚本（eval 资产）。status 取值：frozen=已实现且验收全绿；frozen-prototype=雏形已冻结、全量在后续里程碑；partial=部分子命令 frozen 其余占位；planned=未开工（spec 为草案或开工前置）；deferred=明确暂缓（只有边界说明，无可重生 spec）。所有 eval 命令在仓库根执行、均已实测通过（2026-09-28）。",
+  "assetPack": {
+    "name": "试玩广告生产线 · spec+eval 资产包",
+    "version": "1.0.0",
+    "updated": "2026-09-28",
+    "contractVersion": "schema v1.0.0 / rules v1.0.0",
+    "documents": {
+      "manifest": "docs/assets/manifest.md",
+      "contracts": "docs/assets/CONTRACTS.md",
+      "regenerate": "docs/assets/REGENERATE.md",
+      "specsDir": "docs/assets/specs/"
+    }
+  },
+  "modules": [
+    {
+      "id": "M1-spec",
+      "name": "规格（PlayableSpec schema v1 + 双侧校验器）",
+      "status": "frozen",
+      "lang": "JSON Schema + TS 类型 + Python（pydantic/jsonschema）+ JS（ajv）",
+      "responsibility": "一份 PlayableSpec JSON 描述玩法/素材/流程/文案/渠道/质检预算，并给出可复现的结构与语义校验（错误定位到字段路径）。",
+      "physicalLocations": [
+        "packages/spec/（schema + JS 校验器 + TS 类型）",
+        "python/pfcore/validation.py, spec_model.py, invariants.py（Python 权威侧）",
+        "python/pfcore/__main__.py（validate 子命令）",
+        "specs-eval/（golden 1 + bad 6 评测集）"
+      ],
+      "contract": {
+        "schema": "packages/spec/playable-spec.schema.json（draft 2020-12，specVersion 恒 1.0.0）",
+        "invariants": "I1 pullpin 逐关模拟可解 / I2 sort 栈可逆 / I3 match3 存在可行步 / I4 durationBudgetSec.max<=30 且 target<=max / I5 i18n 每语言五键全覆盖",
+        "errorShape": "{path: \"$.x.y\", message, code}（json-path + 稳定错误码）"
+      },
+      "dependsOn": [],
+      "eval": {
+        "commands": [
+          "python/.venv/Scripts/python.exe -m pfcore validate specs-eval/golden-match3.json",
+          "python/.venv/Scripts/python.exe -m pfcore validate \"specs-eval/bad/*.json\"",
+          "node packages/spec/test/ajv-check.mjs"
+        ],
+        "passLine": "golden exit 0；bad 6 个全部 exit 1 且错误含 $. 字段路径；ajv-check exit 0"
+      },
+      "regenOrder": 1,
+      "specDoc": "docs/assets/specs/spec-contract.md"
+    },
+    {
+      "id": "M2-engine-bridge",
+      "name": "运行时桥（window.PF + 渠道退出路由 + 首交互前静音）",
+      "status": "frozen",
+      "lang": "TypeScript（零 npm 运行时依赖，esbuild 直接打包 src/*.ts）",
+      "responsibility": "模板与渠道运行时之间唯一的对接面：挂载 window.PF、派发 pf:* 事件、按渠道路由退出接口、执行首交互前强制静音与平台音量跟随。",
+      "physicalLocations": [
+        "packages/engine-bridge/src/（index/channels/events/audio/types）",
+        "packages/engine-bridge/test/（node --test，26 用例）"
+      ],
+      "contract": {
+        "global": "window.PF: channel/locale/version/ready/isMuted()/phase()/setState()/open(url)/start()/end(win)/audio",
+        "events": "pf:ready{} pf:start{} pf:first-interaction{type} pf:end{win} pf:cta{url}，CustomEvent 冒泡到 document",
+        "exitRoutes": "applovin/unity/mintegral→mraid.open(url)；meta→FbPlayableAd.onComplete()；google→ExitApi.exit()；tiktok(含 pangle)→openAppStore()；preview/接口缺失→window.open(url)"
+      },
+      "dependsOn": [],
+      "eval": {
+        "commands": [
+          "node packages/engine-bridge/test/run.mjs",
+          "npm run coverage -w @pf/engine-bridge"
+        ],
+        "passLine": "node --test 26 用例全过 exit 0；c8 行覆盖 >= 80%"
+      },
+      "regenOrder": 2,
+      "specDoc": "docs/assets/specs/engine-bridge.md"
+    },
+    {
+      "id": "M3-templates",
+      "name": "模板插件（当前仅三消 tmpl-match3 冻结）",
+      "status": "frozen",
+      "lang": "TypeScript + 渲染引擎 vendor bundle（单 IIFE 产物）",
+      "responsibility": "PlayableSpec 驱动渲染一个可玩广告：教程→游玩→结束页全流程、attract 参数、__PF_QC__ 钩子（真实最优步坐标），一切事件与音频经 M2 桥。",
+      "physicalLocations": [
+        "packages/templates/tmpl-match3/（src/ + build.mjs + src/vendor/engine.js）",
+        "packages/templates/tmpl-merge|tmpl-pullpin|tmpl-sort/（仅 package.json 占位）"
+      ],
+      "contract": {
+        "specInjection": "构建时内联 window.PF_SPEC（完整 spec JSON）+ window.PF_LOCALE",
+        "qcHooks": "window.__PF_QC__.hint():{x,y,type}|null（视口 CSS 像素）/ state():loading|tutorial|playing|end / endScreenVisible():boolean",
+        "gameplay": "玩法精确定义见规则卡 docs/assets/specs/match3-rules-card.md"
+      },
+      "dependsOn": ["M2-engine-bridge", "M1-spec"],
+      "eval": {
+        "commands": [
+          "node packages/templates/tmpl-match3/build.mjs --spec specs-eval/golden-match3.json --out artifacts/preview/match3.html",
+          "python/.venv/Scripts/python.exe -m qacore run artifacts/preview/match3.html --channel preview --autoplay"
+        ],
+        "passLine": "构建 exit 0；qacore exit 0（无 fail 项；CHK02/06/10 允许 skip）；pf:end 在 45000ms 内触发（scripts/gate_phase1.py 门项 4 固化）"
+      },
+      "regenOrder": 5,
+      "specDoc": "docs/assets/specs/templates.md",
+      "notes": "merge/pullpin/sort 为 planned：开工前置 = 先写该模板的规则卡页（同 match3-rules-card 标准），复用 M2 桥与同一构建形态。"
+    },
+    {
+      "id": "M4-packager",
+      "name": "打包器（配置驱动多渠道出包）",
+      "status": "frozen",
+      "lang": "Node ESM CLI（零第三方运行时依赖；esbuild 仅根工作区 devDependency 用于压缩）",
+      "responsibility": "把模板构建产物（dist 目录）+ PlayableSpec + channel-rules 打成渠道包：单 HTML 全内联或规则声明的 zip 结构；强制零外链、大小、结构、渠道禁用项，宁失败不出超规包。",
+      "physicalLocations": [
+        "packages/packager/bin.mjs + src/（build/html/rules/zip/assets）",
+        "packages/packager/test/run.mjs（自验收 22+ 断言）"
+      ],
+      "contract": {
+        "output": "<out>/<projectId>/<channel>/<locale>/：单 HTML 渠道 = index.html；zip 渠道 = <projectId>-<locale>.zip；旁车 pack-manifest.json（元数据，不随包投放）",
+        "constraints": "白名单外零 http(s) 外链；字节 <= min(规则上限, spec override)；包内结构 = 规则声明；forbidMraid 渠道零 MRAID 引用；zip 字节可复现（固定 DOS 时间戳）"
+      },
+      "dependsOn": ["M1-spec", "DATA-channel-rules"],
+      "eval": {
+        "commands": ["node packages/packager/test/run.mjs"],
+        "passLine": "全部断言通过 exit 0（三渠道产物 + python zipfile 交叉验证 + 可复现 + 负向三条全拒）；gate_phase1 门项 3 复验"
+      },
+      "regenOrder": 4,
+      "specDoc": "docs/assets/specs/packager.md"
+    },
+    {
+      "id": "M8-qacore",
+      "name": "质检器（无头自动试玩裁判）",
+      "status": "frozen-prototype",
+      "lang": "Python + Playwright（sync）+ Pillow",
+      "responsibility": "对单个 HTML 产物做唯一裁定：本地伺服、双视口仿真、全请求拦截、探针采集事实、（--autoplay）经 __PF_QC__ 用真实指针事件玩到结束页，输出 report.json，任何 FAIL 即 exit 1。",
+      "physicalLocations": [
+        "python/qacore/（cli/checks/autoplay/server）",
+        "python/qacore/tests/fixtures/mini.html（门禁夹具）"
+      ],
+      "contract": {
+        "checks": "CHK01/03/04/05/07/08/09 已实装判定；CHK02（文件数）/CHK06（退出接口）/CHK10（多语言 RTL）为 skip 待后续里程碑",
+        "report": "report.json 字段清单见 docs/assets/specs/qacore.md；exit：0=无 fail，1=有 fail，2=产物缺失/非 HTML"
+      },
+      "dependsOn": ["M1-spec", "DATA-channel-rules", "M3-templates"],
+      "eval": {
+        "commands": [
+          "python/.venv/Scripts/python.exe -m qacore run python/qacore/tests/fixtures/mini.html --channel preview",
+          "python/.venv/Scripts/python.exe -m qacore run artifacts/preview/match3.html --channel preview --autoplay"
+        ],
+        "passLine": "mini.html exit 0 且报告含非空 checks 全过（gate_phase0 门项 5）；match3 --autoplay exit 0 且 pf:end <= 45000ms（gate_phase1 门项 4）"
+      },
+      "regenOrder": 7,
+      "specDoc": "docs/assets/specs/qacore.md",
+      "notes": "该模块正在收紧中（另一代理改 python/qacore），以 eval 命令为最终真源。"
+    },
+    {
+      "id": "MODEL-ADAPTER",
+      "name": "模型适配器（= M6 llmgw + M7 director + M11 repair-loop）",
+      "status": "frozen",
+      "lang": "Python 标准库（零第三方依赖）",
+      "responsibility": "chat-completions 协议的通用客户端（超时/重试/降级/图片/JSON 模式，全部 env 驱动零厂商硬编码）；director 与 repair-loop 是它的两个未来调用方，现明确暂缓。",
+      "physicalLocations": [
+        "python/llmgw/（client.py + selftest.py）",
+        "python/director/__init__.py（占位）",
+        "M11 无代码（边界见 spec）"
+      ],
+      "contract": {
+        "env": "PF_LLM_BASE_URL / PF_LLM_API_KEY / PF_LLM_MODEL / PF_LLM_FALLBACK_MODELS / PF_LLM_TIMEOUT(30) / PF_LLM_MAX_RETRIES(2) / PF_LLM_BACKOFF(0.8, 封顶 8s)",
+        "errors": "LLMError{status, model, attempts[]}；404 跳模型不重试；408/409/429/5xx+网络错误重试；400/401 立即抛"
+      },
+      "dependsOn": [],
+      "eval": {
+        "commands": ["python/.venv/Scripts/python.exe -m llmgw.selftest"],
+        "passLine": "6 项 mock 全过打印 SELFTEST PASS exit 0；python/llmgw 零厂商端点硬编码（gate_phase0 门项 4 扫描）"
+      },
+      "regenOrder": 6,
+      "specDoc": "docs/assets/specs/model-adapter.md（llmgw 可重生 spec 见 docs/assets/specs/llmgw.md）",
+      "notes": "该模块（llmgw）正在收紧中（另一代理改 python/llmgw），以 eval 命令为最终真源。director/repair-loop 暂缓，只有边界说明。"
+    },
+    {
+      "id": "ORCHESTRATOR",
+      "name": "编排器（= M9 pfcore CLI + M10 webui 壳）",
+      "status": "partial",
+      "lang": "Python CLI（argparse）+ 计划中 FastAPI 壳",
+      "responsibility": "一条命令串联 校验→构建→打包→质检→汇总/二维码；命令行是主体，网页只是上传与二维码壳。当前仅 validate 子命令 frozen，build/run/pack/rules-check 为占位（exit 2），webui 为空壳。",
+      "physicalLocations": [
+        "python/pfcore/__main__.py（validate frozen + 4 个占位子命令）",
+        "webui/__init__.py（占位）"
+      ],
+      "contract": {
+        "pipeline": "流水线契约（唯一命令名/退出码/目录形态/报告字段/二维码指向）见 docs/assets/specs/pipeline-contract.md；命令名漂移（规划 make vs 占位 run）在该页如实记录，待统一"
+      },
+      "dependsOn": ["M1-spec", "M3-templates", "M4-packager", "M8-qacore", "M5-assetkit"],
+      "eval": {
+        "commands": [
+          "python/.venv/Scripts/python.exe -m pfcore validate specs-eval/golden-match3.json",
+          "python/.venv/Scripts/python.exe -m pfcore rules-check"
+        ],
+        "passLine": "validate exit 0；未实现子命令回显占位并 exit 2（占位语义本身是当前契约）"
+      },
+      "regenOrder": 9,
+      "specDoc": "docs/assets/specs/orchestrator.md"
+    },
+    {
+      "id": "M5-assetkit",
+      "name": "素材处理（构建时函数，暂缓独立成管线）",
+      "status": "deferred",
+      "lang": "Python（计划）+ Node 图集（计划）",
+      "responsibility": "压图 / 音频转码 / 字体子集化 / 图集打包。当前三消模板用程序化贴图零外部素材，本模块降级为构建时函数说明，只有边界页无可重生 spec。",
+      "physicalLocations": ["python/assetkit/__init__.py（占位）"],
+      "contract": null,
+      "dependsOn": [],
+      "eval": {
+        "commands": [],
+        "passLine": "无（暂缓，无 eval）"
+      },
+      "regenOrder": 10,
+      "specDoc": "docs/assets/specs/assetkit.md"
+    }
+  ],
+  "dataFiles": [
+    {
+      "id": "DATA-channel-rules",
+      "name": "渠道规则库（数据文件，非模块）",
+      "status": "frozen",
+      "lang": "JSON",
+      "responsibility": "渠道合规知识单一来源：包形态/包内结构/大小线/文件数/退出接口/协议/静音要求/注入与禁用声明。打包器配置驱动来源，质检 CHK01 上限来源。",
+      "physicalLocations": ["channel-rules/channel-rules.json"],
+      "contract": {
+        "structure": "rulesVersion + defaults + channels.<id>{package{format,entry,structure}, maxBytes, maxFiles, exit{protocol,call,waitReadyBeforeRender}, runtime{muteBeforeFirstInteraction,injectRelativeScripts,forbidMraid}, allowedUrlWhitelist}",
+        "channels": "现有 frozen：preview / applovin / meta / mintegral；planned：unity / google / tiktok"
+      },
+      "dependsOn": [],
+      "eval": {
+        "commands": ["node packages/packager/bin.mjs channels"],
+        "passLine": "规则库结构校验通过（loadRules validateRules）并列出渠道；gate_phase1 门项 3 复验三渠道断言"
+      },
+      "regenOrder": 3,
+      "specDoc": "docs/assets/specs/channel-adapters.md",
+      "notes": "扩展渠道 = 改此 JSON + 桥 channels.ts 路由（『只改配置』在退出路由上不成立，见 CONTRACTS 痛点）。"
+    }
+  ],
+  "evalAssets": [
+    {
+      "id": "EVAL-gate-phase0",
+      "name": "Phase 0 验收门（5 项，含本机 spike 对照依赖）",
+      "status": "frozen",
+      "lang": "Python（系统 python 可跑）",
+      "responsibility": "固化 5 项验收：pfcore CLI 骨架 / packager CLI 骨架 / 本机对照 spike 六渠道产物 / llmgw 自测+零厂商端点 / qacore 夹具质检。",
+      "physicalLocations": ["scripts/gate_phase0.py"],
+      "eval": {
+        "commands": ["python scripts/gate_phase0.py"],
+        "passLine": "GATE PHASE0: PASS（5/5）exit 0"
+      },
+      "regenOrder": 8,
+      "specDoc": "docs/assets/REGENERATE.md",
+      "notes": "门项 3 依赖 _vendor/（仅本机、不入库）；公开克隆环境此项必 FAIL，公开环境以 gate_phase1 为准。该脚本正在收紧中（另一代理改 scripts/gate_phase0.py），以实际运行为最终真源。"
+    },
+    {
+      "id": "EVAL-gate-phase1",
+      "name": "Phase 1 验收门（4 项，公开环境主验收）",
+      "status": "frozen",
+      "lang": "Python（系统 python 可跑）",
+      "responsibility": "固化 4 项验收：M1 三连校验（golden/bad 含字段路径/ajv）+ M2 bridge 测试 + M4 三渠道打包断言（大小/结构/零外链/注入/禁用）+ M3 构建后 qacore --autoplay 全过且 pf:end<=45s。",
+      "physicalLocations": ["scripts/gate_phase1.py"],
+      "eval": {
+        "commands": ["python scripts/gate_phase1.py"],
+        "passLine": "GATE PHASE1: PASS（4/4）exit 0（实测约 46s）"
+      },
+      "regenOrder": 8,
+      "specDoc": "docs/assets/REGENERATE.md"
+    }
+  ]
+}
