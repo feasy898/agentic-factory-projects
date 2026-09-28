@@ -213,6 +213,40 @@ def has_pf(page: Page) -> bool:
         return False
 
 
+def qc_texts(page: Page) -> list[str]:
+    """模板经 __PF_QC__.texts() 上报的已渲染文案集合。
+
+    画布文字不进 DOM（innerText 取不到），由模板侧登记所有真正加入场景的
+    Text 内容。无钩子/异常时返回空表（CHK10 据实判缺证，不做假定）。"""
+    try:
+        v = page.evaluate(
+            "() => (window.__PF_QC__ && typeof window.__PF_QC__.texts === 'function')"
+            " ? window.__PF_QC__.texts() : []"
+        )
+    except Exception:
+        return []
+    if not isinstance(v, list):
+        return []
+    return [str(x) for x in v if isinstance(x, (str, int, float))]
+
+
+def qc_assets(page: Page) -> list[dict]:
+    """模板经 __PF_QC__.assets() 上报的替换素材像素对账结果。
+
+    对账在页面内完成：渲染贴图与构建期内联的用户 PNG 经同一 contain-fit
+    管线降采样到 16×16 比平均绝对差。无钩子/无替换素材时返回 []。"""
+    try:
+        v = page.evaluate(
+            "() => (window.__PF_QC__ && typeof window.__PF_QC__.assets === 'function')"
+            " ? window.__PF_QC__.assets() : []"
+        )
+    except Exception:
+        return []
+    if not isinstance(v, list):
+        return []
+    return [dict(x) for x in v if isinstance(x, dict)]
+
+
 def has_qc_hooks(page: Page) -> bool:
     try:
         return bool(page.evaluate(

@@ -38,6 +38,11 @@
   `node packages/templates/tmpl-match3/build.mjs --spec <spec.json> [--out <file.html>] [--locale <tag>] [--no-minify]`
   → 单个自包含 HTML（spec JSON 经 `window.PF_SPEC` 内联 + `window.PF_LOCALE`，零外链、零相对资源引用；
   默认输出 `artifacts/preview/match3.html`）。
+  **最小素材路径（2026-09-29 增）**：`spec.assets.sprites` 中文件真实存在的键（png/jpg/webp/gif，
+  相对 spec 目录或仓库根解析）在构建期以 data URI 内联进 `window.PF_ASSETS`，运行期替换同键棋子的
+  程序化贴图；缺失/格式不支持的键打警告并回退程序化贴图。真实嵌入清单同步写旁车
+  **`<out>.assets.json`**（`{spec, locale, sprites:[{spriteKey,path,bytes}]}`，零嵌入也写出空清单）——
+  make 据此给 qacore CHK10 传 `--require-sprite`。
 - **路径 B（打包器的输入形态）**：dist 目录 —— 必须含 `index.html`；
   若存在 `<dist>/<locale>/index.html` 则整目录切换到该语言子目录（优先级：语言产物 > 根产物），
   HTML 内相对引用的 css/js/png 均可（由打包器内联）。
@@ -74,6 +79,9 @@
   `all` = 规则库全部渠道（`preview` 为本地渠道不打包）。规则库外渠道 exit 2。
 - 质检：首个 single-html 渠道 × 首语言，`qacore run --autoplay`（预算取 spec `qc.*`）；
   报告落在该渠道目录（`index.report.json` + 双视口截图）。
+  CHK10 判定输入由 make 自动传入（2026-09-29 增）：首语言的 标题/教程/胜/CTA/分 文案作
+  `--require-text`（lose 不要求——自动试玩必胜，无出场机会），构建旁车清单（§3.1 路径 A）
+  中真实嵌入的素材键作 `--require-sprite`。
 - 任何质检 fail → exit 1，**不产出** 二维码与 demo-prebuilt（质检是裁判）。
 
 ### 3.3 质检报告（qacore 输出，冻结）
@@ -113,12 +121,20 @@
     "autoplay_timeout_sec": 45,
     "pf_present": true,
     "viewport_shots": { "portrait": {...}, "landscape": {...} },  // has_canvas / variance / 静音事实
-    "variance_threshold": 30.0
+    "variance_threshold": 30.0,
+    "required_texts": ["宝石消消乐（试玩演示）", ...],  // CHK10 输入：要求的渲染文案（CLI --require-text）
+    "required_sprites": ["piece-0"],                    // CHK10 输入：要求的替换素材键（CLI --require-sprite）
+    "page_texts": ["..."],                              // 模板 __PF_QC__.texts() 上报的已渲染文案（竖屏趟，
+                                                        //   驱动前+结束后两次并集；画布文字不进 DOM）
+    "asset_audit": [ { "texKey": "gem-0", "spriteKey": "piece-0",
+                       "mad": 0, "replaced": true } ]   // 替换素材像素对账（渲染贴图 vs 内联用户 PNG）
   }
 }
 ```
 
 - 注意：`facts` 中**不含** autoplay 明细（单独在判定前抽出，不落盘到 facts）——两趟视口与试玩事实的完整采集结构见 [qacore spec](qacore.md)。
+- CHK10（多语言文案与素材上屏）2026-09-29 实装：required_* 全缺 → skip（同旧"未实装"形态）；
+  文案子串命中 + 素材对账 replaced 全真 → pass；任一缺口 → fail。
 - **缺口**：报告尚无正式 JSON Schema（CHK 字段表即本节；schema 化列入 M8 后续）。
 
 ## 5. 二维码指向与计时（2026-09-28 随 `make` 实现，冻结）

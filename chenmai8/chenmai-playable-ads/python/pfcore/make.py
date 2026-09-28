@@ -392,10 +392,46 @@ def _make_impl(args: argparse.Namespace, started_epoch: float, t0: float) -> int
     if qa_pkg is None:
         raise MakeError("渠道列表中没有 single-html 渠道，qacore 当前仅支持单 HTML 产物", 2)
     qa_report = qa_pkg["artifact"].with_name("index.report.json")
+
+    # CHK10 判定输入（反馈行动 3：评委输入看得见）：首语言的 标题/教程/胜/CTA/分
+    # 文案必须真实上屏；构建真实嵌入的用户替换素材（旁车清单）必须像素对账通过。
+    # lose 不要求——自动试玩走最优线必胜，lose 文案无出场机会（如实记录）。
+    def _locale_text(key: str) -> str:
+        table = ((spec.get("i18n") or {}).get("strings") or {}).get(locales[0]) or {}
+        v = table.get(key)
+        return str(v) if isinstance(v, str) else ""
+
+    flow = spec.get("flow") or {}
+    end_screen = flow.get("endScreen") or {}
+    required_texts = [str((spec.get("meta") or {}).get("title") or "")]
+    if (flow.get("tutorial") or {}).get("enabled", True):
+        required_texts.append(_locale_text("tutorial"))
+    required_texts.append(_locale_text("win"))
+    required_texts.append(_locale_text(str(end_screen.get("ctaKey") or "cta")))
+    if end_screen.get("showScore", True):
+        required_texts.append(_locale_text("score"))
+    required_texts = [t for t in required_texts if t]
+
+    required_sprites: list[str] = []
+    manifest_path = Path(str(previews[locales[0]]) + ".assets.json")
+    try:
+        mf = json.loads(manifest_path.read_text(encoding="utf-8"))
+        required_sprites = [str(s.get("spriteKey"))
+                            for s in (mf.get("sprites") or []) if s.get("spriteKey")]
+    except (OSError, json.JSONDecodeError, AttributeError):
+        pass  # 旁车缺失/不可读 → 不提要求（构建日志已对缺失素材告警）
+
+    chk10_args: list[str] = []
+    for _t in required_texts:
+        chk10_args += ["--require-text", _t]
+    for _k in required_sprites:
+        chk10_args += ["--require-sprite", _k]
+
     _run([sys.executable, "-m", "qacore", "run", str(qa_pkg["artifact"]),
           "--channel", qa_pkg["channel"], "--autoplay",
           "--max-load-sec", str(qc.get("maxLoadSec", 2.0)),
           "--autoplay-timeout", str(qc.get("autoplayTimeoutSec", 45.0)),
+          *chk10_args,
           "--out", str(qa_report)],
          f"qacore 质检（{qa_pkg['channel']}）", timeout_sec=300)
     qa_raw = json.loads(qa_report.read_text(encoding="utf-8"))

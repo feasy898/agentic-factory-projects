@@ -17,7 +17,8 @@ from playwright.sync_api import Page, sync_playwright
 
 from . import checks
 from .autoplay import (PROBE_JS, audio_running, drive_autoplay, has_pf,
-                       media_sample, pf_muted, probe_installed, rtc_count)
+                       media_sample, pf_muted, probe_installed, qc_assets,
+                       qc_texts, rtc_count)
 from .server import ArtifactServer
 
 VIEWPORT_PORTRAIT = {"width": 390, "height": 844}
@@ -237,8 +238,13 @@ def cmd_run(args) -> int:
 
                     facts_pass: dict = {"probeInstalled": probe_installed(page)}
                     if do_autoplay:
+                        # 教程期文案先采（教程浮层在自动试玩开始数秒后即消失）
+                        texts_early = qc_texts(page)
                         facts_pass.update(drive_autoplay(page, autoplay_timeout))
                         page.wait_for_timeout(300)
+                        # 结束页文案补采 + 替换素材像素对账（贴图此时必然已就绪）
+                        facts_pass["page_texts"] = sorted(set(texts_early) | set(qc_texts(page)))
+                        facts_pass["asset_audit"] = qc_assets(page)
                     else:
                         # 未驱动试玩时，加载后的静音态即"首交互前静音"事实
                         ms = media_sample(page) or {}
@@ -296,6 +302,12 @@ def cmd_run(args) -> int:
         "autoplay_timeout_sec": autoplay_timeout,
         "autoplay": autoplay_facts,
         "muteLoadTime": mute_facts,
+        # CHK10 判定输入（2026-09-29 扩展）：要求的渲染文案 / 替换素材键，
+        # 以及模板上报的已渲染文案集合与像素对账结果（仅竖屏趟采集）。
+        "required_texts": list(args.require_texts or []),
+        "required_sprites": list(args.require_sprites or []),
+        "page_texts": shots.get("portrait", {}).get("page_texts", []),
+        "asset_audit": shots.get("portrait", {}).get("asset_audit", []),
         "pf_present": pf_present,
         "probe_installed": probe_ok,
         "viewport_shots": shots,

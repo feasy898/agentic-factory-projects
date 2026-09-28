@@ -47,6 +47,16 @@ def main(argv: list[str] | None = None) -> int:
         "--autoplay-timeout", type=float, default=45.0,
         help="自动试玩时长预算（秒），默认 45（对应 qc.autoplayTimeoutSec）",
     )
+    p_run.add_argument(
+        "--require-text", action="append", default=[], dest="require_texts",
+        help="CHK10：要求出现在页面渲染文案中的字符串（可重复传入；"
+             "画布文字经模板 __PF_QC__.texts() 上报，子串命中即算）",
+    )
+    p_run.add_argument(
+        "--require-sprite", action="append", default=[], dest="require_sprites",
+        help="CHK10：要求经像素对账确认替换生效的素材键（spec.assets.sprites 键，"
+             "可重复传入；对账在页面内比对渲染贴图与内联用户 PNG）",
+    )
 
     args = parser.parse_args(argv)
     if args.command == "run":

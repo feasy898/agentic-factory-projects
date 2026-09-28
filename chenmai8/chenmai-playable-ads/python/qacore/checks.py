@@ -1,9 +1,10 @@
-"""检查项定义（M8 规划十项；当前实装 CHK01/03/04/05/07/08/09）。
+"""检查项定义（M8 规划十项；当前实装 CHK01/03/04/05/07/08/09/10）。
 
 判定状态取值：pass / fail / skip。
 - pass/fail：由本次无头打开过程真实测得；
-- skip：检查项尚未实装（CHK02/06/10）或产物/配置不具备判定前提
-  （如无 PF 桥且渠道未强制静音、无 --autoplay），不做任何假定结论。
+- skip：检查项尚未实装（CHK02/06）或产物/配置不具备判定前提
+  （如无 PF 桥且渠道未强制静音、无 --autoplay、CHK10 未提供
+  --require-text/--require-sprite），不做任何假定结论。
   注意：渠道要求静音时（muteBeforeFirstInteraction 默认 true），
   CHK04 缺 PF 桥/探针不是 skip 而是 fail——无法证明静音合规即违规。
 """
@@ -191,5 +192,43 @@ def evaluate(facts: dict[str, Any]) -> list[Check]:
         checks.append(Check("CHK09", f"本地加载 ≤{max_load_sec:g}s", "fail",
                             f"load 耗时 {load_ms:.0f}ms 超过阈值 {max_load_sec * 1000:.0f}ms"))
 
-    checks.append(skip("CHK10", "多语言与 RTL", "未实装（locale 仿真属 M8 后续里程碑）"))
+    # CHK10 多语言文案与素材上屏（2026-09-29 实装，扩展自规划项"多语言/RTL"）：
+    # - required_texts：每条都须出现在页面渲染文案集合（画布文字不进 DOM，
+    #   由模板经 __PF_QC__.texts() 上报；子串命中即算，如"得分"命中"得分 120"）；
+    # - required_sprites：每键都须页面内像素对账通过（渲染贴图 vs 构建期内联
+    #   用户 PNG，16×16 平均绝对差 ≤ 模板侧阈值，证据在 facts.asset_audit）。
+    # 两者都未提供时保持 skip（无判定对象，不算通过）。
+    required_texts = [str(s) for s in (facts.get("required_texts") or []) if str(s)]
+    required_sprites = [str(s) for s in (facts.get("required_sprites") or []) if str(s)]
+    if not required_texts and not required_sprites:
+        checks.append(skip("CHK10", "多语言文案与素材上屏",
+                           "未提供 --require-text/--require-sprite，无判定对象（locale 仿真属后续）"))
+    else:
+        texts = facts.get("page_texts") or []
+        audit = {a.get("spriteKey"): a
+                 for a in (facts.get("asset_audit") or []) if isinstance(a, dict)}
+        problems: list[str] = []
+        missing = [s for s in required_texts if not any(s in t for t in texts)]
+        if missing:
+            shown = "、".join(_clip(m, 24) for m in missing[:6])
+            more = f"（另 {len(missing) - 6} 条略）" if len(missing) > 6 else ""
+            problems.append(
+                f"渲染文案集合（{len(texts)} 条）中未找到：{shown}{more}"
+                + ("" if texts else "；页面未上报任何渲染文案（无 __PF_QC__.texts？）"))
+        for key in required_sprites:
+            a = audit.get(key)
+            if a is None:
+                problems.append(
+                    f"替换素材 {key}：页面未上报像素对账结果（无 __PF_QC__.assets 或该键未嵌入）")
+            elif a.get("replaced") is not True:
+                problems.append(f"替换素材 {key}：像素对账未通过（{a.get('reason') or '平均差 ' + str(a.get('mad'))}）")
+        if problems:
+            checks.append(Check("CHK10", "多语言文案与素材上屏", "fail", "；".join(problems)))
+        else:
+            checks.append(Check(
+                "CHK10", "多语言文案与素材上屏", "pass",
+                f"渲染文案命中 {len(required_texts)}/{len(required_texts)}"
+                f"（集合共 {len(texts)} 条）"
+                + (f"；替换素材像素对账通过 {len(required_sprites)}/{len(required_sprites)}"
+                   if required_sprites else "")))
     return checks

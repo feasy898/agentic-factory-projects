@@ -128,7 +128,7 @@
         "python/qacore/tests/fixtures/mini.html（门禁夹具）"
       ],
       "contract": {
-        "checks": "CHK01/03/04/05/07/08/09 已实装判定；CHK02（文件数）/CHK06（退出接口）/CHK10（多语言 RTL）为 skip 待后续里程碑",
+        "checks": "CHK01/03/04/05/07/08/09/10 已实装判定（CHK10=指定文案与替换素材上屏，2026-09-29）；CHK02（文件数）/CHK06（退出接口）为 skip 待后续里程碑",
         "report": "report.json 字段清单见 docs/assets/specs/qacore.md；exit：0=无 fail，1=有 fail，2=产物缺失/非 HTML"
       },
       "dependsOn": ["M1-spec", "DATA-channel-rules", "M3-templates"],

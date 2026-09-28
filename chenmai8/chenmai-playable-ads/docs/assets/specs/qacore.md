@@ -13,13 +13,15 @@
 写 `report.json` + 截屏；任何 fail → exit 1。
 
 **不做**：不处理 zip（非 .html 后缀直接 exit 2——**已知缺口**：zip 渠道产物暂无法质检）；不注入渠道退出
-stub（CHK06 未实装）；不做多语言/RTL 仿真（CHK10 未实装）；不做文件数清点（CHK02 未实装）。
+stub（CHK06 未实装）；不做多语言/RTL 的 locale 轮换仿真（CHK10 只对**本产物内联语言**断言指定文案与
+替换素材上屏，切换语言重跑即可覆盖其他 locale）；不做文件数清点（CHK02 未实装）。
 
 ## 2. 命令契约（冻结）
 
 ```
 python -m qacore run <artifact.html> [--channel preview] [--out <report.json>]
                        [--port 0] [--max-load-sec 2.0] [--autoplay] [--autoplay-timeout 45.0]
+                       [--require-text <str> ...] [--require-sprite <key> ...]
 ```
 
 - 报告默认写产物旁 `<产物名>.report.json`；截屏随报告目录（竖屏 `<名>.png`，横屏 `<名>-landscape.png`）。
@@ -59,6 +61,11 @@ python -m qacore run <artifact.html> [--channel preview] [--out <report.json>]
   首次手势后采集 `mutedAfterFirstGesture`（应为 false=解除静音）。
 - 结束采集：`pfEndFired/pfEndMs/pfEndWin`（探针）、`reachedState`（`__PF_QC__.state()`）、
   `endScreenVisible`（`__PF_QC__.endScreenVisible()`，无此钩子时为 null）、`gestures` 计数。
+- CHK10 取证（2026-09-29 增，autoplay.py `qc_texts`/`qc_assets`）：竖屏趟在**驱动试玩前**采一次
+  `__PF_QC__.texts()`（教程浮层数秒即消失，必须早采）、驱动到结束页**后再采一次**并集为
+  `page_texts`；`__PF_QC__.assets()`（页面内把渲染贴图与内联用户 PNG 经同一 contain-fit 管线
+  降采样 16×16 比平均绝对差，≤ 模板侧阈值 8 判 replaced）结果记 `asset_audit`。
+  画布文字不进 DOM，innerText 取不到——文案取证必须走模板上报钩子。
 - **禁止事项**：不许 mock 被测物——QC 必须以真实浏览器 + 真实 pointer 事件驱动；被测页面必须真实加载
   （本地伺服是真实 HTTP，这不算 mock）。不许把 skip 当 pass 统计。
 
@@ -75,7 +82,7 @@ python -m qacore run <artifact.html> [--channel preview] [--out <report.json>]
 | CHK07 自动试玩到结束页 | 实装 | 无 `__PF_QC__` → fail；需 pf:end 已触发且 ≤45s、终态=end、结束页可见，三者齐备 |
 | CHK08 控制台零错误 | 实装 | 两趟合并：console.error 或 pageerror 任一 → fail |
 | CHK09 本地加载 | 实装 | 竖屏 load_ms ≤ max_load_sec×1000 |
-| CHK10 多语言/RTL | skip | 未实装（locale 仿真属后续） |
+| CHK10 多语言文案与素材上屏 | 实装（2026-09-29，扩展自"多语言/RTL"） | `--require-text`（可重复）每条须在 `page_texts` 中子串命中；`--require-sprite`（可重复）每键须 `asset_audit` 中 `replaced=true`（像素对账）。两者都未提供 → **skip**（无判定对象不算通过）。make 自动传入：首语言 标题/教程/胜/CTA/分 文案 + 构建旁车清单里的真实嵌入素材键；lose 不要求（自动试玩必胜，无出场机会） |
 
 - 状态机取值 `pass|fail|skip`；**skip 是显式声明"未测"，报告中保留 skip 字样，严禁标成 pass**。
 
@@ -88,6 +95,11 @@ python/.venv/Scripts/python.exe -m qacore run python/qacore/tests/fixtures/mini.
 #     零 skip（skip 不算过）、CHK03/08/09 必须 pass
 python/.venv/Scripts/python.exe -m qacore run artifacts/preview/match3.html --channel preview --autoplay
 #   → exit 0（CHK01/03/04/05/07/08/09 全 pass；CHK02/06/10 skip 允许），pf:end ≤ 45000ms
+# CHK10 实装层（2026-09-29，中文演示规格 specs-eval/demo-zh.json，piece-0 为用户替换 PNG）：
+python/.venv/Scripts/python.exe -m pfcore make --spec specs-eval/demo-zh.json
+#   → exit 0；报告 CHK10 pass：标题/教程/胜/CTA/分 中文文案全命中 + piece-0 像素对账 replaced=true。
+#   阴性对照：对无嵌入的 golden 构建 `qacore run ... --require-sprite piece-0` → CHK10 fail、exit 1
+#   （"替换素材 piece-0：页面未上报像素对账结果"）——检查非永绿。
 # 变异样本（门禁固化于 gate_phase0.py 门项 6）：外链 img→恰 CHK03 / 未静音 audio→恰 CHK04 /
 #   超体积→恰 CHK01，各自 qacore exit 1
 ```
