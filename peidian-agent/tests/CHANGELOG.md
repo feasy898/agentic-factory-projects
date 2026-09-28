@@ -42,3 +42,52 @@
      `ontology/actions.yaml` 的缺省 Policy。
   6. specs/README §0 称"11 数据结构"，01§2 实定义 12 个（§2.1–§2.12，含
      ReleaseBundle）；S0 按 12 个全部代码化（超集无风险）。
+
+---
+
+## 2026-09-28 · M4 语义层首条登记（本体加载/实体解析/三跳查询）
+
+- **模块**：M4（`src/m4_semantic/` + `ontology/aliases.yaml` + `tests/test_m4.yaml`）
+- **spec_ref**（按序拼接取 hash）：
+  - `specs/M4-semantic-ontology.md`
+  - `specs/00-ontology.md`
+  - `specs/01-contracts.md`
+  - `specs/ADDENDUM.md`
+- **spec_hash → eval_hash**：
+
+  | suite | spec_hash (sha256) | eval_hash (sha256) |
+  | --- | --- | --- |
+  | test_m4.yaml | `f93c7c26f4b63512e5d14efb81ce5c1506f5e7bcbfd731954d4fcbc1d07abbb8` | `513d21fffa02f54b63466d2450474a42a2140f8553a6af848c6583171e12db54` |
+
+- **覆盖范围**：M4 §4 Eval 表 12 条机械生成（SPEC-M4-01/02/03/04/05/06/07 各条款
+  正例+负例），另含 1 条 DoD §5 时延门槛用例（EVAL-M4-PERF-P，performance 形态，
+  三种查询模式端到端 <50ms）。合计 13 条，全部通过（13/13）。
+- **登记的偏差与落盘口径**（均为机械落盘时的必要消歧，未改任何冻结语义）：
+  1. 园区实例（PARK-001 seed）不含告警/工单/检修计划/负荷曲线运行对象，而 00 §1.2
+     三跳查询需要它们作起点——开发实例 `tests/fixtures/dev-graph.yaml`（与 seed
+     同构，含 AL-0201/WO-D0021/MP-TX01/LC-A0901/F-A1 等）经 ADDENDUM §D 按名加载
+     机制（PARK_INSTANCE_PATH 追加 tests/fixtures）注入 EVAL，同一代码路径服务任意
+     同构实例。
+  2. SPEC-M4-02 歧义判据的机械口径："N 号<类型>" 双读法打分——房内序号
+     （room_ordinal_score：某配电房内该类型按 ID 排序第 N 台，强读法）与全园区尾号
+     （parkwide_ordinal_score：ID 数字尾号恰为 N，弱读法），与同类型兜底
+     （same_type_fallback_score）按 unambiguous_margin（0.3）判唯一/歧义：
+     "2 号变压器"强读法命中 TX-02（0.8 对 0.5 分差 0.3）→ 唯一消歧；
+     "3 号变压器"无任何房拥有第 3 台变压器，仅弱读法命中 TX-03（0.6 对 0.5 分差
+     0.1）→ 返回候选列表 [TX-03/TX-01/TX-02] 含理由，不擅自择一。
+     全部分数为 ontology/aliases.yaml 数据（新增设备零代码）。
+  3. "唯一消歧"（EVAL-M4-02-P expect.unique）语义 = 结果无 ambiguous 标记；
+     结果集可含联动传感器（"A 房 1 号柜局放" → SG-A01 + PD-A01 两条，符合规格
+     期望 "SG-A01+PD-A01"）。
+  4. 00 §1.2 "负荷→回路→变压器→容量约束" 的机械路径：LoadCurve -metered_at->
+     Feeder（回路/计量点）-upstream_of(in)-> Transformer + 属性拾取 capacity_kva
+     （属性拾取步不计关系跳数：模式声明 hops=3，路径关系跳数=2）。
+  5. EVAL-M4-PERF-P 为 DoD §5 时延自测的常态化落盘（规格 §4 表之外），归属
+     SPEC-M4-03；门槛 50ms 是数据（expect.max_ms）非代码；实测三模式端到端
+     （内存图构建+查询）≤0.32ms。
+  6. SPEC-M4-06 触发口径：缺失概念比例 ≥30%（等价命中率 <70%，00 §4）产出
+     `badcase.opened` **候选事件**（EventRecord dict 经 contracts 校验，producer=M4，
+     payload.candidate=true）；事件持久化（runtime/events/）归 M2/M6，M4 只产出
+     候选。任务级报告落盘 runtime/coverage/task-<id>.json。
+  7. EVAL-M4-04-P 的 token 计量口径：CJK 字符 1 token/字 + ASCII 词元 1/串
+     （确定性估算，无模型调用；见 m4_semantic.view.estimate_tokens）。

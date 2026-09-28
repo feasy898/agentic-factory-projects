@@ -1,0 +1,246 @@
+# tests/test_m4.yaml
+# M4（语义层：本体加载/实体解析/三跳查询）数据驱动 EVAL 套件。
+# 用例从 specs/M4-semantic-ontology.md §4 Eval 表逐行机械生成（12 条），
+# 另含 1 条 DoD §5 时延门槛用例（EVAL-M4-PERF-P，performance 形态）。
+# schema 见 tests/EVAL-SCHEMA.md；执行器注册于 src/m4_semantic/eval_plugin.py。
+# spec_hash 口径（01§6）：spec_ref 列表按序拼接文件字节的 sha256。
+suite: m4
+title: M4 语义层（本体加载/实体解析/三跳查询）EVAL
+spec_ref:
+  - specs/M4-semantic-ontology.md
+  - specs/00-ontology.md
+  - specs/01-contracts.md
+  - specs/ADDENDUM.md
+spec_hash: f93c7c26f4b63512e5d14efb81ce5c1506f5e7bcbfd731954d4fcbc1d07abbb8
+executors:
+  - module: m4_semantic.eval_plugin
+
+cases:
+  # ================= SPEC-M4-01 加载校验 =================
+  - id: EVAL-M4-01-P
+    spec: SPEC-M4-01
+    title: 加载合法本体成功，版本 hash 稳定且内容敏感，动作清单可导出
+    form: expression
+    executor: m4.load_ok
+    params:
+      actions_file: ontology/actions.yaml
+    expect: {}
+
+  - id: EVAL-M4-01-N
+    spec: SPEC-M4-01
+    title: 种子实例引用不存在设备（TX-09/SG-A09）→ 启动拒绝，错误含缺失 ID
+    form: negative_rejection
+    executor: m4.load_reject
+    params:
+      attempt: instance_missing_ref
+      file: tests/fixtures/bad_instance_missing_ref.yaml
+    expect:
+      error_contains: TX-09
+      error_type: InstanceLoadError
+
+  - id: EVAL-M4-01-N2
+    spec: SPEC-M4-01
+    title: 动作表与 M3 注册表 diff 非空（缺 query.measurement、多 bogus.action）→ 加载拒绝
+    form: negative_rejection
+    executor: m4.load_reject
+    params:
+      attempt: registry_misaligned
+      registry:
+        - query.asset
+        - query.regulation
+        - analyze.load_forecast
+        - analyze.power_quality
+        - analyze.transformer_economy
+        - analyze.demand_forecast
+        - write.report
+        - create.work_order
+        - create.switch_order
+        - create.inspection_record
+        - execute.remote_control
+        - execute.capacitor_switch
+        - modify.protection_setting
+        - modify.asset_history
+        - bypass.approval
+        - bogus.action
+    expect:
+      error_contains: 对齐失败
+      error_type: RegistryAlignmentError
+
+  # ================= SPEC-M4-02 实体解析 =================
+  - id: EVAL-M4-02-P
+    spec: SPEC-M4-02
+    title: '"2 号变压器温度"→TX-02+winding_temp；"A 房 1 号柜局放"→SG-A01+PD-A01'
+    form: expression
+    executor: m4.resolve
+    params:
+      instance: seed
+      queries:
+        - text: 2 号变压器温度
+          expect:
+            unique: true
+            entity_ids: [TX-02]
+            attributes: {TX-02: winding_temp}
+        - text: A 房 1 号柜局放
+          expect:
+            unique: true
+            entity_ids: [SG-A01, PD-A01]
+            attributes: {SG-A01: pd}
+    expect: {}
+
+  - id: EVAL-M4-02-N
+    spec: SPEC-M4-02
+    title: '"3 号变压器"（无房拥有第 3 台变压器，仅全园区尾号弱读法命中）→ 候选列表含理由，不猜'
+    form: expression
+    executor: m4.resolve
+    params:
+      instance: seed
+      queries:
+        - text: 3 号变压器
+          expect:
+            all_ambiguous: true
+            min_candidates: 3
+            contains_entity: TX-03
+            reasons_nonempty: true
+    expect: {}
+
+  # ================= SPEC-M4-03 三跳查询 =================
+  - id: EVAL-M4-03-P
+    spec: SPEC-M4-03
+    title: 告警影响面（AL-0201→TX-01→BUS-A1→同母线设备 TX-02/TX-03）
+    form: expression
+    executor: m4.query
+    params:
+      instance: dev-graph
+      start: AL-0201
+      mode: alarm_impact
+      expect_terminal_ids: [TX-02, TX-03]
+      expect_node_chain: [AL-0201, TX-01, BUS-A1, TX-02]
+      expect_hops: 3
+      expect_pattern_hops: 3
+    expect: {}
+
+  - id: EVAL-M4-03-P2
+    spec: SPEC-M4-03
+    title: 过载研判（LC-A0901→F-A1→TX-01，三跳链完整含 capacity_kva=1600）
+    form: expression
+    executor: m4.query
+    params:
+      instance: dev-graph
+      start: LC-A0901
+      mode: overload_analysis
+      expect_terminal_ids: [TX-01]
+      expect_node_chain: [LC-A0901, F-A1, TX-01]
+      expect_terminal_attributes: {capacity_kva: 1600}
+      expect_hops: 2
+      expect_pattern_hops: 3
+    expect: {}
+
+  - id: EVAL-M4-03-N
+    spec: SPEC-M4-03
+    title: 四跳查询 → 拒绝并建议分解查询
+    form: negative_rejection
+    executor: m4.query_reject
+    params:
+      instance: dev-graph
+      pattern:
+        start: AL-0201
+        hops: 4
+        steps:
+          - [raised_by, out]
+          - [connected_to, out]
+          - [connected_to, in]
+          - [connected_to, out]
+    expect:
+      error_contains: 分解
+
+  # ================= SPEC-M4-04 OntologyView 预算化 =================
+  - id: EVAL-M4-04-P
+    spec: SPEC-M4-04
+    title: 预算 200 tokens 的大邻域裁剪后 ≤200，保核心属性+规则 ID，Manifest 有 trim 记录
+    form: expression
+    executor: m4.view
+    params:
+      instance: dev-graph
+      entity_ids: [AL-0201, TX-01, BUS-A1, WO-D0021]
+      token_budget: 200
+      max_tokens: 200
+      require_core_attribute: {TX-01: capacity_kva, BUS-A1: voltage_level}
+      require_rule_ids: {TX-01: [PHYS-TX-LOAD], BUS-A1: [PHYS-V-RANGE]}
+      require_trimmed: true
+      require_manifest_trimmed: true
+    expect: {}
+
+  # ================= SPEC-M4-05 规程引用规范 =================
+  - id: EVAL-M4-05-P
+    spec: SPEC-M4-05
+    title: 检索"变压器负载率要求" → PHYS-TX-LOAD 条款+判据结构（metric/thresholds）
+    form: expression
+    executor: m4.regulation
+    params:
+      instance: seed
+      query: 变压器负载率要求
+      expect_rule_id: PHYS-TX-LOAD
+      expect_clauses_at_least: 1
+      expect_criterion_fields: [metric, thresholds]
+      expect_scope: Transformer
+      expect_unknown_refs: [NO-SUCH-RULE]
+    expect: {}
+
+  # ================= SPEC-M4-06 覆盖率监测 =================
+  - id: EVAL-M4-06-P
+    spec: SPEC-M4-06
+    title: 任务涉及 10 概念、3 个未注册 → ratio=0.7，缺失清单落盘，触发 badcase.opened 候选
+    form: expression
+    executor: m4.coverage
+    params:
+      instance: seed
+      task_id: task-m4-eval-06
+      persist_dir: runtime/coverage
+      trace_id: trace-m4-eval-06
+      concepts:
+        - Transformer
+        - TX-01
+        - winding_temp
+        - PHYS-TX-LOAD
+        - Bus
+        - connected_to
+        - query.measurement
+        - dev-unknown-concept-1
+        - dev-unknown-concept-2
+        - dev-unknown-concept-3
+    expect:
+      hits: 7
+      total: 10
+      ratio: 0.7
+      missing: [dev-unknown-concept-1, dev-unknown-concept-2, dev-unknown-concept-3]
+      candidate_event: badcase.opened
+      persisted: true
+
+  # ================= SPEC-M4-07 版本管理 =================
+  - id: EVAL-M4-07-P
+    spec: SPEC-M4-07
+    title: Release 指定旧本体版本运行 → 任务启动拒绝（版本不匹配，防本体漂移）
+    form: negative_rejection
+    executor: m4.load_reject
+    params:
+      attempt: version_mismatch
+      version: 00000000000000000000000000000000000000000000000000000000deadbeef
+    expect:
+      error_contains: 版本不匹配
+      error_type: OntologyVersionMismatchError
+
+  # ================= DoD §5 三种查询模式端到端时延 =================
+  - id: EVAL-M4-PERF-P
+    spec: SPEC-M4-03（DoD §5 时延）
+    title: 三种查询模式端到端（内存图构建+查询）< 50ms
+    form: performance
+    executor: m4.query_latency
+    params:
+      instance: dev-graph
+      iterations: 5
+      runs:
+        - {start: AL-0201, mode: alarm_impact}
+        - {start: LC-A0901, mode: overload_analysis}
+        - {start: WO-D0021, mode: defect_closure}
+    expect:
+      max_ms: 50
