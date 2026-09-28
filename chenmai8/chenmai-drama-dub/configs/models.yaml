@@ -145,9 +145,15 @@ components:
     device: cpu
     precision: fp32
     weights: models/cap-ocr/
-    version: TBD-D1
+    version: 3.7.0             # T6 实测回填（2026-09-28，windev 本机 .venv 运行时）
+    model_det: PP-OCRv6_medium_det   # 引擎默认模型；本机官方仓缓存（~/.paddlex），离线可用
+    model_rec: PP-OCRv6_medium_rec
     fallback: []
-    volta_status: ok
+    volta_status: ok           # CPU 组件，无 Volta 依赖
+    runtime_notes: >-
+      推理必须 enable_mkldnn=False（PIR/oneDNN 执行器不支持，T0 实测）；
+      同进程 torch 必须先于本引擎导入（libiomp5md.dll 冲突，T0 实测）；
+      字幕带 0.5 降采样推理 1.7s/帧（全尺寸 5.5s/帧），0.5 档识别质量不降（T6 实测）。
   cap-clean:
     task: subtitle-erase       # 字幕擦除；修复算法默认 lama（备选待条款复核后登记）
     langs: [multi]

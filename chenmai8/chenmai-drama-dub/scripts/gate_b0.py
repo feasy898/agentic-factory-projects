@@ -115,7 +115,9 @@ FFMPEG_FALLBACK_DIRS = (r"D:\tools\bin",)
 MANIFEST_CANDIDATES = (ROOT.parent / "plan" / "oss-manifest.md",
                        ROOT / "plan" / "oss-manifest.md")
 
-PYTEST_TIMEOUT_S = 900
+# B1 修订：套件含 M1/M3/M4 实测用例（M3 为 CPU 真模型推理，全量实测 ~1932s，
+# 2026-09-28）——900s 是 M3 入列前的旧值，会误杀全绿套件；给足余量取 3600s。
+PYTEST_TIMEOUT_S = 3600
 
 
 def venv_python() -> Path | None:
