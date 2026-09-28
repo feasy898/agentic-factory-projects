@@ -1,0 +1,79 @@
+{
+ "task": "T5 M4 ASR/对齐/情绪 GPU 服务化部署报告",
+ "generated_at": "2026-09-28T22:05:00+08:00",
+ "machine": "anolis-gpu-01 (dev-env-with-gpu / 203.0.113.41), 2x Tesla V100S-PCIE-32GB (sm_70)",
+ "service": {
+  "name": "asr_align",
+  "port": 9001,
+  "bind": "127.0.0.1（GPU 机本地回环，不对公网暴露）",
+  "code_dir": "/data/xdng/asr_align (来自 repo/gpu-services/asr_align)",
+  "log": "/data/xdng/logs/asr_align.log",
+  "pid": 264530,
+  "gpu_memory_mib": 6992,
+  "device": "cuda:0（与既有 9112MiB 进程共存，32GB 卡余量充足）",
+  "start_cmd": "bash /data/xdng/asr_align/run_gpu.sh start   (stop|restart|status)"
+ },
+ "venv": {
+  "path": "/data/xdng/venv-asr",
+  "python": "3.11.6",
+  "setup_script": "gpu/setup_asr_venv.sh（幂等，已验证重跑全 skip 通过）",
+  "components": {
+   "torch": "2.5.1+cu118（复用主 venv，经 _bootstrap_main_venv.pth 追加 sys.path，避免 2.3GB 重下）",
+   "transformers": "5.13.0（原生识别/对齐架构支持下限，与主 venv 的 4.52.x 组隔离——见 data/gpu_smoke_report.json 第 4 项）",
+   "emo_framework": "1.4.16",
+   "fastapi": "0.141.1",
+   "uvicorn": "0.53.0",
+   "httpx": "0.28.1",
+   "soundfile": "0.14.0",
+   "librosa": "0.11.0",
+   "python-multipart": "0.0.32"
+  }
+ },
+ "models": {
+  "asr-core": {"dir": "/data/xdng/models/asr-core", "sha256_16": "2db53c7d81bd9b8c", "source": "T3 已就位"},
+  "align-core": {"dir": "/data/xdng/models/align-core", "sha256_16": "00568245ceca5af1", "source": "T5 经 ModelScope 国内直连（11.8MB/s，1.84G/3min）；模型 ID 见 GPU 机 /data/xdng/etc/model_ids.env 或 docs/gpu_asr_align_deps.md"},
+  "emo-tag": {"dir": "/data/xdng/models/emo-tag", "sha256_16": "833ca2dcfdf8ec91", "source": "T5 经 HF 镜像（非 Xet 仓库可走普通 HTTP）"}
+ },
+ "ssh_commands": [
+  {"step": "环境探查", "cmd": "ssh dev-env-with-gpu \"hostname && nvidia-smi --query-gpu=index,name,memory.used,memory.total --format=csv,noheader && ls /data/xdng/\""},
+  {"step": "模型注册（GPU 机本地文件，不入公开仓）", "cmd": "ssh dev-env-with-gpu 'cat > /data/xdng/etc/model_ids.env  # ALIGN_ID/EMO_ID/EMO_PKG/ALIGN_SRC 等，见 docs/gpu_asr_align_deps.md'"},
+  {"step": "venv+依赖+权重（后台）", "cmd": "ssh dev-env-with-gpu 'cd /data/xdng && nohup bash setup_asr_venv.sh > logs/setup_asr_venv3.log 2>&1 &' → 退出码 0，日志尾 SETUP_ASR_DONE / SM70_OK"},
+  {"step": "权重下载（venv 脚本内主路）", "cmd": "modelscope download --model $ALIGN_ID --local_dir /data/xdng/models/align-core（$ALIGN_ID 见 env 文件；HF 镜像兜底需 HF_HUB_DISABLE_XET=1）"},
+  {"step": "部署+启动", "cmd": "scp -r gpu-services/asr_align dev-env-with-gpu:/data/xdng/ && ssh dev-env-with-gpu 'bash /data/xdng/asr_align/run_gpu.sh start' → RC=0，health 全 loaded"},
+  {"step": "GPU 直连冒烟", "cmd": "ssh dev-env-with-gpu 'curl -s -F file=@/data/xdng/smoke/artifacts/dub-tts_fp32.wav -F lang=zh http://127.0.0.1:9001/v1/asr_align' → text=你到底想怎么样？把话说清楚。 words=12 segments=2 aligner=align-core timing.total_s=1.10"},
+  {"step": "权重校验", "cmd": "ssh dev-env-with-gpu 'sha256sum /data/xdng/models/{align-core/model.safetensors,emo-tag/model.pt,asr-core/model.safetensors}' → 00568245... / 833ca2dc... / 2db53c7d..."}
+ ],
+ "tunnel": {
+  "script": "ops/tunnel_gpu.sh（start|stop|restart|status，幂等可重跑；日志 tmp/tunnel_gpu.log）",
+  "cmd": "bash ops/tunnel_gpu.sh start",
+  "local_check": "bash ops/tunnel_gpu.sh status → tunnel UP (127.0.0.1:9001)，curl /health 三模型全 loaded",
+  "keepalive": "ssh -N -o ServerAliveInterval=30 -o ExitOnForwardFailure=yes -o ControlMaster=no（规避 mux 控制套接字抖动）"
+ },
+ "acceptance": {
+  "eval": "tests/test_m4.py（本机，经隧道）",
+  "wav_source": "本机 Windows SAPI 中文声库(zh-CN)合成『你到底想怎么样？把话说清楚。』→ ffmpeg 重采样 16k 单声道（4.59s）",
+  "cmd": "PYTHONUTF8=1 .venv/Scripts/python.exe -m pytest tests/test_m4.py -v",
+  "exit_code": 0,
+  "tests": "3 passed（health / 转写+对齐+情绪 / 阿语比例分支）；gate_b0 全量 pytest 63 passed（隧道在线，M4 用例实跑非跳过）",
+  "cli_chain": "python -m pipeline.m4_asr --ep ep01 → exit 0；python -m pipeline.cli validate utterances → OK C2（2 条记录）；B1 契约修订落地：切句=VAD 段、utt_id=make_utt_id 稳定公式、upsert_jsonl 原子写、diar.jsonl speaker=unknown、输入只读 04_dial/vocals.wav",
+  "c2_summary": {
+   "utt_ids": ["ep01-u00000020", "ep01-u00002480"],
+   "texts": ["你到底想怎么样", "把话说清楚"],
+   "windows": [[0.02, 1.715], [2.48, 3.885]],
+   "words_total": 12,
+   "emo": "neutral（服务整段判别，emo.jsonl 记 scope=clip，M2/M5 融合细化）",
+   "events": ["speech"],
+   "aligner": "align-core",
+   "diar": "2 段 speaker=unknown（M5/B2 回填）",
+   "speaker": "null（M5 回填）"
+  },
+  "timing_observed": {"zh_4.7s_audio": {"asr_s": 0.83, "align_s": 0.08, "emo_s": 0.11, "total_s": 1.02}, "rtf": 0.22, "throughput_note": "V100 单卡 fp16，远优于 ≤0.5×实时 通过线（正式 WER/对齐精度评测属 M4【GPU】10 句集，后续批次）"}
+ },
+ "pitfalls_measured": [
+  "pip 23.3.1（发行版 venv 自带）vendored urllib3 对镜像响应崩（TypeError '>=' int/NoneType）→ 用主 venv 新 pip --python 注入或 get-pip.py 引导（同 gpu/setup_gpu.sh 既有坑）",
+  "huggingface-hub 1.x 默认 Xet CAS 直连，hf-mirror 不代理（401 @ cas-server.xethub.hf.co）→ HF_HUB_DISABLE_XET=1；且该类仓库 /resolve 仍 302 到 HF CDN，本机路由超时频发 → ModelScope 国内直连为主路（11.8MB/s vs HF CDN 长期停滞）",
+  "venv --system-site-packages 暴露的是基础解释器 site-packages（不含主 venv）→ 复用主 venv 用 .pth 追加 sys.path 尾部（venv 自身 site-packages 遮蔽主 venv 的 4.52.x）",
+  "权重就位检查不能用 ls dir/*.a dir/*.b（任一 glob 不匹配即非零）→ 逐 glob -e 判断",
+  "pkill -f 自匹配问题：远程 kill 命令的模式串会匹配 ssh 远端 bash -c 自身进程行 → 用 grep '[x]' 括号技巧"
+ ]
+}

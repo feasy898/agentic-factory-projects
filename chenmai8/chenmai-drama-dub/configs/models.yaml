@@ -2,6 +2,17 @@
 # 组件注册表（configs/models.yaml）—— T1 冻结字段结构
 # 命名纪律：本文件只使用中性内部名；上游对应关系仅存于内部台账，不入公开仓。
 #
+# ---- 部署矩阵：服务 → venv → torch → transformers（B1 冻结 2026-09-28）----
+#   服务/批次                  | 解释器              | torch       | transformers | 组件
+#   -------------------------- | ------------------- | ----------- | ------------ | ----
+#   asr_align(:9001, B1/M4)    | /data/xdng/venv-asr | 2.5.1+cu118 | 5.13.0       | asr-core, align-core, emo-tag
+#   TTS/口型组（B2 常驻预留）  | /data/xdng/venv     | 2.5.1+cu118 | 4.52.1       | dub-tts, alt-tts-b, lip-fast, lip-pro
+#   本机 windev（CPU，OCR 等） | <repo>/.venv        | 2.14.0(cpu) | 无（paddle 组）| cap-ocr, facemesh, cap-clean
+#   两组 transformers（4.52.x 与 5.13）不可共存于同一解释器；安装脚本：
+#   gpu/setup_gpu.sh（主 venv）/ gpu/setup_asr_venv.sh（venv-asr）。
+#   显存：B1 仅 asr_align 三模型常驻 cuda:0（32GB 充裕）；B2 起 #1 需预算表 +
+#   互斥规则（lip-pro 约 18GB 独占 #1，lip-pro 起来时 alt-tts-b 必须退出）。
+#
 # 字段说明：
 #   task          组件职责
 #   langs         支持语种（ISO 639-1；multi=多语）
@@ -66,9 +77,10 @@ components:
     precision: fp16
     attn: sdpa
     weights: models/align-core/
-    version: TBD-D1
+    version: "2026-09-28 (snapshot 00568245ceca5af1)"  # T5 服务化部署（transformers 原生 token 分类头路径）
     fallback: [align-proportional]
-    volta_status: pending
+    volta_status: ok            # T5 实测：中文 12 字全字级时间戳，fp16+sdpa，与识别同卡共存（7.0G/32G）；
+                                # 与 asr-core 同组依赖（transformers>=5.13），同驻 venv-asr
   align-proportional:
     task: word-align
     langs: [ar]
@@ -82,11 +94,11 @@ components:
     task: emotion-events       # 7 类情绪 + 声音事件（哭/笑/掌声/叹气）
     langs: [zh, yue, en, ja, ko]
     device: cuda:0
-    precision: fp16
+    precision: fp32            # 框架默认 fp32 装载（模型小，未暴露 fp16 开关）；Volta 无 bf16 不涉及
     weights: models/emo-tag/
-    version: TBD-D1
+    version: "2026-09-28 (snapshot 833ca2dcfdf8ec91)"  # T5 服务化部署
     fallback: []
-    volta_status: pending
+    volta_status: ok           # T5 实测：富文本情绪/事件 token 解析正常（0.1s/句），与识别/对齐同卡共存
 
   # ---- 说话人 / 视觉 ----
   voxdia:

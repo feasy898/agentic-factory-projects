@@ -17,6 +17,7 @@ paddleocr==3.7.0          # 依赖 paddlex 3.7.2 / opencv-contrib-python 4.10.0.
 fastapi==0.141.1
 uvicorn==0.54.0
 httpx==0.28.1
+python-multipart==0.0.20   # GPU 服务 multipart 上传解析（本机调试 gpu-services 时需要）
 
 # 数据 / 音频
 pydantic==2.13.5

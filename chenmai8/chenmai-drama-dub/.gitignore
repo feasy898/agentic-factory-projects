@@ -19,9 +19,10 @@ build/
 *.key
 secrets/
 
-# Data & models (large artifacts)；GPU 冒烟报告为小体积交付物，显式入库
+# Data & models (large artifacts)；GPU 冒烟/部署报告为小体积交付物，显式入库
 data/*
 !data/gpu_smoke_report.json
+!data/asr_align_deploy_report.json
 models/
 *.onnx
 *.pt

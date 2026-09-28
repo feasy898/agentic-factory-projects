@@ -22,6 +22,11 @@
    "ok": true,
    "seconds": 5.35,
    "artifact_path": "/data/xdng/smoke/artifacts/dub-tts_fp32.wav",
+   "artifact_verify": {
+    "sha256": "fc06505be3e2af259cb86ccd1ab55fb76a0a8e2a1ca6f0a7aa8e038a044fecf3",
+    "size": 207404,
+    "duration_s": 4.702
+   },
    "error": null,
    "env_note": "engine default path (use_bf16=False); torch 2.5.1+cu118 / transformers 4.52.1; text_normalization=False (WeTextProcessing/pynini not installable from CN pip); bigvgan weights pre-placed at model_dir/hf_cache/bigvgan via hf-mirror; emotion assets (conformer_shaw + emo-text-encoder-0.6b) auto-cached on first load; 8s mono ref wav"
   },
@@ -42,6 +47,11 @@
    "ok": true,
    "seconds": 41.0,
    "artifact_path": "/data/xdng/smoke/artifacts/lip-fast_v15.mp4",
+   "artifact_verify": {
+    "sha256": "385dc9aa82887593a772b02aaead1fd8b79abdf110b14205faa4255176585529",
+    "size": 217972,
+    "frames": 50
+   },
    "error": null,
    "env_note": "diffusers==0.30.2 + transformers 4.52.1 + mmpose/mmcv 2.2.0 (mmdet version guard relaxed to <2.3.0, GPU-side env only) + S3FD detector weights placed locally; v1.5 unet fp16; input 2s 704x1216 25fps clip, output re-encoded h264 + aac"
   },
@@ -52,6 +62,11 @@
    "ok": true,
    "seconds": 11.52,
    "artifact_path": "/data/xdng/smoke/artifacts/alt-tts-b_zh.wav",
+   "artifact_verify": {
+    "sha256": "75691565e3c8b12670f049bf9598e785450be01878eefb07383c1c8bbb3a7ca7",
+    "size": 430124,
+    "duration_s": 13.44
+   },
    "error": null,
    "env_note": "requires torch>=2.5 (SDPA enable_gqa) -> validated on torch 2.5.1+cu118 (sm_70 in arch list); engine loads fp32 by default (no dtype switch surfaced); reference-only voice-clone mode"
   },
@@ -62,6 +77,10 @@
    "ok": true,
    "seconds": 2.28,
    "artifact_path": "/data/xdng/smoke/artifacts/asr-core_fp16_transcript.txt",
+   "artifact_verify": {
+    "sha256": "5ab8cdb3b281334c0c1800664068e4af1d4dba52395617a3c3a1561903c83550",
+    "size": 89
+   },
    "error": null,
    "env_note": "validated under transformers==5.13.0 (native arch support needs >=5.13); venv later downgraded to 4.52.1 for TTS/lip engines -> deployment must pin transformers>=5.13 for this component (separate venv or resolver split); input sample was English speech, correctly transcribed"
   }
