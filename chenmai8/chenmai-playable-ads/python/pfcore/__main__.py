@@ -1,15 +1,18 @@
 """pfcore 命令行入口（编排 CLI）。
 
-子命令进度：
+子命令进度（命令名裁决见 docs/assets/specs/pipeline-contract.md §1：全流水线冻结名为
+``make``，与规划一致；占位名 ``run`` 已删除，不得再引入第三个全流水线命令名）：
 - validate     校验 PlayableSpec JSON（schema v1 + 不变式 I1-I5 + 类型化解析）  [M1 已实现]
+- make         全流水线编排：validate → 模板构建 → 多渠道打包 → qacore 质检 →
+               summary/二维码/墙钟计时/artifacts/demo-prebuilt 兜底目录        [M9 已实现]
 - build        按 spec 构建单个模板产物                           （M3/M4 占位）
-- run          跑完整流水线（素材→构建→打包→质检→汇总）           （M9 占位）
 - pack         全渠道打包                                          （M4 占位）
 - rules-check  校验渠道规则库 channel-rules                        （M12 占位）
 
-validate 用法：
+用法：
     python -m pfcore validate <spec.json> [more.json ...]
-路径参数支持 glob（如 ``specs-eval/bad/*.json``，Windows shell 不展开时由本
+    python -m pfcore make --spec <spec.json> [--locales en,ar] [--channels all]
+validate 路径参数支持 glob（如 ``specs-eval/bad/*.json``，Windows shell 不展开时由本
 命令自行展开）；全部文件通过才退出 0，否则退出 1。
 """
 
@@ -32,7 +35,7 @@ def build_parser() -> argparse.ArgumentParser:
     """构建 pfcore 的 argparse 解析器。"""
     parser = argparse.ArgumentParser(
         prog="pfcore",
-        description="试玩广告生产线编排 CLI（validate 已实现；build/run/pack/rules-check 随里程碑落地）",
+        description="试玩广告生产线编排 CLI（validate/make 已实现；build/pack/rules-check 随里程碑落地）",
     )
     sub = parser.add_subparsers(dest="command", metavar="<command>")
 
@@ -43,18 +46,40 @@ def build_parser() -> argparse.ArgumentParser:
         "spec", nargs="+", help="PlayableSpec JSON 文件路径（支持 glob 模式）"
     )
 
+    p_make = sub.add_parser(
+        "make", help="全流水线：校验→模板构建→渠道打包→qacore 质检→summary+二维码+计时+demo-prebuilt"
+    )
+    p_make.add_argument("--spec", required=True, help="PlayableSpec JSON 文件路径（必填）")
+    p_make.add_argument(
+        "--locales", default=None,
+        help="逗号分隔的语言列表（默认取 spec i18n.defaultLocale）",
+    )
+    p_make.add_argument(
+        "--channels", default="applovin,meta,mintegral",
+        help="逗号分隔的渠道列表或 all（默认规则库已冻结的三投放渠道；preview 为本地渠道不打包）",
+    )
+    p_make.add_argument(
+        "--out", default="artifacts",
+        help="输出根目录（默认 artifacts；渠道包/预览/demo-prebuilt 均落在其下）",
+    )
+    p_make.add_argument(
+        "--serve-port", type=int, default=8618,
+        help="兜底静态伺服端口（默认 8618；被占用时向后顺延）",
+    )
+    p_make.add_argument(
+        "--serve-host", default=None,
+        help="二维码指向的主机 IP（默认自动探测局域网地址；手机须与本机同网段可达）",
+    )
+    p_make.add_argument(
+        "--no-serve", action="store_true",
+        help="不启动/复用本地静态伺服（仍产出二维码与预览链接，自行伺服 demo-prebuilt）",
+    )
+
     p_build = sub.add_parser("build", help="按 spec 构建模板产物（占位）")
     p_build.add_argument("spec", help="PlayableSpec JSON 文件路径")
     p_build.add_argument("--channel", default="preview", help="目标渠道（默认 preview）")
     p_build.add_argument("--locale", default="en", help="输出语言（默认 en）")
     p_build.add_argument("--out", default="artifacts", help="输出目录（默认 artifacts）")
-
-    p_run = sub.add_parser("run", help="跑完整流水线（占位）")
-    p_run.add_argument("spec", help="PlayableSpec JSON 文件路径")
-    p_run.add_argument("--locales", default="en", help="逗号分隔的语言列表（默认 en）")
-    p_run.add_argument(
-        "--channels", default="all", help="逗号分隔的渠道列表或 all（默认 all）"
-    )
 
     p_pack = sub.add_parser("pack", help="按渠道规则库打包产物（占位）")
     p_pack.add_argument("spec", help="PlayableSpec JSON 文件路径")
@@ -110,7 +135,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    """入口函数；未实现的子命令回显占位状态并返回 2。"""
+    """入口函数；仍为占位的子命令回显占位状态并返回 2。"""
     parser = build_parser()
     args = parser.parse_args(argv)
     if not args.command:
@@ -118,6 +143,11 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.command == "validate":
         return cmd_validate(args)
+    if args.command == "make":
+        # 延迟导入：validate 路径不背负 make 的依赖（qrcode 等）。
+        from .make import cmd_make
+
+        return cmd_make(args)
     print(f"[pfcore] 子命令 {args.command!r} 尚未实现（当前为占位）。")
     return 2
 
