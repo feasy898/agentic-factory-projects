@@ -174,28 +174,43 @@ def test_jobs_dir_helper():
 # ---------------------------------------------------------------------------
 
 def _banned_tokens() -> list[str]:
-    # 拼接构造，避免本测试文件自身包含被禁字符串
-    return [
-        "paddle" + "ocr", "paddle" + "paddle", "sense" + "voice", "fun" + "asr",
-        "qw" + "en", "index" + "tts", "vox" + "cpm", "hy-" + "mt",
-        "muse" + "talk", "latent" + "sync", "trans" + "net", "light-" + "asd",
-        "3d-" + "speaker", "pyan" + "note", "audio" + "seal", "c2pa" + "tool",
-        "wav2" + "lip", "whis" + "per", "audio-" + "separator",
-        "video-subtitle-" + "remover", "flash" + "attention", "vll" + "m",
+    # 拼接构造，避免本测试文件自身包含被禁字符串；与 scripts/gate_b0.py::BANNED_TOKENS 同步。
+    # B1 修订（2026-09-28）：每个词根同时禁 无分隔/下划线/连字符 三种写法
+    # （上游 API 的蛇形命名如 forced _ aligner 同样不许出现在公开仓）。
+    def sep3(*parts: str) -> list[str]:
+        return ["".join(parts), "_".join(parts), "-".join(parts)]
+
+    roots = [
+        ("paddle", "ocr"), ("paddle", "paddle"), ("sense", "voice"), ("fun", "asr"),
+        ("qw", "en"), ("index", "tts"), ("vox", "cpm"), ("hy-", "mt"),
+        ("muse", "talk"), ("latent", "sync"), ("trans", "net"), ("light-", "asd"),
+        ("3d-", "speaker"), ("pyan", "note"), ("audio", "seal"), ("c2pa", "tool"),
+        ("wav2", "lip"), ("whis", "per"), ("audio-", "separator"),
+        ("video-subtitle-", "remover"), ("flash", "attention"), ("vll", "m"),
+        ("forced", "aligner"), ("content", "auth"), ("dub", "mt"), ("dem", "ucs"),
+        ("media", "pipe"), ("cam", "++"),
     ]
+    tokens = [v for parts in roots for v in sep3(*parts)]
+    tokens.append("c2pa" + " toolchain")
+    return tokens
 
 
 def test_neutral_naming_discipline():
     repo_root = Path(__file__).resolve().parents[1]
     targets: list[Path] = []
-    for sub in ["pipeline", "configs", "tests"]:
+    # B1 修订：扫描面扩到 gpu/、gpu-services/、scripts/、data/（docs/ 与
+    # requirements.txt 是依赖安装记录，须用真实发行名，维持豁免——同 gate_b0 口径）
+    for sub in ["pipeline", "configs", "tests", "gpu", "gpu-services", "scripts", "data"]:
         targets.extend(sorted((repo_root / sub).rglob("*")))
     targets.append(repo_root / "README.md")
     targets.append(repo_root / "conftest.py")
     banned = _banned_tokens()
     hits: list[str] = []
     for path in targets:
-        if not path.is_file() or path.suffix not in {".py", ".yaml", ".yml", ".md"}:
+        if not path.is_file() or path.suffix not in {".py", ".yaml", ".yml", ".md",
+                                                    ".json", ".sh", ".txt"}:
+            continue
+        if "__pycache__" in path.parts or ".venv" in path.parts:
             continue
         text = path.read_text(encoding="utf-8", errors="replace").lower()
         for token in banned:
