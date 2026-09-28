@@ -46,7 +46,7 @@
   },
   "i18n": {
     "defaultLocale": "en",
-    "locales": ["en", "ja", "ko", "pt-BR", "de", "ar"],
+    "locales": ["en", "ja", "ko", "pt-BR", "de", "ar", "zh"],
     "strings": {
       "en": {
         "cta": "Play Now",
@@ -89,6 +89,13 @@
         "win": "لقد فزت!",
         "lose": "حاول مجدداً!",
         "score": "النقاط"
+      },
+      "zh": {
+        "cta": "立即游玩",
+        "tutorial": "拖动宝石，三个同色连成一线！",
+        "win": "你赢了！",
+        "lose": "再试一次！",
+        "score": "得分"
       }
     },
     "rtl": ["ar"]

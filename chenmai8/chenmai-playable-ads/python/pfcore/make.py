@@ -614,7 +614,12 @@ def _make_impl(args: argparse.Namespace, started_epoch: float, t0: float) -> int
                    f"规则库 rulesVersion={rules.get('rulesVersion')} · "
                    "本页与二维码同源（demo-prebuilt 静态目录），零外链"),
     }
-    (demo_dir / "index.html").write_text(build_summary_html(ctx), encoding="utf-8")
+    summary_html = build_summary_html(ctx)
+    (demo_dir / "index.html").write_text(summary_html, encoding="utf-8")
+    # 同一份矩阵汇总页落双名：index.html 是伺服根落地页（打开根目录即见），
+    # summary.html 是 M9 冻结名产物（orchestrator.md 与规划 §6-M9 均名 summary.html）；
+    # 二者内容一致、同为相对链接，伺服根相同即可同源打开。
+    (demo_dir / "summary.html").write_text(summary_html, encoding="utf-8")
 
     report = {
         "command": "pfcore make", "spec": str(spec_path),
@@ -633,6 +638,7 @@ def _make_impl(args: argparse.Namespace, started_epoch: float, t0: float) -> int
                       "artifact": str(p["artifact"])} for p in packages],
         "qa": qa,
         "demoPrebuilt": {"root": str(demo_dir), "index": str(demo_dir / "index.html"),
+                         "summary": str(demo_dir / "summary.html"),
                          "qr": str(demo_dir / "qr.png")},
     }
     (demo_dir / "pipeline-report.json").write_text(
