@@ -14,6 +14,8 @@ from pipeline.contracts import (
     Character,
     ComplianceReport,
     Consent,
+    DiarSegment,
+    DiarTable,
     EmoTag,
     ExplicitLabel,
     FaceFact,
@@ -35,6 +37,9 @@ from pipeline.contracts import (
     UtteranceTable,
     Word,
     lip_eligible,
+    make_utt_id,
+    to_absolute_seconds,
+    upsert_jsonl,
 )
 
 __version__ = "0.1.0"
@@ -48,6 +53,8 @@ __all__ = [
     "Character",
     "ComplianceReport",
     "Consent",
+    "DiarSegment",
+    "DiarTable",
     "EmoTag",
     "ExplicitLabel",
     "FaceFact",
@@ -69,4 +76,7 @@ __all__ = [
     "UtteranceTable",
     "Word",
     "lip_eligible",
+    "make_utt_id",
+    "to_absolute_seconds",
+    "upsert_jsonl",
 ]

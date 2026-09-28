@@ -327,11 +327,12 @@ def test_load_model_json_roundtrip(tmp_path):
 
 def test_contract_kinds_registry_complete():
     assert set(C.CONTRACT_KINDS) == {
-        "shots", "utterances", "characters", "translations",
+        "shots", "utterances", "diar", "characters", "translations",
         "synth-plan", "lip-plan", "labels", "compliance",
     }
     codes = {kind: code for kind, (code, _, _) in C.CONTRACT_KINDS.items()}
     assert codes == {
-        "shots": "C1", "utterances": "C2", "characters": "C3", "translations": "C4",
-        "synth-plan": "C5", "lip-plan": "C6", "labels": "C7", "compliance": "C8",
+        "shots": "C1", "utterances": "C2", "diar": "C2-pre", "characters": "C3",
+        "translations": "C4", "synth-plan": "C5", "lip-plan": "C6",
+        "labels": "C7", "compliance": "C8",
     }

@@ -31,14 +31,21 @@ LAYERS: dict[str, tuple[str, ...]] = {
 #: 各层预期产物文件名（模块按此命名；契约号注明出处）
 EXPECTED_FILES: dict[str, tuple[str, ...]] = {
     "00_raw": ("input.mp4",),
+    # 01_media 保存混音口径产物：audio_16k.wav/audio_48k.wav 为 M1 重采样混音（含 BGM/音效），
+    # bgm.wav 为 M3 分离出的背景音。人声不落本层 —— B1 冻结：M3 人声产出到 04_dial/vocals.wav。
     "01_media": ("video_1080x1920_25fps.mp4", "audio_16k.wav", "audio_48k.wav", "bgm.wav",
                  "probe.json"),  # probe.json 为 M1 产出口径（规划 §4 M1）
     "02_shots": ("shots.json",),  # C1
     "03_ocr": ("ocr_raw.jsonl", "ocr_merged.jsonl"),
     "04_dial": (
+        # B1 冻结槽位（2026-09-28）：M3 人声分离产出 → 04_dial/vocals.wav；
+        # M4（ASR/对齐/情绪）只读人声 vocals.wav，不读 01_media/audio_16k.wav
+        # （混音含 BGM/音效会污染识别、对齐与情绪）。时间零点与切句规则见
+        # pipeline/contracts.py 冻结规则 7/8 与 docs/b1_contract_notes.md。
+        "vocals.wav",
         "asr.jsonl",
         "forced.jsonl",
-        "diar.jsonl",
+        "diar.jsonl",  # C2-pre（说话人段级预分段 schema；speaker 由 M5 回填，M5 执行归 B2）
         "emo.jsonl",
         "utterances.jsonl",  # C2
     ),

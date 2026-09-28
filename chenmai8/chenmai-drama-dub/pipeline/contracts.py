@@ -10,12 +10,30 @@
 4. C5：``nonverbal`` 句（哭/尖叫）``keep_original=true``，不合成（M7 生产规则）；
 5. C6 分流：正脸 + 近景 + 非重叠才入口型；台词最长前 10% 镜头用 lip-pro，
    其余合格镜头用 lip-fast（见 :func:`lip_eligible`）；
-6. C7 依据 GB 45438-2025（显式 + 隐式标识 + 内容凭证 + 音频水印）。
+6. C7 依据 GB 45438-2025（显式 + 隐式标识 + 内容凭证 + 音频水印）；
+7. M4 时间零点（B1 冻结 2026-09-28）：``:9001`` /v1/asr_align 响应中的
+   ``words[*].s/e`` 与 ``segments[*].start/end`` 均为**上传音频内相对时间**
+   （0 = 上传片段起点）；全片绝对时间 = 片段内时间 + offset
+   （offset = 上传片段在 01_media/audio_16k.wav 中的起点秒，由客户端注入，
+   见 :func:`to_absolute_seconds`；服务端不做平移）；
+8. 切句规则（B1 冻结）：C2 句窗（Utterance.start/end）来源优先级 =
+   ① M2 OCR 字幕时间段（03_ocr/ocr_merged.jsonl 有字幕区间时按其切句）
+   ② 服务返回 VAD segments（能量预分段）③ 兜底 [0, 音频时长]。
+   **禁止**把服务整段 ``text`` 当单句落 C2：服务返回整段一个 string，
+   text/words/segments 三者无共同键，唯一共同基准是上传音频 0 秒；
+9. ``utt_id`` 稳定生成公式（B1 冻结）：``<ep>-u<起始毫秒,8 位零填充>``
+   （:func:`make_utt_id`）；写盘一律「按 utt_id 替换后整文件重写」
+   （:func:`upsert_jsonl`），禁止同 id 追加（追加会触发唯一性自锁）；
+10. 说话人段级契约 ``diar.jsonl``（B1 冻结）：:class:`DiarSegment`
+   （start/end/speaker），M4/VAD 只负责切分，``speaker`` 由 M5 聚类回填；
+   **M5 执行不在 B1 批次**（B1 出口 ``Utterance.speaker`` 保持 None），
+   归入 B2 批次（见 docs/b1_contract_notes.md §5）。
 """
 
 from __future__ import annotations
 
 import json
+import os
 from datetime import date as _Date
 from pathlib import Path
 from typing import (
@@ -52,6 +70,9 @@ __all__ = [
     "FaceFact",
     "Utterance",
     "UtteranceTable",
+    # C2-pre（B1 冻结：说话人段级预分段）
+    "DiarSegment",
+    "DiarTable",
     # C3
     "Consent",
     "Character",
@@ -78,6 +99,10 @@ __all__ = [
     "ComplianceReport",
     # 分流规则
     "lip_eligible",
+    # B1 冻结：时间零点 / utt_id 公式 / 替换写盘原语
+    "to_absolute_seconds",
+    "make_utt_id",
+    "upsert_jsonl",
     # IO
     "dump_jsonl",
     "load_jsonl",
@@ -236,6 +261,23 @@ class Utterance(_Frozen):
             raise ValueError(f"utterance end 须大于 start: end={v} <= start={start}")
         return v
 
+    @model_validator(mode="after")
+    def _words_within_and_sorted(self) -> "Utterance":
+        """字级时间校验（B1 冻结，2026-09-28）：
+        每个字须满足 ``utt.start ≤ word.s ≤ word.e ≤ utt.end``，且按时间排序
+        （``word.s`` 非降；同起点并列允许）。空 words 跳过。"""
+        prev_s = -1.0
+        for i, w in enumerate(self.words):
+            if not (self.start <= w.s <= w.e <= self.end):
+                raise ValueError(
+                    f"words[{i}] 越出句窗: utt=[{self.start}, {self.end}] "
+                    f"word=[{w.s}, {w.e}] ({w.w!r})"
+                )
+            if w.s < prev_s:
+                raise ValueError(f"words[{i}] 未按时间排序: s={w.s} < 前一字 s={prev_s}")
+            prev_s = w.s
+        return self
+
 
 class UtteranceTable(RootModel[list[Utterance]]):
     """契约 C2 容器：``utterances.jsonl`` 全集（``utt_id`` 全局唯一）。"""
@@ -243,6 +285,44 @@ class UtteranceTable(RootModel[list[Utterance]]):
     @model_validator(mode="after")
     def _unique_utt_ids(self) -> "UtteranceTable":
         _require_unique([u.utt_id for u in self.root], "utt_id")
+        return self
+
+
+# ---------------------------------------------------------------------------
+# 契约 C2-pre —— diar.jsonl（说话人段级预分段；B1 冻结 2026-09-28）
+# ---------------------------------------------------------------------------
+
+class DiarSegment(_Frozen):
+    """说话人段级 schema（``04_dial/diar.jsonl`` 单行）。
+
+    冻结口径：M4/VAD（或 M2 OCR 时间段）只负责切出 ``start/end``
+    （**上传音频内相对时间**，冻结规则 7/8）；``speaker`` 是 M5 聚类回填的
+    段级标签（如 ``spk0``；段内未定人时填 ``unknown``，不置空）。
+    注意：这是 M4→M5 的**段级**中间契约，句级归属（Utterance.speaker/char_id）
+    由 M5 消费本表后回填 C2。
+    """
+
+    start: NonNegSec
+    end: NonNegSec
+    speaker: str = Field(min_length=1)
+
+    @field_validator("end")
+    @classmethod
+    def _end_after_start(cls, v: float, info: Any) -> float:
+        start = info.data.get("start")
+        if start is not None and v <= start:
+            raise ValueError(f"diar 段 end 须大于 start: end={v} <= start={start}")
+        return v
+
+
+class DiarTable(RootModel[list[DiarSegment]]):
+    """契约 C2-pre 容器：``diar.jsonl`` 全集（段按时间排序，允许说话人重复）。"""
+
+    @model_validator(mode="after")
+    def _sorted_by_time(self) -> "DiarTable":
+        for a, b in zip(self.root, self.root[1:]):
+            if b.start < a.start:
+                raise ValueError(f"diar 段未按时间排序: {a.start} -> {b.start}")
         return self
 
 
@@ -412,6 +492,33 @@ def lip_eligible(u: Utterance) -> bool:
 
 
 # ---------------------------------------------------------------------------
+# B1 冻结原语 —— 时间零点 / utt_id 公式（2026-09-28）
+# ---------------------------------------------------------------------------
+
+def to_absolute_seconds(t: float, offset: float) -> float:
+    """:9001 服务响应时间 → 全片绝对时间（冻结规则 7）。
+
+    ``绝对 = 片段内相对 + offset``，其中 offset 为上传片段在
+    ``01_media/audio_16k.wav`` 中的起点秒。与契约同口径保留 3 位小数。
+    """
+    return round(float(t) + float(offset), 3)
+
+
+def make_utt_id(ep: str, start_s: float) -> str:
+    """``utt_id`` 稳定生成公式（冻结规则 9）：``<ep>-u<起始毫秒,8 位零填充>``。
+
+    同一集内同一时间起点重跑得到同一 id —— 该 id 即 :func:`upsert_jsonl`
+    的替换键，支撑同句重跑与断点续跑。负起点拒绝（音频时间轴无负值）。
+    """
+    if not ep:
+        raise ValueError("ep 不得为空")
+    ms = int(round(float(start_s) * 1000))
+    if ms < 0:
+        raise ValueError(f"起始毫秒须非负: {ms}")
+    return f"{ep}-u{ms:08d}"
+
+
+# ---------------------------------------------------------------------------
 # 契约 C7 —— labels.json（GB 45438-2025 标识 + 内容凭证 + 音频水印）
 # ---------------------------------------------------------------------------
 
@@ -505,18 +612,61 @@ def load_model(path: str | Path, cls: type[ModelT]) -> ModelT:
 
 
 def dump_jsonl(path: str | Path, items: Union[Iterable[BaseModel], RootModel]) -> int:
-    """写 JSONL；``items`` 可为模型迭代器或 RootModel 容器。返回行数。"""
+    """写 JSONL；``items`` 可为模型迭代器或 RootModel 容器。返回行数。
+
+    原子写：先写同目录临时文件再 ``os.replace``，避免半截文件被当作产物读入。
+    同 id 追加场景请改用 :func:`upsert_jsonl`（追加会触发唯一性自锁）。
+    """
     if isinstance(items, RootModel):
         items = items.root  # type: ignore[attr-defined]
     rows = list(items)
+    for row in rows:
+        if not isinstance(row, BaseModel):
+            raise TypeError(f"dump_jsonl 只接受 pydantic 模型，得到 {type(row)!r}")
+    _atomic_write_lines(path, [row.model_dump_json() for row in rows])
+    return len(rows)
+
+
+def _atomic_write_lines(path: str | Path, lines: list[str]) -> None:
+    """同目录临时文件 + os.replace 的原子整文件写。"""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
-    with open(path, "w", encoding="utf-8", newline="\n") as f:
-        for row in rows:
-            if not isinstance(row, BaseModel):
-                raise TypeError(f"dump_jsonl 只接受 pydantic 模型，得到 {type(row)!r}")
-            f.write(row.model_dump_json() + "\n")
-    return len(rows)
+    tmp = path.with_name(path.name + ".tmp")
+    with open(tmp, "w", encoding="utf-8", newline="\n") as f:
+        for ln in lines:
+            f.write(ln + "\n")
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, path)
+
+
+def upsert_jsonl(
+    path: str | Path,
+    items: Iterable[BaseModel],
+    *,
+    container: type[RootModel],
+    key_field: str = "utt_id",
+) -> int:
+    """按 id 替换后整文件重写（冻结规则 9 的写盘原语；解决追加自锁）。
+
+    语义：读旧文件（存在时）→ 以 ``key_field`` 值为键，``items`` 覆盖同键旧行、
+    其余保留（替换行保持原位置，新行追加尾部）→ 整表经 ``container`` 强校验
+    （唯一性/时间窗等全部规则重新生效）→ 原子重写。返回写出行数。
+
+    ``items`` 为契约模型实例；同键多条以最后一条为准。
+    """
+    path = Path(path)
+    merged: dict[Any, BaseModel] = {}
+    if path.is_file():
+        for row in load_jsonl(path, container).root:
+            merged[getattr(row, key_field)] = row
+    for it in items:
+        if not isinstance(it, BaseModel):
+            raise TypeError(f"upsert_jsonl 只接受 pydantic 模型，得到 {type(it)!r}")
+        merged[getattr(it, key_field)] = it
+    table = container.model_validate(list(merged.values()))
+    _atomic_write_lines(path, [row.model_dump_json() for row in table.root])
+    return len(table.root)
 
 
 def load_jsonl(path: str | Path, cls: type) -> Any:
@@ -544,6 +694,7 @@ CONTRACT_KINDS: dict[str, tuple[str, type, bool]] = {
     # kind: (契约号, 模型类, 是否 JSONL)
     "shots": ("C1", ShotSheet, False),
     "utterances": ("C2", UtteranceTable, True),
+    "diar": ("C2-pre", DiarTable, True),  # B1 冻结：说话人段级预分段（M4→M5）
     "characters": ("C3", CastBook, False),
     "translations": ("C4", TranslationTable, True),
     "synth-plan": ("C5", SynthPlanTable, True),
