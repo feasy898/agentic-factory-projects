@@ -63,7 +63,7 @@
       "ori_err_mean_rad": 0.00012710907580001446,
       "restarts_used_max": 27,
       "restarts_used_mean": 1.3015075376884422,
-      "duration_s": 4.98
+      "duration_s": 5.76
     },
     "cross_tier_fk": {
       "skipped": false,
@@ -80,7 +80,7 @@
         "max_pos_err_m": 3.6894727791956735e-06,
         "max_ori_err_rad": 1.6197829531822862e-05
       },
-      "duration_s": 2.9
+      "duration_s": 5.54
     },
     "reachability": {
       "grid": {
@@ -103,7 +103,7 @@
       "reachable_fraction": 0.5920008354218881,
       "n_unreachable": 3907,
       "png": "reports\\reach_map.png",
-      "duration_s": 68.85
+      "duration_s": 76.13
     },
     "safety_envelope": {
       "violating_total": 500,
@@ -147,7 +147,7 @@
       "benign_accepted": 100,
       "benign_acceptance_rate": 1.0,
       "config_source": "chengshao/config/workspace.json (defaults)",
-      "duration_s": 1.1
+      "duration_s": 1.31
     }
   },
   "thresholds": {
@@ -176,5 +176,5 @@
     "cross_tier_urdf_mujoco": true
   },
   "pass": true,
-  "wall_time_s": 78.8
+  "wall_time_s": 89.84
 }
