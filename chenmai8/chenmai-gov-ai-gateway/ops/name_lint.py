@@ -15,7 +15,7 @@
 范围与豁免（有意设计，勿随意收紧）：
 - 默认扫描后缀：.py .md .txt .html .js .ts .css .sh .bat .ps1（源码/注释/文档）；
 - 严格档额外扫 .yaml .yml .toml .json .cfg .ini（用于公开导出前的终检）；
-- 排除目录：.git .venv venv plan third_party data node_modules __pycache__ 等；
+- 排除目录：.git .venv venv plan third_party data node_modules __pycache__ .zcode（本地工具状态）等；
 - 永远豁免的文件：constraints.txt、pyproject.toml、third_party/PINNED.txt、
   ops/clone_oss.sh（内部克隆坐标）、LICENSE*、词表自身、各锁文件——
   依赖清单/锁文件/克隆坐标必须携带真实 pip 包名与上游地址，
@@ -38,6 +38,7 @@ STRICT_EXTRA_SUFFIXES = {".yaml", ".yml", ".toml", ".json", ".cfg", ".ini"}
 EXCLUDED_DIRS = {
     ".git", ".venv", "venv", "plan", "third_party", "data", "node_modules",
     "__pycache__", ".pytest_cache", ".ruff_cache", ".mypy_cache", "dist", "build", "out", "tmp",
+    ".zcode",  # 本地工作流工具状态（自持 .gitignore，非仓库源码，T1.4）
 }
 ALWAYS_EXCLUDED_FILES = {
     "constraints.txt", "pyproject.toml", "pinned.txt", "forbidden_names.txt",
