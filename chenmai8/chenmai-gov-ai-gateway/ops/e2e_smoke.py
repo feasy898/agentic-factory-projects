@@ -646,8 +646,9 @@ def main() -> int:
     failed = sum(1 for _, s, _ in RESULTS if s == "FAIL")
     deferred = sum(1 for _, s, _ in RESULTS if s == "DEFER")
     print("-" * 64)
-    print(f"e2e_smoke: {passed} PASS, {failed} FAIL, {deferred} DEFERRED "
-          f"(共发送 {ctx['chat_sent']} 个 /v1/chat/completions 请求)")
+    print(f"e2e_smoke: {passed} PASS / {failed} FAIL / {deferred} DEFERRED"
+          f"（DEFERRED=按期未生效不计入通过数，如 U6 文件通道 D3 起生效；"
+          f"共发送 {ctx['chat_sent']} 个 /v1/chat/completions 请求）")
     return 1 if failed else 0
 
 

@@ -13,7 +13,8 @@ exit 0 = 通过。检查项：
 6. constraints.txt 存在且为 pip freeze 形态；.env.example/.gitignore 卫生；
 7. §5 冻结契约六件（recognizers/routing/masking/audit/filechannel/gateway 的
    models.py）：字段名与 §5 一字不差、§5 示例 JSON 逐字可解析、序列化往返全等、
-   UTC Z 时间戳、审计事件零 raw、枚举/字面量值域与边界约束生效。
+   UTC Z 时间戳、审计事件零 raw、枚举/字面量值域与边界约束生效；
+   另对全部契约模型做未知字段拒绝负例（删掉 extra="forbid" 必须变红，审查 §C）。
 """
 from __future__ import annotations
 
@@ -408,6 +409,44 @@ def check_api_error_contract() -> str:
     return "ApiError: §5.6 envelope shape + content_blocked code"
 
 
+def check_contract_extra_forbid() -> str:
+    """每个契约模型对未知字段必须拒绝（``extra="forbid"`` 负例；审查 §C）。
+
+    往 §5 示例 JSON 里塞一个多余字段再 ``model_validate``，必须抛校验错误——
+    防止未来有人删掉 ``extra="forbid"`` 而往返用例仍然全绿（假绿灯盲区）。
+    覆盖全部 9 个契约模型类（含嵌套的 RouteReason / FileFinding / 嵌套 Finding /
+    ErrorBody）。
+    """
+    rm = importlib.import_module("recognizers.models")
+    rt = importlib.import_module("routing.models")
+    mm = importlib.import_module("masking.models")
+    am = importlib.import_module("audit.models")
+    fm = importlib.import_module("filechannel.models")
+    gm = importlib.import_module("gateway.models")
+    probe = "__extra_probe__"
+
+    def reject(model_cls, data: dict, where: str) -> None:
+        poisoned = json.loads(json.dumps(data, ensure_ascii=False))
+        poisoned[probe] = 1
+        _must_raise(lambda: model_cls.model_validate(poisoned))
+
+    reject(rm.Finding, json.loads(FINDING_JSON), "Finding")
+    route = json.loads(ROUTE_DECISION_JSON)
+    reject(rt.RouteDecision, route, "RouteDecision")
+    reject(rt.RouteReason, route["reasons"][0], "RouteReason")
+    reject(mm.MappingEntry, json.loads(MAPPING_ENTRY_JSON), "MappingEntry")
+    reject(am.AuditEvent, json.loads(AUDIT_EVENT_JSON), "AuditEvent")
+    report = json.loads(FILE_REPORT_JSON)
+    reject(fm.FileReport, report, "FileReport")
+    reject(fm.FileFinding, report["findings"][0], "FileFinding")
+    reject(rm.Finding, report["findings"][0]["finding"], "Finding(nested)")
+    err = json.loads(API_ERROR_JSON)
+    reject(gm.ApiError, err, "ApiError")
+    reject(gm.ErrorBody, err["error"], "ErrorBody")
+    return ("extra-field rejected on 9 contract models: Finding/RouteDecision/RouteReason/"
+            "MappingEntry/AuditEvent/FileReport/FileFinding/ErrorBody/ApiError")
+
+
 CONTRACT_CHECKS = (
     ("contract:entity-catalog", check_entity_catalog),
     ("contract:finding(5.1)", check_finding_contract),
@@ -416,6 +455,7 @@ CONTRACT_CHECKS = (
     ("contract:audit(5.4)", check_audit_contract),
     ("contract:file-report(5.5)", check_file_report_contract),
     ("contract:api-error(5.6)", check_api_error_contract),
+    ("contract:extra-forbid-negative", check_contract_extra_forbid),
 )
 
 
