@@ -66,10 +66,37 @@ do_status() {
   echo "tunnel DOWN (127.0.0.1:$LOCAL)"; return 1
 }
 
+# keepalive —— 每 KA_INTERVAL_S 秒探测一次，断则自动拉起（幂等）。
+# 背景（B1 收口 2026-09-29）：公网 ssh 链路周期性 reset，reset→重建有 ~10s 愈合窗，
+# 期间经隧道的服务用例会瞬时 GpuServiceError/skip。本循环把窗口收敛为秒级自愈。
+# v2：单实例锁（~/.tunnel_keepalive.lock，防多实例竞争连锁 bind 失败）；
+#     拉起失败不并发叠加，交由下一轮探测重试。
+# 用法: nohup bash ops/tunnel_gpu.sh keepalive >> tmp/tunnel_keepalive.log 2>&1 &
+KA_LOCK="$HOME/.tunnel_keepalive.lock"
+do_keepalive() {
+  if [ -f "$KA_LOCK" ]; then
+    other=$(cat "$KA_LOCK" 2>/dev/null)
+    if [ -n "$other" ] && kill -0 "$other" 2>/dev/null; then
+      echo "keepalive already running (pid $other)"; exit 0
+    fi
+  fi
+  echo $$ > "$KA_LOCK"
+  echo "[$(date '+%F %T')] keepalive loop start (interval ${KA_INTERVAL_S:-5}s, pid $$)"
+  while true; do
+    if ! health >/dev/null 2>&1; then
+      echo "[$(date '+%F %T')] health probe failed -> do_start"
+      do_start || true
+      health >/dev/null 2>&1 || sleep 2   # 未就绪交由下一轮重试，不并发拉起
+    fi
+    sleep "${KA_INTERVAL_S:-5}"
+  done
+}
+
 case "${1:-start}" in
   start) do_start ;;
   stop) do_stop ;;
   restart) do_stop >/dev/null 2>&1 || true; do_start ;;
   status) do_status ;;
-  *) echo "usage: $0 [start|stop|restart|status]"; exit 2 ;;
+  keepalive) do_keepalive ;;
+  *) echo "usage: $0 [start|stop|restart|status|keepalive]"; exit 2 ;;
 esac
