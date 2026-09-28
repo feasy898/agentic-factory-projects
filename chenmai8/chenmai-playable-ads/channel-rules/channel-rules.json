@@ -9,6 +9,28 @@
     "allowRelativeRuntimeScripts": true
   },
   "channels": {
+    "preview": {
+      "label": "Preview",
+      "package": {
+        "format": "single-html",
+        "entry": "index.html",
+        "maxFiles": 1
+      },
+      "maxBytes": 5242880,
+      "maxFiles": 1,
+      "exit": {
+        "protocol": "window-open",
+        "call": "window.open(url)",
+        "waitReadyBeforeRender": false
+      },
+      "runtime": {
+        "injectRelativeScripts": [],
+        "muteBeforeFirstInteraction": true,
+        "forbidMraid": false
+      },
+      "allowedUrlWhitelist": [],
+      "source": "本地预览/QC 渠道（非投放渠道）：单 HTML 自包含产物，供 qacore --autoplay 与预览页使用；退出接口回退 window.open。包体上限沿用 5MB 内部从严线。"
+    },
     "applovin": {
       "label": "AppLovin",
       "package": {
