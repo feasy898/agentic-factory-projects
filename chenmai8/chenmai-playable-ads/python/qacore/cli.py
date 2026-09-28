@@ -28,6 +28,13 @@ VARIANCE_THRESHOLD = 30.0  # 64×64 灰度方差低于此值视为空白画面
 REPO_ROOT = Path(__file__).resolve().parents[2]
 RULES_PATH = REPO_ROOT / "channel-rules" / "channel-rules.json"
 
+# 渠道容器运行时脚本的本地桩：投放时由容器提供（如 AppLovin 的 mraid.js），
+# 本地质检时容器不在场。桩不定义任何全局（与真实缺失一致），只消掉 404——
+# 避免"容器脚本不在场"被误记为游戏自身的控制台错误（CHK08）。
+CONTAINER_STUB_JS = (
+    "/* pf-qacore: 渠道容器运行时脚本本地桩（投放时由渠道容器提供，非包体内容） */\n"
+)
+
 
 def load_channel_limit(channel: str) -> int | None:
     """从规则库取渠道包体上限；规则库/渠道缺失返回 None（CHK01 不判定）。"""
@@ -39,6 +46,24 @@ def load_channel_limit(channel: str) -> int | None:
     except (OSError, json.JSONDecodeError):
         pass
     return None
+
+
+def load_channel_runtime_scripts(channel: str) -> list[str]:
+    """渠道声明注入的相对运行时脚本清单（runtime.injectRelativeScripts，如 mraid.js）。
+
+    这些脚本投放时由渠道容器提供，不属于包体；本地质检时容器不在场，
+    由本模块以桩应答（见 _on_route），模拟容器注入行为。
+    规则库不可读时返回空表（退回真实 404 行为，不掩盖任何东西）。
+    """
+    try:
+        rules = json.loads(RULES_PATH.read_text(encoding="utf-8"))
+        entry = rules.get("channels", {}).get(channel)
+        scripts = (entry or {}).get("runtime", {}).get("injectRelativeScripts")
+        if isinstance(scripts, list):
+            return [s for s in scripts if isinstance(s, str)]
+    except (OSError, json.JSONDecodeError):
+        pass
+    return []
 
 
 def load_channel_mute_required(channel: str) -> bool:
@@ -87,6 +112,8 @@ def cmd_run(args) -> int:
     requests: list[dict] = []
     entries: dict[object, dict] = {}
     blocked_urls: set[str] = set()
+    runtime_scripts = load_channel_runtime_scripts(args.channel)
+    runtime_stubs: list[str] = []
     rtc_max = 0
     load_ms = -1.0
     pf_present = False
@@ -120,6 +147,20 @@ def cmd_run(args) -> int:
                     external.append(req.url)
                 blocked_urls.add(req.url)
                 route.abort()
+                return
+            # 渠道容器运行时脚本（如 mraid.js）：本地缺失时以桩应答，模拟容器注入。
+            # 只对规则库声明过的相对脚本名生效；包体自身的本地 404 照常透传。
+            name = parsed.path.rsplit("/", 1)[-1]
+            if name in runtime_scripts and not (artifact.parent / name).is_file():
+                entry["status"] = 200
+                entry["stub"] = True
+                if req.url not in runtime_stubs:
+                    runtime_stubs.append(req.url)
+                route.fulfill(
+                    status=200,
+                    content_type="application/javascript",
+                    body=CONTAINER_STUB_JS,
+                )
                 return
             route.continue_()
 
@@ -245,6 +286,7 @@ def cmd_run(args) -> int:
         "channel_max_bytes": load_channel_limit(args.channel),
         "channel_mute_required": load_channel_mute_required(args.channel),
         "external_requests": external,
+        "runtime_stubs": runtime_stubs,
         "rtc_connections": rtc_max,
         "request_count": len(requests),
         "console_errors": console_errors,
