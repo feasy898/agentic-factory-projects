@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+build/
+.vite/
+
+# Env & secrets
+.env
+.env.*
+*.key
+secrets/
+
+# Data & models (large artifacts)
+data/
+models/
+*.onnx
+*.pt
+*.ckpt
+*.safetensors
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local artifacts
+*.log
+tmp/
+out/
