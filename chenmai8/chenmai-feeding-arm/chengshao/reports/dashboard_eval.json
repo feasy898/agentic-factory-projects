@@ -1,0 +1,37 @@
+{
+  "module": "cs_dashboard",
+  "date": "2026-09-28",
+  "cmd": ".venv/Scripts/python.exe -m pytest tests/test_dashboard.py -q  (cwd=仓库根)",
+  "metrics": {
+    "passed": 5,
+    "failed": 0,
+    "errors": 0,
+    "exit_status": 0,
+    "page_http_status": 200,
+    "static_assets_all_200": true,
+    "first_party_external_refs": 0,
+    "bites_posted": 30,
+    "bites_recorded": 30,
+    "aggregation_match": true,
+    "outcomes": {
+      "success": 26,
+      "retry": 2,
+      "rejected": 1,
+      "aborted": 1
+    },
+    "sse_snapshot_ok": true,
+    "sse_bite_delivered": true,
+    "invalid_rejected_422": true,
+    "conflicts_409": true,
+    "grams_total_check": true
+  },
+  "thresholds": {
+    "all_green": true,
+    "bites_expected": 30,
+    "bites_loss_allowed": 0,
+    "page_http_status": 200,
+    "sse_required": true,
+    "offline_external_refs_allowed": 0
+  },
+  "pass": true
+}

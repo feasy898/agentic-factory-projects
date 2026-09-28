@@ -16,6 +16,17 @@
 | `vendor-safety-ref` | 助餐场景安全设计只读参考（急停看门狗在线确认、失败状态机），不安装不构建不复制代码 | `0e91e8d33836ef675217ced4690e1e913dbbedda` | BSD-3-Clause |
 | `vendor-policy-ref` | 模仿学习策略原论文对照实现的只读参考，实际训练走运行栈内置策略，不直接使用 | `742c753c0d4a5d87076c8f69e5628c79a8cc5488` | MIT |
 
+## 前端静态资产 vendor（`cs_dashboard/static/vendor/`，随仓库分发）
+
+| 内部代号 | 资产 | 版本 | sha256 | 许可证 |
+|---|---|---|---|---|
+| `vendor-chart-lib` | `chart.umd.js`（单文件 UMD 构建看板图表） | 4.4.1 | `74401d738dd3e03ee5dfb3b6841210fe2c4ead8a960c4011ca4ba0b78a9fd8f3` | MIT（文件头许可证声明保留） |
+
+- 与四个参考克隆不同：这是看板离线运行所需的**单文件运行时资产**（开发指令 §5.7"静态资源本地化"），
+  必须随看板静态目录分发，故放 `chengshao/cs_dashboard/static/vendor/` 而非 `_vendor/`；
+  文件保持上游发布物字节原样（仅校验 sha256，无修改）。
+- 来源地址遵循本文件纪律不入公开仓库，版本号 + sha256 足以复核（2026-09-28 下载后即时计算）。
+
 ## 备注
 
 - 克隆方式：`git clone --depth 1`（经境外出口中转），克隆后以 `git rev-parse HEAD` 锁定；
