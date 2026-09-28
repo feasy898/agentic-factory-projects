@@ -363,7 +363,8 @@ def test_vocals_asr_usable(separation, jobs60):
     """M3 出口（04_dial/vocals.wav，B1 冻结 M4 唯一识别输入）→ :9001 转写非空。"""
     from pipeline.gpu_client import GpuClient, GpuServiceError
 
-    client = GpuClient(SERVICE_URL, timeout=300.0, retries=0)
+    # B1 收口修订（2026-09-29）：retries 0→5（间隔 3s，桥接隧道 ~10s 保活愈合窗口）
+    client = GpuClient(SERVICE_URL, timeout=300.0, retries=5, retry_wait_s=3.0)
     try:
         h = client.health()
     except GpuServiceError:

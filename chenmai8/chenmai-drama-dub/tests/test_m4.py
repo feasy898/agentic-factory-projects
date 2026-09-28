@@ -20,7 +20,9 @@ from pipeline.gpu_client import GpuClient, GpuServiceError
 SERVICE_URL = os.environ.get("M4_ASR_URL", "http://127.0.0.1:9001")
 ZH_SENTENCE = "你到底想怎么样？把话说清楚。"
 
-_client = GpuClient(SERVICE_URL, timeout=300.0, retries=0)
+# B1 收口修订（2026-09-29）：retries 0→5（间隔 3s，桥接 ssh 隧道公网 reset 的
+# ~10s 保活愈合窗口）——断言口径不变，仅消除共享链路瞬时抖动造成的假红。
+_client = GpuClient(SERVICE_URL, timeout=300.0, retries=5, retry_wait_s=3.0)
 
 
 # ---------------------------------------------------------------------------
