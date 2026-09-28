@@ -1,0 +1,23 @@
+{
+  "distance_m": 0.42,
+  "mouth_height_m": 0.25,
+  "error_band_m": [0.03, 0.05],
+  "calib_closed_ratio": 0.11,
+  "calib_open_ratio": 0.23,
+  "max_side": 640,
+  "fx": 460.0,
+  "fy": 460.0,
+  "cx": 320.0,
+  "cy": 240.0,
+  "ref_width": 640,
+  "ref_height": 480,
+  "T_base_cam": [
+    [0.0, 0.0, 1.0, 0.05],
+    [-1.0, 0.0, 0.0, -0.2],
+    [0.0, -1.0, 0.0, 0.3],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "model_path": "models/face_landmarker.task",
+  "model_url": "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task",
+  "_note": "mono 先验尺度配置（开发指令 §5.3）：距离先验 0.42m（±3-5cm 横纵误差由交互设计吸收）；calib_closed/open_ratio 为张闭嘴几何口径比标定簇界（实测闭嘴 0.057-0.10、张嘴 0.226-0.30）；fx/fy/cx/cy 为标称内参（640x480），真机标定后覆盖；T_base_cam 为缺省摆位外参，手眼标定后覆盖。"
+}

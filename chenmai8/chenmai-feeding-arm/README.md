@@ -30,3 +30,35 @@ chengshao/
 ```
 
 > 详细模块规格与验收标准见 `docs/`，逐模块 spec+eval 驱动开发。
+
+## 模块进度
+
+| 模块 | 状态 | 验收 |
+|---|---|---|
+| cs_schema | 契约冻结 v1.0 | `pytest tests/test_schema.py` |
+| cs_food | 勺上检查接口 + 启发式基线 | `pytest tests/test_food_interface.py` |
+| cs_dashboard | 看板骨架 | `pytest tests/test_dashboard.py` |
+| **cs_mouth** | **口部三维估计（mono 主路径 + depth 保留）** | `python -m cs_mouth.eval`（包根下执行） |
+
+### cs_mouth：口部三维估计
+
+单目 + 先验尺度为演示主路径：人脸 478 关键点定位口中心，距离取先验
+（`chengshao/config/mouth_prior.json`，默认 0.42m，横纵误差 ±3–5cm，由
+"勺停口前 5cm + 用户前倾取食 + 座位定位垫"设计吸收）；深度后端接口不变、
+延后保留。张嘴用几何口径比（实测静帧上 blendshape jawOpen 不区分张闭嘴，
+见 `chengshao/assets/face_samples/README.md` 的实测记录），转头判定
+`|head_yaw| > 25°`（双向），皱眉用 mouthFrown。
+
+```bash
+# 环境准备（一次性，权重不入库）
+python chengshao/scripts/fetch_models.py
+
+# 验收（在 chengshao/ 包根下执行；报告落 reports/mouth_eval.json）
+cd chengshao && python -m cs_mouth.eval --input assets/face_samples --report reports/mouth_eval.json
+
+# 后补真机样本（手机视频 → 抽帧 + 半自动标签初稿）
+cd chengshao && python scripts/import_face_samples.py --video 前面.mp4 转头.mp4 皱眉.mp4
+```
+
+样本说明（来源 / 许可证 / 标签规范 / 实测数据）：`chengshao/assets/face_samples/README.md`。
+
