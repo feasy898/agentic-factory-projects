@@ -5,7 +5,10 @@
 透视/盘面旋转/亮度噪点扰动。真值 H_mm_px 由生成侧解析给出，被测模块不可见。
 
 通过线（§4 M3 原文）：
-  1. marker 中心反投影误差 ≤ 0.5 mm；
+  1. marker 中心反投影误差 ≤ 0.5 mm
+     （口径 = 合成空盘检测残差：纯针孔投影/空盘/无亚克力/无反光/无挡码，
+       见 docs/calibration-error-budget.md；D7 真机标定前不得引用为现场
+       标定精度）；
   2. px_per_mm 相对误差 ≤ 1%（真值 = 生成投影在盘面中心的局部 px/mm 尺度）；
   3. 四角顺序任意摆放仍正确配对（整体旋转 43/90/180/270° + id-角位置换布局）；
   4. 单张 12MP 处理 ≤ 3 s CPU；
@@ -30,6 +33,7 @@ import pytest
 import yaml
 
 import _calib_views as cvw
+from beaneye.acquisition import imread_bgr
 from beaneye.calibration import (
     CalibrationError,
     TrayConfig,
@@ -50,7 +54,7 @@ TRAY_MM = 300.0
 MARKER_MM = 60.0
 P0 = 8  # 素材板分辨率 px/mm（make_aruco.build_board 要求 int，thickness 计算用）
 MARGIN_MM = 10.0
-MM_TOL = 0.5          # 通过线 1：marker 中心反投影误差
+MM_TOL = 0.5          # 通过线 1：marker 中心反投影误差（合成空盘检测残差口径）
 PPM_REL_TOL = 0.01    # 通过线 2：px_per_mm 相对误差
 GRID_MM_AUX_TOL = 1.0 # 辅助：盘面任意点反投影（通过线只卡 marker 中心）
 
@@ -204,7 +208,7 @@ def test_make_aruco_cli_material(tmp_path, cfg):
     assert proc.returncode == 0, proc.stdout + proc.stderr
     png, jsn = out_base.with_suffix(".png"), out_base.with_suffix(".json")
     assert png.is_file() and jsn.is_file()
-    img = cv2.imdecode(np.fromfile(png, dtype=np.uint8), cv2.IMREAD_COLOR)  # 中文路径安全读法
+    img = imread_bgr(png)  # 中文路径安全读法（禁止 np.fromfile，见 gate 扫描）
     assert img is not None and img.shape[0] == int((300 + 2 * MARGIN_MM) * P0)
 
     layout = json.loads(jsn.read_text(encoding="utf-8"))
@@ -417,6 +421,36 @@ def test_calibrate_pair_contract(board_bgr, cfg):
     assert np.allclose(np.asarray(res2.H_top), Ht)
     assert np.allclose(np.asarray(res2.H_bottom), Hb)
     assert res2.px_per_mm == res.px_per_mm
+
+
+def test_calibrate_pair_assembly_convention_mean_and_mm_max(board_bgr, cfg):
+    """组装约定锁死（W13 修复）：px_per_mm=两面均值；重投影误差先按本面
+    px_per_mm 毫米化、取 mm 最大、再以均值 px_per_mm 折回 px 存储。
+
+    动机（评审 B 项）：两面分辨率不同时，像素 RMS 直接取 max 不可比——
+    8px/mm 面的 0.8px 与 12px/mm 面的 0.8px 是不同的毫米误差。本测试用
+    两块不同打印分辨率（8 与 12 px/mm）的板各渲染一面，锁定约定。
+    """
+    canvas_t, _ = make_aruco.build_board(TRAY_MM, MARKER_MM, 8, MARGIN_MM)
+    canvas_b, _ = make_aruco.build_board(TRAY_MM, MARKER_MM, 12, MARGIN_MM)
+    vt, _ = cvw.render_view(
+        cv2.cvtColor(canvas_t, cv2.COLOR_GRAY2BGR), TRAY_MM, MARGIN_MM, 8,
+        cvw.ViewSpec(rx_deg=10, rz_deg=6, seed=1),
+    )
+    vb, _ = cvw.render_view(
+        cv2.cvtColor(canvas_b, cv2.COLOR_GRAY2BGR), TRAY_MM, MARGIN_MM, 12,
+        cvw.ViewSpec(ry_deg=12, rz_deg=-9, seed=2),
+    )
+
+    st = calibrate(vt, cfg)
+    sb = calibrate(vb, cfg)
+    res = calibrate_pair(vt, vb, cfg)
+
+    # 约定 1：px_per_mm = 两面中心尺度均值
+    assert res.px_per_mm == pytest.approx((st.px_per_mm + sb.px_per_mm) / 2.0, rel=1e-9)
+    # 约定 2：毫米化取最大，再折回均值 px 量纲（契约字段 reproj_err_px 语义不变）
+    err_mm = max(st.reproj_err_px / st.px_per_mm, sb.reproj_err_px / sb.px_per_mm)
+    assert res.reproj_err_px == pytest.approx(err_mm * res.px_per_mm, rel=1e-9)
 
 
 def test_calibrate_accepts_path_cfg(board_bgr):

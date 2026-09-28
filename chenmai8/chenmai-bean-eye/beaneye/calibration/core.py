@@ -14,8 +14,9 @@
   - :func:`calibrate` 单面求解，返回富结果 :class:`SingleCalib`
     （H / px_per_mm / reproj_err_px / 检测细节）。这是 §4 M3 spec 的单图入口；
   - :func:`calibrate_pair` 两面各解一次，组装契约 ``CalibResult``
-    （``px_per_mm`` 取两面均值；``reproj_err_px`` 取两面最大值，按最保守读数），
-    由 M2 采集写入 ``TrayScan.calibration``。
+    （``px_per_mm`` 取两面均值；``reproj_err_px`` 先按本面 px_per_mm 毫米化、
+    取 mm 最大再折回均值 px 量纲——两面分辨率不同时像素 RMS 直接取 max
+    不可比，W13 修复），由 M2 采集写入 ``TrayScan.calibration``。
 
 求解策略（两级）：
   a) 四码 **中心**（4 角点均值）→ ``findHomography`` 精确解。中心配对只依赖
@@ -255,17 +256,23 @@ def calibrate_pair(
 ) -> CalibResult:
     """双面各标定一次，组装冻结契约 ``CalibResult``（M2 写入 TrayScan.calibration）。
 
-    px_per_mm 取两面中心尺度均值；reproj_err_px 取两面最大（保守读数）。
+    组装约定（W13 修复并锁进 tests/test_calibration.py）：
+    - ``px_per_mm`` 取两面中心尺度**均值**；
+    - ``reproj_err_px``：两面像素 RMS **先各自除以本面 px_per_mm 毫米化**
+      （两面分辨率不同时像素 RMS 直接取 max 不可比），取 mm 最大者，再以
+      均值 px_per_mm 折回 px 存储——契约字段仍是像素量纲，但跨面比较公平。
     """
     cfg = _resolve_cfg(cfg)
     st = calibrate(img_top, cfg)
     sb = calibrate(img_bottom, cfg)
+    ppm = (st.px_per_mm + sb.px_per_mm) / 2.0
+    err_mm = max(st.reproj_err_px / st.px_per_mm, sb.reproj_err_px / sb.px_per_mm)
     return CalibResult(
-        px_per_mm=(st.px_per_mm + sb.px_per_mm) / 2.0,
+        px_per_mm=ppm,
         H_top=[[float(v) for v in row] for row in st.H],
         H_bottom=[[float(v) for v in row] for row in sb.H],
         marker_ids=sorted(set(st.marker_ids) | set(sb.marker_ids)),
-        reproj_err_px=max(st.reproj_err_px, sb.reproj_err_px),
+        reproj_err_px=err_mm * ppm,
     )
 
 

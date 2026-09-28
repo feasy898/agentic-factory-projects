@@ -37,6 +37,10 @@ for _stream in (sys.stdout, sys.stderr):
         _stream.reconfigure(encoding="utf-8", errors="replace")
 
 ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from beaneye.acquisition.base import imwrite_bgr  # noqa: E402  # 中文路径安全落盘（收敛自本文件旧 _imwrite_unicode）
 OUT_DIR = ROOT / "out"
 SMOKE_DIR = OUT_DIR / "oss_smoke"
 SAMPLES_DIR = ROOT / "data" / "samples"
@@ -63,18 +67,6 @@ def _fmt_err(exc: BaseException) -> str:
     return msg[:500]
 
 
-def _imwrite_unicode(path: Path, img: "object") -> None:
-    """cv2.imwrite 在非 ASCII 路径（本仓含中文目录）下会静默失败，改走编码字节流。"""
-    import cv2
-    import numpy as np
-
-    ext = path.suffix or ".png"
-    ok, buf = cv2.imencode(ext, img)
-    if not ok:
-        raise RuntimeError(f"图像编码失败: {path}")
-    path.write_bytes(bytes(np.asarray(buf).tobytes()))
-
-
 def _ensure_sample_image() -> Path:
     """确保 COCO 类样图存在；缺失则按 URL 列表顺序下载到 data/samples/。"""
     SAMPLES_DIR.mkdir(parents=True, exist_ok=True)
@@ -99,14 +91,23 @@ def _ensure_sample_image() -> Path:
 
 # ---------------------------------------------------------------- item 1: ArUco
 def smoke_aruco() -> str:
-    """渲染 4 角 ArUco(4x4_50) 合成盘面 → 检测 → 单应矩阵 → 反投影校验。"""
+    """渲染 4 角 ArUco(4x4_50) 合成盘面 → 检测 → 单应矩阵 → 独立内点误差校验。
+
+    布局（盘边长/码边长/四码中心）读 configs/tray.yaml——码位几何单一真源，
+    与 MockSource、打印板生成器同坐标（W13 修复）。
+    """
     import cv2
     import numpy as np
 
+    from beaneye.calibration.config import load_tray_config
+
+    cfg = load_tray_config()
+    board_mm = float(cfg.tray_mm)
+    marker_mm = float(cfg.marker_mm)
+    centers_mm = {int(k): (float(x), float(y)) for k, (x, y) in cfg.centers_mm.items()}
+
     px_per_mm = 2.0          # 合成"照片"比例
-    board_mm = 300.0         # 盘面边长
-    marker_mm = 60.0         # 码边长（与 configs/tray.yaml 默认一致）
-    margin_px = 100          # 盘面外留白（模拟拍摄视野）
+    margin_px = 100          # 盘面外留白（模拟拍摄视野，保住角码静区）
     size_px = int(board_mm * px_per_mm) + 2 * margin_px
 
     board = np.full((size_px, size_px, 3), 235, dtype=np.uint8)  # 浅灰背景
@@ -115,13 +116,6 @@ def smoke_aruco() -> str:
     board = np.clip(board.astype(np.int16) + noise, 0, 255).astype(np.uint8)
 
     dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
-    # 期望的 4 角码中心（盘面 mm 坐标系原点在盘面左上角）
-    centers_mm = {
-        0: (marker_mm / 2, marker_mm / 2),
-        1: (board_mm - marker_mm / 2, marker_mm / 2),
-        2: (board_mm - marker_mm / 2, board_mm - marker_mm / 2),
-        3: (marker_mm / 2, board_mm - marker_mm / 2),
-    }
     side_px = int(marker_mm * px_per_mm)
     half_px = side_px // 2
     for mid, (cx_mm, cy_mm) in centers_mm.items():
@@ -156,35 +150,55 @@ def smoke_aruco() -> str:
     if H is None:
         raise AssertionError("findHomography 求解失败")
 
-    # 校验 1：检测中心反投影到 mm 后与真值距离
-    proj = cv2.perspectiveTransform(np.float32([img_pts_px]), H)[0]
-    err_mm = float(np.linalg.norm(proj - np.float32(obj_pts_mm), axis=1).max())
+    # ---- 硬项校验 1：独立内点误差（W13 修复，弃自反投影）----
+    # 旧版用「参与求解的 4 个中心」做反投影 + 中心闭合——4 点单应下该项
+    # 代数上≈0，是自证不是精度。现改用 16 个码角点（与求解所用的 4 中心
+    # 相互独立）：检测角点经 H 投到盘面 mm，与该码四个期望角点(mm)的最近
+    # 距离取最大。该残差反映真实检测质量，口径 = 「合成空盘检测残差」
+    # （无畸变/折射/反光/挡码的针孔合成图，见 docs/calibration-error-budget.md，
+    # D7 真机标定前不得引用为现场标定精度）。
+    half_mm = marker_mm / 2.0
+    proj_all = cv2.perspectiveTransform(
+        np.float32([corner[0] for corner in corners])  # 4 码 × 4 角点 = (16,2) px
+        .reshape(-1, 1, 2),
+        H,
+    ).reshape(-1, 2)
+    inlier_err_mm = 0.0
+    idx = 0
+    for corner, mid in zip(corners, ids):
+        cx_mm, cy_mm = centers_mm[int(mid[0])]
+        cand = np.float32(
+            [
+                [cx_mm - half_mm, cy_mm - half_mm],
+                [cx_mm + half_mm, cy_mm - half_mm],
+                [cx_mm + half_mm, cy_mm + half_mm],
+                [cx_mm - half_mm, cy_mm + half_mm],
+            ]
+        )
+        for _ in range(len(corner[0])):
+            d = float(np.linalg.norm(cand - proj_all[idx], axis=1).min())
+            inlier_err_mm = max(inlier_err_mm, d)
+            idx += 1
 
-    # 校验 2：px_per_mm 相对误差（用对角线法：两对角中心距 px / 同距 mm）
-    # H 的尺度 = sqrt(|A|)（无投影项修正的近似），直接用相邻中心距更稳：
+    # ---- 硬项校验 2：px_per_mm 相对误差（对角线法，有信息量，保留）----
     d_px = float(np.linalg.norm(np.float32(img_pts_px[0]) - np.float32(img_pts_px[2])))
     d_mm = float(np.linalg.norm(np.float32(obj_pts_mm[0]) - np.float32(obj_pts_mm[2])))
     ppm_est = d_px / d_mm
     ppm_err = abs(ppm_est - px_per_mm) / px_per_mm
 
-    # 校验 3：盘面中心点 (150,150)mm 经 H^-1 落回图像，再正投影应闭合（<0.5mm）
-    H_inv = np.linalg.inv(H)
-    center_px = cv2.perspectiveTransform(np.float32([[[150, 150]]]), H_inv)[0][0]
-    back_mm = cv2.perspectiveTransform(center_px.reshape(1, 1, 2).astype(np.float32), H)[0][0]
-    center_err_mm = float(np.linalg.norm(back_mm - np.float32([150.0, 150.0])))
-
-    if err_mm > 0.5 or ppm_err > 0.01 or center_err_mm > 0.5:
+    if inlier_err_mm > 1.0 or ppm_err > 0.01:
         raise AssertionError(
-            f"标定精度不足: 中心反投影 {err_mm:.3f}mm, px_per_mm 误差 {ppm_err * 100:.2f}%, 中心闭合 {center_err_mm:.3f}mm"
+            f"合成空盘检测残差超限: 独立内点误差 {inlier_err_mm:.3f}mm（阈值 1.0mm）, "
+            f"px_per_mm 误差 {ppm_err * 100:.2f}%（阈值 1%）"
         )
 
     # 证据图：标注检测框与 id
     annotated = board.copy()
     cv2.aruco.drawDetectedMarkers(annotated, corners, ids)
-    _imwrite_unicode(SMOKE_DIR / "aruco_detected.png", annotated)
+    imwrite_bgr(SMOKE_DIR / "aruco_detected.png", annotated)
     return (
-        f"ids={found}, reproj_max={err_mm:.3f}mm, px_per_mm={ppm_est:.3f}(err {ppm_err * 100:.2f}%), "
-        f"center_close={center_err_mm:.3f}mm"
+        f"ids={found}, inlier_err={inlier_err_mm:.3f}mm（合成空盘检测残差，非现场标定精度）, "
+        f"px_per_mm={ppm_est:.3f}(err {ppm_err * 100:.2f}%)"
     )
 
 
@@ -226,7 +240,7 @@ def smoke_rfdetr() -> str:
             annotated, f"cls{cid} {conf:.2f}", (p0[0], max(0, p0[1] - 6)),
             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 200, 0), 1, cv2.LINE_AA,
         )
-    _imwrite_unicode(SMOKE_DIR / "rfdetr_boxes.jpg", annotated)
+    imwrite_bgr(SMOKE_DIR / "rfdetr_boxes.jpg", annotated)
     del model
     return f"boxes={n_boxes}, masks={masks}, class_ids={class_ids}, max_conf={max(confs):.2f}"
 

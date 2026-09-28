@@ -8,7 +8,8 @@
 四项检查（任何一项 FAIL → 总退出码 1）：
   1) scripts/doctor.py 以 .venv python 运行且退出码 0
   2) .venv python -m pytest tests/test_schemas.py 全绿（退出码 0）
-  3) out/oss_smoke_report.json 存在，且 aruco / qrcode 两项 ok=true
+  3) **现场重跑** scripts/oss_smoke.py（W13 修复：旧版只读过期报告，是假
+     绿灯），退出码 0 且刚生成的报告里 aruco / qrcode 两项 ok=true、hard_ok=true
      （数据集本体允许 BLOCKED——硬项只有 aruco/qrcode，见 oss_smoke.py 的 hard_items）
   4) data/datasets/README.md 存在且含数据集"解锁步骤"
 
@@ -102,9 +103,26 @@ def check_pytest_schemas() -> tuple[bool, str]:
 
 
 def check_oss_smoke_report() -> tuple[bool, str]:
-    """检查 ③ oss_smoke 报告存在且 aruco/qrcode 两硬项 ok。"""
+    """检查 ③ **现场重跑** oss_smoke.py，再核对报告硬项（W13 修复）。
+
+    旧实现只读已落盘的 out/oss_smoke_report.json——报告过期或代码已改时
+    仍可 PASS（假绿灯）。现在闸门自己以 .venv python 执行冒烟（权重/缓存
+    均在仓库 models/ 下，命中缓存时数分钟内完成），退出码非 0（aruco 或
+    qrcode 硬项失败）即 FAIL；随后解析刚生成的报告核对 hard_ok 与逐项 ok，
+    报告新鲜度由「本次运行生成」天然保证。
+    """
+    if not (ROOT / "scripts" / "oss_smoke.py").is_file():
+        return False, "scripts/oss_smoke.py 不存在"
+    try:
+        proc = _run_in_venv(["scripts/oss_smoke.py"])
+    except subprocess.TimeoutExpired:
+        return False, f"oss_smoke.py 超时（>{SUBPROC_TIMEOUT_S}s）"
+    tail = _tail(proc.stdout + proc.stderr, n_lines=6)
+    if proc.returncode != 0:
+        return False, f"现场冒烟失败（exit={proc.returncode}）:\n{tail}"
+
     if not SMOKE_REPORT.is_file():
-        return False, f"报告不存在: {SMOKE_REPORT}（先运行 scripts/oss_smoke.py）"
+        return False, f"冒烟退出码 0 但报告未生成: {SMOKE_REPORT}"
     try:
         report = json.loads(SMOKE_REPORT.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
@@ -118,12 +136,14 @@ def check_oss_smoke_report() -> tuple[bool, str]:
     if not_ok:
         bad = "; ".join(f"{n}: {items[n].get('error', '(无 error 字段)')}" for n in not_ok)
         return False, f"硬项未通过: {bad}"
+    if report.get("hard_ok") is not True:
+        return False, f"报告 hard_ok={report.get('hard_ok')!r}，应为 true"
     top_detail = report.get("detail", {}) if isinstance(report.get("detail", {}), dict) else {}
     parts = [
         f"{name}: ok ({top_detail.get(name, items[name].get('detail', '') or '')})"
         for name in SMOKE_HARD_ITEMS
     ]
-    return True, "; ".join(parts)
+    return True, f"现场重跑 exit 0；" + "; ".join(parts)
 
 
 def check_datasets_readme() -> tuple[bool, str]:
