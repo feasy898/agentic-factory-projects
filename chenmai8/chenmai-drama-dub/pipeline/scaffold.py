@@ -31,7 +31,8 @@ LAYERS: dict[str, tuple[str, ...]] = {
 #: 各层预期产物文件名（模块按此命名；契约号注明出处）
 EXPECTED_FILES: dict[str, tuple[str, ...]] = {
     "00_raw": ("input.mp4",),
-    "01_media": ("video_1080x1920_25fps.mp4", "audio_16k.wav", "audio_48k.wav", "bgm.wav"),
+    "01_media": ("video_1080x1920_25fps.mp4", "audio_16k.wav", "audio_48k.wav", "bgm.wav",
+                 "probe.json"),  # probe.json 为 M1 产出口径（规划 §4 M1）
     "02_shots": ("shots.json",),  # C1
     "03_ocr": ("ocr_raw.jsonl", "ocr_merged.jsonl"),
     "04_dial": (
