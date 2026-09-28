@@ -1,8 +1,9 @@
 """SSE 流式管线（开发指令 §8.2）：上游 chunk 字节流 → 还原 → AI 标识 → 客户端 SSE。
 
 三段组合（async generator 管线，逐层可独立测试）：
-1. :func:`iter_sse_data_lines` —— 字节流 → ``data:`` 行载荷。按 ``\\n`` 切行并
+1. :func:`iter_sse_data_lines` —— 字节流 → 事件 ``data:`` 载荷。按 ``\\n`` 切行并
    **跨 chunk 缓冲半行**（上游任意字节切块——含把多字节 UTF-8 切成两半——都不破行）；
+   同一事件的多行 ``data:`` 按空行组帧、用换行拼接（SSE 规范）；
 2. :class:`StreamToolBuffer` —— 流式工具调用参数**增量累积，finish 前不发**；
    finish 时整体还原后作为单个 delta 发出（§6 M3 工具条目，参数级 JSON 还原由
    脱敏任务补全，v0 为串级还原）；
@@ -56,14 +57,27 @@ def format_sse(payload_json: str) -> str:
 
 
 async def iter_sse_data_lines(chunks: AsyncIterator[bytes]) -> AsyncIterator[str]:
-    """上游字节流 → ``data:`` 行载荷序列（半行跨 chunk 缓冲；UTF-8 安全）。
+    """上游字节流 → SSE 事件 ``data:`` 载荷序列（按空行组帧；半行跨 chunk 缓冲；UTF-8 安全）。
 
-    - 按 ``\\n`` 切行，行尾 ``\\r`` 去除（SSE 规范允许 CRLF）；
-    - 行是完整字节序列后才 decode，多字节字符被切成两半不会产生乱码
-      （UTF-8 续字节不含 0x0A，行界不受切块影响）；
-    - 非 ``data:`` 行（注释/事件名等）跳过；流结束时残留半行按一行处理。
+    - 按 ``\\n`` 切行，行尾 ``\\r`` 去除（SSE 规范允许 CRLF）；行是完整字节序列后才
+      decode，多字节字符被切成两半不会产生乱码（UTF-8 续字节不含 0x0A）；
+    - **按空行组帧**（SSE 规范，审查 §A3）：同一事件内的连续多行 ``data:``（中间
+      无空行）用 ``\\n`` 拼成一条载荷后一次产出——多行 data 拆写的 JSON 不会再因
+      逐行解析失败而原样透传绕过还原管线；单行 ``data:`` 事件行为与逐行解析完全
+      兼容；
+    - ``data:`` 以外的事件字段/注释行跳过；空行 = 事件边界；流结束时未遇空行的
+      残留 ``data:`` 行按一个事件产出。
     """
     buffer = b""
+    data_lines: list[str] = []
+
+    def flush_event() -> str | None:
+        if not data_lines:
+            return None
+        payload = "\n".join(data_lines)
+        data_lines.clear()
+        return payload
+
     async for chunk in chunks:
         if not chunk:
             continue
@@ -73,13 +87,21 @@ async def iter_sse_data_lines(chunks: AsyncIterator[bytes]) -> AsyncIterator[str
             if nl < 0:
                 break
             line, buffer = buffer[:nl], buffer[nl + 1:]
+            if line.rstrip(b"\r") == b"":  # 空行 = 事件边界（CRLF 兼容）
+                event = flush_event()
+                if event is not None:
+                    yield event
+                continue
             payload = _data_payload(line)
             if payload is not None:
-                yield payload
-    if buffer:
+                data_lines.append(payload)
+    if buffer:  # 流结束残留半行按一行处理
         payload = _data_payload(buffer)
         if payload is not None:
-            yield payload
+            data_lines.append(payload)
+    event = flush_event()
+    if event is not None:
+        yield event
 
 
 def _data_payload(raw_line: bytes) -> str | None:
@@ -159,8 +181,9 @@ async def compose_chat_stream(
     - 内容增量：过 :class:`StreamRestorer` 后放行；``on_content`` 在还原**前**
       收到上游原始内容（审计 response_preview 取占位符版本用）；
     - 工具增量：全部缓冲，finish 时整体还原为单个 delta；
-    - finish chunk：先补发还原尾（restorer flush）、工具 delta、AI 标识内容 delta，
-      再给 finish chunk 的首个 choice delta 加 ``annotations`` 元数据后放行；
+    - finish chunk：**先 feed 本块**（正文尾片/参数尾片先进状态机与缓冲），再补发
+      还原尾（restorer flush）、工具 delta、AI 标识内容 delta，最后给 finish chunk
+      的首个 choice delta 加 ``annotations`` 元数据后放行；
     - 若上游未发 finish chunk 就 ``[DONE]``，在 [DONE] 前执行同一收尾序列；
     - 非法 JSON / 非 dict 载荷：原样透传（网关不吞不猜）。
     """
@@ -242,10 +265,13 @@ async def compose_chat_stream(
         reason = finish_reason_of(event)
         if reason == "stop":
             state["stop_seen"] = True
+        # 先 feed 本块（finish chunk 可能自带正文尾片/参数尾片——审查 §A3：顺序反了
+        # 会把占位符前缀当普通文本吐出、参数尾片被删且不再发出），后 flush 收尾。
+        transformed = transform(event, reason)
         if reason is not None:  # 仅 finish chunk 触发收尾（finalize 自身幂等）
             for text in finalize(reason):
                 yield text
-        yield format_sse(json.dumps(transform(event, reason), ensure_ascii=False))
+        yield format_sse(json.dumps(transformed, ensure_ascii=False))
 
     # 上游未发 [DONE] 即断流：补收尾（不让缓冲内容无声丢失）
     for text in finalize(None):
