@@ -16,18 +16,21 @@
   /admin/api/audit 上线后自动改为 HTTP 交叉核对。
 
 用例（§9 步骤 3；U1–U5 当天生效，U6 文件通道 D3 起生效）：
-- U1 非流式：2 身份证 + 3 手机号（含分隔符写法）+ 人名 → 上游 bytes 级零原值、
-  占位符计数精确（〔身份证·×2、〔手机号·×3）；客户端零占位符形状、原值（归一化形态）
-  完整在位；响应头 x-anongw-route=INTERNET；
+- U1 非流式：人名 + 2 身份证 + 3 手机号（含分隔符写法）→ 上游 messages **全文
+  diff = 原文脱敏版**（审查 §B：占位符计数精确〔人名·×1/〔身份证·×2/〔手机号·×3）；
+  客户端零占位符形状、原值（归一化形态）完整在位；route=INTERNET；
 - U2 流式：同 prompt，SSE 逐 delta 拼接后同 U1 断言（外加流式 AI 生成标识尾注）；
   再以 mock 默认 1–7 字符随机切块模式重放 20 次，逐次全等断言（覆盖占位符被
   切进相邻两个 SSE chunk 的还原）；
-- U3 三路由：普通材料→INTERNET/:8901；批量名单（≥3 结构化号码）→GOVCLOUD/:8902；
-  机密★材料→403 content_blocked 且两 mock 均零新增；
-- U4 工具调用：tools 定义 + arguments 中文含 PII → 上游收到占位符版参数、
-  客户端收到还原版（JSON 可解析、占位符形状零残留）；
+- U3 三路由：普通材料（messages 全文逐字原样）→INTERNET/:8901；批量名单（≥3
+  结构化号码，全文=脱敏版）→GOVCLOUD/:8902；机密★材料→403 且两 mock 均零新增；
+- U4 工具调用：tools 定义 + arguments 中文含人名/PII → 上游 messages 与
+  tool_arguments **全文 = 原文脱敏版**、客户端收到还原版（JSON 全等、占位符
+  零残留）；U4b：历史 assistant.tool_calls.arguments 藏密级词 → 403 整单拦截、
+  上游零感知（出站全量检测面）；
 - U5 审计：行数 == 本次发送的全部 /v1/chat/completions 请求数；事件字段形状齐全；
-  审计 SQLite 库文件（主文件 + WAL 旁挂）bytes 级扫描所有用到的原值 → 零命中；
+  审计 SQLite 库文件（主文件 + WAL 旁挂）bytes 级扫描全部原值（含人名与密级词，
+  审查 §B）→ 零命中；
 - U6 文件：inspect+export seeded docx → 重解析零命中（文件通道未上线时输出
   DEFERRED，不计失败）。
 
@@ -69,6 +72,7 @@ from common.config import (  # noqa: E402
 from gateway.app import create_app, resolve_db_path  # noqa: E402
 from gateway.mock_upstream import ECHO_MARKER  # noqa: E402
 from masking.mapper import RESTORE_PATTERN  # noqa: E402
+from recognizers.models import EntityClass  # noqa: E402
 
 # ── 固定拓扑与演示凭据（对齐 config/app.yaml / config/dept_keys.yaml）──────
 MOCK_PORT_INTERNET = 8901
@@ -134,15 +138,40 @@ TOOLS = [{
     },
 }]
 
-#: 全部用例涉及的敏感原值（归一化 + 原始写法）；上游/审计 bytes 级扫描必须零命中。
-#: 注：密级词表词（机密★等）不在此列——BLOCK 拦截语义允许其留在审计理由码之外的原文本形态。
+#: 全部用例涉及的敏感原值（归一化 + 原始写法 + 人名 + 密级词，审查 §B）；
+#: 上游/审计 bytes 级扫描必须零命中。密级词属拦截语义（BLOCK 不出网关、审计
+#: 预览以「〔密级·已拦截〕」占位），人名由规则层 v0 脱敏——两者同样不得以
+#: 原文形态出现在上游 bytes 或审计库文件中，故一并入清单。
 RAW_VALUES: tuple[str, ...] = (
     ID_A, ID_B, ID_C, ID_D,
     PHONE_A, PHONE_B_RAW, PHONE_B, PHONE_C_RAW, PHONE_C, PHONE_BLOCKED,
+    PERSON, "机密★", "内部资料", "注意保密",
 )
 
-U1_EXPECTED_PLACEHOLDERS = {"〔身份证·": 2, "〔手机号·": 3}
+U1_EXPECTED_PLACEHOLDERS = {"〔身份证·": 2, "〔手机号·": 3, "〔人名·": 1}
 U3_BATCH_EXPECTED_PLACEHOLDERS = {"〔身份证·": 3, "〔手机号·": 1}
+
+#: 夹具 → 上游应收「原文脱敏版」的手工 span 声明（审查 §B 全文 diff 期望侧：
+#: 该脱敏什么=验收契约，不回读被测检测器，避免同源假绿）。
+U1_SPANS: list[tuple[str, EntityClass, str]] = [
+    (PERSON, EntityClass.PERSON, PERSON),
+    (ID_A, EntityClass.ID_CARD, ID_A),
+    (ID_B, EntityClass.ID_CARD, ID_B),
+    (PHONE_A, EntityClass.PHONE_MOBILE, PHONE_A),
+    (PHONE_B_RAW, EntityClass.PHONE_MOBILE, PHONE_B),
+    (PHONE_C_RAW, EntityClass.PHONE_MOBILE, PHONE_C),
+]
+U3_BATCH_SPANS: list[tuple[str, EntityClass, str]] = [
+    (ID_A, EntityClass.ID_CARD, ID_A),
+    (ID_C, EntityClass.ID_CARD, ID_C),
+    (ID_D, EntityClass.ID_CARD, ID_D),
+    (PHONE_A, EntityClass.PHONE_MOBILE, PHONE_A),
+]
+U4_SPANS: list[tuple[str, EntityClass, str]] = [
+    (PERSON, EntityClass.PERSON, PERSON),
+    (ID_D, EntityClass.ID_CARD, ID_D),
+    (PHONE_A, EntityClass.PHONE_MOBILE, PHONE_A),
+]
 
 RESULTS: list[tuple[str, str, str]] = []   # (用例名, 状态 PASS/FAIL/DEFER, 详情)
 
@@ -306,6 +335,33 @@ def _assert_no_raw(blob: bytes, values: tuple[str, ...], where: str) -> None:
         raise AssertionError(f"{where} 出现原值（bytes 级命中）: {hits}")
 
 
+def _expected_masked(ctx: dict[str, Any], session: str, text: str,
+                     spans: list[tuple[str, EntityClass, str]]) -> str:
+    """夹具 → 上游应收到的「原文脱敏版」（审查 §B 全文 diff 的期望侧）。
+
+    - 替换哪些表面形式由调用方手工声明（U1/U3_BATCH/U4_SPANS）＝验收契约，
+      不回读被测检测器（同源假绿）；
+    - 占位符取网关同会话 mapper 的 §5.3.1 冻结算法结果——HMAC 同
+      key/session/类别/归一化值 → 同占位符，与网关实际写入必然一致；
+    - 替换按表面形式长度降序执行，避免短串吃掉长串的子串。
+    """
+    mapper = ctx["service"].registry.get(session)
+    out = text
+    for raw, etype, normalized in sorted(spans, key=lambda s: len(s[0]), reverse=True):
+        placeholder, _ = mapper.placeholder_for(etype, normalized)
+        out = out.replace(raw, placeholder)
+    return out
+
+
+def _assert_upstream_messages(record: dict[str, Any], expected_content: str, where: str) -> None:
+    """records[].messages 全文 diff（审查 §B）：上游收到 = 「原文脱敏版」逐字全等。"""
+    expected = [{"role": "user", "content": expected_content}]
+    if record.get("messages") != expected:
+        raise AssertionError(
+            f"{where} messages != 原文脱敏版（全文 diff）:\n"
+            f" got={record.get('messages')!r}\n exp={expected!r}")
+
+
 def _assert_placeholder_counts(text: str, expected: dict[str, int]) -> None:
     for marker, want in expected.items():
         got = text.count(marker)
@@ -332,6 +388,7 @@ def _start_gateway(ctx: dict[str, Any]) -> None:
     _drop_db(audit_db)
     _drop_db(session_db)
     app = create_app(cfg=cfg, mask_key=mask_key, dept_key_digests=load_dept_keys())
+    ctx["service"] = app.state.service
     ctx["audit"] = app.state.service.audit
     if not isinstance(ctx["audit"], SqliteAuditWriter):
         raise RuntimeError("gateway audit store is not the SQLite writer (M7/T1.3 wiring)")
@@ -459,13 +516,15 @@ def case_u1(ctx: dict[str, Any]) -> str:
             raise AssertionError(f"原值未还原: {value}")
     if data["model"] != "mock-chat" or data["usage"]["total_tokens"] <= 0:
         raise AssertionError(f"passthrough shape: model={data['model']} usage={data['usage']}")
-    # 上游：仅 +1 条；全占位符（计数精确）；bytes 级零原值
+    # 上游：仅 +1 条；全占位符（计数精确）；messages 全文 == 原文脱敏版；bytes 级零原值
     if _mock_count(base) != before + 1:
         raise AssertionError(f"8901 ring delta {_mock_count(base) - before}")
-    upstream_text = _mock_last_record(base)["last_user_content"]
-    _assert_placeholder_counts(upstream_text, U1_EXPECTED_PLACEHOLDERS)
+    record = _mock_last_record(base)
+    _assert_placeholder_counts(record["last_user_content"], U1_EXPECTED_PLACEHOLDERS)
+    _assert_upstream_messages(record, _expected_masked(ctx, "sess_e2e_u1", U_TEXT, U1_SPANS),
+                              "mock:8901")
     _assert_no_raw(_mock_text(base), RAW_VALUES, "mock:8901")
-    return "200 INTERNET；上游全占位符（身份证×2/手机号×3，bytes 级零原值）；客户端还原完整"
+    return "200 INTERNET；上游 messages 全文=原文脱敏版（人名×1/身份证×2/手机号×3）；客户端还原完整"
 
 
 # ── U2 流式 + 重放 20 次（§9 U2）──────────────────────────────────────
@@ -501,9 +560,11 @@ def case_u2(ctx: dict[str, Any]) -> str:
     if _mock_count(base) != before + 1 + U2_REPLAYS:
         raise AssertionError(f"8901 ring delta {_mock_count(base) - before}")
     _assert_no_raw(_mock_text(base), RAW_VALUES, "mock:8901")
-    upstream_text = _mock_last_record(base)["last_user_content"]
-    _assert_placeholder_counts(upstream_text, U1_EXPECTED_PLACEHOLDERS)
-    return f"200 SSE；首传 + {U2_REPLAYS} 次随机切块重放全等；上游全占位符；AI 标识尾注在位"
+    record = _mock_last_record(base)
+    _assert_placeholder_counts(record["last_user_content"], U1_EXPECTED_PLACEHOLDERS)
+    _assert_upstream_messages(record, _expected_masked(ctx, "sess_e2e_u2", U_TEXT, U1_SPANS),
+                              "mock:8901")
+    return f"200 SSE；首传 + {U2_REPLAYS} 次随机切块重放全等；上游 messages 全文=原文脱敏版；AI 标识尾注在位"
 
 
 # ── U3 三路由（§9 U3）─────────────────────────────────────────────────
@@ -512,7 +573,7 @@ def case_u3(ctx: dict[str, Any]) -> str:
     base1, base2 = ctx["mock_internet"], ctx["mock_govcloud"]
     b1, b2 = _mock_count(base1), _mock_count(base2)
 
-    # ① 普通材料 → INTERNET / :8901
+    # ① 普通材料 → INTERNET / :8901（无敏感面 → messages 逐字原文）
     status, headers, frames, raw = _send_chat(
         client, _plain_body(ORDINARY_TEXT), "sess_e2e_u3a", ctx)
     if status != 200 or headers.get("x-anongw-route") != "INTERNET":
@@ -521,6 +582,7 @@ def case_u3(ctx: dict[str, Any]) -> str:
     _plain_answer_ok(content, f"{ECHO_MARKER}internet_mock\n{ORDINARY_TEXT}", streaming=False)
     if _mock_count(base1) != b1 + 1 or _mock_count(base2) != b2:
         raise AssertionError("ordinary forward split wrong")
+    _assert_upstream_messages(_mock_last_record(base1), ORDINARY_TEXT, "mock:8901 ordinary")
 
     # ② 批量名单 → GOVCLOUD / :8902
     status, headers, frames, raw = _send_chat(
@@ -533,8 +595,10 @@ def case_u3(ctx: dict[str, Any]) -> str:
         raise AssertionError("batch client restore failed")
     if _mock_count(base2) != b2 + 1 or _mock_count(base1) != b1 + 1:
         raise AssertionError("batch forward split wrong")
-    up = _mock_last_record(base2)["last_user_content"]
-    _assert_placeholder_counts(up, U3_BATCH_EXPECTED_PLACEHOLDERS)
+    up = _mock_last_record(base2)
+    _assert_placeholder_counts(up["last_user_content"], U3_BATCH_EXPECTED_PLACEHOLDERS)
+    _assert_upstream_messages(up, _expected_masked(ctx, "sess_e2e_u3b", BATCH_TEXT, U3_BATCH_SPANS),
+                              "mock:8902")
     _assert_no_raw(_mock_text(base2), RAW_VALUES, "mock:8902")
 
     # ③ 机密★材料 → 403 拦截，两 mock 均零新增
@@ -551,8 +615,9 @@ def case_u3(ctx: dict[str, Any]) -> str:
         raise AssertionError(f"route header on block: {headers.get('x-anongw-route')}")
     if _mock_count(base1) != b1 + 1 or _mock_count(base2) != b2 + 1:
         raise AssertionError("blocked request reached an upstream")
-    _assert_no_raw(_mock_text(base1) + _mock_text(base2), (PHONE_BLOCKED,), "mocks")
-    return "普通→8901 / 批量→8902 / 机密★→403（reasons[0]=CLASSIFICATION_MARK）；上游零原值"
+    _assert_no_raw(_mock_text(base1) + _mock_text(base2),
+                   (PHONE_BLOCKED, PERSON, "机密★", "内部资料", "注意保密"), "mocks")
+    return "普通→8901 / 批量→8902（全文=脱敏版）/ 机密★→403（reasons[0]=CLASSIFICATION_MARK）；上游零原值"
 
 
 # ── U4 工具调用（§9 U4）───────────────────────────────────────────────
@@ -580,11 +645,44 @@ def case_u4(ctx: dict[str, Any]) -> str:
     record = _mock_last_record(base)
     if not record.get("tool_call") or _mock_count(base) != before + 1:
         raise AssertionError("upstream did not record the tool call")
+    # 上游全文 diff（审查 §B/§F4）：messages 与 tool_arguments 都必须逐字等于
+    # 「原文脱敏版」（历史 tool_calls 携带明文 PII/密级词的入站用例由 U4b 覆盖）
+    expected_tool_masked = _expected_masked(ctx, "sess_e2e_u4", TOOL_TEXT, U4_SPANS)
+    _assert_upstream_messages(record, expected_tool_masked, "mock:8901")
     up_args = record["tool_arguments"]
+    expected_args = json.dumps({"query": expected_tool_masked}, ensure_ascii=False)
+    if up_args != expected_args:
+        raise AssertionError(f"upstream tool_arguments != 原文脱敏版:\n got={up_args!r}\n exp={expected_args!r}")
     _assert_no_raw(up_args.encode("utf-8"), RAW_VALUES, "mock:8901 tool_arguments")
-    if "〔身份证·" not in up_args or "〔手机号·" not in up_args:
-        raise AssertionError(f"upstream arguments lack placeholders: {up_args!r}")
-    return "上游收到占位符版参数；客户端拿到还原版（JSON 全等、占位符零残留）"
+
+    # U4b（审查 §A4/§B）：历史 assistant.tool_calls.arguments 藏密级词 → 整单 403，
+    # 上游零感知（出站全量检测面：辅助面 BLOCK_FLAG 与正文同权拦截）
+    before_b = _mock_count(base)
+    history_body = {
+        "model": "mock-chat",
+        "messages": [
+            {"role": "user", "content": "继续处理上一步的查询。"},
+            {"role": "assistant", "content": None, "tool_calls": [{
+                "id": "call_hist_1", "type": "function",
+                "function": {"name": "query_lowincome_record",
+                             "arguments": json.dumps(
+                                 {"query": f"机密★{PERSON} 电话{PHONE_BLOCKED}"},
+                                 ensure_ascii=False)},
+            }]},
+            {"role": "tool", "tool_call_id": "call_hist_1", "content": "（模拟工具结果）"},
+            {"role": "user", "content": "请汇总上一步结果。"},
+        ],
+    }
+    status, headers, frames, raw = _send_chat(client, history_body, "sess_e2e_u4b", ctx)
+    if status != 403:
+        raise AssertionError(f"history tool_calls classified: status={status} body={raw[:200]!r}")
+    err = json.loads(raw)["error"]
+    if err["code"] != "content_blocked":
+        raise AssertionError(f"history classified code: {err['code']}")
+    if _mock_count(base) != before_b:
+        raise AssertionError("classified history tool_calls reached an upstream")
+    return ("上游 messages+工具参数 全文=原文脱敏版；客户端拿到还原版（JSON 全等、占位符零残留）；"
+            "历史 tool_calls 藏密级词 → 403 整单拦截、上游零感知")
 
 
 # ── U5 审计（§9 U5；T1.3 起以 SQLite 库文件级扫描为口径）──────────────
@@ -602,10 +700,11 @@ def case_u5(ctx: dict[str, Any]) -> str:
         raise AssertionError(f"audit rows={len(events)}, expect {expected}")
 
     routes = [e.route for e in events]
-    if routes.count("BLOCK") != 1 or routes.count("GOVCLOUD") != 1:
+    # 2×BLOCK（U3c 机密正文 + U4b 历史参数藏密级词）+ 1×GOVCLOUD（U3b 批量）+ 其余 INTERNET
+    if routes.count("BLOCK") != 2 or routes.count("GOVCLOUD") != 1:
         raise AssertionError(f"route mix: BLOCK={routes.count('BLOCK')} GOVCLOUD={routes.count('GOVCLOUD')}")
-    if routes.count("INTERNET") != expected - 2:
-        raise AssertionError(f"INTERNET count {routes.count('INTERNET')} != {expected - 2}")
+    if routes.count("INTERNET") != expected - 3:
+        raise AssertionError(f"INTERNET count {routes.count('INTERNET')} != {expected - 3}")
     for event in events:
         if not event.request_id.startswith("req_") or not event.session_id.startswith("sess_"):
             raise AssertionError(f"ids: {event.request_id}/{event.session_id}")
@@ -644,8 +743,8 @@ def case_u5(ctx: dict[str, Any]) -> str:
         note = "；/admin/api/audit 交叉核对一致"
     else:
         note = "；/admin/api/audit 未上线（T5.1 落地后自动交叉核对）"
-    return (f"{expected} 行落库（1 BLOCK + 1 GOVCLOUD + {expected - 2} INTERNET）；"
-            f"预览占位符版本；库文件 bytes 级扫描 {scanned} 字节零明文{note}")
+    return (f"{expected} 行落库（2 BLOCK + 1 GOVCLOUD + {expected - 3} INTERNET）；"
+            f"预览占位符版本；库文件 bytes 级扫描 {scanned} 字节零明文（含人名/密级词）{note}")
 
 
 # ── U6 文件通道（§9 U6；D3 起生效）────────────────────────────────────

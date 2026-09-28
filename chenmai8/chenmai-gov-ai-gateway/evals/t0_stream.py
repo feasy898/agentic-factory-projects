@@ -362,7 +362,7 @@ def step_stream_audit(ctx: dict[str, Any]) -> str:
     normal = events[0]
     if normal.route != "INTERNET" or normal.upstream != "internet_mock" or normal.blocked:
         raise AssertionError(f"normal event: {normal.route}/{normal.upstream}/{normal.blocked}")
-    if normal.class_counts != {"ID_CARD": 1, "PHONE_MOBILE": 1}:
+    if normal.class_counts != {"ID_CARD": 1, "PHONE_MOBILE": 1, "PERSON": 1}:
         raise AssertionError(f"class_counts: {normal.class_counts}")
     # response_preview = 还原前占位符版本（有占位符形状、无原值）
     if "〔身份证·" not in normal.response_preview or ID_OK in normal.response_preview:
@@ -374,7 +374,8 @@ def step_stream_audit(ctx: dict[str, Any]) -> str:
         raise AssertionError(f"blocked event: {blocked.blocked}/{blocked.upstream}")
     if any(e.route == "GOVCLOUD" for e in events) is False:
         raise AssertionError("govcloud event missing")
-    raw_values = [ID_OK, PHONE_B, "110105194912311019", "110105194912312027", "13800138002"]
+    raw_values = [ID_OK, PHONE_B, "110105194912311019", "110105194912312027",
+                  "13800138002", "张三", "机密★", "不得外传"]
     blob = "\n".join(e.prompt_preview + "\n" + e.response_preview for e in events).encode("utf-8")
     hits = [v for v in raw_values if v.encode("utf-8") in blob]
     if hits:

@@ -10,6 +10,9 @@
 - 词面类：SENSITIVE_ATTR（政务敏感身份词表，携带 subtype，ROUTE_FLAG）/
   WORK_SECRET（词表可选层，ROUTE_FLAG）/ CLASSIFICATION_MARK（密级词表，
   命中即 BLOCK_FLAG → 路由拦截）；
+- PERSON（规则层 v0，审查 §A1/§F1：NER 接入前的人名兜底——「词表精确匹配
+  confidence=1.0 + 常见姓氏启发式 confidence=0.5」双轨，宁可多脱敏不漏脱敏；
+  开放域人名召回由 NER 层接管）；
 - 白名单（labels.md §7）：公开文号 → DOC_NUMBER 且 whitelisted=true、热线/应急
   短号回查、单位座机号段（config/whitelist.yaml）、公开职务姓名称谓钩子
   （:mod:`recognizers.rule.whitelist`，NER 层 PERSON 接入后生效）。
@@ -45,6 +48,7 @@ from recognizers.rule.whitelist import Whitelist, get_whitelist
 CLASSIFICATION_TERMS_PATH = REPO_ROOT / "config" / "classification_terms.txt"
 SENSITIVE_TERMS_PATH = REPO_ROOT / "config" / "sensitive_terms.txt"
 WORK_SECRET_TERMS_PATH = REPO_ROOT / "config" / "work_secret_terms.txt"
+PERSON_NAMES_PATH = REPO_ROOT / "config" / "person_names.txt"
 
 #: 词表文件缺失时的兜底词（与 config/classification_terms.txt v0 内容一致）
 DEFAULT_CLASSIFICATION_TERMS: tuple[str, ...] = (
@@ -68,6 +72,34 @@ DEFAULT_SENSITIVE_TERMS: tuple[tuple[str, str], ...] = (
 DEFAULT_WORK_SECRET_TERMS: tuple[str, ...] = (
     "未公开人事任免", "未公开的干部考察情况", "内部议题",
 )
+
+#: 人名词表兜底（与 config/person_names.txt 一致；评测夹具/演示样例名）
+DEFAULT_PERSON_NAMES: tuple[str, ...] = ("张三", "李四", "王五", "赵六")
+
+#: 常见姓氏启发式用姓集（人口普查前 100 姓，单字姓；复姓留给 NER 层）
+_COMMON_SURNAMES: str = (
+    "王李张刘陈杨黄赵吴周徐孙马朱胡郭何林罗高郑梁谢宋唐许韩冯邓曹彭曾肖田董潘"
+    "袁蔡蒋余于杜叶程苏魏吕丁任沈姚卢姜崔钟谭陆汪范金石廖贾夏韦付方白邹孟熊秦"
+    "邱江尹薛闫段雷侯龙史陶黎贺顾毛郝龚邵万钱严覃武戴莫孔向汤"
+)
+
+#: 姓氏启发式：姓 + 1~2 个汉字 + **右边界非汉字**（名字后接标点/数字/串尾）。
+#: 有意不加左边界守卫——「居民张三」「考察对象张三」是人名在公文里的常态；
+#: 「查询张三名下」这类中间语名字由人名词表精确匹配兜底。
+_PERSON_HEUR_RE = re.compile(
+    rf"[{_COMMON_SURNAMES}][\u4e00-\u9fff]{{1,2}}(?![\u4e00-\u9fff])"
+)
+
+#: 姓氏启发式停用词（v0 静态 curated，新词按实测追加）：以姓氏字开头的高频
+#: 非人名词——词尾恰逢标点/串尾时会被启发式误收（「到周四。」「杜绝此类。」）。
+_PERSON_HEUR_STOPWORDS: frozenset[str] = frozenset({
+    "周一", "周二", "周三", "周四", "周五", "周六", "周日", "周年", "周报",
+    "马上", "马路", "于是", "由于", "属于", "关于", "对于", "在于", "等于",
+    "终于", "介于", "任何", "曾经", "方面", "范围", "范畴", "程度", "杜绝",
+    "严格", "金融", "金额", "余额", "其余", "石头", "石油", "白天", "白色",
+    "王国", "夏天", "谢谢", "许可", "肖像", "董事", "付款", "高端", "林业",
+    "万一", "陆地", "向上", "向下",
+})
 
 #: 机构名后缀抑制：词命中紧跟这些后缀时视为机构指称而非个人敏感属性
 #: （如「退役军人事务局」是单位，不是个人「特定身份」；「银行账户」不受影响）
@@ -135,6 +167,7 @@ _TOKEN_SEPARATORS = " \t-"
 _TERMS_CACHE: tuple[str, ...] | None = None
 _SENSITIVE_CACHE: tuple[tuple[str, str], ...] | None = None
 _WORK_SECRET_CACHE: tuple[str, ...] | None = None
+_PERSON_CACHE: tuple[str, ...] | None = None
 
 
 # ── 校验位（独立实现，供 eval 交叉复核）─────────────────────────────
@@ -270,6 +303,34 @@ def set_work_secret_terms(terms: tuple[str, ...]) -> None:
     """测试/运维显式注入工作秘密词表（绕过文件）。"""
     global _WORK_SECRET_CACHE
     _WORK_SECRET_CACHE = tuple(terms) or DEFAULT_WORK_SECRET_TERMS
+
+
+def load_person_names(path: str | Path | None = None) -> tuple[str, ...]:
+    """加载人名词表：一行一个全名、# 注释；缺失/为空回退内置词表。"""
+    p = Path(path) if path else PERSON_NAMES_PATH
+    names: list[str] = []
+    if p.exists():
+        for raw in p.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if line and not line.startswith("#"):
+                names.append(line)
+    if not names:
+        names = list(DEFAULT_PERSON_NAMES)
+    return tuple(names)
+
+
+def get_person_names() -> tuple[str, ...]:
+    """进程级缓存的人名词表（首次调用加载 config/person_names.txt）。"""
+    global _PERSON_CACHE
+    if _PERSON_CACHE is None:
+        _PERSON_CACHE = load_person_names()
+    return _PERSON_CACHE
+
+
+def set_person_names(names: tuple[str, ...]) -> None:
+    """测试/运维显式注入人名词表（绕过文件）。"""
+    global _PERSON_CACHE
+    _PERSON_CACHE = tuple(names) or DEFAULT_PERSON_NAMES
 
 
 # ── 内部：span 占用与 Finding 组装 ──────────────────────────────────
@@ -475,6 +536,26 @@ def detect(text: str, *, terms: tuple[str, ...] | None = None,
             findings.append(_finding(text, EntityClass.CLASSIFICATION_MARK,
                                      hit, hit + len(term), confidence=1.0))
             pos = hit + len(term)
+
+    # 11) PERSON（规则层 v0：词表精确匹配 → 姓氏启发式；审查 §A1/§F1——NER 接入
+    #     前的人名兜底，宁可多脱敏不漏脱敏。词表命中占位后启发式自动去重）
+    for name in get_person_names():
+        if not name:
+            continue
+        pos = 0
+        while (hit := text.find(name, pos)) != -1:
+            hit_end = hit + len(name)
+            if not _overlaps(hit, hit_end, taken):
+                findings.append(_finding(text, EntityClass.PERSON,
+                                         hit, hit_end, confidence=1.0))
+                taken.append((hit, hit_end))
+            pos = hit_end
+    for m in _PERSON_HEUR_RE.finditer(text):
+        if m.group(0) in _PERSON_HEUR_STOPWORDS or _overlaps(m.start(), m.end(), taken):
+            continue
+        findings.append(_finding(text, EntityClass.PERSON,
+                                 m.start(), m.end(), confidence=0.5))
+        taken.append((m.start(), m.end()))
 
     findings.sort(key=lambda f: (f.start, f.end, f.type.value))
     return findings

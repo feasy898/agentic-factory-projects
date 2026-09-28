@@ -322,7 +322,7 @@ def step_audit(ctx: dict[str, Any]) -> str:
         raise AssertionError(f"auth-step event: {auth_ok.reasons}/{auth_ok.class_counts}")
     if normal.route != "INTERNET" or normal.blocked or normal.dept != DEPT:
         raise AssertionError(f"normal event: {normal.route}/{normal.blocked}/{normal.dept}")
-    if normal.class_counts != {"ID_CARD": 1, "PHONE_MOBILE": 1}:
+    if normal.class_counts != {"ID_CARD": 1, "PHONE_MOBILE": 1, "PERSON": 1}:
         raise AssertionError(f"class_counts: {normal.class_counts}")
     if normal.reasons != ["SINGLE_STRUCTURED_PII"] or normal.upstream != "internet_mock":
         raise AssertionError(f"reasons/upstream: {normal.reasons}/{normal.upstream}")
@@ -342,7 +342,7 @@ def step_audit(ctx: dict[str, Any]) -> str:
         raise AssertionError(f"batch event: {batch.class_counts}/{batch.reasons}")
     if any(e.latency_ms < 0 for e in events):
         raise AssertionError("latency negative")
-    raw_values = [ID_OK, ID_B, ID_C, PHONE_B, "13800138002"]
+    raw_values = [ID_OK, ID_B, ID_C, PHONE_B, "13800138002", "张三", "机密★", "不得外传"]
     blob = "\n".join(e.prompt_preview + "\n" + e.response_preview for e in events).encode("utf-8")
     hits = [v for v in raw_values if v.encode("utf-8") in blob]
     if hits:
