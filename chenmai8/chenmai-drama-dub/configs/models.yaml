@@ -1,0 +1,266 @@
+# ============================================================================
+# 组件注册表（configs/models.yaml）—— T1 冻结字段结构
+# 命名纪律：本文件只使用中性内部名；上游对应关系仅存于内部台账，不入公开仓。
+#
+# 字段说明：
+#   task          组件职责
+#   langs         支持语种（ISO 639-1；multi=多语）
+#   device        部署设备：cpu | cuda:0 | cuda:1（两卡分工：#0=识别/翻译/合成，#1=口型）
+#   precision     推理精度。GPU 机为 Volta 架构（sm_70）：有 fp16、无 bf16，
+#                 全部推理不依赖重型服务化运行时，注意力实现固定 sdpa
+#   weights       权重缓存相对路径（models/ 不入公开仓；公开版只留占位+校验和）
+#   version       版本/commit 固化位 —— D1 冒烟后回填（以内部台账为准）
+#   fallback      按序降级链；为空 [] 表示无降级，失败如实记 FAIL
+#   volta_status  Volta 实测结论：pending | ok | degraded | fail（D1 冒烟回填）
+# ============================================================================
+
+schema_version: 1
+
+routing:
+  # 语种 → 合成引擎链（按序尝试）
+  tts:
+    en: [dub-tts, dub-tts-base, alt-tts-a, alt-tts-b]
+    es: [dub-tts, alt-tts-a, alt-tts-b]
+    ar: [dub-tts, alt-tts-b]
+  # 语种 → 翻译后端链
+  mt:
+    en: [mt-core, mt-api]
+    es: [mt-core, mt-api]
+    ar: [mt-core, mt-api]
+  # 字级对齐策略（主对齐器不含阿语 → 阿语走字符比例估算，MVP 内置）
+  align:
+    default: align-core
+    ar: align-proportional
+  # 口型分流（与 pipeline.yaml lip 参数配合；不合格镜头 none=原画）
+  lip:
+    default: none
+    frontal_closeup: lip-fast
+    top10pct: lip-pro
+
+components:
+  # ---- 识别 / 对齐 / 情绪 ----
+  asr-core:
+    task: asr-transcribe
+    langs: [zh]
+    device: cuda:0
+    precision: fp16
+    attn: sdpa
+    weights: models/asr-core/
+    version: TBD-D1
+    fallback: [asr-multi-fb]
+    volta_status: pending
+  asr-multi-fb:
+    task: asr-transcribe
+    langs: [multi]
+    device: cpu
+    precision: fp32
+    weights: models/asr-multi-fb/
+    version: TBD
+    fallback: []
+    volta_status: pending
+  align-core:
+    task: word-align
+    langs: [zh, en, yue, fr, de, it, ja, ko, pt, ru, es]
+    device: cuda:0
+    precision: fp16
+    attn: sdpa
+    weights: models/align-core/
+    version: TBD-D1
+    fallback: [align-proportional]
+    volta_status: pending
+  align-proportional:
+    task: word-align
+    langs: [ar]
+    device: cpu
+    precision: fp32
+    weights: null              # 内置算法（字符比例线性内插），无权重
+    version: builtin
+    fallback: []
+    volta_status: ok
+  emo-tag:
+    task: emotion-events       # 7 类情绪 + 声音事件（哭/笑/掌声/叹气）
+    langs: [zh, yue, en, ja, ko]
+    device: cuda:0
+    precision: fp16
+    weights: models/emo-tag/
+    version: TBD-D1
+    fallback: []
+    volta_status: pending
+
+  # ---- 说话人 / 视觉 ----
+  voxdia:
+    task: speaker-embedding    # 说话人嵌入 + 谱聚类（CAM++ 系中文优化，免注册）
+    langs: [zh]
+    device: cuda:0
+    precision: fp16
+    weights: models/voxdia/
+    version: TBD-D1
+    fallback: []
+    volta_status: pending
+  actspk:
+    task: active-speaker       # 每镜头在说话人判定
+    langs: [multi]
+    device: cuda:0
+    precision: fp16
+    weights: models/actspk/
+    version: TBD-D1
+    fallback: []
+    volta_status: pending
+  facemesh:
+    task: head-pose            # 正脸判定（俯仰/偏航阈值见 pipeline.yaml）
+    langs: [multi]
+    device: cpu
+    precision: fp32
+    weights: models/facemesh/
+    version: TBD
+    fallback: []
+    volta_status: ok
+  shot-cut:
+    task: shot-detection
+    langs: [multi]
+    device: cuda:0
+    precision: fp16
+    weights: models/shot-cut/
+    version: TBD-D1
+    fallback: []
+    volta_status: pending
+
+  # ---- 文字 ----
+  cap-ocr:
+    task: subtitle-ocr         # 硬字幕检测识别（CPU 可跑）
+    langs: [zh]
+    device: cpu
+    precision: fp32
+    weights: models/cap-ocr/
+    version: TBD-D1
+    fallback: []
+    volta_status: ok
+  cap-clean:
+    task: subtitle-erase       # 字幕擦除；修复算法默认 lama（备选待条款复核后登记）
+    langs: [multi]
+    device: cpu
+    precision: fp32
+    inpaint: lama
+    weights: models/cap-clean/
+    version: TBD
+    fallback: []
+    volta_status: pending
+
+  # ---- 音频 ----
+  audiosplit:
+    task: vocal-bgm-separation # 人声/背景分离（卡拉OK系分离模型为默认）
+    langs: [multi]
+    device: cpu                # --device cuda 可选
+    precision: fp32
+    weights: models/audiosplit/
+    version: TBD-D1
+    fallback: []
+    volta_status: pending
+  audmark:
+    task: audio-watermark      # 16-bit 负荷水印 + 检测
+    langs: [multi]
+    device: cpu
+    precision: fp32
+    weights: models/audmark/
+    version: TBD
+    fallback: []
+    volta_status: pending
+
+  # ---- 翻译 ----
+  mt-core:
+    task: translate            # 本地翻译主后端（含术语干预/背景信息/格式保留模板）
+    langs: [en, es, ar]
+    device: cuda:0
+    precision: fp16
+    attn: sdpa
+    weights: models/mt-core/
+    version: TBD-D1
+    fallback: [mt-api]
+    volta_status: pending
+  mt-api:
+    task: translate            # OpenAI 兼容 API 抽象层（兜底）；key 从环境变量注入，不落盘
+    langs: [en, es, ar]
+    device: remote
+    precision: null
+    weights: null
+    version: api
+    fallback: []
+    volta_status: na
+
+  # ---- 语音合成（音色参考与情绪参考分离）----
+  dub-tts:
+    task: tts                  # 主力：五语种；默认 bf16 —— Volta 无 bf16，启动须强制 fp32/fp16（D1 定案）
+    langs: [zh, en, ja, es, ar]
+    device: cuda:0
+    precision: fp32            # D1 冒烟定案（fp32/fp16 二选一），禁 bf16
+    weights: models/dub-tts/
+    version: TBD-D1
+    fallback: [dub-tts-base, alt-tts-a, alt-tts-b]
+    volta_status: pending
+  dub-tts-base:
+    task: tts                  # 上一代主力（fp16，仅 zh/en）
+    langs: [zh, en]
+    device: cuda:0
+    precision: fp16
+    weights: models/dub-tts-base/
+    version: TBD
+    fallback: []
+    volta_status: pending
+  alt-tts-a:
+    task: tts                  # 备选 A：es 等约 10 语种（无 ar）
+    langs: [en, es]
+    device: cuda:0
+    precision: fp16
+    weights: models/alt-tts-a/
+    version: TBD
+    fallback: []
+    volta_status: pending
+  alt-tts-b:
+    task: tts                  # 备选 B：30+ 语种含 ar；要求新运行时，Volta 兼容未声明（D1 冒烟）
+    langs: [multi]
+    device: cuda:1
+    precision: fp16
+    weights: models/alt-tts-b/
+    version: TBD
+    fallback: []
+    volta_status: pending
+
+  # ---- 口型 ----
+  lip-fast:
+    task: lip-sync             # 快口型：256×256 嘴区，官方实测 Volta 上 30fps+ 实时
+    langs: [multi]
+    device: cuda:1
+    precision: fp16
+    weights: models/lip-fast/
+    version: TBD-D1
+    fallback: []
+    volta_status: ok
+  lip-pro:
+    task: lip-sync             # 精口型：512×512，推理约 18GB，独占 cuda:1，只给重点镜头
+    langs: [multi]
+    device: cuda:1
+    precision: fp16
+    weights: models/lip-pro/
+    version: TBD-D1
+    fallback: [lip-pro-1.5, lip-fast]
+    volta_status: pending
+  lip-pro-1.5:
+    task: lip-sync             # 精口型降级版（256×256，约 8GB）
+    langs: [multi]
+    device: cuda:1
+    precision: fp16
+    weights: models/lip-pro-1.5/
+    version: TBD
+    fallback: [lip-fast]
+    volta_status: pending
+
+  # ---- 合规 ----
+  provenance:
+    task: content-credentials  # 内容凭证 manifest 注入与校验（双许可工具链，以 LICENSE 为准）
+    langs: [multi]
+    device: cpu
+    precision: null
+    weights: null
+    version: TBD
+    fallback: []
+    volta_status: na

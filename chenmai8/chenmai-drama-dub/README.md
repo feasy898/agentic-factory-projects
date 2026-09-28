@@ -17,8 +17,15 @@
 ```
 docs/      架构、数据 schema、模块契约、spec + eval
 pipeline/  管线编排与任务队列（音频/翻译/配音/口型/字幕/合规）
+configs/   管线常量、组件注册表（引擎路由与降级链）、角色音色映射
 dubmt/     时长可控翻译模型（数据合成与训练脚本）
 review/    Web 审校台
+tests/     契约与模块验收测试（pytest）
 ```
+
+**冻结契约（C1–C8）**：`pipeline/contracts.py` 是全项目唯一权威 schema（pydantic，
+2026-09-28 T1 冻结）：镜头表、单句事实表（核心）、角色卡、译文候选、合成计划、
+口型分流、AI 标识、市场合规报告。改动 schema 须走规划裁决，模块不得单方面扩展。
+命令行入口：`python -m pipeline.cli init|validate|run`（jobs 工作区生成 / 契约校验 / 编排占位）。
 
 > 详细模块规格与验收标准见 `docs/`，逐模块 spec+eval 驱动开发。

@@ -1,0 +1,45 @@
+# ============================================================================
+# 角色 → 音色参考映射（configs/voices.yaml）—— T1 模板
+# 与契约 C3 characters.json 的关系：本文件是**项目级默认模板**；
+# 每部剧人工确认一次（M5/审校台回写 05_cast/characters.json），各集复用。
+# ============================================================================
+
+schema_version: 1
+
+defaults:
+  engine: dub-tts              # 默认合成引擎（降级链见 models.yaml routing.tts）
+  emo_alpha_default: 0.7       # 情绪强度默认（实际按情绪识别分映射 0.5–0.85）
+  duration_factor_default: 1.0 # 语速因子初值（M8 在 0.9–1.1 内二分微调）
+  ref_dur_s_range: [10.0, 15.0]  # 音色参考时长要求（10–15s 干净人声）
+
+casts:
+  ep01:
+    note: 示例占位 —— 正式音色库由 M5 人工挑选参考音色后回填，勿直接用于生产
+    characters:
+      char_nan:
+        name: 程总
+        gender: m
+        voice_ref: 05_cast/voicebank/char_nan_ref.wav
+        ref_dur_s: 12.0
+        desc: 男主，世家出身，语气克制但压迫感强
+        terms:
+          en: Master Cheng
+          es: Sr. Cheng
+          ar: السيد تشنغ
+        consent_scope: 比赛演示
+      char_nv:
+        name: 女主
+        gender: f
+        voice_ref: 05_cast/voicebank/char_nv_ref.wav
+        ref_dur_s: 12.0
+        desc: 女主，外柔内韧，情绪爆发力强
+        terms: {}
+        consent_scope: 比赛演示
+      char_narrator:
+        name: 旁白
+        gender: u
+        voice_ref: 05_cast/voicebank/char_narrator_ref.wav
+        ref_dur_s: 12.0
+        desc: 旁白声线，沉稳叙事（文旅/古装素材用）
+        terms: {}
+        consent_scope: 比赛演示

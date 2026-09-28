@@ -1,0 +1,61 @@
+# ============================================================================
+# 管线常量（configs/pipeline.yaml）—— T1 冻结
+# 路径均相对本文件所在 configs/ 目录解析；clips/jobs/models 不入公开仓。
+# ============================================================================
+
+schema_version: 1
+
+paths:
+  jobs_dir: ../../jobs        # <项目根>/jobs（每集工作区，见 pipeline/scaffold.py）
+  clips_dir: ../../clips      # <项目根>/clips（自拍素材）
+  models_dir: ../../models    # <项目根>/models（权重缓存）
+
+media:
+  width: 1080
+  height: 1920
+  fps: 25
+  audio:
+    asr_sr: 16000             # 识别用单声道
+    mix_sr: 48000             # 成片混音用立体声
+
+label_zone:                   # AI 显式标识区（M11 擦除掩码必须排除此区域）
+  position: top-center
+  top_px: 60
+  height_px: 120
+  min_duration_s: 3.0
+  text: 本内容由AI生成
+
+erase_band:                   # 硬字幕擦除带（自拍素材字幕 y≈1500–1700，外扩留量）
+  y0_px: 1440
+  y1_px: 1780
+  expand_px: 4
+
+speed_window: [0.9, 1.1]      # 语速可接受窗（M8 duration_factor）
+atempo_max: 0.05              # 音频变速滤镜只做 ±5% 最终微调
+loudness_lufs: -16            # 响度归一目标（短剧平台惯例）
+
+budget:                       # 译文时长预算（C4.budget）
+  lo_ratio: 0.9
+  hi_ratio: 1.1
+  hit_target_mvp: 0.55        # 预算内命中率通过线（未训自研时长可控翻译前）
+  hit_target_lora: 0.75       # 自研 LoRA 后目标
+
+lip:                          # C6 分流参数
+  pro_top_ratio: 0.10         # 台词最长前 10% 升级精口型
+  frontal_yaw_deg: 25         # 头部姿态阈值 ±25°
+  min_face_height_ratio: 0.25 # 人脸框高度 ≥ 1/4 画幅
+
+channels:                     # 语种 → 市场规则包 / 字幕样式（引擎路由见 models.yaml）
+  en:
+    market: en-US
+    subs_align: left-bottom
+  es:
+    market: es-419
+    subs_align: left-bottom
+  ar:
+    market: ar-SA
+    subs_align: right-rtl     # 右对齐 + RTL shaping
+
+queue:                        # M14 任务队列
+  db_name: jobs.db
+  module_max_workers: 2
