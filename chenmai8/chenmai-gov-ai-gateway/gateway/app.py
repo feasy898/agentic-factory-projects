@@ -7,10 +7,14 @@
                                 x-anongw-route / x-anongw-request-id / x-anongw-session-id；
                                 流式成功另附 x-anongw-ai-label: 1（§6 M5，AI 生成标识头）
     GET  /v1/models             路由目标清单（脱敏视图，仅名字）
-    POST /internal/detect       {text} → findings（调试）
-    POST /internal/anonymize    {text, session_id} → 占位符版本（调试/演示对比屏）
-    POST /internal/restore      {text, session_id} → 还原版本（调试/演示对比屏）
+    POST /internal/detect       {text} → findings（调试；需部门 Key）
+    POST /internal/anonymize    {text, session_id} → 占位符版本（调试/演示对比屏；需部门 Key）
+    POST /internal/restore      {text, session_id} → 还原版本（调试/演示对比屏；需部门 Key）
     GET  /healthz               存活
+
+/internal/* 调试端点（审查 §A1）：复用与 /v1/chat/completions 同一部门 Key 鉴权
+（Authorization: Bearer <dept_key>），未命中 → 401——响应含 Finding.raw/还原原文，
+绝不无鉴权暴露；生产部署另须仅经本地管理面/内网访问（见 README 安全注记）。
 
 落库形态（T1.3）：不注入时审计走 SQLite 写队列（cfg.audit_db）、会话映射走
 SessionStore（cfg.session_db，TTL=cfg.session_ttl_h，lifespan 挂清理协程）——
@@ -211,6 +215,10 @@ def create_app(
 
     @app.post("/internal/detect")
     async def internal_detect(request: Request) -> JSONResponse:
+        if deps.authenticate(
+            deps.extract_bearer(request.headers.get("authorization")), digests,
+        ) is None:
+            return _error_response(401, CODE_UNAUTHORIZED, "无效部门 Key（Authorization: Bearer dk_***）")
         try:
             body = await request.json()
         except Exception:  # noqa: BLE001
@@ -224,6 +232,10 @@ def create_app(
 
     @app.post("/internal/anonymize")
     async def internal_anonymize(request: Request) -> JSONResponse:
+        if deps.authenticate(
+            deps.extract_bearer(request.headers.get("authorization")), digests,
+        ) is None:
+            return _error_response(401, CODE_UNAUTHORIZED, "无效部门 Key（Authorization: Bearer dk_***）")
         try:
             body = await request.json()
         except Exception:  # noqa: BLE001
@@ -249,6 +261,10 @@ def create_app(
 
     @app.post("/internal/restore")
     async def internal_restore(request: Request) -> JSONResponse:
+        if deps.authenticate(
+            deps.extract_bearer(request.headers.get("authorization")), digests,
+        ) is None:
+            return _error_response(401, CODE_UNAUTHORIZED, "无效部门 Key（Authorization: Bearer dk_***）")
         try:
             body = await request.json()
         except Exception:  # noqa: BLE001

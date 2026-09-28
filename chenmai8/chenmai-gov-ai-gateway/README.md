@@ -35,4 +35,9 @@ evals/      可执行验收入口（python -m evals.*，exit 0 = 通过）
 许可证字样；`ops/name_lint.py` 按 `ops/forbidden_names.txt` 词表把关，
 `python -m evals.m0_infra` 为基础设施验收入口。
 
+**安全注记**：`/v1/chat/completions` 与 `/internal/detect|anonymize|restore` 均需
+部门 Key（`Authorization: Bearer dk_***`）。`/internal/*` 为调试/演示端点，响应含
+识别明细与还原原文，生产环境只应经本机管理面（127.0.0.1）或受控内网访问，不得
+直接暴露公网。
+
 > 详细模块规格与验收标准见 `docs/`，逐模块 spec+eval 驱动开发。

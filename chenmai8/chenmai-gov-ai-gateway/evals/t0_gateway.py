@@ -371,19 +371,27 @@ def step_audit_raw_gate(ctx: dict[str, Any]) -> str:
 def step_internal_endpoints(ctx: dict[str, Any]) -> str:
     async def run() -> str:
         async with _gw_client(ctx["app"]) as client:
-            d = (await client.post("/internal/detect", json={"text": f"联系{PHONE_B}，证件{ID_OK}"})).json()
+            # 未带部门 Key → 401（审查 §A1：调试端点响应含 raw/还原原文，必须鉴权）
+            bare = await client.post("/internal/detect", json={"text": "联系13800138000"})
+            if bare.status_code != 401 or bare.json()["error"]["code"] != "unauthorized":
+                raise AssertionError(f"internal without key: {bare.status_code} {bare.text[:120]!r}")
+            headers = {"Authorization": f"Bearer {DEMO_KEY}"}
+            d = (await client.post("/internal/detect", json={"text": f"联系{PHONE_B}，证件{ID_OK}"},
+                                   headers=headers)).json()
             fids = [f["fid"] for f in d["findings"]]
             if fids != ["f_0001", "f_0002"] or d["findings"][0]["normalized"] != PHONE_B:
                 raise AssertionError(f"detect: {d}")
             a = (await client.post("/internal/anonymize",
-                                   json={"text": f"证件{ID_OK}", "session_id": "sess_internal"})).json()
+                                   json={"text": f"证件{ID_OK}", "session_id": "sess_internal"},
+                                   headers=headers)).json()
             if "〔身份证·" not in a["masked"] or not a["mappings"]:
                 raise AssertionError(f"anonymize: {a}")
             r = (await client.post("/internal/restore",
-                                   json={"text": a["masked"], "session_id": "sess_internal"})).json()
+                                   json={"text": a["masked"], "session_id": "sess_internal"},
+                                   headers=headers)).json()
             if r["restored"] != f"证件{ID_OK}":
                 raise AssertionError(f"restore: {r}")
-        return "detect fid auto-increment; anonymize/restore round-trip equal"
+        return "internal endpoints: 401 without dept key; detect fid auto-increment; anonymize/restore round-trip"
     return asyncio.run(run())
 
 
