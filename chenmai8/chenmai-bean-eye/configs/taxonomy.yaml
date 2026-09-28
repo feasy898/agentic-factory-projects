@@ -4,16 +4,16 @@
 # 本文件是 beaneye/taxonomy.py 的唯一数据源；全链路 defect 字段的合法
 # 取值 = classes 的 key。字段语义：
 #   kind             primary=主缺陷 | secondary=次缺陷 | normal=好豆
-#   counts_as_defect 是否计入缺陷计数（peaberry 计量不计缺陷，仅标注保留）
+#   counts_as_defect 是否计入缺陷计数（peaberry 计量不计缺陷，仅标注保留；
+#                    W13 修复：非缺陷类不参与「最严重缺陷」比较）
 #   verified         类别主/次归属与中/英文名是否已对照契约核定
 #   vi_verified      越南语译名是否经核对（当前全部 false，待回填）
 # severity_order：严重度默认序，0=normal，越靠后越严重；
 #                 各标准 YAML 可按原文覆盖自己的序。
-# upstream_mapping：单粒素材来源类别 → 本体系 key；来源用中性代号：
-#   poly12 : 12 类开源生豆缺陷多边形图集（主素材源）
-#   grade4 : 4 类开源等级图集（仅粒型素材参考）
-# 映射决策来自契约决策表（含括注：黑耳按原文归主缺陷；三角豆=胡椒粒豆）。
-# null = 明确不映射（不进训练映射）。
+# W13 公开树清理：upstream_mapping（素材来源类别 → 本体系 key）已移出到
+# 不入库内部文件 configs/upstream_mapping.internal.yaml（原标签属上游项目
+# 命名，不得随公开仓分发；loader 对含该节的 taxonomy 仍兼容）。加载器
+# （beaneye/taxonomy.py）支持任意来源代号的映射，目标 key 必须在 classes。
 # =====================================================================
 version: 1
 
@@ -34,28 +34,9 @@ classes:
 
 severity_order: [normal, broken, faded, brocade, immature, peaberry, shell, elephant, insect, dried, sour, mold, black]
 
-upstream_mapping:
-  poly12:
-    normal: normal
-    sour: sour
-    brocade: brocade
-    peaberry: peaberry
-    shell: shell
-    elephant: elephant
-    frozen: dried
-    black_ear: black
-    broken: broken
-    dry: dried
-    triangle: peaberry
-    black: black
-  grade4:
-    peaberry: peaberry
-    longberry: null
-    premium: null
-    defect: null
-
 notes:
   - severity_order 为契约默认序；不同标准可在标准 YAML 覆盖（不同标准可不同）。
   - peaberry 计量不计缺陷（counts_as_defect=false），但保留标注与严重度位次。
   - 越南语译名为占位（vi_verified=false），标准核对（D1）后回填并置 true。
-  - upstream_mapping 目标 key 必须存在于 classes；null 表示明确不映射。
+  - upstream_mapping 已移出不入库内部文件（configs/upstream_mapping.internal.yaml）；
+    含该节的 taxonomy 仍可加载，目标 key 必须存在于 classes，null 表示明确不映射。

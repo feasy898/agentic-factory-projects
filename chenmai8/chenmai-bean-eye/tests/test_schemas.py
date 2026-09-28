@@ -212,6 +212,68 @@ def test_batch_result_counts_mismatch_rejected():
 
 
 # ---------------------------------------------------------------------------
+# W13 修复：构造期校验补强（defect 查 taxonomy / side 一致 / 双面 cost≥0 /
+# 主次与 bean_count 一致 / color_lab 单一 lab8 标度）
+# ---------------------------------------------------------------------------
+
+
+def test_defect_must_be_taxonomy_key():
+    """defect 不在 taxonomy → ValidationError（原仅非空字符串约束）。"""
+    obs = bean_observation_top_017()
+    with pytest.raises(ValidationError, match="不在 taxonomy"):
+        _mutated(obs, {"defect": "unicorn_disease"})
+    # 全部 taxonomy key 均可构造（合法面）
+    tax = tax_mod.load_taxonomy()
+    for key in tax.keys():
+        rank = tax.severity_rank(key)
+        assert type(obs).model_validate(
+            {**obs.model_dump(mode="json"), "defect": key, "severity_rank": rank}
+        ).defect == key
+
+
+def test_side_must_match_mask_side():
+    obs = bean_observation_top_017()
+    with pytest.raises(ValidationError, match="mask.side"):
+        _mutated(obs, {"side": "bottom"})
+    with pytest.raises(ValidationError, match="mask.side"):
+        _mutated(obs, {"side": "bottom"}, nested="mask")
+
+
+def test_paired_bean_dual_side_negative_cost_rejected():
+    """双面豆 pairing_cost < 0 → ValidationError（-1 保留给单面/占位）。"""
+    b = paired_bean_b0002()  # 两面都在
+    with pytest.raises(ValidationError, match="pairing_cost 必须 >= 0"):
+        _mutated(b, {"pairing_cost": -1})
+    with pytest.raises(ValidationError, match="pairing_cost 必须 >= 0"):
+        _mutated(b, {"pairing_cost": -3.5})
+
+
+def test_batch_result_primary_secondary_bean_count_consistency():
+    """主/次分计与 bean_count 必须与豆列表一致（W13 契约校验）。"""
+    br: BatchResult = all_fixtures()["batch_result"]()
+    assert br.measurements.bean_count == len(br.beans) == 3
+    # peaberry（counts_as_defect=false）不计次缺陷：把 b0002 换成 peaberry 平级仍不计
+    with pytest.raises(ValidationError, match="主/次归属的分计"):
+        _mutated(br, {"primary_count": 0}, nested="grading")
+    with pytest.raises(ValidationError, match="主/次归属的分计"):
+        _mutated(br, {"secondary_count": 2}, nested="grading")
+    with pytest.raises(ValidationError, match="bean_count"):
+        _mutated(br, {"bean_count": 350}, nested="measurements")
+
+
+def test_color_lab_single_lab8_scale_rejected_out_of_range():
+    """color_lab 单一 lab8 标度：三通道 ∈[0,255]，CIE 量纲（a/b 可负）拒绝。"""
+    obs = bean_observation_top_017()
+    with pytest.raises(ValidationError, match="lab8"):
+        _mutated(obs, {"color_lab": [52.0, -10.0, 20.0]})  # CIE a<0
+    with pytest.raises(ValidationError, match="lab8"):
+        _mutated(obs, {"color_lab": [260.0, 128.0, 128.0]})  # L 越界
+    m = all_fixtures()["measurements"]()
+    with pytest.raises(ValidationError, match="lab8"):
+        _mutated(m, {"color_lab_mean": [52.1, -10.5, 20.3]})
+
+
+# ---------------------------------------------------------------------------
 # 不变式：「每粒只计最严重缺陷」
 # ---------------------------------------------------------------------------
 
@@ -292,14 +354,17 @@ def test_batch_result_grading_consistent_with_beans():
     """整盘级不变式：grading.defect_counts == 逐粒 final_defect 直方。"""
     br: BatchResult = all_fixtures()["batch_result"]()
     assert defect_counts_from_beans(br.beans) == br.grading.defect_counts == {"black": 1, "broken": 1}
-    # 主/次分计与 taxonomy 类别归属一致（black=primary, broken=secondary）
+    # 主/次分计与 taxonomy 类别归属一致（black=primary, broken=secondary；
+    # counts_as_defect=false 的 peaberry 不计，W13 契约校验同口径）
     tax = tax_mod.load_taxonomy()
     assert tax.get("black").kind == "primary" and tax.get("broken").kind == "secondary"
     assert br.grading.primary_count == sum(
-        1 for b in br.beans if tax.get(b.final_defect).kind == "primary"
+        1 for b in br.beans
+        if tax.is_valid_key(b.final_defect) and tax.get(b.final_defect).kind == "primary" and tax.get(b.final_defect).counts_as_defect
     )
     assert br.grading.secondary_count == sum(
-        1 for b in br.beans if tax.get(b.final_defect).kind == "secondary"
+        1 for b in br.beans
+        if tax.is_valid_key(b.final_defect) and tax.get(b.final_defect).kind == "secondary" and tax.get(b.final_defect).counts_as_defect
     )
 
 
@@ -357,19 +422,40 @@ def test_taxonomy_special_classes():
     assert "black" in tax.counting_defect_keys() and "peaberry" not in tax.counting_defect_keys()
 
 
-def test_taxonomy_upstream_mapping_targets_valid():
+def test_taxonomy_public_tree_carries_no_upstream_mapping():
+    """公开树不携带素材来源映射（W13 清理，评审 E 项）。
+
+    原标签属上游数据集命名，映射只留在不入库内部文件
+    ``configs/upstream_mapping.internal.yaml``（gitignore；内部素材管线用）。
+    公开 taxonomy 加载后 upstream_mapping 为空、map_upstream 一律 None。
+    """
     tax = tax_mod.load_taxonomy()
-    # 契约决策：frozen→dried, black_ear→black, triangle→peaberry, dry→dried
-    assert tax.map_upstream("poly12", "frozen") == "dried"
-    assert tax.map_upstream("poly12", "black_ear") == "black"
-    assert tax.map_upstream("poly12", "triangle") == "peaberry"
-    assert tax.map_upstream("poly12", "dry") == "dried"
-    assert len(tax.upstream_mapping["poly12"]) == 12  # 12 类全部登记
-    # 另一来源：仅粒型参考，defect 粗标不映射
-    assert tax.map_upstream("grade4", "peaberry") == "peaberry"
-    assert tax.map_upstream("grade4", "defect") is None
-    assert tax.map_upstream("grade4", "longberry") is None
-    assert tax.map_upstream("unknown_src", "x") is None
+    assert tax.upstream_sources() == []
+    assert tax.map_upstream("poly12", "any_label") is None
+    assert tax.map_upstream("grade4", "any_label") is None
+
+
+def test_taxonomy_upstream_mapping_targets_valid(tmp_path: Path):
+    """含 upstream_mapping 的 taxonomy 仍可加载：目标 key 必须在 classes、
+    null = 明确不映射、未登记来源 → None（loader 校验语义保留）。"""
+    good = tmp_path / "taxonomy.yaml"
+    good.write_text(
+        "version: 1\n"
+        "classes:\n"
+        "  normal: {kind: normal, zh: hao, en: normal, vi: x, counts_as_defect: false}\n"
+        "  black: {kind: primary, zh: hei, en: black, vi: x, counts_as_defect: true}\n"
+        "severity_order: [normal, black]\n"
+        "upstream_mapping:\n"
+        "  src_a: {up1: black, up2: null}\n"
+        "  src_b: {up1: normal}\n",
+        encoding="utf-8",
+    )
+    tax = tax_mod.load_taxonomy(good)
+    assert tax.map_upstream("src_a", "up1") == "black"
+    assert tax.map_upstream("src_a", "up2") is None
+    assert tax.map_upstream("src_b", "up1") == "normal"
+    assert tax.map_upstream("src_unknown", "up1") is None
+    assert set(tax.upstream_sources()) == {"src_a", "src_b"}
 
 
 def test_taxonomy_uncertain_items_marked_unverified():

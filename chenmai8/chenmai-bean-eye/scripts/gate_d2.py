@@ -5,7 +5,7 @@
 本脚本用**系统 Python** 运行（不要求已激活 venv、不限定 cwd），
 内部自行定位仓库根，并统一改用项目 .venv 解释器执行子检查（与 gate_d1 同约定）。
 
-四项检查（任何一项 FAIL → 总退出码 1）：
+五项检查（任何一项 FAIL → 总退出码 1）：
   ① scripts/doctor.py 以 .venv python 运行且退出码 0
   ② .venv python -m pytest tests/ 全绿（含 D1 契约 test_schemas 与本批
      W2/W3/W6/W7 新测试；退出码 0）
@@ -17,11 +17,17 @@
      （对应开发指令 §4 各模块 "eval: pytest tests/test_<pkg>.py -q"；
       入口文件缺失按该模块 FAIL 计）
   ④ 中性名扫描零命中：对 git 跟踪的文本文件全文本扫描上游名清单
-     （§5 开源件锚点 + 数据集/论文来源名，模式见 UPSTREAM_NAME_PATTERNS），
-     命中即 FAIL。豁免名单 INTERNAL_ALLOWLIST 仅收录**按 D-3/§6 定义的
-     内部版文件**（requirements 钉版注释、环境装配、OSS 冒烟、数据集
-     下载器/解锁说明——它们记录上游锚点是设计使然，D9 出公开仓时整体
-     不随迁）；产品面（beaneye/ tests/ configs/ docs/ README 等）零豁免。
+     （§5 开源件锚点 + 数据集/论文来源名 + 素材映射原标签，模式见
+     UPSTREAM_NAME_PATTERNS），命中即 FAIL。豁免名单 INTERNAL_ALLOWLIST
+     仅收录**按 D-3/§6 定义的内部版文件**（requirements 钉版注释、环境
+     装配、OSS 冒烟、数据集下载器/解锁说明——它们记录上游锚点是设计使然，
+     D9 出公开仓时整体不随迁）；产品面（beaneye/ tests/ configs/ docs/
+     README 等）零豁免。
+  ⑤ 禁止 IO 扫描（W13 修复，评审 D 项）：产品代码不得出现
+     ``cv2.imwrite(`` / ``cv2.imread(``（非 ASCII 路径静默失败）与
+     ``np.fromfile(``（Windows 上同样不安全）——图像读写一律走
+     ``beaneye.acquisition.base`` 的 ``imread_bgr``/``imwrite_bgr``
+     （imencode/imdecode 字节缓冲）。命中即 FAIL。
 
 用法（Git Bash / cmd / PowerShell 均可，任意 cwd）：
     python D:/workspace/澄迈8项目/咖啡豆质检/repo/scripts/gate_d2.py
@@ -59,7 +65,7 @@ MODULE_EVALS: list[tuple[str, str, str]] = [
 # ④ 上游名清单（内部维护；D9 的 scripts/name_audit.py 将按 oss-manifest 全量接管）。
 # 短词用 \b 词边界防误伤（usk/sahi/yolo 等），长 distinctive 词直接子串匹配。
 # 覆盖：检测/分割 NN、SAM2、增强、标注复核、切片、向量库、LLM 服务/权重、
-#       检索嵌入、数据集主辅源、论文出处、模型托管方。
+#       检索嵌入、数据集主辅源、论文出处、模型托管方、素材映射原标签（W13）。
 UPSTREAM_NAME_PATTERNS: list[str] = [
     r"rf-?detr",                # 检测/分割 NN（中性名 beaneye-det）
     r"roboflow",                # 数据集托管（含 universe.roboflow.com）
@@ -84,6 +90,14 @@ UPSTREAM_NAME_PATTERNS: list[str] = [
     r"\busk\b",                 # 数据集辅源（USK-COFFEE）
     r"\bmdpi\b",                # 数据集论文出处
     r"huggingface",             # 模型托管方（含 facebook/sam2-* 模型 id 前缀）
+    # -- W13 修复：素材映射原标签组（评审 E 项）——公开树只允许留在
+    #    不入库内部文件 configs/upstream_mapping.internal.yaml（gitignore），
+    #    data/datasets/README.md 与 download_datasets.py 属内部豁免件
+    r"\bfrozen\b(?!=)",         # dataclass(frozen=True) 是合法 Python，(?!=) 排除
+    r"\bblack_ear\b",
+    r"\btriangle\b",
+    r"\blongberry\b",
+    r"\bpremium\b",
 ]
 
 # ④ 豁免：内部版文件（D-3/§6 —— 内部文件可写开源名；D9 出公开仓时不随迁）。
@@ -108,6 +122,16 @@ BINARY_SUFFIXES = {".png", ".jpg", ".jpeg", ".webp", ".gif", ".bmp", ".ico",
                    ".zip", ".gz", ".7z", ".pdf", ".exe", ".dll", ".pd_"}
 
 _SCAN_RE = re.compile("|".join(UPSTREAM_NAME_PATTERNS), re.IGNORECASE)
+
+# ⑤ 禁止的图像 IO 调用（评审 D 项：中文路径下 cv2 直读直写会静默失败、
+#    np.fromfile 在 Windows 同样不可靠）。def line 上必须出现这些字符串才能扫描，
+#    本闸门自身已在 INTERNAL_ALLOWLIST 豁免。
+FORBIDDEN_IO_PATTERNS: list[str] = [
+    r"cv2\.imwrite\(",
+    r"cv2\.imread\(",
+    r"np\.fromfile\(",
+]
+_FORBIDDEN_IO_RE = re.compile("|".join(FORBIDDEN_IO_PATTERNS))
 
 
 def _child_env() -> dict[str, str]:
@@ -241,6 +265,39 @@ def check_neutral_names() -> tuple[bool, str]:
     )
 
 
+def check_forbidden_io() -> tuple[bool, str]:
+    """检查 ⑤ 禁止 IO 零命中（cv2.imwrite / cv2.imread / np.fromfile）。"""
+    tracked = _git_tracked_files()
+    if tracked is None:
+        return False, "git ls-files 失败（需在 git 仓库内运行）"
+
+    hits: list[str] = []
+    n_scanned = 0
+    for path in tracked:
+        rel = path.relative_to(ROOT).as_posix()
+        if rel in INTERNAL_ALLOWLIST:
+            continue
+        if path.suffix.lower() in BINARY_SUFFIXES or not path.is_file():
+            continue
+        try:
+            raw = path.read_bytes()
+        except OSError:
+            continue
+        if b"\x00" in raw[:8192]:
+            continue
+        text = raw.decode("utf-8", errors="replace")
+        n_scanned += 1
+        for m in _FORBIDDEN_IO_RE.finditer(text):
+            line_no = text.count("\n", 0, m.start()) + 1
+            hits.append(f"{rel}:{line_no}: \"{m.group(0)}\"")
+
+    if hits:
+        shown = "\n  ".join(hits[:20])
+        more = f"\n  ...（共 {len(hits)} 处命中）" if len(hits) > 20 else ""
+        return False, f"命中 {len(hits)} 处禁止 IO：\n  {shown}{more}"
+    return True, f"命中 0；扫描 {n_scanned} 个文本文件，模式 {len(FORBIDDEN_IO_PATTERNS)} 条（{', '.join(FORBIDDEN_IO_PATTERNS)}）"
+
+
 def main() -> int:
     print("== BeanEye D2 闸门（gate_d2）==")
     print(f"仓库根: {ROOT}")
@@ -258,6 +315,7 @@ def main() -> int:
         results.append(("② pytest tests/ 全绿", False, skip))
         results.append(("③ 模块 eval 入口 W3/W6/W7/W2 逐个 exit 0", False, skip))
     results.append(("④ 中性名扫描零命中", *check_neutral_names()))
+    results.append(("⑤ 禁止 IO 扫描零命中", *check_forbidden_io()))
 
     failed = 0
     for name, ok, detail in results:
@@ -268,9 +326,9 @@ def main() -> int:
 
     print("----------------------------")
     if failed == 0:
-        print("GATE D2: PASS (4/4)")
+        print(f"GATE D2: PASS ({len(results)}/{len(results)})")
         return 0
-    print(f"GATE D2: FAIL ({failed}/4 项未通过)")
+    print(f"GATE D2: FAIL ({failed}/{len(results)} 项未通过)")
     return 1
 
 

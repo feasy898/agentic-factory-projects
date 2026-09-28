@@ -1,7 +1,13 @@
 """缺陷分类体系加载器（M1 · 契约附件）
 
 唯一数据源：``configs/taxonomy.yaml``。全链路 ``defect`` 字段的合法取值、
-严重度默认序、素材来源类别映射都从这里读。
+严重度默认序都从这里读。
+
+W13 公开树清理：素材来源类别映射（``upstream_mapping``）已移出到不入库
+内部文件（``configs/upstream_mapping.internal.yaml``，含上游数据集原生
+标签，不得随公开仓分发）。公开 taxonomy 不含该节时 ``upstream_mapping``
+为空、``map_upstream`` 一律返回 None；内部管线可用含该节的 taxonomy 文件
+按原语义加载（目标 key 必须在 classes，null = 明确不映射）。
 
 用法::
 
@@ -10,7 +16,6 @@
     tax = load_taxonomy()
     tax.severity_rank("black")   # -> 12
     tax.is_valid_key("black")    # -> True
-    tax.map_upstream("poly12", "frozen")  # -> "dried"
 """
 
 from __future__ import annotations
