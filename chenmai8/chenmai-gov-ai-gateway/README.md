@@ -16,13 +16,23 @@
 
 ```
 docs/       架构、数据 schema、模块契约、spec + eval
+config/     主配置（app.yaml / dept_keys.yaml）与依赖自检清单
+common/     配置加载、结构化日志等跨模块基础设施
 gateway/    OpenAI 兼容网关与流式还原
 recognizers/ 三层识别引擎
 masking/    可逆脱敏
 routing/    敏感度路由策略
+outguard/   输出侧防护（AI 标识、拦截文案、代答）
 filechannel/ 文档解析与彻底删除导出
 audit/      审计日志与看板
 benchmark/  合成测评集与基线对比
+webui/      演示前端页面
+ops/        运维工具：名称守卫、克隆脚本、e2e 冒烟、公开导出
+evals/      可执行验收入口（python -m evals.*，exit 0 = 通过）
 ```
+
+**公开仓库卫生**：代码、注释、README 一律使用中性名，不出现任何上游开源项目名与
+许可证字样；`ops/name_lint.py` 按 `ops/forbidden_names.txt` 词表把关，
+`python -m evals.m0_infra` 为基础设施验收入口。
 
 > 详细模块规格与验收标准见 `docs/`，逐模块 spec+eval 驱动开发。

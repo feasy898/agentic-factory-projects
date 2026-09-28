@@ -16,6 +16,7 @@ build/
 # Env & secrets
 .env
 .env.*
+!.env.example
 *.key
 secrets/
 

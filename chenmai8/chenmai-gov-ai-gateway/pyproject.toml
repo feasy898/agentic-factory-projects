@@ -1,0 +1,77 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gov-anon-gateway"
+version = "0.1.0"
+description = "政务 AI 安全网关：识别-可逆脱敏-敏感度路由-审计 一体化代理层"
+readme = "README.md"
+requires-python = ">=3.12"
+# 依赖版本以本文件为安装入口、constraints.txt 为冻结真相（pip freeze 产物）。
+# 版本钉子依据内部核实表（plan/oss-manifest.md，内部文件不进仓库）：
+#   pypdfium2 5.13.* / pikepdf 10.14.* / PyMuPDF 1.28.* / onnxruntime 1.30.* / faker 40.*
+dependencies = [
+  "fastapi>=0.115",
+  "uvicorn[standard]>=0.30",
+  "httpx>=0.27",
+  "pydantic>=2.7,<3",
+  "pyyaml>=6.0.1",
+  "jinja2>=3.1.4",
+  "python-multipart>=0.0.9",
+  "python-docx>=1.1.2",
+  "openpyxl>=3.1.5",
+  "pypdfium2==5.13.*",
+  "pikepdf==10.14.*",
+  "PyMuPDF==1.28.*",
+  "faker==40.*",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3",
+  "pytest-asyncio>=0.24",
+  "ruff>=0.6",
+]
+ocr = [
+  "rapidocr>=3,<4",
+  "onnxruntime==1.30.*",
+]
+ml = [
+  "transformers>=4.51,<5",
+  "torch>=2.4,<3",
+  "accelerate>=1.0,<2",
+]
+# 基线对比用（D6 安装，默认不装；会拖入很重的传递依赖）
+bench = [
+  "presidio-analyzer==2.2.364",
+]
+# 可选集成演示（P2，默认不装）：litellm==1.103.*
+
+[tool.setuptools.packages.find]
+include = [
+  "common*",
+  "gateway*",
+  "recognizers*",
+  "masking*",
+  "routing*",
+  "outguard*",
+  "filechannel*",
+  "audit*",
+  "benchmark*",
+  "webui*",
+  "ops*",
+  "evals*",
+  "tests*",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,17 @@
+# 主配置（字段即契约，开发指令 §8.7；字段只增不改名）
+# 密钥类值一律不入本文件：只写环境变量名（mask_key_env / api_key_env），
+# 运行时经 common.config.resolve_secret() 解析。
+# 环境变量覆盖：顶层键 K 可用 ANONGW_<K大写> 覆盖（如 ANONGW_LISTEN=9001）。
+listen: 9000
+mask_key_env: MASK_KEY
+session_ttl_h: 24
+upstreams:
+  - {name: internet_mock, base_url: "http://127.0.0.1:8901/v1", api_key_env: MOCK_KEY, models: [mock-chat], route: INTERNET}
+  - {name: govcloud_local, base_url: "http://127.0.0.1:8902/v1", api_key_env: MOCK_KEY, models: [gov-chat], route: GOVCLOUD}
+  # - {name: internet_real, base_url: "https://open.bigmodel.cn/api/paas/v4", api_key_env: UPSTREAM_BIGMODEL_KEY, models: [glm-4-flash], route: INTERNET}
+ai_label: "本内容由AI生成"
+thresholds: {batch_pii_to_govcloud: 3}
+# 语义审核模型（D4 接入）：HF/魔搭路径只允许写在这里，README/代码不出现模型名
+moderation_model: ""
+# PDF 导出引擎（D3 决策点）：库名只允许写在这里，源码经 importlib 动态加载
+# pdf_engine_module: pikepdf
