@@ -1,0 +1,6 @@
+{
+  "name": "@pf/tmpl-merge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "合成玩法模板（M3 占位）"
+}

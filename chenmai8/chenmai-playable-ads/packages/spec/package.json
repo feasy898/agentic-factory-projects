@@ -1,0 +1,6 @@
+{
+  "name": "@pf/spec",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PlayableSpec 模式定义、TS 类型与示例（M1 占位）"
+}

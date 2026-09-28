@@ -1,0 +1,10 @@
+{
+  "name": "@pf/packager",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "配置驱动的多渠道打包器（M4 占位）",
+  "bin": {
+    "pf-packager": "bin.mjs"
+  }
+}

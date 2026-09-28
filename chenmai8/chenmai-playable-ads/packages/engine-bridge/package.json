@@ -1,0 +1,6 @@
+{
+  "name": "@pf/engine-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "渠道运行时桥：注入退出接口与静音策略（M2 占位，零上游运行时依赖）"
+}

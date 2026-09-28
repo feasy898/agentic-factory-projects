@@ -14,12 +14,23 @@
 **仓库结构（建设中）**
 
 ```
-docs/       架构、PlayableSpec schema、模块契约、spec + eval
-templates/  玩法模板
-builder/    配置→构建→渠道打包
-assets/     素材处理流水线
-qa/         自动质检器
-web/        操作界面与预览
+packages/       Node 侧（npm workspaces，TS）
+  spec/           PlayableSpec 模式与类型
+  engine-bridge/  渠道运行时桥
+  templates/      玩法模板（三消 / 合成 / 拔针 / 排序）
+  packager/       配置驱动的多渠道打包器
+python/         Python 侧（统一 venv）
+  pfcore/         编排 CLI（validate / build / run / pack）
+  llmgw/          LLM 网关抽象层
+  director/       截图 / 录屏 → Spec 草稿（演示级）
+  qacore/         无头自动质检器
+  assetkit/       素材处理流水线
+channel-rules/  渠道规则库（包形态 / 大小线 / 退出接口）
+assets-cc0/     开源授权素材与字体
+specs-eval/     验收基准 spec
+artifacts/      构建产物（不入库）
+webui/          操作界面与预览
+scripts/        端到端验证脚本
 ```
 
 > 详细模块规格与验收标准见 `docs/`，逐模块 spec+eval 驱动开发。

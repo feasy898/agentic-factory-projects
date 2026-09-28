@@ -37,3 +37,9 @@ Thumbs.db
 *.log
 tmp/
 out/
+
+# 构建产物（不入库，演示兜底产物单独处理）
+artifacts/
+
+# 本机才存在的上游参考 clone（法务红线：不入公开仓）
+_vendor/

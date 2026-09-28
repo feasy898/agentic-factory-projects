@@ -1,0 +1,15 @@
+{
+  "name": "playable-factory",
+  "version": "0.1.0",
+  "private": true,
+  "description": "试玩广告生产线：模板 + PlayableSpec + 多渠道打包 + 自动质检",
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "ajv": "8.20.0",
+    "esbuild": "0.28.2",
+    "sharp": "0.35.5",
+    "typescript": "7.0.2"
+  }
+}
