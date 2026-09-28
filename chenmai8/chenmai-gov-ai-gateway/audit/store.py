@@ -33,7 +33,7 @@ class RawPiiLeakError(ValueError):
     """零明文断言失败：审计面出现了本应被脱敏的原值。
 
     ``kind``：``masked_finding``（单事件 preview 命中）｜ ``db_file_scan``
-    （库文件 bytes 级扫描命中）。
+    （库文件 bytes 级扫描命中）｜ ``truncated_sensitive``（截断点切中敏感串）。
     """
 
     def __init__(self, kind: str) -> None:
@@ -41,16 +41,69 @@ class RawPiiLeakError(ValueError):
         super().__init__(f"audit leaks raw value (gate={kind})")
 
 
-def assert_no_raw_pii(event: AuditEvent, normalized_values: Iterable[str]) -> None:
-    """零明文硬闸：preview 逐字符包含任一本请求 normalized 原值即抛错。
+#: preview 截断上限（与 audit.models.AuditEvent.prompt_preview/response_preview
+#: 的 max_length 同源；改模型上限时同步此处）
+PREVIEW_LIMIT = 500
 
-    断言面 = prompt_preview + response_preview（§5.4 口径：reasons 只存理由码、
-    class_counts 只存类别计数，不含原值）。白名单值不在断言清单内（合法保留）。
+#: 截断边界守护的最小敏感串长度（更短的串做「切中」判定误报面过大，不参与）
+TRUNCATION_GUARD_MIN_LEN = 4
+
+
+def assert_no_raw_pii(event: AuditEvent, normalized_values: Iterable[str],
+                      surface_forms: Iterable[str] = ()) -> None:
+    """零明文硬闸：preview 逐字符包含任一敏感值即抛错。
+
+    - ``normalized_values``：归一化值（``13900139000``）；
+    - ``surface_forms``：同一请求敏感实体的**表面形式**（``139 0013 9000``）——
+      只查归一化串时分隔符写法会对不上而绕闸，故调用方必须两类合并传入
+      （网关管线把两集合合并进 ``normalized_values`` 一个参数，写库层零改动）；
+    - 截断边界守护：长度恰为 :data:`PREVIEW_LIMIT` 的 preview（盲截形态）若
+      以任一敏感串的 ≥:data:`TRUNCATION_GUARD_MIN_LEN` 字符前缀结尾，判定
+      截断点切中敏感串 → :class:`RawPiiLeakError("truncated_sensitive")`。
+      经 :func:`safe_preview` 回退截断的 preview 短于上限，天然不触发。
     """
+    values = [v for v in (*normalized_values, *surface_forms) if v]
     blob = "\n".join((event.prompt_preview, event.response_preview))
-    for value in normalized_values:
-        if value and value in blob:
+    for value in values:
+        if value in blob:
             raise RawPiiLeakError("masked_finding")
+    for preview in (event.prompt_preview, event.response_preview):
+        if len(preview) != PREVIEW_LIMIT:
+            continue
+        for value in values:
+            if len(value) <= TRUNCATION_GUARD_MIN_LEN:
+                continue
+            for k in range(min(len(value) - 1, len(preview)), TRUNCATION_GUARD_MIN_LEN - 1, -1):
+                if preview.endswith(value[:k]):
+                    raise RawPiiLeakError("truncated_sensitive")
+
+
+def safe_preview(text: str, forbidden: Iterable[str], limit: int = PREVIEW_LIMIT) -> str:
+    """截断到 ``limit`` 字符，且截断点不得落在任一敏感串内部。
+
+    某敏感串的出现区间横跨截断点时，把截断点回退到该串起点（宁可少留不可留
+    半截）；回退可能使更早的串重新横跨新截断点，故循环到不再变化为止。
+    短于 ``limit`` 的文本原样返回（无截断即无切中）。
+    """
+    if len(text) <= limit:
+        return text
+    cut = limit
+    values = [v for v in forbidden if v]
+    changed = True
+    while changed:
+        changed = False
+        for value in values:
+            start = 0
+            while True:
+                idx = text.find(value, start, cut + len(value) - 1)
+                if idx < 0:
+                    break
+                if idx < cut < idx + len(value):
+                    cut = idx
+                    changed = True
+                    break
+                start = idx + 1
+    return text[:cut]
 
 
 def scan_db_files(db_path: str | Path) -> bytes:
