@@ -26,6 +26,13 @@ import {
   TEX_HAND,
   TEX_JELLY,
 } from "./textures.ts";
+import {
+  AUDIT_MAD_MAX,
+  decodeToCanvas,
+  meanAbsDiff,
+  sample16,
+  type ReplacedSprite,
+} from "./assets.ts";
 
 const BG_COLOR = 0x141b34;
 
@@ -37,6 +44,10 @@ interface CellSprites {
 export class Match3Scene extends engine.Scene {
   private readonly spec: NormalizedSpec;
   private readonly pf: PFGlobal;
+  /** 用户替换贴图（最小素材路径）：create() 先注册，再走程序化生成（自动跳过已存在键）。 */
+  private readonly replacedSprites: ReplacedSprite[];
+  /** 已渲染到画布的文案集合（__PF_QC__.texts() 上报；画布文字不进 DOM）。 */
+  private readonly seenTexts = new Set<string>();
 
   private board!: Board;
   private texKeys: string[] = [];
@@ -71,13 +82,15 @@ export class Match3Scene extends engine.Scene {
   private movesText: any = null;
   private progressText: any = null;
   private progressBar: any = null;
+  private titleText: any = null;
   private t: (key: string) => string;
   private audio: GameAudio | null = null;
 
-  constructor(spec: NormalizedSpec, pf: PFGlobal) {
+  constructor(spec: NormalizedSpec, pf: PFGlobal, replacedSprites: ReplacedSprite[] = []) {
     super("main");
     this.spec = spec;
     this.pf = pf;
+    this.replacedSprites = replacedSprites;
     this.t = makeT(spec, pf.locale);
   }
 
@@ -85,6 +98,11 @@ export class Match3Scene extends engine.Scene {
 
   create(): void {
     const p = this.spec.params;
+    // 最小素材路径：先注册用户替换贴图（gem-N 已存在时 createTextures 自动
+    // 跳过程序化生成——"声明并嵌入即替换，未声明即程序化回退"）。
+    for (const r of this.replacedSprites) {
+      if (!this.textures.exists(r.texKey)) this.textures.addCanvas(r.texKey, r.canvas);
+    }
     this.texKeys = createTextures(this, p);
     this.audio = createGameAudio(this.pf.audio);
 
@@ -221,6 +239,11 @@ export class Match3Scene extends engine.Scene {
 
   // ---------------------------------------------------------------- HUD
 
+  /** 登记已渲染文案（画布文字不进 DOM，质检经 __PF_QC__.texts() 读取）。 */
+  private track(t: any): void {
+    if (t) this.seenTexts.add(String(t.text));
+  }
+
   private buildHud(): void {
     this.movesText = this.add
       .text(0, 0, "", {
@@ -239,6 +262,16 @@ export class Match3Scene extends engine.Scene {
       })
       .setDepth(10);
     this.progressBar = this.add.graphics().setDepth(9);
+    // 标题上屏（反馈行动 3：评委改 spec 标题要看得见）。
+    this.titleText = this.add
+      .text(0, 0, "", {
+        fontFamily: "Arial, sans-serif",
+        fontSize: "10px",
+        color: "#ffd166",
+        fontStyle: "bold",
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(10);
     this.buildHudPositions();
   }
 
@@ -250,6 +283,11 @@ export class Match3Scene extends engine.Scene {
     const fontSize = Math.max(26, Math.round(w * 0.07));
     this.movesText.setFontSize(fontSize).setPosition(pad, h * 0.03);
     this.progressText.setFontSize(fontSize).setPosition(w - pad, h * 0.03);
+    this.titleText
+      .setFontSize(Math.max(14, Math.round(w * 0.042)))
+      .setPosition(w / 2, h * 0.03 + 6)
+      .setText(this.spec.title);
+    this.track(this.titleText);
     this.updateHud();
   }
 
@@ -262,6 +300,8 @@ export class Match3Scene extends engine.Scene {
         ? `${Math.min(this.progress, p.goalCount)}/${p.goalCount}`
         : `${this.score}/${p.goalCount}`;
     this.progressText.setText(shown);
+    this.track(this.movesText);
+    this.track(this.progressText);
     const w = this.scale.width;
     const pad = Math.max(16, w * 0.05);
     const barW = w - pad * 2;
@@ -301,6 +341,7 @@ export class Match3Scene extends engine.Scene {
         wordWrap: { width: w * 0.8 },
       })
       .setOrigin(0.5);
+    this.track(label);
     this.tutorialGroup.add([dim, label]);
     this.showTutorialMarkers();
 
@@ -739,6 +780,7 @@ export class Match3Scene extends engine.Scene {
       })
       .setOrigin(0.5)
       .setDepth(52);
+    this.track(title);
 
     const nodes: any[] = [dim, panel, title];
     if (this.spec.endScreen.showScore) {
@@ -750,6 +792,7 @@ export class Match3Scene extends engine.Scene {
         })
         .setOrigin(0.5)
         .setDepth(52);
+      this.track(scoreText);
       nodes.push(scoreText);
     }
 
@@ -771,6 +814,7 @@ export class Match3Scene extends engine.Scene {
       })
       .setOrigin(0.5)
       .setDepth(53);
+    this.track(ctaLabel);
     const ctaZone = this.add
       .zone(w / 2, ctaY, ctaW * 1.3, ctaH * 1.6)
       .setOrigin(0.5)
@@ -796,6 +840,54 @@ export class Match3Scene extends engine.Scene {
   }
 
   // ---------------------------------------------------------------- QC 钩子
+
+  /** __PF_QC__.texts()：已渲染到画布的全部文案集合（画布文字不进 DOM，
+   *  qacore 的 CHK10 靠本钩子取证"指定文案确实上屏"）。 */
+  textsSeen(): string[] {
+    return Array.from(this.seenTexts);
+  }
+
+  /** __PF_QC__.assets()：替换素材像素对账。对每个替换贴图，把"引擎实际渲染
+   *  的贴图源"与"构建期内联的用户 PNG"经同一 contain-fit 管线降采样到 16×16，
+   *  比平均绝对差：≤ AUDIT_MAD_MAX 判 replaced（替换生效），否则给出原因。
+   *  无替换素材的构建返回 []。 */
+  async assetAudit(): Promise<
+    Array<{ texKey: string; spriteKey: string; mad: number | null; replaced: boolean; reason?: string }>
+  > {
+    const assets = (window as any).PF_ASSETS as Record<string, string> | undefined;
+    const out: Array<{
+      texKey: string; spriteKey: string; mad: number | null; replaced: boolean; reason?: string;
+    }> = [];
+    for (const r of this.replacedSprites) {
+      const entry: { texKey: string; spriteKey: string; mad: number | null; replaced: boolean; reason?: string } = {
+        texKey: r.texKey,
+        spriteKey: r.spriteKey,
+        mad: null,
+        replaced: false,
+      };
+      try {
+        if (!this.textures.exists(r.texKey)) {
+          entry.reason = "贴图未注册（引擎纹理管理器无该键）";
+        } else if (!assets || typeof assets[r.spriteKey] !== "string") {
+          entry.reason = "window.PF_ASSETS 缺该键（非嵌入构建？）";
+        } else {
+          const src = this.textures.get(r.texKey).getSourceImage() as CanvasImageSource;
+          const userCanvas = await decodeToCanvas(assets[r.spriteKey]);
+          const mad = meanAbsDiff(sample16(src), sample16(userCanvas));
+          entry.mad = Math.round(mad * 10) / 10;
+          if (mad <= AUDIT_MAD_MAX) {
+            entry.replaced = true;
+          } else {
+            entry.reason = `渲染贴图与用户 PNG 的 16×16 平均差 ${entry.mad} > 阈值 ${AUDIT_MAD_MAX}（疑似程序化贴图）`;
+          }
+        }
+      } catch (err: any) {
+        entry.reason = `对账异常：${err?.message ?? err}`;
+      }
+      out.push(entry);
+    }
+    return out;
+  }
 
   /** __PF_QC__.hint()：当前最优下一步的真实坐标（视口 CSS 像素）。 */
   hint(): { x: number; y: number; type: string } | null {

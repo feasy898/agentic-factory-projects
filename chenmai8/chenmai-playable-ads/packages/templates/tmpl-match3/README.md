@@ -21,8 +21,19 @@
 - **`window.__PF_QC__`**：`hint(): {x,y,type}|null`（type ∈ `swap-up/down/left/right`，
   坐标为视口 CSS 像素；QC 用真实 pointer 事件拖拽即可推动最优线）；
   `state(): "loading|tutorial|playing|end"`（直读 `PF.phase()`）；
-  附加 `endScreenVisible()`（非契约成员，仅 QC 结束页可见性断言用）。
+  附加 `endScreenVisible()`（非契约成员，仅 QC 结束页可见性断言用）、
+  `texts()`（已渲染到画布的文案集合——画布文字不进 DOM，CHK10 文案取证走本钩子）、
+  `assets()`（替换素材像素对账：渲染贴图 vs 内联用户 PNG，16×16 平均绝对差 ≤8 判 replaced）。
 - **静音策略走 engine-bridge**：一切音频经 `PF.audio` 创建（首交互前 muted）。
+
+## 用户 PNG 替换棋子（最小素材路径，反馈行动 3-③）
+
+`spec.assets.sprites` 里**文件真实存在**的键（png/jpg/webp/gif，相对 spec 目录或仓库根解析）
+在构建期被读出并以 data URI 内联进 `window.PF_ASSETS`；运行期解码、contain 等比归一到
+96×96 画布后注册为该棋子色号的贴图（`createTextures` 对已存在的贴图键自动跳过程序化生成）。
+**声明并嵌入即替换；未声明/缺失/解码失败即程序化回退**（构建日志告警，不阻塞）。
+真实嵌入清单写旁车 `<out>.assets.json`（make 据此给 CHK10 传 `--require-sprite`，
+QC 在页面内做像素对账——`assets()` 上报 `mad/replaced`）。压图/图集/字体子集仍属 assetkit。
 
 ## 可玩性保证（模板交付物，非 QC 作弊）
 
@@ -52,5 +63,6 @@ npm run build        # 默认 golden spec → artifacts/preview/match3.html
 npm run typecheck
 ```
 
-预览产物自包含：贴图运行时程序化生成（无图片文件），音效为内置 WAV data URI，
-字体用系统字体（M5 assetkit 字体子集接入后替换）。
+预览产物自包含：未替换的贴图运行时程序化生成，被 `spec.assets.sprites` 命中的棋子在构建期
+内联用户 PNG（见上节），音效为内置 WAV data URI，字体用系统字体（M5 assetkit 字体子集
+接入后替换）。

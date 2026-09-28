@@ -6,9 +6,15 @@
 //   node build.mjs [--spec <path>] [--out <path>] [--locale <tag>] [--no-minify]
 //
 // 默认：--spec specs-eval/golden-match3.json --out artifacts/preview/match3.html
-// 产物自包含：贴图由引擎运行时程序化生成，音效为代码内置的 WAV data URI。
+// 产物自包含：未替换的贴图由引擎运行时程序化生成，音效为代码内置的 WAV data URI。
+//
+// 最小素材路径（反馈行动 3-③）：spec.assets.sprites 里文件真实存在的键，其
+// PNG/JPG/WebP/GIF 在构建期读出并以 data URI 内联进 window.PF_ASSETS（运行期
+// 替换同键棋子的程序化贴图）；缺失/格式不支持的键打警告并继续（运行期回退
+// 程序化贴图）。真实嵌入清单同步写旁车 `<out>.assets.json`（make 据此给
+// qacore CHK10 传 --require-sprite）。
 
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import process from "node:process";
@@ -16,6 +22,47 @@ import { build } from "esbuild";
 
 const PKG_DIR = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(PKG_DIR, "../../..");
+
+const ASSET_MIME = {
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".gif": "image/gif",
+};
+
+/** 解析 spec.assets.sprites 的相对路径：先相对 spec 文件目录，再相对仓库根。 */
+function resolveAssetPath(rel, specDir) {
+  for (const base of [specDir, REPO_ROOT]) {
+    const abs = path.resolve(base, rel);
+    if (existsSync(abs)) return abs;
+  }
+  return null;
+}
+
+/** 构建期内联素材：返回 (内联 data URI 表, 真实嵌入清单)。 */
+function buildAssetMap(spec, specDir) {
+  const sprites = (spec.assets && spec.assets.sprites) || {};
+  const map = {};
+  const manifest = [];
+  for (const [key, rel] of Object.entries(sprites)) {
+    if (typeof rel !== "string" || !rel) continue;
+    const abs = resolveAssetPath(rel, specDir);
+    if (!abs) {
+      console.warn(`[tmpl-match3] 警告: 素材文件缺失，跳过嵌入（运行期回退程序化贴图）: ${key}=${rel}`);
+      continue;
+    }
+    const mime = ASSET_MIME[path.extname(abs).toLowerCase()];
+    if (!mime) {
+      console.warn(`[tmpl-match3] 警告: 不支持的素材格式（仅 png/jpg/webp/gif）: ${key}=${rel}`);
+      continue;
+    }
+    const bytes = readFileSync(abs);
+    map[key] = `data:${mime};base64,${bytes.toString("base64")}`;
+    manifest.push({ spriteKey: key, path: rel, bytes: bytes.length });
+  }
+  return { map, manifest };
+}
 
 function parseArgs(argv) {
   const o = { spec: path.join(REPO_ROOT, "specs-eval", "golden-match3.json"),
@@ -56,6 +103,7 @@ async function main() {
 
   const localeTag = o.locale || (spec.i18n && spec.i18n.defaultLocale) || "en";
   const title = (spec.meta && spec.meta.title) || "Playable";
+  const { map: assetMap, manifest } = buildAssetMap(spec, path.dirname(path.resolve(o.spec)));
   const html = `<!doctype html>
 <html lang="${localeTag}">
 <head>
@@ -70,7 +118,7 @@ async function main() {
 </head>
 <body>
 <div id="app"></div>
-<script>window.PF_SPEC=${escapeForInlineScript(JSON.stringify(spec))};window.PF_LOCALE=${JSON.stringify(localeTag)};</script>
+<script>window.PF_SPEC=${escapeForInlineScript(JSON.stringify(spec))};window.PF_LOCALE=${JSON.stringify(localeTag)};window.PF_ASSETS=${escapeForInlineScript(JSON.stringify(assetMap))};</script>
 <script>${js}</script>
 </body>
 </html>
@@ -78,7 +126,15 @@ async function main() {
 
   mkdirSync(path.dirname(o.out), { recursive: true });
   writeFileSync(o.out, html, "utf8");
+  // 旁车清单：本次构建真实嵌入的素材（零嵌入也写出空清单——"没嵌"本身就是事实）
+  writeFileSync(
+    `${o.out}.assets.json`,
+    JSON.stringify({ spec: path.basename(o.spec), locale: localeTag, sprites: manifest }, null, 2) + "\n",
+    "utf8",
+  );
   const kb = (Buffer.byteLength(html, "utf8") / 1024).toFixed(1);
+  const embedded = manifest.map((m) => `${m.spriteKey}=${m.path}(${m.bytes}B)`).join(", ") || "无（程序化贴图）";
+  console.log(`[tmpl-match3] 素材嵌入: ${embedded}`);
   console.log(`[tmpl-match3] 构建完成: ${o.out} (${kb}KB, spec=${path.basename(o.spec)}, locale=${localeTag})`);
 }
 

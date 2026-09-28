@@ -1,19 +1,29 @@
 // 模板入口：装配 engine-bridge 的 window.PF → 等渠道就绪 → 启动渲染引擎 →
-// 挂载 window.__PF_QC__（hint/state，契约 §4.2）。spec 由构建时内联的
-// window.PF_SPEC 提供（预览/单文件产物），渠道经 PF_CHANNEL / 全局探测识别。
+// 挂载 window.__PF_QC__（hint/state/texts/assets，契约 §4.2）。spec 由构建时
+// 内联的 window.PF_SPEC 提供（预览/单文件产物），渠道经 PF_CHANNEL / 全局探测
+// 识别；window.PF_ASSETS 为构建期内联的用户替换素材（最小素材路径，可缺省）。
 
 import { initBridge, type PFGlobal } from "@pf/engine-bridge";
 import * as engine from "./vendor/engine.js";
 import { normalizeSpec } from "./spec.ts";
+import { decodeReplacedSprites, type ReplacedSprite } from "./assets.ts";
 import { Match3Scene } from "./game.ts";
 
 declare global {
   interface Window {
     PF_SPEC?: unknown;
+    /** 构建期内联的用户替换素材（spriteKey → data URI）；无替换时为空对象。 */
+    PF_ASSETS?: Record<string, string>;
     __PF_QC__?: {
       hint: () => { x: number; y: number; type: string } | null;
       state: () => string;
       endScreenVisible?: () => boolean;
+      /** 已渲染到画布的文案集合（画布文字不进 DOM，innerText 取不到）。 */
+      texts?: () => string[];
+      /** 替换素材像素对账（渲染贴图 vs 内联用户 PNG），无替换素材时为 []。 */
+      assets?: () => Promise<
+        Array<{ texKey: string; spriteKey: string; mad: number | null; replaced: boolean; reason?: string }>
+      >;
     };
   }
 }
@@ -31,10 +41,17 @@ let scene: any = null;
   hint: () => (scene ? scene.hint() : null),
   state: () => pf.phase(),
   endScreenVisible: () => (scene ? scene.endScreenVisible() : false),
+  texts: () => (scene && typeof scene.textsSeen === "function" ? scene.textsSeen() : []),
+  assets: () => (scene && typeof scene.assetAudit === "function" ? scene.assetAudit() : Promise.resolve([])),
 };
 
-function boot(): void {
-  scene = new Match3Scene(spec, pf); // 供 __PF_QC__ 闭包引用
+async function boot(): Promise<void> {
+  // 最小素材路径：解码构建期内联的用户 PNG（可缺省——纯程序化构建无此对象）。
+  const replaced: ReplacedSprite[] = await decodeReplacedSprites(
+    (window as any).PF_ASSETS,
+    spec.params,
+  );
+  scene = new Match3Scene(spec, pf, replaced); // 供 __PF_QC__ 闭包引用
   const game = new engine.Game({
     type: engine.AUTO,
     parent: "app",
