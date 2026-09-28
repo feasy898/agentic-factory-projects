@@ -16,8 +16,10 @@ outguard_texts: config/outguard_texts.yaml
 thresholds: {batch_pii_to_govcloud: 3}
 # 语义审核模型（D4 接入）：HF/魔搭路径只允许写在这里，README/代码不出现模型名
 moderation_model: ""
-# PDF 导出引擎（D3 决策点）：库名只允许写在这里，源码经 importlib 动态加载
-# pdf_engine_module: <部署方按环境配置>
+# PDF 清理引擎（T3.3 文件通道；库名只允许写在这里，源码经 importlib 动态加载）。
+# 引擎适配面（filechannel/pdf_engine.py）：文本抽取 / 串检索定位 / 涂删重写；
+# 留空 = PDF 导出报「引擎未配置」明确错误（体检不受影响）。
+pdf_engine_module: pymupdf
 # 审计/会话映射库文件（T1.3；相对路径按仓库根解析）。两库必须分文件：
 # 审计库要过 bytes 级全文件零明文扫描（§9 U5），masking_map 必须存归一化原值才能还原。
 audit_db: data/audit.db

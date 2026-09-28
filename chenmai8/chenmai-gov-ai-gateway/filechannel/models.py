@@ -26,7 +26,8 @@ class FileFinding(BaseModel):
     """带物理定位的文件内命中。
 
     ``page`` 为 1 起始页码；``bbox`` 为 PDF 文本坐标 ``[x0, y0, x1, y1]``
-    （仅 pdf/scan_pdf 提供）；``location`` 为增补字段（§6 M6 要求单元格/段落定位）：
+    （render 坐标系：原点左上、y 轴向下、单位 pt；仅 pdf/scan_pdf 提供）；
+    ``location`` 为增补字段（§6 M6 要求单元格/段落定位）：
     xlsx 形如 ``Sheet1!B3``，docx 形如 ``para:5`` / ``table:2:r1:c3``。
     """
 

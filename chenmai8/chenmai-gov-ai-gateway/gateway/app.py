@@ -1,6 +1,6 @@
-"""网关 FastAPI 应用（骨架 v0）：/v1/chat/completions 非流式+流式 + 调试/健康端点。
+"""网关 FastAPI 应用（骨架 v0）：/v1/chat/completions 非流式+流式 + 文件通道 + 调试/健康端点。
 
-端点（§5.6，v0 实装子集；文件/管理面端点由对应任务补全）::
+端点（§5.6，实装子集；管理面端点由 T5.1 补全）::
 
     POST /v1/chat/completions   OpenAI 兼容（``stream=true`` 走 SSE 流式）；鉴权
                                 Authorization: Bearer <dept_key>；响应附
@@ -8,9 +8,15 @@
                                 成功回答另附 x-anongw-ai-label: 1（§6 M5，AI 生成标识头，
                                 流式随 SSE 头、非流式同头）
     GET  /v1/models             路由目标清单（脱敏视图，仅名字）
+    POST /v1/files/inspect      multipart 上传 → FileReport JSON（T3.3 文件通道；
+                                详见 filechannel/service.py 鉴权面说明——报告 raw 为
+                                上传者自带文件内容回显，演示模式不做部门 Key 鉴权）
+    POST /v1/files/export       multipart 上传 + ``mode=sanitize`` → 清理后文件流，
+                                响应头附 ``X-Report-Id``（导出前体检报告 id）
     POST /internal/detect       {text} → findings（调试；需部门 Key）
     POST /internal/anonymize    {text, session_id} → 占位符版本（调试/演示对比屏；需部门 Key）
     POST /internal/restore      {text, session_id} → 还原版本（调试/演示对比屏；需部门 Key）
+    GET  /webui, /webui/files   演示页（M9 体检页骨架，webui/pages.py 挂载）
     GET  /healthz               存活
 
 /internal/* 调试端点（审查 §A1）：复用与 /v1/chat/completions 同一部门 Key 鉴权
@@ -20,7 +26,8 @@
 落库形态（T1.3）：不注入时审计走 SQLite 写队列（cfg.audit_db）、会话映射走
 SessionStore（cfg.session_db，TTL=cfg.session_ttl_h，lifespan 挂清理协程）——
 生产与注入两种形态见 :func:`create_app` 文档。
-请求体上限：Content-Length > 网关上限即 413（畸形输入用例由 e2e 任务补全）。
+请求体上限：Content-Length > 网关上限即 413（畸形输入用例由 e2e 任务补全）；
+文件通道上限 50MB（evals.thresholds.FILE_SIZE_MAX_BYTES，§6 M6）。
 流式语义（§6 M1/T0.5）：BLOCK / 上游不可达 / 上游协议错误在开流前决出，
 返回普通 JSON 错误信封；开流后为 ``text/event-stream``，AI 标识以内容尾注 +
 finish chunk ``annotations`` 元数据注入（gateway/sse.py 组合管线）。
@@ -31,10 +38,11 @@ import asyncio
 from contextlib import asynccontextmanager
 from datetime import timedelta
 from pathlib import Path
-from typing import Any
+from typing import Annotated, Any
+from urllib.parse import quote
 
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi import FastAPI, File, Form, Request, UploadFile
+from fastapi.responses import JSONResponse, Response, StreamingResponse
 
 from audit.store import AuditSink, RawPiiLeakError
 from audit.writer import SqliteAuditWriter
@@ -46,7 +54,9 @@ from common.config import (
     resolve_secret,
 )
 from common.logs import get_logger
-from evals.thresholds import GATEWAY_BODY_MAX_BYTES
+from evals.thresholds import FILE_SIZE_MAX_BYTES, GATEWAY_BODY_MAX_BYTES
+from filechannel.errors import DocumentParseError, FileTooLargeError, UnsupportedFileType
+from filechannel.service import BadModeError, ExportBlockedError, FileService
 from gateway import deps
 from gateway.models import ApiError, ErrorBody
 from gateway.pipeline import (
@@ -65,10 +75,21 @@ log = get_logger(__name__)
 #: 会话 TTL 清理协程的运行间隔（秒）
 CLEANUP_INTERVAL_S = 300.0
 
+#: 文件通道错误码（§5.6 错误信封复用面；413/400/422 映射见 filechannel/errors.py 口径）
+CODE_UNSUPPORTED_FILE = "unsupported_file_type"
+CODE_FILE_PARSE = "file_parse_error"
+CODE_EXPORT_BLOCKED = "export_blocked"
+
 
 def _error_response(status_code: int, code: str, message: str) -> JSONResponse:
     return JSONResponse(ApiError(error=ErrorBody(code=code, message=message)).model_dump(),
                         status_code=status_code)
+
+
+def _content_disposition(filename: str) -> str:
+    """附件下载头：ASCII 兜底名 + RFC 5987 UTF-8 扩展名（报头仅允许 latin-1 字节）。"""
+    ascii_name = filename.encode("ascii", "replace").decode("ascii").replace('"', "_")
+    return f"attachment; filename=\"{ascii_name}\"; filename*=UTF-8''{quote(filename)}"
 
 
 def resolve_db_path(p: str | Path) -> Path:
@@ -115,6 +136,7 @@ def create_app(
                                 ttl=timedelta(hours=cfg.session_ttl_h))
     service = GatewayService(cfg, mask_key, audit_store=audit, registry=registry,
                              outguard=outguard)
+    files = FileService(cfg)
 
     @asynccontextmanager
     async def lifespan(_: FastAPI):
@@ -137,6 +159,7 @@ def create_app(
     app.state.dept_key_digests = digests
     app.state.audit = audit
     app.state.session_registry = registry
+    app.state.file_service = files
 
     @app.get("/healthz")
     async def healthz() -> dict[str, Any]:
@@ -151,6 +174,68 @@ def create_app(
             for model in upstream.models
         ]
         return {"object": "list", "data": data}
+
+    @app.post("/v1/files/inspect")
+    async def files_inspect(request: Request,
+                            file: Annotated[UploadFile, File(...)]) -> JSONResponse:
+        """multipart 上传 → 公开前体检报告（§5.5 FileReport JSON）。
+
+        体积双闸：Content-Length 预检 + 实读字节复核（均 413）；
+        种类不识别/解析失败 → 400 错误信封（code 见 §5.6 复用面）。
+        """
+        try:
+            content_length = int(request.headers.get("content-length", "0") or "0")
+        except ValueError:
+            content_length = 0
+        if content_length > FILE_SIZE_MAX_BYTES:
+            return _error_response(413, CODE_PAYLOAD_TOO_LARGE,
+                                   f"文件超过上限 {FILE_SIZE_MAX_BYTES} 字节")
+        data = await file.read()
+        try:
+            report = files.inspect_bytes(file.filename or "", data)
+        except FileTooLargeError:
+            return _error_response(413, CODE_PAYLOAD_TOO_LARGE,
+                                   f"文件超过上限 {FILE_SIZE_MAX_BYTES} 字节")
+        except UnsupportedFileType as exc:
+            return _error_response(400, CODE_UNSUPPORTED_FILE, str(exc))
+        except DocumentParseError as exc:
+            return _error_response(422, CODE_FILE_PARSE, str(exc))
+        except Exception:  # noqa: BLE001 — 兜底 500（不泄漏内部细节）
+            log.error("files.inspect.unhandled_error", extra={"exc_type": "InternalError"})
+            return _error_response(500, CODE_INTERNAL_ERROR, "internal error")
+        return JSONResponse(report.model_dump())
+
+    @app.post("/v1/files/export")
+    async def files_export(
+            file: Annotated[UploadFile, File(...)],
+            mode: Annotated[str, Form()] = "sanitize") -> Response:
+        """multipart 上传 + ``mode=sanitize`` → 删除式清理后的文件流（§5.6）。
+
+        响应头：``X-Report-Id`` = 导出前体检报告 id（FileService 登记表可查）；
+        ``Content-Disposition`` = sanitized_<原文件名>。命中无法物理定位时 422
+        export_blocked（宁可阻止不可漏删）。
+        """
+        data = await file.read()
+        try:
+            result = files.export_bytes(file.filename or "", data, mode)
+        except BadModeError as exc:
+            return _error_response(400, CODE_BAD_REQUEST, str(exc))
+        except FileTooLargeError:
+            return _error_response(413, CODE_PAYLOAD_TOO_LARGE,
+                                   f"文件超过上限 {FILE_SIZE_MAX_BYTES} 字节")
+        except UnsupportedFileType as exc:
+            return _error_response(400, CODE_UNSUPPORTED_FILE, str(exc))
+        except DocumentParseError as exc:
+            return _error_response(422, CODE_FILE_PARSE, str(exc))
+        except ExportBlockedError as exc:
+            return _error_response(422, CODE_EXPORT_BLOCKED, str(exc))
+        except Exception:  # noqa: BLE001
+            log.error("files.export.unhandled_error", extra={"exc_type": "InternalError"})
+            return _error_response(500, CODE_INTERNAL_ERROR, "internal error")
+        return Response(content=result.data, media_type=result.content_type, headers={
+            "X-Report-Id": result.report.file_id,
+            "Content-Disposition": _content_disposition(result.download_name),
+        })
 
     @app.post("/v1/chat/completions")
     async def chat_completions(request: Request) -> JSONResponse:
@@ -279,8 +364,13 @@ def create_app(
             return _error_response(400, CODE_BAD_REQUEST, "'text' must be a string")
         session_id = body.get("session_id")
         if not isinstance(session_id, str) or not session_id:
-            return _error_response(400, CODE_BAD_REQUEST, "'session_id' must be a non-empty string")
+            session_id = deps.new_session_id()
         mapper = service.registry.get(session_id)
         return JSONResponse({"session_id": session_id, "restored": mapper.restore(body["text"])})
+
+    # 演示前端（M9，无框架 Jinja2 + 原生 JS；体检页骨架先行，其余页面 T5.2 补全）
+    from webui.pages import mount as mount_webui  # noqa: PLC0415 — 延迟导入避免环
+
+    mount_webui(app)
 
     return app

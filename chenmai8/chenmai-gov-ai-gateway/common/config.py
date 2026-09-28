@@ -64,6 +64,10 @@ class AppConfig(BaseModel):
     session_db: str = "data/session_map.db"
     # 拦截代答/拒答文案库（T2.2 outguard；相对路径按仓库根解析；缺失回落内置默认）
     outguard_texts: str = "config/outguard_texts.yaml"
+    # PDF 清理库模块名（T3.3 文件通道）：真实库名只允许写 config/（铁律 E），
+    # 源码经 importlib 按本配置动态加载、不得硬编码；留空 = 仅体检可用、
+    # PDF 导出报「引擎未配置」明确错误。
+    pdf_engine_module: str = ""
 
 
 def _override_from_env(data: dict[str, Any], env: Mapping[str, str]) -> dict[str, Any]:
