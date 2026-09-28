@@ -1,10 +1,10 @@
 """契约测试运行器。
 
 用法：
-  python tools/run_contract.py                     # 契约测试跑参考实现
-  python tools/run_contract.py --impl-dir regen/round1 [--modules diagnosis,paper]
-                                                  # 契约测试跑重生成实例
-退出码：0=全部通过，1=有失败（供工作流 world.run 门控使用）。
+  python tools/run_contract.py                     # 契约测试跑参考实现（全部模块）
+  python tools/run_contract.py --impl-dir regen/round1 --modules diagnosis,paper
+                                                  # 只注入指定模块的重生成实例，只跑其契约测试
+退出码：0=全部通过，非0=有失败（供工作流 world.run 门控使用）。
 """
 import argparse
 import os
@@ -14,21 +14,42 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(
 
 import pytest
 
+MODULE_TEST_FILES = {
+    "kpgraph": ["test_kpgraph_contract.py"],
+    "itembank": ["test_itembank_contract.py"],
+    "diagnosis": ["test_diagnosis_contract.py"],
+    "paper": ["test_paper_contract.py"],
+    "scheduler": ["test_scheduler_pedagogy_contract.py"],
+    "pedagogy": ["test_scheduler_pedagogy_contract.py"],
+    "route": ["test_route_contract.py"],
+    "agent_shell": ["test_agent_shell_contract.py"],
+}
+
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--impl-dir", default="", help="重生成实现所在目录；留空则测参考实现")
-    ap.add_argument("--modules", default="kpgraph,itembank,diagnosis,paper,scheduler,pedagogy,route,agent_shell")
+    ap.add_argument("--modules", default=",".join(MODULE_TEST_FILES))
     args = ap.parse_args()
 
+    mods = [m.strip() for m in args.modules.split(",") if m.strip()]
+    unknown = [m for m in mods if m not in MODULE_TEST_FILES]
+    if unknown:
+        print(f"unknown modules: {unknown}")
+        return 2
+
+    pytest_args = []
     if args.impl_dir:
         os.environ["XX_IMPL_DIR"] = os.path.abspath(args.impl_dir)
-        os.environ["XX_MODULES"] = args.modules
+        os.environ["XX_MODULES"] = ",".join(mods)
+        test_files = sorted({f for m in mods for f in MODULE_TEST_FILES[m]})
+        pytest_args = [f"tests/contract/{f}" for f in test_files]
     else:
         os.environ.pop("XX_IMPL_DIR", None)
         os.environ.pop("XX_MODULES", None)
+        pytest_args = ["tests/contract"]
 
-    rc = pytest.main(["tests/contract", "-q", "--disable-warnings", "-p", "no:cacheprovider"])
+    rc = pytest.main(pytest_args + ["-q", "--disable-warnings", "-p", "no:cacheprovider"])
     return int(rc)
 
 
