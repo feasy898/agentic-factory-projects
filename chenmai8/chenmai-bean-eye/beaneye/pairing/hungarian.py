@@ -29,9 +29,14 @@ spec（plan/开发指令.md §4 M6）：
    更近，纯逐对距离不可分辨。两遍法：第一遍匈牙利粗配对 → 对成对位移
    ``top质心 - bottom质心`` 取逐分量中位数（对少数错配/伪观测鲁棒）得
    残差 ``mu``；当 ``|mu| >= 1mm`` 且粗配对 ≥8 对时，把 top 坐标平移
-   ``-mu`` 后重解（门限语义不变）。已知极限：若多数观测呈规则点阵且
-   偏移接近点阵间距的整分数，中位数会锁到错误模式——真实随机豆盘不
-   会出现该构型；此局限如实记录，不在 v1 处理。
+   ``-mu`` 后重解（门限语义不变）。**第二遍只有严格变优才替换第一遍**
+   （W13 修复）：比较口径 = 在矫正坐标系下重评两解（先比对数、再比总
+   距离，见 :func:`_second_pass_wins`）——只要不变优就保留第一遍，防
+   「中位数锁错模」的第二遍把本来就对的配对改坏。已知极限：若多数观测
+   呈规则点阵且偏移接近点阵间距的整分数，中位数会锁到错误模式（W13
+   之前误判「真实随机豆盘不会出现」——密排盘恰恰接近该构型，见
+   tests/test_pairing.py 的密排/透视用例）；劣化守卫只能阻止第二遍
+   变差，不能修正第一遍已锁错的方向，此局限如实记录。
 
 ``pairing_cost`` 语义：返回**配对判定坐标系**下的距离（无配准残差时即
 质心原始欧氏距离；有残差时为矫正后距离，两者相差 ≤ |mu|）。
@@ -122,6 +127,37 @@ def robust_shift_mm(displacements: Sequence[tuple[float, float]]) -> tuple[float
     return float(np.median(arr[:, 0])), float(np.median(arr[:, 1]))
 
 
+def _second_pass_wins(
+    pairs_first: list[tuple[int, int, float]],
+    pairs_corrected: list[tuple[int, int, float]],
+    txy: np.ndarray,
+    bxy: np.ndarray,
+    mu: tuple[float, float],
+) -> bool:
+    """第二遍（矫正坐标系）解是否**严格优于**第一遍解在同一坐标系下的重评。
+
+    比较口径（W13 修复引入的劣化守卫）：把第一遍的配对也放到矫正坐标系
+    （top 坐标 - mu）下重算距离，然后按「先比对数（多者优先）、再比总
+    距离（小者优先）」的字典序比较；不变优（含完全相等）即返回 False，
+    保留第一遍结果。两个解都在同一坐标系下比较，整体平移对二者影响相同，
+    不会系统性偏袒任何一方。
+    """
+    if not pairs_corrected:
+        return False
+    mu_vec = np.asarray(mu, dtype=float)
+
+    def _key(pairs: list[tuple[int, int, float]], *, corrected: bool) -> tuple[int, float]:
+        total = 0.0
+        for r, c, d in pairs:
+            if corrected:
+                total += float(d)  # 第二遍的 d 本就是矫正坐标系距离
+            else:
+                total += float(np.linalg.norm((txy[r] - mu_vec) - bxy[c]))
+        return (len(pairs), -round(total, 9))
+
+    return _key(pairs_corrected, corrected=True) > _key(pairs_first, corrected=False)
+
+
 def _solve_assignment(
     txy: np.ndarray, bxy: np.ndarray, gate_mm: float
 ) -> list[tuple[int, int, float]]:
@@ -184,7 +220,10 @@ def pair_observations(
             )
             if mu is not None and math.hypot(*mu) >= _REG_MIN_SHIFT_MM:
                 corrected = _solve_assignment(txy - np.asarray(mu), bxy, cfg.gate_mm)
-                if corrected:
+                # W13 修复：第二遍只有严格变优才替换（劣化守卫，见模块 docstring
+                # 与 _second_pass_wins）——原实现「只要有解就覆盖」会把中位数锁
+                # 错模后的坏矫正强加给本来就对的配对
+                if corrected and _second_pass_wins(pairs, corrected, txy, bxy, mu):
                     pairs = corrected
 
     matched_top = {r for r, _, _ in pairs}
