@@ -1,0 +1,74 @@
+{
+ "task": "T3 GPU smoke (D1)",
+ "generated_at": "2026-09-28T17:48:36",
+ "machine": "anolis-gpu-01 / 2x Tesla V100S-PCIE-32GB (Volta sm_70), GPU index 1 used",
+ "driver": "570.133.20",
+ "env": {
+  "python": "3.11.6",
+  "torch": "2.5.1+cu118",
+  "torch_cuda_build": "11.8",
+  "cuda_available": true,
+  "gpu": "Tesla V100S-PCIE-32GB",
+  "transformers": "4.52.1",
+  "venv": "/data/xdng/venv",
+  "note_downloads": "HF_ENDPOINT=https://hf-mirror.com; pypi index switched to Aliyun mirror (Tsinghua mirror actively blocks this machine IP: 'you've been denied access')",
+  "note_bf16": "Volta has no BF16; bf16 explicitly never enabled"
+ },
+ "items": [
+  {
+   "item": "1-dub-tts-fp32",
+   "model": "dub-tts",
+   "dtype": "fp32",
+   "ok": true,
+   "seconds": 5.57,
+   "artifact_path": "/data/xdng/smoke/artifacts/dub-tts_fp32.wav",
+   "error": null,
+   "env_note": "engine default path (use_bf16=False); torch 2.5.1+cu118 / transformers 4.52.1; text_normalization=False (WeTextProcessing/pynini not installable from CN pip); bigvgan weights pre-placed at model_dir/hf_cache/bigvgan via hf-mirror; emotion assets (conformer_shaw + qwen0.6b) auto-cached on first load; 8s mono ref wav"
+  },
+  {
+   "item": "1-dub-tts-fp16",
+   "model": "dub-tts",
+   "dtype": "fp16",
+   "ok": false,
+   "seconds": 0.0,
+   "artifact_path": null,
+   "error": "v2.5 API does not expose fp16 (use_bf16 only; bf16 forbidden on Volta): TypeError: IndexTTS2.__init__() got an unexpected keyword argument 'use_fp16'",
+   "env_note": "v2.5 constructor exposes only use_bf16 (fp32/bf16); fp16 switch does not exist -> engine-level limitation, not a Volta failure; bf16 forbidden on Volta (sm_70)"
+  },
+  {
+   "item": "2-lip-fast",
+   "model": "lip-fast",
+   "dtype": "fp16",
+   "ok": true,
+   "seconds": 41.0,
+   "artifact_path": "/data/xdng/smoke/artifacts/lip-fast_v15.mp4",
+   "error": null,
+   "env_note": "diffusers==0.30.2 + transformers 4.52.1 + mmpose/mmcv 2.2.0 (mmdet version guard relaxed to <2.3.0, GPU-side env only) + S3FD detector weights placed locally; v1.5 unet fp16; input 2s 704x1216 25fps clip, output re-encoded h264 + aac"
+  },
+  {
+   "item": "3-alt-tts-b",
+   "model": "alt-tts-b",
+   "dtype": "fp32-default",
+   "ok": true,
+   "seconds": 11.72,
+   "artifact_path": "/data/xdng/smoke/artifacts/alt-tts-b_zh.wav",
+   "error": null,
+   "env_note": "requires torch>=2.5 (SDPA enable_gqa) -> validated on torch 2.5.1+cu118 (sm_70 in arch list); engine loads fp32 by default (no dtype switch surfaced); reference-only voice-clone mode"
+  },
+  {
+   "item": "4-asr-core",
+   "model": "asr-core",
+   "dtype": "fp16",
+   "ok": true,
+   "seconds": 2.28,
+   "artifact_path": "/data/xdng/smoke/artifacts/asr-core_fp16_transcript.txt",
+   "error": null,
+   "env_note": "validated under transformers==5.13.0 (native arch support needs >=5.13); venv later downgraded to 4.52.1 for TTS/lip engines -> deployment must pin transformers>=5.13 for this component (separate venv or resolver split); input sample was English speech, correctly transcribed"
+  }
+ ],
+ "summary": {
+  "all_ok": false,
+  "ok_count": 4,
+  "total": 5
+ }
+}

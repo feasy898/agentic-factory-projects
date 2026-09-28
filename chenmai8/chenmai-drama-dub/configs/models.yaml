@@ -46,9 +46,10 @@ components:
     precision: fp16
     attn: sdpa
     weights: models/asr-core/
-    version: TBD-D1
+    version: "2026-09-28 (snapshot bcd2b5b7)"   # D1 冒烟通过：fp16 转写 1 句 OK（2.3s，复跑热身值）
     fallback: [asr-multi-fb]
-    volta_status: pending
+    volta_status: ok                            # 注意：本组件需 transformers>=5.13（原生架构支持），
+                                                # 与 TTS/口型引擎的 4.52.x 不同 —— 部署需独立 venv 或分组安装
   asr-multi-fb:
     task: asr-transcribe
     langs: [multi]
@@ -189,14 +190,14 @@ components:
 
   # ---- 语音合成（音色参考与情绪参考分离）----
   dub-tts:
-    task: tts                  # 主力：五语种；默认 bf16 —— Volta 无 bf16，启动须强制 fp32/fp16（D1 定案）
+    task: tts                  # 主力：五语种；Volta 路径引擎仅暴露 fp32/bf16 两档，无 fp16 开关（D1 实测 TypeError）
     langs: [zh, en, ja, es, ar]
     device: cuda:0
-    precision: fp32            # D1 冒烟定案（fp32/fp16 二选一），禁 bf16
+    precision: fp32            # D1 定案：fp32 通过（5.6s/句含 emotion 首载缓存后）；fp16 不可用；bf16 禁用
     weights: models/dub-tts/
-    version: TBD-D1
+    version: "2026-09-28@ee40fa7"
     fallback: [dub-tts-base, alt-tts-a, alt-tts-b]
-    volta_status: pending
+    volta_status: ok
   dub-tts-base:
     task: tts                  # 上一代主力（fp16，仅 zh/en）
     langs: [zh, en]
@@ -216,14 +217,14 @@ components:
     fallback: []
     volta_status: pending
   alt-tts-b:
-    task: tts                  # 备选 B：30+ 语种含 ar；要求新运行时，Volta 兼容未声明（D1 冒烟）
+    task: tts                  # 备选 B：30+ 语种含 ar；D1 冒烟通过（11.7s/句，参考音色克隆模式）
     langs: [multi]
     device: cuda:1
-    precision: fp16
+    precision: fp32            # 引擎默认 fp32（未暴露 dtype 开关）；D1 实测此档即可
     weights: models/alt-tts-b/
-    version: TBD
+    version: "2026-09-28@f772e49"
     fallback: []
-    volta_status: pending
+    volta_status: ok           # 硬约束：需 torch>=2.5（SDPA enable_gqa）；GPU 机已升级 torch 2.5.1+cu118（arch 含 sm_70）
 
   # ---- 口型 ----
   lip-fast:
@@ -232,9 +233,9 @@ components:
     device: cuda:1
     precision: fp16
     weights: models/lip-fast/
-    version: TBD-D1
+    version: "2026-09-28@0a89dec"
     fallback: []
-    volta_status: ok
+    volta_status: ok           # D1 实测：2s/50帧片段全流程 41s（含模型加载+预处理+合成+回贴），fp16
   lip-pro:
     task: lip-sync             # 精口型：512×512，推理约 18GB，独占 cuda:1，只给重点镜头
     langs: [multi]
