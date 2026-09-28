@@ -1,0 +1,8 @@
+# 人名词表（PERSON，规则层 v0）：一行一个全名、# 注释；命中即 confidence=1.0
+# 脱敏替换（MASK）。本表覆盖评测夹具与演示样例名；开放域人名召回由 NER 层接管
+# （recognizers/ner），detect 内置的常见姓氏启发式（confidence=0.5）仅作
+# 右边界匹配兜底。文件缺失/为空时回退 detect.py 内置 DEFAULT_PERSON_NAMES。
+张三
+李四
+王五
+赵六
