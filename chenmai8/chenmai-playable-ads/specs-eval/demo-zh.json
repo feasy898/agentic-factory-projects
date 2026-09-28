@@ -65,7 +65,7 @@
     }
   },
   "qc": {
-    "maxLoadSec": 2.0,
+    "maxLoadSec": 3.0,
     "autoplayTimeoutSec": 45
   }
 }
