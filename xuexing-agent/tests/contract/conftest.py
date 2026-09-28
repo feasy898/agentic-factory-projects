@@ -1,37 +1,13 @@
-"""契约测试环境：默认测参考实现；设置 XX_IMPL_DIR 后测重生成实例。
+"""契约测试环境。
 
-注入规则：XX_IMPL_DIR 目录下 <module>.py 会被装载并顶替 sys.modules["xuexing.<module>"]。
-重生成实现必须：单文件、只 import 标准库 + xuexing.types（绝对导入）、暴露模块全部公开 API。
+实现注入（XX_IMPL_DIR）已上移到 tests/conftest.py，对全部测试目录生效。
+本文件只保留契约级夹具（刻意不依赖 data/ 夹具，保持契约自封闭）。
 """
-import importlib.util
-import os
-import sys
+import pytest
 
-MODULES = ["kpgraph", "itembank", "diagnosis", "paper", "scheduler", "pedagogy", "route", "agent_shell"]
-
-import xuexing  # noqa: F401,E402  先完整加载参考包，再做顶替
-
-_impl_dir = os.environ.get("XX_IMPL_DIR", "")
-if _impl_dir:
-    for _name in os.environ.get("XX_MODULES", ",".join(MODULES)).split(","):
-        _name = _name.strip()
-        if not _name:
-            continue
-        _path = os.path.join(_impl_dir, f"{_name}.py")
-        if not os.path.exists(_path):
-            raise RuntimeError(f"impl file missing: {_path}")
-        _spec = importlib.util.spec_from_file_location(f"_regen_{_name}", _path)
-        _mod = importlib.util.module_from_spec(_spec)
-        sys.modules[f"xuexing.{_name}"] = _mod
-        _spec.loader.exec_module(_mod)
-
-
-# ---------- 契约级夹具（刻意不依赖 data/ 夹具，保持契约自封闭） ----------
-import pytest  # noqa: E402
-
-from xuexing.itembank import ItemBank  # noqa: E402
-from xuexing.kpgraph import KPGraph  # noqa: E402
-from xuexing.types import Item, KnowledgePoint, Strategy  # noqa: E402
+from xuexing.itembank import ItemBank
+from xuexing.kpgraph import KPGraph
+from xuexing.types import Item, KnowledgePoint, Strategy
 
 
 @pytest.fixture

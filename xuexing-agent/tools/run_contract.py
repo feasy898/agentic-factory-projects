@@ -30,6 +30,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--impl-dir", default="", help="重生成实现所在目录；留空则测参考实现")
     ap.add_argument("--modules", default=",".join(MODULE_TEST_FILES))
+    ap.add_argument("--suite", choices=["contract", "full"], default="contract",
+                    help="contract=仅契约测试；full=契约+集成（集成也打在注入实现上）")
     args = ap.parse_args()
 
     mods = [m.strip() for m in args.modules.split(",") if m.strip()]
@@ -42,12 +44,15 @@ def main() -> int:
     if args.impl_dir:
         os.environ["XX_IMPL_DIR"] = os.path.abspath(args.impl_dir)
         os.environ["XX_MODULES"] = ",".join(mods)
-        test_files = sorted({f for m in mods for f in MODULE_TEST_FILES[m]})
-        pytest_args = [f"tests/contract/{f}" for f in test_files]
+        if args.suite == "full":
+            pytest_args = ["tests/contract", "tests/integration", "tests/data"]
+        else:
+            test_files = sorted({f for m in mods for f in MODULE_TEST_FILES[m]})
+            pytest_args = [f"tests/contract/{f}" for f in test_files]
     else:
         os.environ.pop("XX_IMPL_DIR", None)
         os.environ.pop("XX_MODULES", None)
-        pytest_args = ["tests/contract"]
+        pytest_args = ["tests/contract"] if args.suite == "contract" else ["tests/contract", "tests/integration", "tests/data"]
 
     rc = pytest.main(pytest_args + ["-q", "--disable-warnings", "-p", "no:cacheprovider"])
     return int(rc)
