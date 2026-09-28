@@ -22,6 +22,7 @@
 |---|---|---|
 | `validate <spec...>` | frozen（M1 交付） | glob 展开；逐文件 `OK/INVALID`；全过 exit 0 否则 1 |
 | `make --spec [--locales] [--channels] [--out] [--serve-port] [--serve-host] [--no-serve]` | frozen（M9 交付，2026-09-28） | validate → 模板构建（真实可玩 HTML）→ 按规则库打包各渠道 → 首个 single-html 渠道 qacore `--autoplay` → summary.html + LAN 二维码 + 墙钟计时 + `artifacts/demo-prebuilt/` 兜底；质检 FAIL 则不出二维码（exit 1）。实现见 `python/pfcore/make.py` |
+| `serve [--root] [--port] [--host]` | frozen（2026-09-29，反馈行动 2） | 对既有产物目录（demo-prebuilt/裸预览）起**前台**局域网静态伺服，现场重建汇总页（渠道包下载 + 质检报告链接，零外链）与二维码（内容规则同 make §5）；Ctrl+C 停止，端口被占向后顺延。实现见 `python/pfcore/serve.py`，契约 §5.1 |
 | `build --spec --channel --locale --out` | 占位 | 回显"尚未实现" → exit 2 |
 | `pack --spec --all-channels --locale --out` | 占位 | 同上 |
 | `rules-check` | 占位 | 同上（结构校验实际可复用 packager 的 `loadRules/validateRules`） |
@@ -54,6 +55,7 @@
 python/.venv/Scripts/python.exe -m pfcore validate specs-eval/golden-match3.json   # exit 0
 python/.venv/Scripts/python.exe -m pfcore validate "specs-eval/bad/*.json"         # 全 exit 1
 python/.venv/Scripts/python.exe -m pfcore make --spec specs-eval/golden-match3.json  # exit 0：三渠道包+质检+二维码+demo-prebuilt（实测 make 墙钟 ~42s）
+python/.venv/Scripts/python.exe -m pfcore serve --root artifacts/demo-prebuilt     # 前台伺服兜底目录，重建汇总页+二维码；httpx 拉页面 200、QR 可解码回读预览 URL（2026-09-29 实测，见 pipeline-contract §5.1）
 python/.venv/Scripts/python.exe -m pfcore build --spec x.json                      # exit 2（占位语义本身是契约）
 ```
 

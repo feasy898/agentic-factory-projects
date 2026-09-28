@@ -98,8 +98,9 @@ SPEC_BAD_DIR = REPO_ROOT / "specs-eval" / "bad"
 
 # pfcore / packager 的子命令名：--help 文本必须完整包含（防"入口能跑但命令
 # 树被砍"的假灯）。来源：python/pfcore/__main__.py build_parser / packager HELP。
-# 全流水线命令名 2026-09-28 裁决为 make（占位 run 已删），见 pipeline-contract.md §1。
-PFCORE_SUBCOMMANDS = ("validate", "build", "make", "pack", "rules-check")
+# 全流水线命令名 2026-09-28 裁决为 make（占位 run 已删），见 pipeline-contract.md §1；
+# serve 为演示伺服命令（2026-09-29 反馈行动 2），非第三全流水线名。
+PFCORE_SUBCOMMANDS = ("validate", "build", "make", "pack", "rules-check", "serve")
 PACKAGER_SUBCOMMANDS = ("build", "channels")
 
 # llmgw.selftest 的顶层测试项数：stdout 必须恰好打印这么多条 [PASS]。

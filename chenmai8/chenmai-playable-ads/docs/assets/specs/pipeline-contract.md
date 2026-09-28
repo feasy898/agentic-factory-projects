@@ -16,6 +16,7 @@
 | 全渠道打包 | `pfcore pack --spec S --all-channels --locale en` | 占位 `pack`（exit 2）；实际可用的打包入口是 `node packages/packager/bin.mjs build` | 未实现 |
 | 单模板构建 | `pfcore build`（占位） | 占位 `build`（exit 2）；**实际能用的构建入口是模板自己的 `node packages/templates/tmpl-match3/build.mjs`**（`make` 内部即调它） | 未实现 |
 | 规则库校验 | `pfcore rules-check` | 占位（exit 2）；结构校验实际由 packager 的 `loadRules()` 承担 | 未实现 |
+| 演示产物伺服 | —（规划未列，2026-09-29 反馈行动 2 新增） | **已实现**：`python -m pfcore serve [--root DIR] [--port N] [--host IP]`（`python/pfcore/serve.py`）：前台伺服既有目录 + 现场重建汇总页/二维码（§5.1） | frozen |
 
 **裁决记录（2026-09-28 回填）**：全流水线冻结名取 **`make`**（与规划正文一致）；实现前占位名 `run`
 已从 argparse、门禁常量（`scripts/gate_phase0.py` PFCORE_SUBCOMMANDS）与本仓全部文档删除。
@@ -135,6 +136,27 @@
   1. **make 墙钟**：编排入口 → 二维码可扫（演示计时器口径，目标 ≤90s；
      留档实测 41.8s：构建+三渠道包+qacore 自动试玩+兜底目录）；
   2. **spec 修改完成 → 二维码可扫**：以 spec 文件 mtime 为"改完 spec"的客观代理。
+
+### 5.1 pfcore serve（2026-09-29 反馈行动 2，冻结）
+
+对**已经生成好的**目录起前台局域网静态伺服器（演示日兜底：扫"今早 make 的预构建产物"
+不必重跑流水线）：
+
+```
+python -m pfcore serve [--root artifacts/demo-prebuilt] [--port 8618] [--host <ip>]
+```
+
+- `--root` 缺省 `artifacts/demo-prebuilt`（相对 CWD）；也接受裸预览目录（如 `artifacts/preview/`）。
+  目录不存在 → exit 2。
+- 启动时**现场重建**两件东西（都落在被伺服目录内，覆盖写）：`index.html` 汇总页（预览链接 +
+  各渠道包下载链接 + 质检报告链接——`*.report.json`/双视口截图/检查项明细现场解析，
+  仅相对引用、零外链）与 `qr.png`（内容规则与上面 make 完全同规：LAN 预览 HTML 的 http URL；
+  目录内无预览 HTML 时退化指向汇总页并打印警告）。
+- **前台进程**（区别于 make 的分离子进程）：Ctrl+C 停止、端口即释放；不写 `.demo-serve.json`
+  复用状态；端口被占同样向后顺延（上限 20 个）。退出码：0 = 被正常停止；2 = 用法/环境错误。
+- 二维码指向优先级：`preview/*.html` 排序第一个 > 根目录散置 `*.html`（排除 index.html）> 汇总页。
+- IP 探测、段优先级、TCP-only 健康检查复用 `make.py` 同一套函数（`_lan_ip`/`_port_listening`），
+  本命令同样不发起任何 HTTP 请求。
 
 ## 6. 本契约的变更流程
 
