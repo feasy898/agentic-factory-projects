@@ -1,0 +1,25 @@
+{
+  "subject": "math",
+  "grade_band": [7],
+  "standard": "义务教育数学课程标准（2022年版）第四学段·数与代数/图形与几何",
+  "knowledge_points": [
+    {"id": "kp_posneg", "name": "正数与负数", "subject": "math", "grade": 7, "cluster": "有理数", "description": "用正负数表示相反意义的量", "standard_ref": "2022课标：理解正负数的意义，用数轴表示"},
+    {"id": "kp_numberline", "name": "数轴", "subject": "math", "grade": 7, "cluster": "有理数", "description": "数轴三要素，用数轴表示数与比较大小", "standard_ref": "2022课标：能用数轴表示有理数", "prereqs": ["kp_posneg"]},
+    {"id": "kp_opposite", "name": "相反数", "subject": "math", "grade": 7, "cluster": "有理数", "description": "相反数的概念与双重符号化简", "standard_ref": "2022课标：知道相反数的意义", "prereqs": ["kp_numberline"]},
+    {"id": "kp_absvalue", "name": "绝对值", "subject": "math", "grade": 7, "cluster": "有理数", "description": "绝对值的几何与代数意义，|a|的计算", "standard_ref": "2022课标：会求有理数的绝对值", "prereqs": ["kp_numberline", "kp_opposite"]},
+    {"id": "kp_rational_add", "name": "有理数加减运算", "subject": "math", "grade": 7, "cluster": "有理数", "description": "有理数加法法则与减法转化", "standard_ref": "2022课标：熟练进行有理数加减运算", "prereqs": ["kp_absvalue"]},
+    {"id": "kp_rational_mul", "name": "有理数乘除运算", "subject": "math", "grade": 7, "cluster": "有理数", "description": "有理数乘法法则、倒数与除法转化", "standard_ref": "2022课标：熟练进行有理数乘除运算", "prereqs": ["kp_rational_add"]},
+    {"id": "kp_power", "name": "乘方", "subject": "math", "grade": 7, "cluster": "有理数", "description": "乘方意义、幂的符号法则", "standard_ref": "2022课标：理解乘方意义", "prereqs": ["kp_rational_mul"]},
+    {"id": "kp_mixed_ops", "name": "有理数混合运算", "subject": "math", "grade": 7, "cluster": "有理数", "description": "含乘方的混合运算顺序", "standard_ref": "2022课标：能运用运算律简化运算", "prereqs": ["kp_power", "kp_rational_add"]},
+    {"id": "kp_algebraic", "name": "代数式", "subject": "math", "grade": 7, "cluster": "整式加减", "description": "用字母表示数，列代数式", "standard_ref": "2022课标：代数式表达数量关系", "prereqs": ["kp_posneg"]},
+    {"id": "kp_monomial", "name": "单项式与多项式", "subject": "math", "grade": 7, "cluster": "整式加减", "description": "整式概念、系数与次数", "standard_ref": "2022课标：理解整式的概念", "prereqs": ["kp_algebraic"]},
+    {"id": "kp_like_terms", "name": "同类项与合并", "subject": "math", "grade": 7, "cluster": "整式加减", "description": "同类项判别与合并法则", "standard_ref": "2022课标：能合并同类项", "prereqs": ["kp_monomial"]},
+    {"id": "kp_poly_ops", "name": "整式的加减", "subject": "math", "grade": 7, "cluster": "整式加减", "description": "去括号法则与整式加减化简", "standard_ref": "2022课标：能进行整式加减运算", "prereqs": ["kp_like_terms", "kp_rational_add"]},
+    {"id": "kp_eq_concept", "name": "方程与方程的解", "subject": "math", "grade": 7, "cluster": "一元一次方程", "description": "方程、一元一次方程、方程的解的概念", "standard_ref": "2022课标：了解方程及相关概念", "prereqs": ["kp_poly_ops"]},
+    {"id": "kp_eq_solve", "name": "一元一次方程解法", "subject": "math", "grade": 7, "cluster": "一元一次方程", "description": "移项、去括号、去分母解方程", "standard_ref": "2022课标：能解一元一次方程", "prereqs": ["kp_eq_concept", "kp_rational_mul"]},
+    {"id": "kp_eq_apply", "name": "实际问题与一元一次方程", "subject": "math", "grade": 7, "cluster": "一元一次方程", "description": "列方程解应用题（行程/工程/配套）", "standard_ref": "2022课标：能根据实际问题列方程", "prereqs": ["kp_eq_solve"]},
+    {"id": "kp_geometry_basic", "name": "立体图形与平面图形", "subject": "math", "grade": 7, "cluster": "图形初步", "description": "几何体的识别与展开图", "standard_ref": "2022课标：认识常见几何体", "prereqs": []},
+    {"id": "kp_lines_rays", "name": "直线射线线段", "subject": "math", "grade": 7, "cluster": "图形初步", "description": "直线射线线段的性质与线段计算", "standard_ref": "2022课标：理解两点确定一条直线", "prereqs": ["kp_geometry_basic"]},
+    {"id": "kp_angles", "name": "角的度量与计算", "subject": "math", "grade": 7, "cluster": "图形初步", "description": "角的单位换算、角平分线与角度计算", "standard_ref": "2022课标：会进行角的运算", "prereqs": ["kp_lines_rays"]}
+  ]
+}

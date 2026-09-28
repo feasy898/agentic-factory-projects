@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.mimosa/
+.zcode/
+regen/round*/
+specs/drafts/
+*.egg-info/
+_research_tmp/
+nul
