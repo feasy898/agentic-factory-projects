@@ -11,6 +11,7 @@
     {"id": "kp_rational_mul", "name": "有理数乘除运算", "subject": "math", "grade": 7, "cluster": "有理数", "description": "有理数乘法法则、倒数与除法转化", "standard_ref": "2022课标：熟练进行有理数乘除运算", "prereqs": ["kp_rational_add"]},
     {"id": "kp_power", "name": "乘方", "subject": "math", "grade": 7, "cluster": "有理数", "description": "乘方意义、幂的符号法则", "standard_ref": "2022课标：理解乘方意义", "prereqs": ["kp_rational_mul"]},
     {"id": "kp_mixed_ops", "name": "有理数混合运算", "subject": "math", "grade": 7, "cluster": "有理数", "description": "含乘方的混合运算顺序", "standard_ref": "2022课标：能运用运算律简化运算", "prereqs": ["kp_power", "kp_rational_add"]},
+    {"id": "kp_sci_notation", "name": "科学记数法与近似数", "subject": "math", "grade": 7, "cluster": "有理数", "description": "用a×10^n（1≤a<10，n为正整数）表示较大的数，按需要取近似数", "standard_ref": "2022课标：会用科学记数法表示较大的数，能按解决问题的需要取近似值", "prereqs": ["kp_power"]},
     {"id": "kp_algebraic", "name": "代数式", "subject": "math", "grade": 7, "cluster": "整式加减", "description": "用字母表示数，列代数式", "standard_ref": "2022课标：代数式表达数量关系", "prereqs": ["kp_posneg"]},
     {"id": "kp_monomial", "name": "单项式与多项式", "subject": "math", "grade": 7, "cluster": "整式加减", "description": "整式概念、系数与次数", "standard_ref": "2022课标：理解整式的概念", "prereqs": ["kp_algebraic"]},
     {"id": "kp_like_terms", "name": "同类项与合并", "subject": "math", "grade": 7, "cluster": "整式加减", "description": "同类项判别与合并法则", "standard_ref": "2022课标：能合并同类项", "prereqs": ["kp_monomial"]},
@@ -20,6 +21,24 @@
     {"id": "kp_eq_apply", "name": "实际问题与一元一次方程", "subject": "math", "grade": 7, "cluster": "一元一次方程", "description": "列方程解应用题（行程/工程/配套）", "standard_ref": "2022课标：能根据实际问题列方程", "prereqs": ["kp_eq_solve"]},
     {"id": "kp_geometry_basic", "name": "立体图形与平面图形", "subject": "math", "grade": 7, "cluster": "图形初步", "description": "几何体的识别与展开图", "standard_ref": "2022课标：认识常见几何体", "prereqs": []},
     {"id": "kp_lines_rays", "name": "直线射线线段", "subject": "math", "grade": 7, "cluster": "图形初步", "description": "直线射线线段的性质与线段计算", "standard_ref": "2022课标：理解两点确定一条直线", "prereqs": ["kp_geometry_basic"]},
-    {"id": "kp_angles", "name": "角的度量与计算", "subject": "math", "grade": 7, "cluster": "图形初步", "description": "角的单位换算、角平分线与角度计算", "standard_ref": "2022课标：会进行角的运算", "prereqs": ["kp_lines_rays"]}
+    {"id": "kp_angles", "name": "角的度量与计算", "subject": "math", "grade": 7, "cluster": "图形初步", "description": "角的单位换算、角平分线与角度计算", "standard_ref": "2022课标：会进行角的运算", "prereqs": ["kp_lines_rays"]},
+    {"id": "kp_comp_supp", "name": "余角与补角", "subject": "math", "grade": 7, "cluster": "图形初步", "description": "余角、补角的概念及同角（等角）的余角相等、补角相等", "standard_ref": "2022课标：理解余角、补角的概念，知道同角（等角）的余角相等、补角相等", "prereqs": ["kp_angles"]},
+    {"id": "kp_square_root", "name": "平方根与算术平方根", "subject": "math", "grade": 7, "cluster": "实数", "description": "平方根与算术平方根的概念、符号表示与求法", "standard_ref": "2022课标：了解平方根、算术平方根的概念，会用根号表示并求非负数的平方根、算术平方根", "prereqs": ["kp_power"]},
+    {"id": "kp_cube_root", "name": "立方根", "subject": "math", "grade": 7, "cluster": "实数", "description": "立方根的概念与性质，用根号表示立方根", "standard_ref": "2022课标：了解立方根的概念，会用根号表示并求数的立方根", "prereqs": ["kp_power"]},
+    {"id": "kp_real_numbers", "name": "实数", "subject": "math", "grade": 7, "cluster": "实数", "description": "无理数与实数的概念，实数与数轴上点的一一对应，实数的大小比较与简单运算", "standard_ref": "2022课标：了解实数的意义，知道实数与数轴上的点一一对应，能进行简单的实数运算", "prereqs": ["kp_square_root", "kp_cube_root", "kp_numberline"]},
+    {"id": "kp_intersect_lines", "name": "对顶角与垂线", "subject": "math", "grade": 7, "cluster": "相交线与平行线", "description": "对顶角、邻补角与垂线的概念，对顶角相等与垂线的基本事实", "standard_ref": "2022课标：理解对顶角、垂线的概念，知道对顶角相等，会画已知直线的垂线", "prereqs": ["kp_lines_rays", "kp_angles"]},
+    {"id": "kp_parallel_judge", "name": "平行线的判定", "subject": "math", "grade": 7, "cluster": "相交线与平行线", "description": "平行线的概念与平行公理，同位角、内错角、同旁内角与平行线的判定方法", "standard_ref": "2022课标：掌握基本事实：过直线外一点有且只有一条直线与这条直线平行；掌握平行线的判定方法", "prereqs": ["kp_intersect_lines"]},
+    {"id": "kp_parallel_props", "name": "平行线的性质", "subject": "math", "grade": 7, "cluster": "相交线与平行线", "description": "两直线平行时同位角相等、内错角相等、同旁内角互补及简单应用", "standard_ref": "2022课标：探索并掌握平行线的性质", "prereqs": ["kp_parallel_judge"]},
+    {"id": "kp_coordinates", "name": "平面直角坐标系", "subject": "math", "grade": 7, "cluster": "平面直角坐标系", "description": "平面直角坐标系与有序数对，由坐标描点、由点写坐标，各象限及坐标轴上点的坐标特征", "standard_ref": "2022课标：理解平面直角坐标系的有关概念，能根据坐标描出点的位置、由点的位置写出坐标", "prereqs": ["kp_numberline", "kp_intersect_lines"]},
+    {"id": "kp_coord_apply", "name": "坐标方法的简单应用", "subject": "math", "grade": 7, "cluster": "平面直角坐标系", "description": "用坐标表示地理位置，图形平移前后对应点坐标的变化规律", "standard_ref": "2022课标：能建立适当的坐标系描述物体的位置，知道图形平移与对应点坐标变化的关系", "prereqs": ["kp_coordinates"]},
+    {"id": "kp_sys_concept", "name": "二元一次方程组及其解", "subject": "math", "grade": 7, "cluster": "二元一次方程组", "description": "二元一次方程（组）及其解的概念，检验一组数是否为方程组的解", "standard_ref": "2022课标：能根据实际问题列出二元一次方程组，理解方程组及其解的意义", "prereqs": ["kp_eq_concept"]},
+    {"id": "kp_sys_solve", "name": "消元法解二元一次方程组", "subject": "math", "grade": 7, "cluster": "二元一次方程组", "description": "代入消元法与加减消元法解二元一次方程组", "standard_ref": "2022课标：掌握代入消元法和加减消元法，能解二元一次方程组", "prereqs": ["kp_sys_concept", "kp_eq_solve"]},
+    {"id": "kp_sys_apply", "name": "实际问题与二元一次方程组", "subject": "math", "grade": 7, "cluster": "二元一次方程组", "description": "列二元一次方程组解应用题（配套、分配、鸡兔同笼等）", "standard_ref": "2022课标：能根据实际问题中的数量关系列出二元一次方程组并求解", "prereqs": ["kp_sys_solve"]},
+    {"id": "kp_ineq_concept", "name": "不等式及其性质", "subject": "math", "grade": 7, "cluster": "不等式与不等式组", "description": "不等式的概念与不等式的三条基本性质", "standard_ref": "2022课标：了解不等式的意义，探索并掌握不等式的基本性质", "prereqs": ["kp_numberline"]},
+    {"id": "kp_ineq_solve", "name": "解一元一次不等式", "subject": "math", "grade": 7, "cluster": "不等式与不等式组", "description": "解数字系数的一元一次不等式，并在数轴上表示解集", "standard_ref": "2022课标：能解数字系数的一元一次不等式，并能在数轴上表示其解集", "prereqs": ["kp_ineq_concept", "kp_eq_solve"]},
+    {"id": "kp_ineq_group", "name": "一元一次不等式组", "subject": "math", "grade": 7, "cluster": "不等式与不等式组", "description": "一元一次不等式组的解集（公共部分）与整数解问题", "standard_ref": "2022课标：能解数字系数的一元一次不等式组，并能在数轴上确定其解集", "prereqs": ["kp_ineq_solve"]},
+    {"id": "kp_data_collect", "name": "数据的收集：全面调查与抽样调查", "subject": "math", "grade": 7, "cluster": "数据的收集与整理", "description": "全面调查与抽样调查，总体、个体、样本与样本容量", "standard_ref": "2022课标：经历收集数据的活动，了解全面调查与抽样调查，体会抽样调查的必要性", "prereqs": []},
+    {"id": "kp_data_charts", "name": "统计表与统计图", "subject": "math", "grade": 7, "cluster": "数据的收集与整理", "description": "用条形统计图、折线统计图、扇形统计图整理与描述数据", "standard_ref": "2022课标：能用条形统计图、折线统计图、扇形统计图等整理与描述数据", "prereqs": ["kp_data_collect"]},
+    {"id": "kp_data_histogram", "name": "频数分布直方图", "subject": "math", "grade": 7, "cluster": "数据的收集与整理", "description": "频数与频率、组距，频数分布表与频数分布直方图", "standard_ref": "2022课标：会用频数分布表和频数分布直方图描述数据", "prereqs": ["kp_data_charts"]}
   ]
 }

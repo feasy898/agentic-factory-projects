@@ -1,0 +1,24 @@
+{
+  "misconceptions": [
+    {"id": "mc_g7_posneg_sign", "kp_id": "kp_posneg", "description": "相反意义量的符号表示错误：收入记+100元后，支出80元仍记+80元，忘加负号", "hint": "正负表示相反意义的量：先规定收入为正，则与它相反的支出必须为负，符号不能只写在方便的一方。", "signature": ["+80", "80元", "+80元"]},
+    {"id": "mc_g7_numline_cmp", "kp_id": "kp_numberline", "description": "数轴比较大小错误：认为绝对值大的数大，-3与-1比较写成-3>-1", "hint": "数轴上右边的数总比左边的大：-3在-1左边，所以-3<-1；负数比较时绝对值大的反而小。", "signature": ["-3>-1", "-3＞-1"]},
+    {"id": "mc_g7_opp_double_sign", "kp_id": "kp_opposite", "description": "多重符号化简错误：化简-(-3)时把前面的负号照抄，得-3", "hint": "一个数前面的负号表示求相反数：-(-3)表示-3的相反数，即3；负号个数为偶数时结果为正。", "signature": ["-3"]},
+    {"id": "mc_g7_div_no_reciprocal", "kp_id": "kp_rational_mul", "description": "除法转化错误：除以一个分数不取倒数，(-6)÷(1/2)直接算成(-6)×(1/2)", "hint": "除以一个数等于乘它的倒数：÷(1/2)要变成×2，符号照乘法法则处理。", "signature": ["-3"]},
+    {"id": "mc_g7_ops_order", "kp_id": "kp_mixed_ops", "description": "运算顺序错误：从左往右算，2+3×(-2)先算加法得5×(-2)", "hint": "先乘方，再乘除，后加减，有括号先算括号；乘法优先于加法，不能从左往右依次算。", "signature": ["-10"]},
+    {"id": "mc_g7_sci_pow_offbyone", "kp_id": "kp_sci_notation", "description": "科学记数法指数数错：36000写成3.6×10^5，小数点移动位数数错一位", "hint": "n等于小数点向左移动的位数，也等于原数整数位数减1：36000是5位整数，n=4。", "signature": ["3.6×10^5", "3.6×10⁵"]},
+    {"id": "mc_g7_bracket_first_term", "kp_id": "kp_poly_ops", "description": "去括号只变首项：括号前是负号时，5-(a-3)写成5-a-3，第二项漏变号", "hint": "括号前是负号，去括号后括号里每一项都要变号：5-(a-3)=5-a+3=8-a。", "signature": ["5-a-3", "2-a"]},
+    {"id": "mc_g7_lcm_skip_constant", "kp_id": "kp_eq_solve", "description": "去分母漏乘不含分母的项：解x/2+1=x/3时两边乘6，常数1不乘，得3x+1=2x", "hint": "去分母是等式两边同乘最简公分母，每一项都要乘，不含分母的整数项也不能漏。", "signature": ["-1"]},
+    {"id": "mc_g7_degmin_base100", "kp_id": "kp_angles", "description": "度分秒换算按100进制：把1.5°写成1°50′", "hint": "度、分、秒是60进制：0.5°=0.5×60′=30′，不是50′。", "signature": ["1°50′", "1°50'"]},
+    {"id": "mc_g7_supp_vs_comp", "kp_id": "kp_comp_supp", "description": "余角补角混淆：求70°的补角时用90°去减，得20°", "hint": "补角之和为180°，余角之和为90°：先判断求的是哪一种，再选对的和去减。", "signature": ["20°"]},
+    {"id": "mc_g7_sqroot_drop_neg", "kp_id": "kp_square_root", "description": "平方根漏负根：问9的平方根只答3", "hint": "正数有两个平方根，它们互为相反数：9的平方根是±3；只有算术平方根才单独取正。", "signature": ["3"]},
+    {"id": "mc_g7_artsqroot_add_pm", "kp_id": "kp_square_root", "description": "算术平方根误带正负：把√9写成±3", "hint": "根号√本身只表示算术平方根（正的那个）：√9=3；求±3的是'9的平方根'这个问题。", "signature": ["±3", "正负3"]},
+    {"id": "mc_g7_cuberoot_neg_nonexist", "kp_id": "kp_cube_root", "description": "把'负数没有平方根'错误迁移到立方根：认为-8的立方根不存在", "hint": "平方根要求非负数，但立方根任何实数都有：负数的立方根是负数，-8的立方根是-2。", "signature": ["不存在", "无解", "没有立方根"]},
+    {"id": "mc_g7_vert_vs_adj", "kp_id": "kp_intersect_lines", "description": "对顶角邻补角混淆：两直线相交，一个角60°，求它的对顶角答成180°-60°=120°", "hint": "对顶角相等（60°），与它互补的120°是邻补角；先认清要求的角与已知角的位置关系。", "signature": ["120°"]},
+    {"id": "mc_g7_quadrant_mix", "kp_id": "kp_coordinates", "description": "象限符号记反：判断点P(2,-3)所在象限时答成第三象限", "hint": "按逆时针记象限符号：一(+,+)、二(-,+)、三(-,-)、四(+,-)；先看横坐标符号，再看纵坐标。", "signature": ["第三象限"]},
+    {"id": "mc_g7_translate_dir", "kp_id": "kp_coord_apply", "description": "平移坐标规律方向记反：点(1,2)向右平移2个单位，横坐标做成1-2=-1", "hint": "右加左减、上加下减：向右平移a个单位，横坐标加a，纵坐标不变。", "signature": ["(-1,2)", "(-1，2)"]},
+    {"id": "mc_g7_subst_no_bracket", "kp_id": "kp_sys_solve", "description": "代入消元漏乘括号内项：y=2x-1代入3x+2y=12时写成3x+4x-1=12，漏乘-1", "hint": "代入后先把整体加括号再去括号：3x+2(2x-1)=3x+4x-2，括号里每一项都要乘系数2。", "signature": ["x=13/7", "13/7"]},
+    {"id": "mc_g7_ineq_mul_neg", "kp_id": "kp_ineq_concept", "description": "不等式两边乘（除）负数不变号：解-2x>4时两边除以-2得x>-2", "hint": "不等式两边同乘或同除一个负数，不等号方向必须改变：-2x>4两边除以-2得x<-2。", "signature": ["x>-2", "x＞-2"]},
+    {"id": "mc_g7_ineqgroup_wrong_rule", "kp_id": "kp_ineq_group", "description": "不等式组取解集规则记错：{x>2, x>3}的解集答成x>2，同大没有取大", "hint": "在数轴上画公共部分：同大取大、同小取小、大小小大中间找、大大小小无解；{x>2,x>3}取x>3。", "signature": ["x>2", "x≥2"]},
+    {"id": "mc_g7_sample_size_unit", "kp_id": "kp_data_collect", "description": "样本容量带单位：调查全校2000名学生视力抽200名，样本容量答成'200名'", "hint": "样本容量是样本中个体的数目，只是一个数，不带任何单位。", "signature": ["200名", "200名学生"]}
+  ]
+}

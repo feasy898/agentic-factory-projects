@@ -1,0 +1,24 @@
+{
+  "misconceptions": [
+    {"id": "mc_g8_power_exp_rules", "kp_id": "kp_power_rules", "description": "同底数幂相乘与幂的乘方的指数法则记混：a³·a⁴ 误算成 a¹²（指数相乘），(a³)² 误算成 a⁵（指数相加）", "hint": "同底数幂相乘，底数不变指数相加：a³·a⁴=a⁷；幂的乘方，底数不变指数相乘：(a³)²=a⁶。用成组对比练习区分'相加/相乘'。", "signature": ["a¹²", "a⁵"]},
+    {"id": "mc_g8_power_product", "kp_id": "kp_power_rules", "description": "积的乘方只把字母乘方、漏了系数：(2a)³ 误写成 2a³（正确为 8a³）", "hint": "积的乘方要把每个因式分别乘方，系数也要乘方：2³=8，所以 (2a)³=8a³。", "signature": ["2a³"]},
+    {"id": "mc_g8_complete_square", "kp_id": "kp_mul_formula", "description": "完全平方公式漏中间项：(x+3)² 误写成 x²+9（丢了 6x）", "hint": "(a+b)²=a²+2ab+b²，中间项 2ab 不能丢；用面积图把'大正方形分成四个小块'帮助记住中间两项。", "signature": ["x²+9"]},
+    {"id": "mc_g8_factor_incomplete", "kp_id": "kp_factoring", "description": "因式分解不彻底：x⁴-16 只分解到 (x²+4)(x²-4)，未对 x²-4 继续用平方差公式分解", "hint": "分解要分解到每个因式都不能再分解为止；x²-4 仍可用平方差公式继续分，最终结果为 (x²+4)(x+2)(x-2)。", "signature": ["(x²+4)(x²-4)"]},
+    {"id": "mc_g8_fraction_defined", "kp_id": "kp_algebraic_fraction", "description": "分式有意义的条件与无意义搞反：问分式 1/(x-2) 有意义的条件，学生按'分母等于零'作答成 x=2", "hint": "分母不为 0 分式才有意义：先求'分母等于 0 的 x'（x=2，此时无意义），再取反得 x≠2。", "signature": ["x=2"]},
+    {"id": "mc_g8_fraction_add", "kp_id": "kp_fraction_ops", "description": "异分母分式加减仿照'分子加分子、分母加分母'：1/a+1/b 误写成 2/(a+b)", "hint": "异分母分式相加必须先通分：1/a+1/b=b/(ab)+a/(ab)=(a+b)/(ab)；可类比 1/2+1/3≠2/5 来破除直觉。", "signature": ["2/(a+b)"]},
+    {"id": "mc_g8_fraction_eq_root", "kp_id": "kp_fraction_equation", "description": "解分式方程去分母化为整式方程后不检验，把增根当作原方程的解：x/(x-3)=3/(x-3)+2 去分母解得 x=3 直接作答（应无解）", "hint": "解分式方程必须验根：把 x=3 代入最简公分母 x-3 得 0，分母为零说明 x=3 是增根，原方程无解。", "signature": ["x=3"]},
+    {"id": "mc_g8_sqrt_abs", "kp_id": "kp_quadratic_radical", "description": "√(a²)=a 而漏掉绝对值：√((−3)²) 误答 −3（正确为 3）", "hint": "√(a²)=|a|，先看 a 的符号再开方：(−3)²=9，√9=3；负数或未知符号时必须加绝对值。", "signature": ["-3"]},
+    {"id": "mc_g8_radical_add", "kp_id": "kp_radical_ops", "description": "二次根式加减直接把被开方数相加：√8+√2 误写成 √10", "hint": "二次根式加减要先化成最简二次根式再合并：√8=2√2，所以 √8+√2=3√2；被开方数不同的不能直接相加减。", "signature": ["√10"]},
+    {"id": "mc_g8_pythag_assume_hyp", "kp_id": "kp_pythagorean", "description": "用勾股定理求第三边时默认已知的较大边是斜边：直角三角形两边长为 3 和 4，只答 5，漏掉 4 为斜边时第三边为 √7 的情形", "hint": "题目未指明斜边时要分两类讨论：3、4 都作直角边，第三边=√(3²+4²)=5；4 作斜边，第三边=√(4²-3²)=√7。", "signature": ["5"]},
+    {"id": "mc_g8_ext_angle", "kp_id": "kp_triangle_angles", "description": "把三角形的外角与相邻内角混淆：已知两内角为 50° 和 60°，求第三个内角的外角，学生答 70°（只算了第三个内角）", "hint": "外角=相邻内角的补角=与它不相邻的两个内角之和：先求第三内角 70°，再取补角 180°-70°=110°。", "signature": ["70°"]},
+    {"id": "mc_g8_polygon_sum", "kp_id": "kp_polygon_angles", "description": "多边形内角和公式记成 n×180°：六边形内角和误答 1080°（正确为 720°）", "hint": "n 边形从一个顶点出发只能引 n-3 条对角线，分成 n-2 个三角形，内角和=(n-2)×180°；六边形为 4×180°=720°。", "signature": ["1080°"]},
+    {"id": "mc_g8_ssa", "kp_id": "kp_congruence_criteria", "description": "认为'两边及其中一边的对角'（SSA）对应相等的两个三角形全等", "hint": "SSA 不能判定全等：角不是两边的夹角时形状不唯一，可画'同一组边角条件得出钝角与锐角两个三角形'的反例；判定只用 SSS、SAS、ASA、AAS、HL。", "signature": ["对", "能"]},
+    {"id": "mc_g8_sym_coord", "kp_id": "kp_axis_symmetry", "description": "关于 x 轴、y 轴对称的坐标规律记反：点 (2,3) 关于 x 轴对称误答 (-2,3)（正确为 (2,-3)）", "hint": "关于 x 轴对称：横坐标不变、纵坐标变号；关于 y 轴对称：纵坐标不变、横坐标变号。记'关于谁对称谁不变'。", "signature": ["(-2,3)"]},
+    {"id": "mc_g8_isosceles_case", "kp_id": "kp_isosceles_triangle", "description": "等腰三角形已知一个角求另两角时漏分类讨论：一个内角为 80°，只答 50°、50°（把它只当顶角），漏掉 80° 作底角时另两角为 80°、20° 的情形", "hint": "未指明顶角还是底角时必须分两类：80° 为顶角→其余两角 50°、50°；80° 为底角→另两角 80°、20°；逐一检验内角和是否为 180°。", "signature": ["50°、50°"]},
+    {"id": "mc_g8_pgram_judge", "kp_id": "kp_parallelogram", "description": "用'一组对边平行且另一组对边相等'判定平行四边形，忽略等腰梯形也满足该条件的反例", "hint": "'一组对边平行、另一组对边相等'不充分——等腰梯形就是反例；正确判定用'一组对边平行且相等'或'两组对边分别相等'。", "signature": ["对", "是平行四边形"]},
+    {"id": "mc_g8_rect_diagonal", "kp_id": "kp_special_quadrilaterals", "description": "把'对角线相等'直接当矩形的判定条件，漏掉'必须是平行四边形'这一前提", "hint": "对角线相等的四边形不一定是矩形（等腰梯形对角线也相等）；定理应表述为'对角线相等的平行四边形是矩形'。", "signature": ["对", "矩形"]},
+    {"id": "mc_g8_midsegment", "kp_id": "kp_triangle_midsegment", "description": "三角形中位线定理记成'等于第三边'：三边为 6、8、10 的三角形三条中位线之和误答 24（正确为 12）", "hint": "中位线平行于第三边且等于第三边的一半，三条中位线之和=(6+8+10)/2=12；与'中位线段'（连接两边中点）和'中线'（连顶点与对边中点）区分开。", "signature": ["24"]},
+    {"id": "mc_g8_linear_k", "kp_id": "kp_linear_graph", "description": "k 的符号与增减性（图象走向）记反：y=-2x+3（k<0）的图象误判为不经过第四象限，答'第四象限'（实际不经过第三象限）", "hint": "k<0 时 y 随 x 增大而减小，图象自左向右下降，过一、二、四象限；判断前先用两点画出草图，再看象限。", "signature": ["第四象限", "四"]},
+    {"id": "mc_g8_weighted_avg", "kp_id": "kp_weighted_average", "description": "算加权平均数时忽略权、直接求算术平均：80（权 40%）与 90（权 60%）的加权平均误答 85（正确为 86）", "hint": "加权平均=数据×权 再求和：80×40%+90×60%=32+54=86；强调'权大的数据把平均数拉向自己'。", "signature": ["85"]}
+  ]
+}

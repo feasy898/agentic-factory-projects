@@ -69,7 +69,8 @@ def test_evidence_counts(graph, bank):
 def test_aggregate_clusters(graph, bank):
     p = diagnose([Response("m7_010", True)], bank, graph)
     clusters = aggregate_to_clusters(p, graph)
-    assert set(clusters) == {"有理数", "整式加减", "一元一次方程", "图形初步"}
+    # 知识库扩充后章节簇变多：只要求原有四簇仍在，且全部取值合法
+    assert {"有理数", "整式加减", "一元一次方程", "图形初步"} <= set(clusters)
     assert all(0.0 <= v <= 1.0 for v in clusters.values())
 
 

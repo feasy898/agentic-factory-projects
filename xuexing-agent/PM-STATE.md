@@ -26,10 +26,10 @@
 | M1 | 原型 v0 = oracle | ✅ | `9ab7789`，`python -m pytest` = 110 passed（63 常规 + 47 契约） |
 | M1.5 | 契约测试框架 | ✅ | tests/contract + tools/run_contract.py（支持 --impl-dir 注入重生成实例） |
 | M2 | 工作流#1：规格起草→对抗评审→冻结→重生成3轮→测试门 | ✅ | 8/8 模块连续三轮重生成 100% 通过（world.run 门控），相似度 0.07-0.69 无抄袭；对抗评审修复 46 处歧义；specs/frozen/ 共 2395 行已提交（7503b8e）。诊断规格含"闭式手算+独立引擎300用例逐位对拍"级探针 |
-| M4a | 注入器提升根 conftest + run_contract --suite full | ✅ | 56 项测试（47契约+3集成+6数据）在参考实现与 round3 实例上双绿——重生成引擎直接通过合成学习者恢复实验 |
-| M4b | 终版重生成工作流（8生成员→契约+集成+数据联合双门→相似度终检） | 🔄 运行中 | dwfrun-57a79ecb；完成后由主会话执行 M4c |
-| M4c | 终版实例替换 src/xuexing/ → 全套110测试 → commit + tag v0.1.0 | ⬜ | 替换是主会话手动动作（可控）；若替换后全套测试有失败，回滚并归因 |
-| M3 | 工作流#2：知识注入 | ⏳ 就绪待发 | 脚本在 .zcode/workflow-drafts/知识注入.dwf.ts；验收门 tools/validate_knowledge.py（当前 16 缺口）；必须与终版工作流串行 |
+| M4a | 注入器提升根 conftest + run_contract --suite full | ✅ | 56 项测试在参考实现与 round3 实例上双绿 |
+| M4b | 终版重生成工作流 | ✅ | 8/8 一次性通过契约+集成+数据 56 项联合门，相似度 0.08-0.65 |
+| M4c | 终版实例替换 src/xuexing/ | ✅ | 110 测试全绿；commit d162578；**tag v0.1.0**。spec 驱动闭环完成：oracle→冻结→契约内重生成→终版入库 |
+| M3 | 工作流#2：知识注入 | 🔄 运行中 | dwfrun-63db4f64；验收门 validate_knowledge.py；完成后审查 data/ 并提交 |
 | M5 | night-iteration saved workflow + BACKLOG 持续清库 | ⬜ | 待 M4c/M3 完成后建立 |
 
 ## 模块与契约清单（重生成范围）

@@ -31,8 +31,11 @@ def test_unknown_kp_raises(bank, graph):
 
 
 def test_insufficient_items_raises(bank, graph):
+    # 动态构造超库存蓝图：任取一个知识点，要求数量 = 实际库存 + 1
+    kp = graph.kps()[0].id
+    have = len(bank.by_kp(kp, primary_only=True))
     with pytest.raises(PaperError):
-        generate_paper(bank, graph, {"kp_angles": 2}, seed=1)
+        generate_paper(bank, graph, {kp: have + 1}, seed=1)
 
 
 def test_select_next_respects_scope_cap_and_administered(bank, graph):
