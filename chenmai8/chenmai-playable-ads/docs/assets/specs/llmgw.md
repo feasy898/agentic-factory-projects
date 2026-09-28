@@ -96,9 +96,8 @@ python/.venv/Scripts/python.exe -m llmgw.selftest     # → 6 项全过，打印
 比对字节一致；坏 base64 被客户端拦截）；⑤ 500→自动重试成功（恰两次请求）；⑥ 慢模型超时→降级
 （降级耗时 < 慢模型时长；慢模型恰被尝试 1 次）。
 
-- 红线扫描（gate_phase0 门项 4）：`python/llmgw/**/*.py` 对厂商端点/厂商名词表（bigmodel、openai.com、
-  dashscope、anthropic、deepseek、moonshot、stepfun、generativelanguage、cohere、zhipu、mistral.ai、minimax、
-  baichuan）零命中。
+- 红线扫描（gate_phase0 门项 4）：`python/llmgw/**/*.py` 对厂商端点/厂商名黑名单正则
+  （词表权威 = `scripts/gate_phase0.py` 的 `VENDOR_ENDPOINT_RE`，本 spec 不复制 枚举词表）零命中。
 - **禁止事项**：不许 mock 被测物（selftest 的 mock 是服务端替身，客户端本体真实走 HTTP）；不许把任何厂商
   端点写进代码或默认值（一切 env 注入）。真实连通性由主会话注入 key 后手测一次（非 eval 项）。
 
