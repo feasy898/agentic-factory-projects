@@ -7,10 +7,14 @@
 #   Mainland-China network: pip goes through domestic mirrors.
 #
 # What it installs (into /data/xdng/venv):
-#   - PyTorch CUDA build. Tries the cu121 wheel first (default PyPI build of
-#     torch==2.4.1); verifies at runtime that the binary exposes sm_70 and that
-#     CUDA is actually usable. If not, falls back to cu118 wheels and re-verifies.
-#   - transformers (pinned to the 4.x line — see the note in section 3),
+#   - PyTorch CUDA build, DEFAULT torch==2.5.1+cu118 (the build D1 smoke was run on;
+#     ali pytorch-wheels mirror first, official cu118 index / default PyPI as fallbacks).
+#     After install the script asserts the version is 2.5.1+cu118 AND that the binary
+#     exposes sm_70. (Older revisions installed 2.4.1 first — that could NOT reproduce
+#     the smoke stack and broke alt-tts-b which requires torch>=2.5.)
+#   - transformers pinned to the 4.x line (4.52.x for the TTS/lip engine group — see
+#     section 3 and the deployment matrix at the top of configs/models.yaml; the
+#     ASR/align group lives in a SEPARATE venv via gpu/setup_asr_venv.sh),
 #     accelerate, soundfile, fastapi, uvicorn, httpx
 #
 # Idempotent: safe to re-run. Existing venv / working torch install is kept.
@@ -61,7 +65,9 @@ if [ "${PIP_MAJOR:-0}" -lt 24 ]; then
 fi
 log "pip: $($PIP --version 2>&1) | index=$IDX"
 
-# ---------- 2. torch (sm_70 must be present in the binary) ----------
+# ---------- 2. torch (2.5.1+cu118; sm_70 must be present in the binary) ----------
+TORCH_PIN="2.5.1+cu118"
+
 verify_torch() {
   "$PY" - <<'PYCHECK'
 import sys
@@ -82,30 +88,61 @@ sys.exit(2)
 PYCHECK
 }
 
-if "$PY" -c "import torch" 2>/dev/null; then
-  log "torch already installed, verifying"
+# 版本断言：主 venv 必须落在 2.5.1+cu118（D1 冒烟实测栈；alt-tts-b 需 torch>=2.5）。
+# 已装版本不符（如旧脚本留下的 2.4.1）时按全新安装处理，重装到钉版。
+torch_ok() {
+  "$PY" - "$TORCH_PIN" <<'PYCHK'
+import sys
+try:
+    import torch
+except Exception:
+    raise SystemExit(1)
+raise SystemExit(0 if torch.__version__ == sys.argv[1] else 1)
+PYCHK
+}
+
+if torch_ok; then
+  log "torch $TORCH_PIN already installed, verifying"
 else
-  log "installing torch (cu121 build = default PyPI wheel of torch==2.4.1)"
-  "$PIP" install "torch==2.4.1" -i "$IDX" || log "ERROR: cu121 wheel install failed"
+  if "$PY" -c "import torch" 2>/dev/null; then
+    log "torch found but version != $TORCH_PIN -> reinstalling pinned build"
+    "$PIP" uninstall -y torch >/dev/null 2>&1
+  else
+    log "installing torch $TORCH_PIN (aliyun pytorch-wheels cu118 first)"
+  fi
+  "$PIP" install "torch==$TORCH_PIN" \
+      -f "https://mirrors.aliyun.com/pytorch-wheels/cu118/" -i "$IDX" \
+  || "$PIP" install "torch==$TORCH_PIN" --index-url "https://download.pytorch.org/whl/cu118" \
+  || "$PIP" install "torch==2.5.1" -i "$IDX" \
+  || log "ERROR: all torch install routes failed"
 fi
 
 if ! verify_torch; then
-  log "cu121 build not usable on this GPU -> falling back to cu118 wheels"
+  log "pinned build not usable on this GPU -> trying default PyPI torch==2.5.1"
   "$PIP" uninstall -y torch >/dev/null 2>&1
-  "$PIP" install "torch==2.4.1+cu118" \
-      -f "https://mirrors.aliyun.com/pytorch-wheels/cu118/" -i "$IDX" \
-  || "$PIP" install "torch==2.4.1+cu118" --index-url "https://download.pytorch.org/whl/cu118" \
-  || "$PIP" install torch --index-url "https://download.pytorch.org/whl/cu118" \
-  || log "ERROR: all cu118 fallbacks failed"
+  "$PIP" install "torch==2.5.1" -i "$IDX" || log "ERROR: default PyPI torch install failed"
 fi
 
-verify_torch || { log "FATAL: no torch build with sm_70 support could be installed"; exit 2; }
+# 装完断言：版本 + sm_70 + CUDA 真正可用（双卡可见）
+"$PY" - "$TORCH_PIN" <<'PYASSERT' || { log "FATAL: torch $TORCH_PIN / sm_70 assertion failed"; exit 2; }
+import sys, torch
+pin = sys.argv[1]
+ver = torch.__version__
+assert ver == pin, f"torch 版本断言失败: {ver} != {pin}"
+arch = torch.cuda.get_arch_list()
+assert "sm_70" in arch, f"sm_70 不在 arch_list: {arch}"
+assert torch.cuda.is_available(), "CUDA 不可用"
+print(f"TORCH_ASSERT_OK torch={ver} sm_70 present devices={torch.cuda.device_count()}")
+PYASSERT
 
 # ---------- 3. remaining dependencies ----------
-# transformers is pinned to the 4.x line: transformers 5.x requires torch>=2.5
-# (measured: 5.17.0 disables the torch backend against torch 2.4.1), while the
-# newest cu118 build with sm_70 support is torch 2.4.1. If torch ever moves to
-# a newer CUDA build, this pin can be revisited.
+# transformers is pinned to the 4.52.x line for the TTS/lip engine group (the exact
+# stack D1 smoke ran on; measured with torch 2.5.1+cu118 / sm_70). The ASR/align
+# group needs transformers>=5.13 and CANNOT share this interpreter with 4.52.x —
+# it installs into a separate venv via gpu/setup_asr_venv.sh (see the deployment
+# matrix at the top of configs/models.yaml). (Older revisions said "transformers<5
+# because the newest cu118 build with sm_70 is torch 2.4.1" — that premise is stale:
+# torch 2.5.1+cu118 ships sm_70 and is the pinned build above.)
 log "installing 'transformers<5' accelerate soundfile fastapi uvicorn httpx"
 "$PIP" install "transformers<5" accelerate soundfile fastapi uvicorn httpx -i "$IDX" \
 || { log "dependency install failed once, retrying"; sleep 5; \

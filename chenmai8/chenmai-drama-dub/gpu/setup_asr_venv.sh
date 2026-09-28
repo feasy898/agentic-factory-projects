@@ -71,13 +71,24 @@ fi
 log "pip: $($PIP --version 2>&1) | index=$IDX"
 
 have_torch() { "$PY" -c "import torch" 2>/dev/null; }
-if ! have_torch; then
-  log "installing torch/torchaudio 2.5.1+cu118（Volta sm_70 实测可用档；主 venv 缺位时才走此分支）"
-  "$PIP" install "torch==2.5.1+cu118" "torchaudio==2.5.1+cu118" -f "$CU118" -i "$IDX" \
+TORCH_PIN="2.5.1+cu118"
+# torch 按钉版校验（B1 修订 2026-09-28：不再"任意 torch 就跳过"——残缺/旧版安装会被重装）
+torch_ok() { "$PY" -c "import torch,sys; sys.exit(0 if torch.__version__ == '$TORCH_PIN' else 1)" 2>/dev/null; }
+if ! torch_ok; then
+  if have_torch; then
+    log "torch 版本非 $TORCH_PIN（实测 $($PY -c 'import torch;print(torch.__version__)' 2>/dev/null)）-> 重装钉版"
+    "$PIP" uninstall -y torch torchaudio >/dev/null 2>&1
+  else
+    log "installing torch/torchaudio $TORCH_PIN（Volta sm_70 实测可用档；主 venv 缺位时才走此分支）"
+  fi
+  "$PIP" install "torch==$TORCH_PIN" "torchaudio==$TORCH_PIN" -f "$CU118" -i "$IDX" \
     || { log "FATAL: torch 安装失败"; exit 2; }
 else
-  log "torch 已就绪（复用主 venv：$($PY -c 'import torch;print(torch.__version__)' 2>/dev/null)）"
+  log "torch $TORCH_PIN 已就绪（复用主 venv：$($PY -c 'import torch;print(torch.__version__)' 2>/dev/null)）"
 fi
+# 装完断言：版本 + sm_70（同 gpu/setup_gpu.sh 口径）
+"$PY" -c "import torch; assert torch.__version__ == '$TORCH_PIN', torch.__version__; assert 'sm_70' in torch.cuda.get_arch_list(), torch.cuda.get_arch_list(); print('TORCH_ASR_ASSERT_OK', torch.__version__)" \
+  || { log "FATAL: torch $TORCH_PIN / sm_70 断言失败"; exit 2; }
 
 # ---------- 2) transformers 5.13 + 服务/音频依赖 ----------
 "$PY" - <<'CHK' || "$PIP" install "transformers==5.13.0" -i "$IDX"
@@ -104,10 +115,14 @@ CHK
 # 超时频发），而 ModelScope 同 ID 仓库直连 11.8MB/s → 主路 ModelScope，HF 镜像兜底。
 # HF 兜底必须 HF_HUB_DISABLE_XET=1：huggingface-hub 1.x 默认 Xet CAS 直连，hf-mirror
 # 不代理（401 Unauthorized @ cas-server.xethub.hf.co），与 T3 冒烟期"卸载 hf_xet"等价。
-has_weights() {  # has_weights <dir>：任一常见权重文件在位即算完整
-  local f
-  for f in "$1"/*.safetensors "$1"/*.pt "$1"/*.bin; do
-    [ -e "$f" ] && return 0
+has_weights() {  # has_weights <dir>：按最小文件清单校验（B1 修订 2026-09-28），
+                 # 不再"任一权重文件在位即算完整"——config + 权重文件(>1MB) 缺一不可
+  local d=$1 f
+  [ -f "$d/config.json" ] || [ -f "$d/config.yaml" ] || return 1
+  for f in "$d"/*.safetensors "$d"/*.pt "$d"/*.bin; do
+    if [ -s "$f" ] && [ "$(stat -c%s "$f" 2>/dev/null || echo 0)" -gt 1000000 ]; then
+      return 0
+    fi
   done
   return 1
 }
