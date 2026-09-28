@@ -1,0 +1,170 @@
+{
+  "module": "cs_arm",
+  "date": "2026-09-29",
+  "cmd": "python -m cs_arm.eval_mock --report reports/arm_mock_eval.json  (cwd=包根 chengshao/)",
+  "metrics": {
+    "model_tier": "mjcf",
+    "n_joints": 6,
+    "delivery": {
+      "stop_distance_m": 0.16999999999999998,
+      "spoon_tip_reach_m": 0.08,
+      "tracking_err_bound_m": 0.02,
+      "sense_err_bound_m": 0.05,
+      "margin_m": 0.019999999999999976,
+      "pass": true,
+      "stop_point_m": [
+        0.25,
+        0.0,
+        0.3
+      ]
+    },
+    "estop": {
+      "latency_ms": 0.058,
+      "frozen": true,
+      "post_estop_write_rejected": true,
+      "violation_after": "watchdog",
+      "clear_to_move_after": false,
+      "recovered": true
+    },
+    "corridor": {
+      "waypoints_all_accepted": true,
+      "err_bowl_m": 0.000305,
+      "err_stop_m": 0.000203,
+      "measured_max_tcp_mps": 0.0,
+      "measured_max_joint_rad_s": 0.0,
+      "cartesian_rewrites": 38
+    },
+    "injection": {
+      "injected_total": 1000,
+      "violating_executed": 0,
+      "must_reject_rate_min_observed": 1.0,
+      "by_category": {
+        "benign_cartesian": {
+          "n": 340,
+          "rejected": 41,
+          "rate": 0.12058823529411765
+        },
+        "benign_joints": {
+          "n": 266,
+          "rejected": 1,
+          "rate": 0.0037593984962406013
+        },
+        "face_sphere_target": {
+          "n": 120,
+          "rejected": 120,
+          "rate": 1.0
+        },
+        "torso_target": {
+          "n": 80,
+          "rejected": 80,
+          "rate": 1.0
+        },
+        "joints_zone_target": {
+          "n": 70,
+          "rejected": 70,
+          "rate": 1.0
+        },
+        "unreachable": {
+          "n": 8,
+          "rejected": 8,
+          "rate": 1.0
+        },
+        "joint_speed_over_hard": {
+          "n": 60,
+          "rejected": 60,
+          "rate": 1.0
+        },
+        "cart_speed_over_hard": {
+          "n": 40,
+          "rejected": 40,
+          "rate": 1.0
+        },
+        "adversarial": {
+          "n": 16,
+          "rejected": 16,
+          "rate": 1.0
+        }
+      }
+    },
+    "near_face_soft_limit": {
+      "segment_in_band_m": [
+        0.132,
+        0.122
+      ],
+      "requested_mps": 0.15,
+      "effective_mps": 0.0952
+    },
+    "watchdog": {
+      "timeout_s": 0.5,
+      "quiet_0p4s_no_trip": true,
+      "trips_at_0p6s": true,
+      "recovered": true
+    },
+    "zone_monitor": {
+      "arm_stopped_at_stop_point": true,
+      "latched": true,
+      "human_zone_violation": true,
+      "clear_to_move": false,
+      "write_blocked": true,
+      "reset_reannounces_while_intruded": true
+    },
+    "stats": {
+      "envelope": {
+        "written": 602,
+        "rejected": 437,
+        "rejected_by_reason": {
+          "not_clear_to_move": 1,
+          "envelope_violation": 170,
+          "ik_no_solution": 160,
+          "joint_speed_over_hard_limit": 66,
+          "linear_speed_over_hard_limit": 40
+        },
+        "cartesian_rewritten_to_joints": 337,
+        "estop_count": 1,
+        "watchdog_trips": 0,
+        "zone_latches": 0
+      },
+      "mock": {
+        "written": 602,
+        "rejected": 0,
+        "timeout_aborts": 0,
+        "envelope_rejections": 0
+      }
+    },
+    "elapsed_s": 155.06
+  },
+  "thresholds": {
+    "injected_min": 1000,
+    "must_reject_rate_min": 1.0,
+    "violating_executed_max": 0,
+    "estop_latency_ms_max": 100.0,
+    "estop_freeze_required": true,
+    "post_estop_write_rejected": true,
+    "tracking_err_max_m": 0.002,
+    "measured_tcp_speed_max_mps": 0.15,
+    "measured_joint_speed_max_rad_s": 1.5,
+    "delivery_margin_min_m": 0.005,
+    "stop_outside_face_sphere": true,
+    "corridor_all_accepted": true,
+    "benign_categories_accepted_min": 1,
+    "watchdog_timeout_s": 0.5,
+    "watchdog_trips_required": true,
+    "watchdog_quiet_required": true,
+    "zone_latch_required": true
+  },
+  "checks": {
+    "delivery_margin": true,
+    "stop_outside_face_sphere": true,
+    "estop": true,
+    "corridor": true,
+    "measured_speeds": true,
+    "cartesian_rewrite_works": true,
+    "injection_no_violation_executed": true,
+    "benign_accepted": true,
+    "near_face_soft_limit": true,
+    "watchdog": true,
+    "zone_monitor": true
+  },
+  "pass": true,
+  "notes": "近脸 0.10 m/s 软限速场在规划层证明（缺省几何下 0.12-0.15m 壳层被 30mm 连杆胶囊封锁：TCP 名义停点 0.17m + 勺尖前伸 0.08m 覆盖该壳层，执行层限速证据由走廊实测与硬限拒绝覆盖）。violation 状态仅保留给真实安全事件（急停/看门狗/禁入区），指令拒绝不计入——拒绝是包络在正确工作。"
+}

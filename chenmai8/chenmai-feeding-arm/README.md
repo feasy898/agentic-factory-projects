@@ -22,7 +22,8 @@ tests/          跨模块 pytest（pytest 自仓库根运行）
 chengshao/
   cs_schema/     数据契约：跨模块数据结构与枚举的唯一事实来源（契约冻结 v1.1）
   cs_sim/        仿真：模型加载、FK/IK、可达空间、安全包络验证、对抗性 oracle
-  cs_arm/        执行（规划中）：机械臂接口 + Mock 臂 + 真机通道 + 安全包络执行器
+  cs_arm/        执行：机械臂接口（契约 v1.1 六关节）+ Mock 臂（cs_sim 虚拟执行）
+                 + SafetyEnvelope 硬闸（限速/禁入区/软急停/看门狗）+ FeetechArm 骨架
   cs_mouth/      感知：口部三维估计（mono 主路径 + depth 保留 + 腕部 IPD 模式）
   cs_food/       感知：勺上食物检查（启发式基线）、选碗
   cs_voice/      交互：离线语音识别、意图解析、语音播报
@@ -48,7 +49,8 @@ scripts/         gate_g1.py 门禁与 verify_g1_reports.py 报告独立复核
 | cs_mouth | 口部三维估计（mono 主路径 + depth/腕部 IPD 保留） | `python -m cs_mouth.eval`（包根下执行） |
 | cs_sim | 仿真：FK/IK/可达空间/安全包络 + 独立违规轨迹 oracle | `python -m cs_sim.eval`（包根下执行） |
 | cs_voice | 离线语音链路 | `python -m cs_voice.eval`（包根下执行） |
-| cs_arm / cs_orchestra | 未开工（执行层与行为树在 G2 起） | — |
+| cs_arm | 执行层：MockArm（cs_sim 虚拟执行）+ SafetyEnvelope 硬闸 + FeetechArm 骨架 | `pytest tests/test_arm_mock.py` + `python -m cs_arm.eval_mock`（包根下执行） |
+| cs_orchestra | 未开工（行为树在 G3 起，消费 cs_arm 硬闸） | — |
 
 一键门禁：`python scripts/gate_g1.py`（命名扫描 + 全量 pytest + 各模块
 eval + 报告独立复核 + 看板冒烟）。
