@@ -1,0 +1,5 @@
+# -*- coding: utf-8 -*-
+"""m6_flywheel · Flywheel（飞轮层）：轨迹采集、黄金集、Badcase、受控自进化（specs/M6-flywheel.md）。
+
+模块尚未实现（S0 阶段仅建包）；接口以 specs/01-contracts.md §3 冻结 API 为准。
+"""

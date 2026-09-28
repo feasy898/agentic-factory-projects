@@ -10,3 +10,6 @@ golden/holdout/
 runs/acceptance/
 *.db
 *.sqlite3
+*.egg-info/
+build/
+dist/
