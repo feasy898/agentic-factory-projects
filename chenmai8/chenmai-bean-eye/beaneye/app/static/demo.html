@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>啡眼 BeanEye · 质量检测演示</title>
+<style>
+  :root {
+    --bg: #f4f2ec; --card: #ffffff; --ink: #2c2620; --muted: #8a8074;
+    --accent: #6b4f2e; --accent2: #8a6a3f; --ok: #2e7d4f; --bad: #b3402e;
+    --warn-bg: #fdf3e0; --warn-bd: #e0c48a; --line: #e4ddd0;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
+         background: var(--bg); color: var(--ink); }
+  header { background: linear-gradient(135deg, #3d2f1e, #6b4f2e); color: #f7f2e8; padding: 22px 28px; }
+  header h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: 1px; }
+  header p { margin: 0; opacity: .8; font-size: 13px; }
+  main { max-width: 1080px; margin: 0 auto; padding: 20px 16px 48px; }
+  section { background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+            padding: 18px 20px; margin-top: 18px; }
+  h2 { margin: 0 0 12px; font-size: 17px; color: var(--accent); border-left: 4px solid var(--accent2);
+       padding-left: 10px; }
+  label { font-size: 13px; color: var(--muted); display: block; margin: 10px 0 4px; }
+  input[type=text], select { width: 100%; padding: 8px 10px; border: 1px solid var(--line);
+       border-radius: 6px; font-size: 14px; background: #fbfaf7; }
+  button { background: var(--accent); color: #fff; border: 0; border-radius: 6px;
+       padding: 9px 18px; font-size: 14px; cursor: pointer; margin-top: 12px; }
+  button:hover { background: var(--accent2); }
+  button.ghost { background: #eee7da; color: var(--accent); }
+  .row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .row > div { flex: 1 1 220px; }
+  .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  #jobBox { margin-top: 14px; padding: 12px; border-radius: 8px; background: #f7f5ef;
+       border: 1px dashed var(--line); font-size: 13px; display: none; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 12px; }
+  .badge.ok { background: #e4f2e9; color: var(--ok); }
+  .badge.bad { background: #f8e5e1; color: var(--bad); }
+  .badge.warn { background: var(--warn-bg); color: #8a6a1f; border: 1px solid var(--warn-bd); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line); }
+  th { color: var(--muted); font-weight: 600; }
+  tbody tr { cursor: pointer; }
+  tbody tr:hover { background: #f7f3ea; }
+  #degradedBanner { display: none; margin: 0 0 12px; padding: 10px 12px; font-size: 13px;
+       background: var(--warn-bg); border: 1px solid var(--warn-bd); border-radius: 8px; }
+  .gradeLine { font-size: 15px; margin: 6px 0; }
+  .gradeLine b { font-size: 26px; color: var(--accent); margin: 0 8px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .card { border: 1px solid var(--line); border-radius: 8px; padding: 10px; background: #fdfcf9; }
+  .card h4 { margin: 0 0 8px; font-size: 13px; color: var(--accent); }
+  .card img { width: 100%; max-height: 150px; object-fit: contain; background: #efe9dd;
+       border-radius: 6px; }
+  .card .meta { font-size: 12px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+  .passportBox iframe { width: 100%; height: 560px; border: 1px solid var(--line); border-radius: 8px;
+       background: #fff; }
+  .dl { margin-right: 10px; font-size: 13px; color: var(--accent2); }
+  .empty { color: var(--muted); font-size: 13px; padding: 12px 0; }
+  footer { text-align: center; color: var(--muted); font-size: 12px; padding: 18px 0 30px; }
+  .statgrid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .stat { background: #f7f5ef; border-radius: 8px; padding: 8px 14px; font-size: 13px; }
+  .stat b { display: block; font-size: 17px; color: var(--accent); }
+  .langChk { display: inline-flex; align-items: center; gap: 4px; margin-right: 12px; font-size: 13px;
+       color: var(--ink); }
+  .langChk input { width: auto; }
+  .kv { font-size: 13px; line-height: 1.9; color: #5a5142; }
+  .err { color: var(--bad); font-size: 13px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>啡眼 BeanEye · 生咖啡豆质量检测</h1>
+  <p>整盘图上传 → 定位标定 → 逐粒识别 → 上下配对 → 计量定级 → 三语质量护照（本地演示）</p>
+</header>
+<main>
+
+  <!-- ① 上传 -->
+  <section id="sec-upload">
+    <h2>① 上传整盘图</h2>
+    <div class="row">
+      <div>
+        <label for="fTop">正面整盘图（含四角定位码）</label>
+        <input type="file" id="fTop" accept="image/png,image/jpeg">
+        <label for="fBottom">反面整盘图（含四角定位码）</label>
+        <input type="file" id="fBottom" accept="image/png,image/jpeg">
+      </div>
+      <div>
+        <label for="iSample">样品编号</label>
+        <input type="text" id="iSample" placeholder="留空自动生成">
+        <label for="sStd">定级标准</label>
+        <select id="sStd"></select>
+        <label>护照语言</label>
+        <span class="langChk"><input type="checkbox" id="lzh" checked value="zh">中</span>
+        <span class="langChk"><input type="checkbox" id="len" checked value="en">EN</span>
+        <span class="langChk"><input type="checkbox" id="lvi" value="vi">VI</span>
+        <button id="btnUpload">提交检测</button>
+        <div class="err" id="upErr"></div>
+      </div>
+    </div>
+    <div id="jobBox"></div>
+    <div class="hint">没有图片？下方「内置合成」按钮可直接用程序合成的整盘图体验全流程（结果会标注为合成降级演示）。</div>
+    <button class="ghost" id="btnSynth">内置合成整盘走一遍</button>
+  </section>
+
+  <!-- ② 结果列表 -->
+  <section id="sec-list">
+    <h2>② 检测结果列表</h2>
+    <button class="ghost" id="btnRefresh" style="margin:0 0 10px">刷新</button>
+    <div id="listWrap"><div class="empty">暂无结果——先提交一次检测。</div></div>
+  </section>
+
+  <!-- ③ 结果详情：定级 / 证据卡 -->
+  <section id="sec-detail" style="display:none">
+    <h2>③ 定级结论与证据卡</h2>
+    <div id="degradedBanner"></div>
+    <div class="gradeLine" id="gradeLine"></div>
+    <div class="kv" id="stdLine"></div>
+    <div class="statgrid" id="statGrid"></div>
+    <h2 style="margin-top:18px">缺陷豆证据卡</h2>
+    <div class="cards" id="cardGrid"></div>
+  </section>
+
+  <!-- ④ 护照预览 -->
+  <section id="sec-passport" style="display:none">
+    <h2>④ 三语质量护照</h2>
+    <div id="passportLinks" style="margin-bottom:10px"></div>
+    <div class="passportBox"><iframe id="passportFrame" title="护照预览"></iframe></div>
+  </section>
+
+</main>
+<footer>本页为本地演示：样式与脚本全部内嵌，不加载任何外部资源；接口同源 /api/v1/*。</footer>
+
+<script>
+"use strict";
+var $ = function (id) { return document.getElementById(id); };
+var state = { resultId: null, pollTimer: null };
+
+function esc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+  });
+}
+function api(path, opts) {
+  return fetch(path, opts || {}).then(function (r) {
+    return r.json().then(function (j) { return { ok: r.ok, status: r.status, body: j }; });
+  });
+}
+function selLangs() {
+  var out = [];
+  ["lzh", "len", "lvi"].forEach(function (id) {
+    if ($(id).checked) out.push($(id).value);
+  });
+  return out.join(",");
+}
+
+/* ---- 标准下拉 ---- */
+api("/api/v1/standards").then(function (r) {
+  if (!r.ok) return;
+  var sel = $("sStd");
+  (r.body.standards || []).forEach(function (s, i) {
+    var o = document.createElement("option");
+    o.value = s.id;
+    o.textContent = (s.display && s.display.zh ? s.display.zh : s.id) +
+      (s.verified ? "" : "（阈值核对中）");
+    if (s.id === r.body.default) sel.value = s.id;
+    sel.appendChild(o);
+  });
+});
+
+/* ---- 提交（multipart 双图） ---- */
+$("btnUpload").onclick = function () {
+  $("upErr").textContent = "";
+  var top = $("fTop").files[0], bottom = $("fBottom").files[0];
+  if (!top || !bottom) { $("upErr").textContent = "请先选择正、反两面整盘图。"; return; }
+  var fd = new FormData();
+  fd.append("top", top);
+  fd.append("bottom", bottom);
+  var sid = $("iSample").value.trim();
+  if (sid) fd.append("sample_id", sid);
+  fd.append("standard", $("sStd").value);
+  var langs = selLangs();
+  if (langs) fd.append("langs", langs);
+  submitJob(fd, null);
+};
+
+/* ---- 提交（内置合成 JSON） ---- */
+$("btnSynth").onclick = function () {
+  $("upErr").textContent = "";
+  var body = {
+    synth: { n_beans: 36, defect_rate: 0.25, seed: 20260928, width: 1024, height: 1024 },
+    standard: $("sStd").value
+  };
+  var langs = selLangs();
+  if (langs) body.langs = langs;
+  submitJob(null, body);
+};
+
+function submitJob(formData, jsonBody) {
+  var opts = formData ? { method: "POST", body: formData }
+                      : { method: "POST", headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify(jsonBody) };
+  var box = $("jobBox");
+  box.style.display = "block";
+  box.innerHTML = "提交中…";
+  api("/api/v1/scans", opts).then(function (r) {
+    if (!r.ok) { box.innerHTML = ""; $("upErr").textContent = r.body.error || ("HTTP " + r.status); return; }
+    poll(r.body.job_id, 0);
+  }).catch(function (e) { $("upErr").textContent = "网络错误：" + e; });
+}
+
+function poll(jobId, n) {
+  var box = $("jobBox");
+  api("/api/v1/jobs/" + jobId).then(function (r) {
+    if (!r.ok) { box.innerHTML = "查询作业失败：" + esc(r.body.error || r.status); return; }
+    var j = r.body;
+    if (j.status === "done") {
+      box.innerHTML = "检测完成：<b>" + esc(j.sample_id) + "</b>（作业 " + esc(j.job_id) + "）";
+      loadResults(); openResult(j.result_id);
+      return;
+    }
+    if (j.status === "failed") {
+      box.innerHTML = '<span class="badge bad">失败</span> 阶段 <b>' + esc(j.error_stage || "?") +
+        "</b>：" + esc(j.error || "未知错误") + "（作业 " + esc(j.job_id) + "）";
+      return;
+    }
+    box.innerHTML = "状态 <b>" + esc(j.status) + "</b> · 阶段 <b>" + esc(j.stage || "…") +
+      "</b>（作业 " + esc(j.job_id) + "）";
+    if (n > 600) { box.innerHTML = "轮询超时，请稍后在结果列表刷新查看。"; return; }
+    state.pollTimer = setTimeout(function () { poll(jobId, n + 1); }, 800);
+  });
+}
+
+/* ---- 结果列表 ---- */
+$("btnRefresh").onclick = loadResults;
+function loadResults() {
+  api("/api/v1/results").then(function (r) {
+    if (!r.ok) return;
+    var rows = r.body.results || [];
+    if (!rows.length) { $("listWrap").innerHTML = '<div class="empty">暂无结果。</div>'; return; }
+    var html = "<table><thead><tr><th>样品</th><th>标准</th><th>定级</th><th>结论</th>" +
+      "<th>粒数</th><th>主/次缺陷</th><th>状态</th><th>时间</th></tr></thead><tbody>";
+    rows.forEach(function (x) {
+      html += "<tr data-rid=\"" + esc(x.result_id) + "\">" +
+        "<td>" + esc(x.sample_id) + "</td>" +
+        "<td>" + esc(x.standard_id) + "</td>" +
+        "<td><b>" + esc(x.grade) + "</b></td>" +
+        "<td>" + (x.passed ? '<span class="badge ok">通过</span>' : '<span class="badge bad">未通过</span>') + "</td>" +
+        "<td>" + esc(x.bean_count) + "</td>" +
+        "<td>" + esc(x.primary_count) + " / " + esc(x.secondary_count) + "</td>" +
+        "<td>" + (x.degraded
+          ? '<span class="badge warn" title="' + esc((x.degraded_stages || []).join("、")) + '">降级演示</span>'
+          : '<span class="badge ok">完整</span>') + "</td>" +
+        "<td>" + esc((x.created_at || "").replace("T", " ")) + "</td></tr>";
+    });
+    html += "</tbody></table>";
+    $("listWrap").innerHTML = html;
+    Array.prototype.forEach.call($("listWrap").querySelectorAll("tr[data-rid]"), function (tr) {
+      tr.onclick = function () { openResult(tr.getAttribute("data-rid")); };
+    });
+  });
+}
+
+/* ---- 结果详情 + 证据卡 + 护照 ---- */
+function openResult(rid) {
+  state.resultId = rid;
+  api("/api/v1/results/" + rid).then(function (r) {
+    if (!r.ok) return;
+    var env = r.body, res = env.result, g = res.grading, m = res.measurements;
+    $("sec-detail").style.display = "";
+    $("sec-passport").style.display = "";
+
+    var banner = $("degradedBanner");
+    if (env.degraded) {
+      var reasons = Object.keys(env.degraded_reasons || {}).map(function (k) {
+        return "<b>" + esc(k) + "</b>：" + esc(env.degraded_reasons[k]);
+      }).join("<br>");
+      banner.style.display = "block";
+      banner.innerHTML = '<span class="badge warn">降级演示</span> 本结果包含未接入/回退的阶段' +
+        "（" + esc((env.degraded_stages || []).join("、")) + "），结论仅演示链路连通性：<br>" + reasons;
+    } else {
+      banner.style.display = "none";
+    }
+
+    $("gradeLine").innerHTML = "样品 <b>" + esc(res.sample_id) + "</b> 定级结论：" +
+      "<b>" + esc(g.grade) + "</b>" +
+      (g.passed ? '<span class="badge ok">通过</span>' : '<span class="badge bad">未通过</span>') +
+      "（结果 " + esc(rid.slice(0, 8)) + "…）";
+    $("stdLine").innerHTML = "标准 " + esc(g.standard_id) +
+      " · 主缺陷 " + esc(g.primary_count) + " 粒 · 次缺陷 " + esc(g.secondary_count) +
+      " 粒 · 配对 " + esc((env.pairing_summary || {}).paired || 0) +
+      " 对（单面 top " + esc((env.pairing_summary || {}).top_only || 0) +
+      " / bottom " + esc((env.pairing_summary || {}).bottom_only || 0) + "）";
+
+    var stat = function (k, v) { return '<div class="stat"><b>' + esc(v) + "</b>" + esc(k) + "</div>"; };
+    $("statGrid").innerHTML =
+      stat("粒数", m.bean_count) +
+      stat("估重 g", m.est_weight_g) +
+      stat("平均色差 ΔE", m.delta_e_mean) +
+      stat("中位直径 mm", m.eq_diameter_mm_stats.median) +
+      stat("筛目通过", m.sieve_pass == null ? "—" : (m.sieve_pass ? "是" : "否")) +
+      stat("溯因后端", res.agent_report ? res.agent_report.backend : "—");
+
+    /* 缺陷豆证据卡 */
+    var cards = res.beans.filter(function (b) { return b.final_severity_rank > 0; });
+    var grid = $("cardGrid");
+    if (!cards.length) {
+      grid.innerHTML = '<div class="empty">本盘未检出缺陷豆' +
+        (env.degraded ? "（降级模式下无识别检出）" : "") + "。</div>";
+    } else {
+      grid.innerHTML = cards.map(function (b) {
+        var face = function (obs, side) {
+          if (!obs) return '<div class="meta">无 ' + side + " 面观测</div>";
+          return '<img alt="' + esc(b.bean_id) + " " + side + '" src="/api/v1/results/' +
+            esc(rid) + "/evidence/" + esc(b.bean_id) + "/" + side + '">';
+        };
+        return '<div class="card"><h4>' + esc(b.bean_id) + " · " + esc(b.final_defect) +
+          "（严重度 " + esc(b.final_severity_rank) + "）</h4>" +
+          face(b.top, "top") + face(b.bottom, "bottom") +
+          '<div class="meta">判定面：' + esc(b.worst_side) +
+          " · 置信度 " + (b.top && b.bottom
+            ? esc(Math.max(b.top.defect_conf, b.bottom.defect_conf).toFixed(2))
+            : esc((b.top || b.bottom).defect_conf.toFixed(2))) +
+          "<br>上下两图为该豆正/反面裁剪证据</div></div>";
+      }).join("");
+    }
+
+    /* 护照 */
+    var links = $("passportLinks");
+    if (env.passport) {
+      links.innerHTML = (env.passport.langs || []).map(function (lg) {
+        return '<span class="dl"><a href="/api/v1/results/' + esc(rid) + '/passport?lang=' + lg +
+          '&download=1">下载 ' + esc(lg) + " 护照</a></span>";
+      }).join("") + '<span class="hint">QR 负载 sha256 前 12 位：' +
+        esc((env.passport.sha256 || "").slice(0, 12)) + "…</span>";
+      $("passportFrame").src = "/api/v1/results/" + esc(rid) + "/passport?lang=" +
+        ((env.passport.langs || ["zh"])[0]);
+    } else {
+      links.innerHTML = '<span class="hint">护照未生成：' +
+        esc((env.degraded_reasons || {}).passport || "无") + "</span>";
+      $("passportFrame").removeAttribute("src");
+    }
+    $("sec-detail").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+loadResults();
+</script>
+</body>
+</html>
