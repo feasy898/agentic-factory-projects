@@ -15,8 +15,9 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
@@ -56,6 +57,11 @@ class AppConfig(BaseModel):
     upstreams: list[UpstreamCfg] = Field(default_factory=list)
     ai_label: str = "本内容由AI生成"
     thresholds: ThresholdsCfg = Field(default_factory=ThresholdsCfg)
+    # 库文件（T1.3，相对路径按仓库根解析）：审计库与会话映射库**必须分文件**——
+    # 审计库要过 bytes 级全文件零明文扫描（§9 U5），而 masking_map 必须存归一化
+    # 原值才能还原（见 masking/session_store.py 模块文档）
+    audit_db: str = "data/audit.db"
+    session_db: str = "data/session_map.db"
 
 
 def _override_from_env(data: dict[str, Any], env: Mapping[str, str]) -> dict[str, Any]:

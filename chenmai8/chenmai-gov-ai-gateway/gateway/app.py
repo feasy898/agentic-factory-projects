@@ -12,6 +12,9 @@
     POST /internal/restore      {text, session_id} → 还原版本（调试/演示对比屏）
     GET  /healthz               存活
 
+落库形态（T1.3）：不注入时审计走 SQLite 写队列（cfg.audit_db）、会话映射走
+SessionStore（cfg.session_db，TTL=cfg.session_ttl_h，lifespan 挂清理协程）——
+生产与注入两种形态见 :func:`create_app` 文档。
 请求体上限：Content-Length > 网关上限即 413（畸形输入用例由 e2e 任务补全）。
 流式语义（§6 M1/T0.5）：BLOCK / 上游不可达 / 上游协议错误在开流前决出，
 返回普通 JSON 错误信封；开流后为 ``text/event-stream``，AI 标识以内容尾注 +
@@ -19,13 +22,19 @@ finish chunk ``annotations`` 元数据注入（gateway/sse.py 组合管线）。
 """
 from __future__ import annotations
 
+import asyncio
+from contextlib import asynccontextmanager
+from datetime import timedelta
+from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 
-from audit.store import InMemoryAuditStore, RawPiiLeakError
+from audit.store import AuditSink, RawPiiLeakError
+from audit.writer import SqliteAuditWriter
 from common.config import (
+    REPO_ROOT,
     AppConfig,
     load_app_config,
     load_dept_keys,
@@ -43,9 +52,13 @@ from gateway.pipeline import (
     ChatBodyError,
     GatewayService,
 )
+from masking.session_store import SessionStore
 from recognizers.rule.detect import detect
 
 log = get_logger(__name__)
+
+#: 会话 TTL 清理协程的运行间隔（秒）
+CLEANUP_INTERVAL_S = 300.0
 
 
 def _error_response(status_code: int, code: str, message: str) -> JSONResponse:
@@ -53,14 +66,30 @@ def _error_response(status_code: int, code: str, message: str) -> JSONResponse:
                         status_code=status_code)
 
 
+def resolve_db_path(p: str | Path) -> Path:
+    """库文件路径解析：相对路径按仓库根（config 同侧）解析。"""
+    path = Path(p)
+    return path if path.is_absolute() else REPO_ROOT / path
+
+
 def create_app(
     *,
     cfg: AppConfig | None = None,
     mask_key: str | None = None,
     dept_key_digests: dict[str, str] | None = None,
-    audit_store: InMemoryAuditStore | None = None,
+    audit_store: AuditSink | None = None,
+    session_registry: Any | None = None,
 ) -> FastAPI:
-    """构造网关应用。生产入口不传参（读 config/ 与环境）；测试可全量注入。"""
+    """构造网关应用。生产入口不传参（读 config/ 与环境）；测试可全量注入。
+
+    默认落库形态（T1.3）：
+    - ``audit_store`` 缺省 → :class:`audit.writer.SqliteAuditWriter`（队列+WAL，
+      路径 ``cfg.audit_db``），app 关闭时排干队列收尾；
+    - ``session_registry`` 缺省 → :class:`masking.session_store.SessionStore`
+      （LRU+SQLite ``masking_map``+TTL，路径 ``cfg.session_db``，TTL ``cfg.session_ttl_h``），
+      lifespan 启动 TTL 清理协程、关闭时收尾；
+    - 注入形态（evals）不接管生命周期，由注入方自行 close。
+    """
     cfg = cfg or load_app_config()
     if mask_key is None:
         resolved = resolve_secret(cfg.mask_key_env, required=False)
@@ -68,12 +97,36 @@ def create_app(
             raise RuntimeError(f"missing required secret env: {cfg.mask_key_env}")
         mask_key = resolved
     digests = dept_key_digests if dept_key_digests is not None else load_dept_keys()
-    service = GatewayService(cfg, mask_key, audit_store=audit_store)
 
-    app = FastAPI(title="gov-anon-gateway", docs_url=None, redoc_url=None, openapi_url=None)
+    audit = audit_store if audit_store is not None else SqliteAuditWriter(resolve_db_path(cfg.audit_db))
+    registry = session_registry
+    owns_registry = registry is None
+    if registry is None:
+        registry = SessionStore(mask_key.encode("utf-8"), resolve_db_path(cfg.session_db),
+                                ttl=timedelta(hours=cfg.session_ttl_h))
+    service = GatewayService(cfg, mask_key, audit_store=audit, registry=registry)
+
+    @asynccontextmanager
+    async def lifespan(_: FastAPI):
+        task = asyncio.create_task(registry.cleanup_loop(CLEANUP_INTERVAL_S)) if owns_registry else None
+        try:
+            yield
+        finally:
+            if task is not None:
+                task.cancel()
+                await asyncio.gather(task, return_exceptions=True)
+            if isinstance(audit, SqliteAuditWriter):
+                audit.close()
+            if owns_registry and isinstance(registry, SessionStore):
+                registry.close()
+
+    app = FastAPI(title="gov-anon-gateway", docs_url=None, redoc_url=None, openapi_url=None,
+                  lifespan=lifespan)
     app.state.service = service
     app.state.cfg = cfg
     app.state.dept_key_digests = digests
+    app.state.audit = audit
+    app.state.session_registry = registry
 
     @app.get("/healthz")
     async def healthz() -> dict[str, Any]:

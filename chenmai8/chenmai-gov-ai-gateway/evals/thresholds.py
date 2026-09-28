@@ -43,8 +43,13 @@ OCR_ID_CARD_RECALL_MIN = 0.90          # 扫描件身份证召回（D4）
 OCR_SEEDED_SCANS = 3
 
 # ── M7 审计 ────────────────────────────────────────────────────────
-AUDIT_E2E_REQUESTS = 20                # 混合请求数（行数断言）
+AUDIT_E2E_REQUESTS = 20                # 混合请求数（行数断言；T5.1 全量口径用）
 AUDIT_RAW_PII_HITS_ALLOWED = 0         # 库文件 bytes 级扫描命中上限
+AUDIT_WRITER_EVENTS = 30               # T1.3 落库完整性写入事件数
+AUDIT_APPEND_BATCH_MS = 200            # T1.3 入队 30 次（硬闸+put）总耗时上限（请求路径不阻塞）
+AUDIT_SESSION_STABILITY_VALUES = 100   # T1.3 会话稳定抽查值数（全量 1000 在 m3）
+SESSION_TTL_PROBE_MS = 150             # T1.3 会话过期探针 TTL
+AUDIT_FLUSH_TIMEOUT_S = 10.0           # T1.3 写队列排干等待上限
 
 # ── M8 生成器/基线/质量 ────────────────────────────────────────────
 CORPUS_DOCS_MIN = 5000

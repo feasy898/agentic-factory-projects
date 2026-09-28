@@ -10,15 +10,18 @@
 - 归一化等价：同一实体的不同写法 → 同 normalized → 同占位符（见 masking/normalize.py）；
 - 还原：正则扫描占位符形状，查会话映射替换为原值；未知形状原样保留。
 
-v0 会话存储为进程内 LRU（SQLite 落盘 + TTL 由会话存储任务补全）。
+会话存储（内存 LRU + SQLite 落盘 + TTL）见 masking/session_store.py；本模块的
+SessionMapper 通过 ``on_insert`` 回调向外暴露新条目、``hydrate`` 支持从落盘行恢复，
+自身不感知存储介质。
 """
 from __future__ import annotations
 
 import hashlib
 import hmac
 import re
+import threading
 from collections import OrderedDict
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from datetime import UTC, datetime
 
 from masking.models import MappingEntry
@@ -48,11 +51,17 @@ def _utc_now() -> datetime:
 
 
 class SessionMapper:
-    """单个会话的占位符 ↔ 原值映射（内存态，形状即 MappingEntry）。"""
+    """单个会话的占位符 ↔ 原值映射（内存态，形状即 MappingEntry）。
 
-    def __init__(self, session_id: str, key: bytes) -> None:
+    ``on_insert``：新条目首次插入后的回调（会话存储借此即时落盘；
+    复用命中与 hydrate 恢复不触发）。
+    """
+
+    def __init__(self, session_id: str, key: bytes,
+                 *, on_insert: Callable[[MappingEntry], None] | None = None) -> None:
         self.session_id = session_id
         self._key = key
+        self._on_insert = on_insert
         self._by_placeholder: dict[str, MappingEntry] = {}
         self._by_value: dict[tuple[str, str], str] = {}  # (type值, normalized) → placeholder
 
@@ -80,6 +89,8 @@ class SessionMapper:
                 )
                 self._by_placeholder[placeholder] = entry
                 self._by_value[value_key] = placeholder
+                if self._on_insert is not None:
+                    self._on_insert(entry)
                 return placeholder, entry
             if holder.normalized == normalized and holder.type is entity_type:
                 # 极端小概率：低宽度位与异值同串碰撞后，同值再次到达——直接复用既有条目
@@ -115,26 +126,74 @@ class SessionMapper:
         entry = self._by_placeholder.get(placeholder)
         return entry.normalized if entry is not None else None
 
+    def hydrate(self, entries: Iterable[MappingEntry]) -> int:
+        """从落盘行恢复映射（进程重启/会话被 LRU 换出后）；返回实际恢复条数。
+
+        已在内存中的占位符不覆盖（内存态为准）；恢复行不触发 ``on_insert``。
+        """
+        restored = 0
+        for entry in entries:
+            if entry.placeholder in self._by_placeholder:
+                continue
+            value_key = (entry.type.value, entry.normalized)
+            self._by_placeholder[entry.placeholder] = entry
+            self._by_value.setdefault(value_key, entry.placeholder)
+            restored += 1
+        return restored
+
+    def purge_expired(self, cutoff: datetime) -> int:
+        """删除内存中 ``first_seen < cutoff`` 的条目（与落盘 TTL 同口径）；返回删除数。"""
+        doomed = [ph for ph, entry in self._by_placeholder.items() if entry.first_seen < cutoff]
+        for ph in doomed:
+            entry = self._by_placeholder.pop(ph)
+            key = (entry.type.value, entry.normalized)
+            if self._by_value.get(key) == ph:
+                del self._by_value[key]
+        return len(doomed)
+
     def entries(self) -> list[MappingEntry]:
         return list(self._by_placeholder.values())
 
 
 class SessionRegistry:
-    """会话 → SessionMapper 的进程内 LRU 注册表（容量防失控，v0 不落盘）。"""
+    """会话 → SessionMapper 的进程内 LRU 注册表（容量防失控）。
 
-    def __init__(self, key: bytes, capacity: int = 1024) -> None:
+    ``mapper_factory``：LRU 未命中时的构造工厂（会话存储借此在构造时从
+    SQLite 恢复该会话的映射行）；缺省为纯内存构造（v0 形态）。
+    """
+
+    def __init__(self, key: bytes, capacity: int = 1024,
+                 *, mapper_factory: Callable[[str], SessionMapper] | None = None) -> None:
         if not key:
             raise ValueError("masking key must be non-empty")
         self._key = key
         self._capacity = max(1, capacity)
+        self._mapper_factory = mapper_factory
+        self._lock = threading.Lock()
         self._sessions: OrderedDict[str, SessionMapper] = OrderedDict()
 
     def get(self, session_id: str) -> SessionMapper:
-        mapper = self._sessions.get(session_id)
-        if mapper is None:
-            mapper = SessionMapper(session_id, self._key)
-            self._sessions[session_id] = mapper
-        self._sessions.move_to_end(session_id)
-        while len(self._sessions) > self._capacity:
-            self._sessions.popitem(last=False)
-        return mapper
+        with self._lock:
+            mapper = self._sessions.get(session_id)
+            if mapper is None:
+                mapper = (self._mapper_factory(session_id) if self._mapper_factory
+                          else SessionMapper(session_id, self._key))
+                self._sessions[session_id] = mapper
+            self._sessions.move_to_end(session_id)
+            while len(self._sessions) > self._capacity:
+                self._sessions.popitem(last=False)
+            return mapper
+
+    def evict_where(self, predicate: Callable[[SessionMapper], bool]) -> int:
+        """按条件换出会话（TTL 清理用）；返回换出数。"""
+        with self._lock:
+            doomed = [sid for sid, mapper in self._sessions.items() if predicate(mapper)]
+            for sid in doomed:
+                del self._sessions[sid]
+            return len(doomed)
+
+    def apply(self, fn: Callable[[SessionMapper], None]) -> None:
+        """对全部在册会话映射器就地应用 ``fn``（TTL 条目清理用）。"""
+        with self._lock:
+            for mapper in self._sessions.values():
+                fn(mapper)

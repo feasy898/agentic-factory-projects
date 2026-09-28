@@ -15,3 +15,7 @@ thresholds: {batch_pii_to_govcloud: 3}
 moderation_model: ""
 # PDF 导出引擎（D3 决策点）：库名只允许写在这里，源码经 importlib 动态加载
 # pdf_engine_module: pikepdf
+# 审计/会话映射库文件（T1.3；相对路径按仓库根解析）。两库必须分文件：
+# 审计库要过 bytes 级全文件零明文扫描（§9 U5），masking_map 必须存归一化原值才能还原。
+audit_db: data/audit.db
+session_db: data/session_map.db

@@ -4,7 +4,7 @@
 
     1 auth(dept key，app 层) → 2 detect(recognizers.rule v0) → 3 mask(会话稳定占位符)
     → 4 route(routing.engine v0) → 5 转发(gateway.provider，非流式/流式两形态)
-    → 6 还原(占位符→原值) → 7 audit(audit.store 内存版，零明文硬闸)
+    → 6 还原(占位符→原值) → 7 audit(零明文硬闸；直构=内存表，app 默认=SQLite 写队列)
 
 非流式与流式共用 :meth:`GatewayService._prepare`（detect+mask+route，纯前置）；
 差异只在转发与还原形态：
@@ -37,7 +37,7 @@ from typing import Any
 import httpx
 
 from audit.models import AuditEvent
-from audit.store import InMemoryAuditStore, RawPiiLeakError
+from audit.store import AuditSink, InMemoryAuditStore, RawPiiLeakError
 from common.config import AppConfig
 from common.logs import get_logger
 from gateway import sse
@@ -148,13 +148,19 @@ class GatewayService:
         cfg: AppConfig,
         mask_key: str,
         *,
-        audit_store: InMemoryAuditStore | None = None,
+        audit_store: AuditSink | None = None,
+        registry: Any = None,
         session_capacity: int = 1024,
     ) -> None:
         self.cfg = cfg
-        # 注意：InMemoryAuditStore 实现了 __len__，不能用 `or` 兜底（空表为 falsy 会被替换）
+        # 注意：审计/会话存储都可能实现 __len__，不能用 `or` 兜底（空表为 falsy 会被替换）。
+        # audit_store：任何满足 AuditSink（append(event, normalized_values)）的写入口——
+        # 缺省进程内表（直构形态）；生产经 create_app 注入 SQLite 写队列（audit/writer）。
         self.audit = audit_store if audit_store is not None else InMemoryAuditStore()
-        self.registry = SessionRegistry(mask_key.encode("utf-8"), capacity=session_capacity)
+        # registry：SessionRegistry 或 SessionStore（.get(session_id) → SessionMapper）；
+        # 缺省进程内 LRU（直构形态）。
+        self.registry = (registry if registry is not None
+                         else SessionRegistry(mask_key.encode("utf-8"), capacity=session_capacity))
         self._upstreams_by_name = {u.name: u for u in cfg.upstreams}
         self._upstream_for: dict[str, str] = {}
         for upstream in cfg.upstreams:

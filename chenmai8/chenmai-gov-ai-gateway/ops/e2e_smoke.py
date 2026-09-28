@@ -11,8 +11,9 @@
 - mock 上游按 §9「同一 app 不同 argv」以**独立子进程**拉起
   （``python -m gateway.mock_upstream --port N``）；
 - 网关在本进程内以 uvicorn 线程拉起（真实配置 + 真实端口 :9000，客户端走真实 TCP）；
-  审计存储为进程内 v0 表——§9 U5 的"行数断言 + bytes 级零明文扫描"以该存储为对象，
-  SQLite 库文件级扫描自 M7 落地后升级；/admin/api/audit 上线后自动改为 HTTP 交叉核对。
+  审计/会话映射走 config 指定的 SQLite 库文件（T1.3 默认落库形态，与生产一致），
+  §9 U5 的"行数断言 + bytes 级零明文扫描"以**审计库文件（含 WAL 旁挂）**为对象；
+  /admin/api/audit 上线后自动改为 HTTP 交叉核对。
 
 用例（§9 步骤 3；U1–U5 当天生效，U6 文件通道 D3 起生效）：
 - U1 非流式：2 身份证 + 3 手机号（含分隔符写法）+ 人名 → 上游 bytes 级零原值、
@@ -26,7 +27,7 @@
 - U4 工具调用：tools 定义 + arguments 中文含 PII → 上游收到占位符版参数、
   客户端收到还原版（JSON 可解析、占位符形状零残留）；
 - U5 审计：行数 == 本次发送的全部 /v1/chat/completions 请求数；事件字段形状齐全；
-  全部事件序列化后 bytes 级扫描所有用到的原值 → 零命中；
+  审计 SQLite 库文件（主文件 + WAL 旁挂）bytes 级扫描所有用到的原值 → 零命中；
 - U6 文件：inspect+export seeded docx → 重解析零命中（文件通道未上线时输出
   DEFERRED，不计失败）。
 
@@ -57,14 +58,15 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from audit.store import InMemoryAuditStore  # noqa: E402
+from audit.store import assert_db_no_raw_pii  # noqa: E402
+from audit.writer import SqliteAuditWriter  # noqa: E402
 from common.config import (  # noqa: E402
     load_app_config,
     load_dept_keys,
     load_env_file,
     resolve_secret,
 )
-from gateway.app import create_app  # noqa: E402
+from gateway.app import create_app, resolve_db_path  # noqa: E402
 from gateway.mock_upstream import ECHO_MARKER  # noqa: E402
 from masking.mapper import RESTORE_PATTERN  # noqa: E402
 
@@ -222,15 +224,29 @@ def _assert_placeholder_counts(text: str, expected: dict[str, int]) -> None:
             raise AssertionError(f"占位符 {marker}** 计数 {got} != {want}：{text!r}")
 
 
-# ── 网关（§9 步骤 2：真实配置 + 真实端口；审计 v0 表留断言句柄）──────────
+# ── 网关（§9 步骤 2：真实配置 + 真实端口 + 默认 SQLite 落库）────────────
+def _drop_db(db_path: Path) -> None:
+    for suffix in ("", "-wal", "-shm"):
+        Path(str(db_path) + suffix).unlink(missing_ok=True)
+
+
 def _start_gateway(ctx: dict[str, Any]) -> None:
     _assert_port_free(GATEWAY_PORT)
     load_env_file()  # .env 预载（MASK_KEY / MOCK_KEY；不覆盖已有环境变量）
     cfg = load_app_config()
     mask_key = resolve_secret(cfg.mask_key_env)  # 缺失即抛明确错误
-    ctx["audit"] = InMemoryAuditStore()
-    app = create_app(cfg=cfg, mask_key=mask_key, dept_key_digests=load_dept_keys(),
-                     audit_store=ctx["audit"])
+    # U5 行数断言要求每轮全新库；生产默认路径（config audit_db / session_db）
+    audit_db = resolve_db_path(cfg.audit_db)
+    session_db = resolve_db_path(cfg.session_db)
+    if audit_db == session_db:
+        raise RuntimeError("audit_db 与 session_db 必须分文件（§9 U5 全库零明文扫描前提）")
+    _drop_db(audit_db)
+    _drop_db(session_db)
+    app = create_app(cfg=cfg, mask_key=mask_key, dept_key_digests=load_dept_keys())
+    ctx["audit"] = app.state.service.audit
+    if not isinstance(ctx["audit"], SqliteAuditWriter):
+        raise RuntimeError("gateway audit store is not the SQLite writer (M7/T1.3 wiring)")
+    ctx["audit_db"] = audit_db
     server = uvicorn.Server(uvicorn.Config(
         app, host="127.0.0.1", port=GATEWAY_PORT,
         log_level="warning", log_config=None, access_log=False,
@@ -482,14 +498,17 @@ def case_u4(ctx: dict[str, Any]) -> str:
     return "上游收到占位符版参数；客户端拿到还原版（JSON 全等、占位符零残留）"
 
 
-# ── U5 审计（§9 U5）───────────────────────────────────────────────────
+# ── U5 审计（§9 U5；T1.3 起以 SQLite 库文件级扫描为口径）──────────────
 def case_u5(ctx: dict[str, Any]) -> str:
-    audit: InMemoryAuditStore = ctx["audit"]
+    audit: SqliteAuditWriter = ctx["audit"]
     expected = ctx["chat_sent"]
     deadline = time.monotonic() + AUDIT_SETTLE_TIMEOUT_S
     while len(audit) < expected and time.monotonic() < deadline:
-        time.sleep(0.1)  # 流式审计随流收尾落账，留短暂结算窗口
-    events = audit.snapshot()
+        time.sleep(0.1)  # 写队列批量落库 + 流式审计随流收尾，留结算窗口
+    if not audit.flush(timeout_s=5.0):
+        raise AssertionError("audit write queue did not drain")
+    rows = audit.fetch_all()
+    events = [e for _, e in rows]
     if len(events) != expected:
         raise AssertionError(f"audit rows={len(events)}, expect {expected}")
 
@@ -516,25 +535,28 @@ def case_u5(ctx: dict[str, Any]) -> str:
         raise AssertionError(f"u1 prompt preview not masked: {u1.prompt_preview!r}")
     if "〔身份证·" not in u1.response_preview or RESTORE_PATTERN.search(u1.response_preview) is None:
         raise AssertionError(f"u1 response preview not placeholder-version: {u1.response_preview!r}")
-    # bytes 级零明文：全部事件序列化后扫描所有原值（§9 U5 的 v0 等价口径；SQLite 文件级自 M7）
+    # bytes 级零明文（§9 U5 口径，T1.3 起=审计库文件级）：主文件 + WAL 旁挂一并扫
+    audit.checkpoint()
+    scanned = assert_db_no_raw_pii(ctx["audit_db"], RAW_VALUES)
+    # 双保险：全部事件序列化后同样扫一遍（与库文件扫描互相独立）
     blob = "\n".join(e.model_dump_json() for e in events).encode("utf-8")
-    _assert_no_raw(blob, RAW_VALUES, "audit store")
-    # 管理面查询 API（M7 落地后自动启用交叉核对；未上线仅提示）
+    _assert_no_raw(blob, RAW_VALUES, "audit events json")
+    # 管理面查询 API（T5.1 落地后自动启用交叉核对；未上线仅提示）
     note = ""
     try:
         resp = ctx["client"].get("/admin/api/audit", timeout=5.0)
     except Exception:  # noqa: BLE001
         resp = None
     if resp is not None and resp.status_code == 200:
-        rows = resp.json()
-        n = rows.get("total", len(rows.get("events", rows.get("items", []))))
+        payload = resp.json()
+        n = payload.get("total", len(payload.get("events", payload.get("items", []))))
         if n != expected:
             raise AssertionError(f"/admin/api/audit rows={n} != {expected}")
         note = "；/admin/api/audit 交叉核对一致"
     else:
-        note = "；/admin/api/audit 未上线（M7 落地后自动交叉核对）"
-    return f"{expected} 条事件（1 BLOCK + 1 GOVCLOUD + {expected - 2} INTERNET）；" \
-           f"预览占位符版本；bytes 级零明文{note}"
+        note = "；/admin/api/audit 未上线（T5.1 落地后自动交叉核对）"
+    return (f"{expected} 行落库（1 BLOCK + 1 GOVCLOUD + {expected - 2} INTERNET）；"
+            f"预览占位符版本；库文件 bytes 级扫描 {scanned} 字节零明文{note}")
 
 
 # ── U6 文件通道（§9 U6；D3 起生效）────────────────────────────────────
