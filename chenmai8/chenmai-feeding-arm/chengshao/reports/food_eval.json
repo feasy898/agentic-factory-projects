@@ -1,7 +1,7 @@
 {
   "module": "cs_food",
   "date": "2026-09-28",
-  "cmd": "python -m chengshao.cs_food.eval --report chengshao/reports/food_eval.json",
+  "cmd": "python -m cs_food.eval --report reports/food_eval.json",
   "source": "synthetic",
   "metrics": {
     "spoon_cases": 8,
@@ -26,5 +26,5 @@
     "aruco_none_on_empty": true,
     "aruco_ignore_unregistered": true
   },
-  "pass": true
+  "self_check": true
 }

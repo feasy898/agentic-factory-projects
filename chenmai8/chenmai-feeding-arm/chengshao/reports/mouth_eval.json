@@ -15,8 +15,8 @@
     "turn_trigger_rate": 1.0,
     "turn_frames": 8,
     "frontal_turn_false_flag_rate": 0.0,
-    "latency_ms_p50": 20.00449999468401,
-    "latency_ms_p95": 23.57220000703819,
+    "latency_ms_p50": 19.332900003064424,
+    "latency_ms_p95": 22.85380000830628,
     "latency_frames": 56,
     "frames_label_missing": 0
   },

@@ -3,7 +3,7 @@
   "date": "2026-09-28",
   "cmd": ".venv/Scripts/python.exe -m pytest tests/test_schema.py -q  (cwd=仓库根)",
   "metrics": {
-    "passed": 82,
+    "passed": 83,
     "failed": 0,
     "errors": 0,
     "exit_status": 0
