@@ -10,7 +10,7 @@
   "types": "./src/types.ts",
   "scripts": {
     "test": "node --test test/",
-    "coverage": "c8 --include packages/engine-bridge/src/** --check-coverage --lines 80 --reporter text node --test test/",
+    "coverage": "c8 --include src/** --check-coverage --lines 80 --reporter text node --test test/",
     "typecheck": "tsc --noEmit"
   }
 }

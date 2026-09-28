@@ -60,6 +60,13 @@ defaultLocale?, readyTimeoutMs? }`。
 
 `options.locale` → `window.PF_LOCALE`（打包器/模板注入）→ URL `?locale=` → `options.defaultLocale` → `"en"`。
 
+**空串与缺失的逐级回退（精确语义，冻结）**：五级逐级取"**非空字符串**"，任何一级拿到非空串即停——
+- `options.locale` 为 undefined 或 `""` → 跳过；
+- `window.PF_LOCALE` 非 string 或 `""` → 跳过；
+- URL `?locale=`：无 `location` 环境（如 jsdom 异常）整体 try/catch 跳过；参数缺省或空串 → 跳过；
+- `options.defaultLocale` undefined → 跳过（它不会与 `"en"` 合并兜底，二者是独立的两级）；
+- 全部跳过 → 兜底 `"en"`。
+
 ### 2.5 就绪等待与退出路由
 
 - **就绪**（`whenChannelReady`，默认超时 `readyTimeoutMs = 8000ms`）：
@@ -90,6 +97,39 @@ defaultLocale?, readyTimeoutMs? }`。
   策略变化回调：全部已建 `<audio>.muted` 同步 + context suspend/resume 双向。
 - **契约**：模板的一切音频必须经 `PF.audio` 创建（静音策略的执行点）；缺 `Audio` 构造器时 `create` 抛错。
 
+### 2.7 时序约束（initBridge 单同步段，冻结——再生试验反推点，特此写明）
+
+`initBridge()` 在**返回前同步完成**以下动作，顺序固定：
+
+```
+resolveChannel → new MutePolicy → new AudioManager
+→ 组装 bridge 对象（ready = whenChannelReady().then(() => dispatchPFEvent("pf:ready"))，此刻仅登记未执行）
+→ window.PF = bridge（挂载）
+→ installFirstInteraction(...)（document 捕获阶段，pointerdown/touchstart/mousedown/keydown）
+→ installPlatformAudioProbe(...)（仅 mraid 形渠道）
+→ return bridge
+```
+
+推论（均为契约，测试冻结）：
+- **不存在"桥已可取但交互监听未装"的窗口**：`initBridge()` 返回后的任何交互必然被观测；
+- **pf:ready 派发时机 = 异步**：渠道就绪 promise resolve 后才派发，可能先于或后于首次交互；
+- **静音策略与就绪无关**：首交互发生在 `pf:ready` 之前同样解除静音并派发 `pf:first-interaction`；
+- `pf:ready` 不改变相位（派发时相位仍是 loading，由模板经 setState/start 推进）；
+- 在 `ready` resolve 前调用 `start()/end()` 仍有效（相位机立即迁移并派发事件），规范顺序仍是
+  `await PF.ready → (setState("tutorial")) → start() → end()`；
+- 重复 `initBridge()` 在任何时刻返回同一实例（不重复安装监听）。
+
+### 2.8 告警（console.warn）文案规范（冻结——恰两处，前缀 `[PF] `）
+
+| 触发条件 | 精确文案 |
+|---|---|
+| mraid 形渠道（applovin/unity/mintegral）无 `window.mraid` 或无 `getState` 函数 | `[PF] channel=<id>: 未检测到 mraid 全局，按就绪处理（预览模式）` |
+| 非 mraid 形渠道对应全局缺失（meta/google/tiktok） | `[PF] channel=<id>: 未检测到渠道运行时全局对象，按就绪处理（预览模式）` |
+
+- 除以上两处外**一切失败路径静默兜底，不抛错不告警**：`mraid.getState()` 抛异常 → 按就绪；
+  `removeEventListener` 抛异常 → 忽略；**就绪超时（readyTimeoutMs）→ 静默 resolve**
+  （源码头注释与 README 写"放行（告警）"，实测代码无 warn——以代码为准；如需对齐注释属契约变更流程）。
+
 ## 3. 行为规格（边界与失败路径）
 
 - 重复 `initBridge` → 返回既有实例（不重复装监听）。
@@ -101,9 +141,13 @@ defaultLocale?, readyTimeoutMs? }`。
 
 ```bash
 node packages/engine-bridge/test/run.mjs          # node --test 转发；26 用例全过 exit 0
-npm run coverage -w @pf/engine-bridge             # c8 行覆盖 >= 80%（--check-coverage）
+npm run coverage -w @pf/engine-bridge             # c8 行覆盖 >= 80%（--check-coverage；实测 ≈97.85%）
 npm run typecheck -w @pf/engine-bridge            # tsc --noEmit（strict）
 ```
+
+- **coverage 脚本防"空过"**：`--include` 必须是**包内相对** `src/**`（npm -w 在包目录下执行脚本）。
+  2026-09-28 再生试验发现原脚本用 monorepo 根相对路径匹配 0 文件 → 0% 覆盖仍 exit 0，已修；
+  验证方法：临时把 `--lines` 提到 100 跑一遍，必须 exit 1 才算真门。
 
 - 测试结构：3 用例组——channels（6 渠道就绪→pf:ready、open→对应接口恰一次）、events（事件序/detail/冒泡/
   相位推进）、mute（初始化即静音、首交互解除、平台音量 0 覆盖交互、AudioContext suspend/resume）。

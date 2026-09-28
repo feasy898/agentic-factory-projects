@@ -79,19 +79,43 @@ python scripts/gate_phase0.py    # 本机门禁：GATE PHASE0: PASS（5/5），�
 
 通用纪律：门禁/测试**先清旧产物再跑**（存在=本次真事实）；任何模块替换后先跑 `gate_phase1` 再提交。
 
-## 5. 演示兜底（demo-prebuilt）
+## 5. 再生试验 SOP（标准操作——验证"spec+eval 可再生"资产主张）
+
+> 首例试验（2026-09-28，M2 engine-bridge）：全新实现者（未读过原实现的 Fresh Flash 实例）只凭
+> docs/assets spec + 冻结测试重建，**首跑 26/26 全绿、覆盖率 96.3%**——资产主张成立。
+> 试验回炉产出三件（均已入库）：① coverage 脚本根相对 include 的"空过"bug 修复（§7 坑 16）；
+> ② engine-bridge.md 补时序约束/告警文案/locale 空串回退；③ 本 SOP。
+
+标准操作（每个模块的再生试验都按此执行）：
+
+1. **隔离**：建独立工作目录，拷入 `docs/assets/` 全部 spec + 被测模块的 `test/`（含夹具/testsupport，
+   **冻结一字不改**）与 package.json 骨架；**不拷贝原实现 `src/`**。
+2. **盲实现**：实现者只准看 spec 与冻结测试，明确禁止看原实现；允许跑测试自验。
+3. **裁定**：跑模块自验收 + coverage + 门禁相关门项；判据 = 冻结测试全绿 + 通过线达标
+   （coverage 门另验：故意压低于线必须 exit 1，防"空过"）。
+4. **缺口回炉**：实现的 bug → 修原实现/包脚本；spec 歧义或缺失（实现者靠测试反推的点）→ 补 spec；
+   流程问题 → 改本 SOP。三类各自单独 commit。
+5. **记录**：试验结果（模块/日期/首跑结果/回炉清单）追加到本节与 §9 变更史。
+
+已登记试验：
+
+| 日期 | 模块 | 首跑结果 | 回炉清单 |
+|---|---|---|---|
+| 2026-09-28 | M2 engine-bridge | 26/26 全绿，覆盖率 96.3% | coverage include 路径 bug 修复；spec 补时序/告警/locale 回退；本 SOP 建立 |
+
+## 6. 演示兜底（demo-prebuilt）
 
 规划要求 `artifacts/demo-prebuilt/` 存最后一次全绿产物（`artifacts/` 整体 gitignore，不入库）——
 **当前仓库无此目录（如实记录，未实现）**。落地方式待编排器里程碑定（库内提交 or 发布附件）；
 在那之前，全绿产物的人工留存是演示日的前置条件。
 
-## 6. 文档与资产自检
+## 7. 文档与资产自检
 
 - 本资产包（docs/assets/）随代码演进：模块状态变化 → 改 manifest.json/md；契约变更 → 走 CONTRACTS §变更流程。
 - 公开仓纪律自查（每次发布前）：对内部红线词表（引擎/字体/素材包/模型的上游名）做大小写不敏感 grep，
   要求零命中；`_vendor/` 不入库。
 
-## 7. 已知坑清单（构建过程实测，重生成必读）
+## 8. 已知坑清单（构建过程实测，重生成必读）
 
 1. **中文路径 × 图像库**：仓库绝对路径含中文；cv2 系 `imread/imwrite` 在 Windows 非 ASCII 路径下失败，
    须 `np.fromfile + cv2.imdecode`（或如 qacore 用 Pillow）。任何新图像工具链先过这一关。
@@ -120,8 +144,11 @@ python scripts/gate_phase0.py    # 本机门禁：GATE PHASE0: PASS（5/5），�
 14. **npm workspaces**：必须同时含 `packages/*` 与 `packages/templates/*`（Phase 0 实测教训）。
 15. **占位子命令语义**：pfcore build/run/pack/rules-check exit 2 是当前契约的一部分（编排器接通前），
     不要"顺手实现"而不改 pipeline-contract。
+16. **coverage include 必须包内相对**：npm workspaces 的 `npm run -w <pkg>` 在**包目录**下执行脚本，
+    c8 `--include` 写 monorepo 根相对路径会匹配 0 文件 → 0% 覆盖仍 exit 0（"空过"，2026-09-28 再生试验
+    发现并修复）。验证门有效性的方法：临时把 `--lines` 抬到必失败值跑一遍，必须 exit 1。
 
-## 8. 本资产包的变更史指针
+## 9. 本资产包的变更史指针
 
 | commit | 内容 |
 |---|---|
@@ -129,4 +156,5 @@ python scripts/gate_phase0.py    # 本机门禁：GATE PHASE0: PASS（5/5），�
 | `3685725` | 六件优先级 spec |
 | `270bd76` | 周边逻辑模块 spec |
 | （本文件与 CONTRACTS 所在 commit） | 再生手册 + 契约汇总 |
+| （再生试验回炉 commit） | engine-bridge 再生试验回炉：coverage 空过 bug 修复 + spec 时序/告警/locale 补齐 + 再生试验 SOP |
 | `8e6782d`…`e50abdf` | 模块本体构建史（pfcore/qacore/llmgw/gate0/spec/bridge/packager/tmpl-match3/gate1） |
