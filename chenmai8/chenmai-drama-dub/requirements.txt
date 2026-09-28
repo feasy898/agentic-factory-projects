@@ -1,0 +1,35 @@
+# 短剧多国出海本地化引擎 —— windev 本机 CPU 依赖（T0 冻结，2026-09-28）
+# Python 3.12.10 / Windows Server 2022 / 安装源: 清华 PyPI 镜像
+#   pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+#
+# ⚠ 两条硬性使用约束（详见 docs/setup_windev.md）：
+# 1) 同进程同时用 torch 与 paddle 时，必须先 import torch 再 import paddle/paddleocr
+#    （两者捆绑的 libiomp5md.dll 冲突，paddle 先加载会导致 torch shm.dll WinError 127）。
+# 2) paddleocr 推理必须传 enable_mkldnn=False
+#    （paddle 3.3.1 PIR/oneDNN 执行器报 ConvertPirAttribute2RuntimeAttribute not support）。
+
+# 深度学习（CPU 版；Windows 平台 PyPI 的 torch 轮子即 CPU 构建）
+torch==2.14.0
+paddlepaddle==3.3.1
+paddleocr==3.7.0          # 依赖 paddlex 3.7.2 / opencv-contrib-python 4.10.0.84，随装
+
+# Web / 服务
+fastapi==0.141.1
+uvicorn==0.54.0
+httpx==0.28.1
+
+# 数据 / 音频
+pydantic==2.13.5
+numpy==2.3.5              # paddle 依赖约束所钉，勿单独升级
+librosa==1.0.0
+soundfile==0.14.0         # librosa 已自带，显式钉出版本
+
+# 工具
+ffmpeg==系统安装           # 6.1.1 essentials（含 libass/fribidi/harfbuzz），不走 pip
+pydub==不使用              # 按设计直接调 ffmpeg，不引入 pydub
+
+# 测试（各模块 eval 为 pytest 脚本）
+pytest==9.1.1
+
+# 偏差说明：原计划"PaddleOCR 若无 py3.12 轮子则降级 rapidocr-onnxruntime"，
+# 实测 paddlepaddle 3.3.1 提供 cp312 win_amd64 轮子，未触发降级，无需 rapidocr。
