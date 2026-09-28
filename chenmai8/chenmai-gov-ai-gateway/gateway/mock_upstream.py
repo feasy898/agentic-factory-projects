@@ -124,10 +124,18 @@ class RingBuffer:
             return [dict(item) for item in self._items]
 
     def texts(self) -> list[str]:
-        """逐条拼接"收到的全文"（最后一条 user 消息 + 工具参数），供 bytes 级断言。"""
+        """逐条拼接"收到的全文"，供 bytes 级断言（审查 §B：不看 messages 全文的
+        断言是假绿——ring 里保存的 system/更早轮次必须参与）。
+
+        每条请求产出：
+        - ``messages`` 数组的 JSON 序列化全文（``ensure_ascii=False``——中文原样
+          输出，bytes 级原值扫描才会真实命中）；
+        - 有工具调用时追加 ``tool_arguments`` 原文。
+        """
         out: list[str] = []
         for item in self.snapshot():
-            out.append(str(item.get("last_user_content", "")))
+            out.append(json.dumps(item.get("messages", []), ensure_ascii=False,
+                                  sort_keys=True))
             if item.get("tool_call"):
                 out.append(str(item.get("tool_arguments", "")))
         return out
