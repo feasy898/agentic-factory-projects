@@ -1,0 +1,30 @@
+{
+  "module": "cs_food",
+  "date": "2026-09-28",
+  "cmd": "python -m chengshao.cs_food.eval --report chengshao/reports/food_eval.json",
+  "source": "synthetic",
+  "metrics": {
+    "spoon_cases": 8,
+    "spoon_tp": 4,
+    "spoon_tn": 4,
+    "spoon_accuracy": 1.0,
+    "aruco_registered_detected": 3,
+    "aruco_detected_bowls": [
+      0,
+      1,
+      2
+    ],
+    "aruco_selected_bowl": 1,
+    "aruco_select_correct": true,
+    "aruco_none_on_empty": true,
+    "aruco_ignore_unregistered": true
+  },
+  "thresholds": {
+    "synthetic_spoon_accuracy_min": 1.0,
+    "aruco_registered_detected_min": 3,
+    "aruco_select_bowl_expected": 1,
+    "aruco_none_on_empty": true,
+    "aruco_ignore_unregistered": true
+  },
+  "pass": true
+}
