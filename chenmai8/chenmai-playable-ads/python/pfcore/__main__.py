@@ -5,6 +5,8 @@
 - validate     校验 PlayableSpec JSON（schema v1 + 不变式 I1-I5 + 类型化解析）  [M1 已实现]
 - make         全流水线编排：validate → 模板构建 → 多渠道打包 → qacore 质检 →
                summary/二维码/墙钟计时/artifacts/demo-prebuilt 兜底目录        [M9 已实现]
+- serve        局域网静态伺服既有产物目录（demo-prebuilt/裸预览）+ 重建汇总页
+               （渠道包下载 + 质检报告链接）与二维码                          [反馈行动 2 已实现]
 - build        按 spec 构建单个模板产物                           （M3/M4 占位）
 - pack         全渠道打包                                          （M4 占位）
 - rules-check  校验渠道规则库 channel-rules                        （M12 占位）
@@ -12,6 +14,7 @@
 用法：
     python -m pfcore validate <spec.json> [more.json ...]
     python -m pfcore make --spec <spec.json> [--locales en,ar] [--channels all]
+    python -m pfcore serve [--root artifacts/demo-prebuilt] [--port 8618] [--host <ip>]
 validate 路径参数支持 glob（如 ``specs-eval/bad/*.json``，Windows shell 不展开时由本
 命令自行展开）；全部文件通过才退出 0，否则退出 1。
 """
@@ -35,7 +38,7 @@ def build_parser() -> argparse.ArgumentParser:
     """构建 pfcore 的 argparse 解析器。"""
     parser = argparse.ArgumentParser(
         prog="pfcore",
-        description="试玩广告生产线编排 CLI（validate/make 已实现；build/pack/rules-check 随里程碑落地）",
+        description="试玩广告生产线编排 CLI（validate/make/serve 已实现；build/pack/rules-check 随里程碑落地）",
     )
     sub = parser.add_subparsers(dest="command", metavar="<command>")
 
@@ -73,6 +76,22 @@ def build_parser() -> argparse.ArgumentParser:
     p_make.add_argument(
         "--no-serve", action="store_true",
         help="不启动/复用本地静态伺服（仍产出二维码与预览链接，自行伺服 demo-prebuilt）",
+    )
+
+    p_serve = sub.add_parser(
+        "serve", help="局域网静态伺服演示产物目录（demo-prebuilt/裸预览）+ 重建汇总页与二维码"
+    )
+    p_serve.add_argument(
+        "--root", default="artifacts/demo-prebuilt",
+        help="被伺服的产物目录（默认 artifacts/demo-prebuilt；也可以是裸预览目录如 artifacts/preview）",
+    )
+    p_serve.add_argument(
+        "--port", type=int, default=8618,
+        help="伺服端口（默认 8618；被占用时向后顺延）",
+    )
+    p_serve.add_argument(
+        "--host", default=None,
+        help="二维码指向的主机 IP（默认自动探测局域网地址；手机须与本机同网段可达）",
     )
 
     p_build = sub.add_parser("build", help="按 spec 构建模板产物（占位）")
@@ -148,6 +167,10 @@ def main(argv: list[str] | None = None) -> int:
         from .make import cmd_make
 
         return cmd_make(args)
+    if args.command == "serve":
+        from .serve import cmd_serve
+
+        return cmd_serve(args)
     print(f"[pfcore] 子命令 {args.command!r} 尚未实现（当前为占位）。")
     return 2
 
