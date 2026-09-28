@@ -18,6 +18,10 @@ pikepdf
 rapidocr
 pypdfium2
 faker
+# ── 真实上游产品名（审查 §E：真实 LLM 供应商/模型名不进公开仓库；
+#    部署环境里的真实上游只允许写 config/app.yaml，且公开导出时会替换）──
+open.bigmodel.cn
+glm-4-flash
 # ── 许可证字样（单词边界正则）────────────────────────────────────
 re:\bAGPL\b
 re:\bLGPL\b

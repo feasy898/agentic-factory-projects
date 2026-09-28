@@ -12,16 +12,21 @@
 
 退出码：0 = 零命中；1 = 有命中或词表缺失/为空。
 
-范围与豁免（有意设计，勿随意收紧）：
+范围与豁免（审查 §E 收窄后）：
 - 默认扫描后缀：.py .md .txt .html .js .ts .css .sh .bat .ps1（源码/注释/文档）；
 - 严格档额外扫 .yaml .yml .toml .json .cfg .ini（用于公开导出前的终检）；
 - 排除目录：.git .venv venv plan third_party data node_modules __pycache__ .zcode（本地工具状态）等；
-- 永远豁免的文件：constraints.txt、pyproject.toml、third_party/PINNED.txt、
-  ops/clone_oss.sh（内部克隆坐标）、LICENSE*、词表自身、各锁文件——
-  依赖清单/锁文件/克隆坐标必须携带真实 pip 包名与上游地址，
-  公开版依赖清单由导出阶段（ops/export_public.py）统一替换后另走严格档终检；
+- 豁免面收窄为「仓库根固定坐标」：pyproject.toml、constraints.txt、
+  ops/clone_oss.sh（内部克隆坐标）、ops/forbidden_names.txt（词表自身）——
+  仅这些**根级路径**豁免，其它目录里的同名文件一律照扫（防豁免面被借道）；
+  依赖清单/克隆坐标必须携带真实 pip 包名与上游地址，公开版由导出阶段
+  （ops/export_public.py）统一替换并另走严格档终检——豁免不是免检，
+  是把检查挪到导出口；
+- 锁文件与 PINNED 仍按文件名豁免（任何目录）：pinned.txt、各 lock；
+- LICENSE* 豁免（许可证正文必须原文）；
 - 配置文件默认不扫：第三方库的模块名只允许出现在 config/ 中，
-  源码经 importlib 按配置动态加载，不得硬编码库名（本仓库唯一允许的携带方式）。
+  源码经 importlib 按配置动态加载，不得硬编码库名（本仓库唯一允许的携带方式）；
+  公开导出时 config 中的真实模块名同样由 ops/export_public.py 替换。
 """
 from __future__ import annotations
 
@@ -40,10 +45,14 @@ EXCLUDED_DIRS = {
     "__pycache__", ".pytest_cache", ".ruff_cache", ".mypy_cache", "dist", "build", "out", "tmp",
     ".zcode",  # 本地工作流工具状态（自持 .gitignore，非仓库源码，T1.4）
 }
-ALWAYS_EXCLUDED_FILES = {
-    "constraints.txt", "pyproject.toml", "pinned.txt", "forbidden_names.txt",
-    "clone_oss.sh", "package-lock.json", "poetry.lock", "uv.lock", "pipfile.lock",
-}
+#: 根级坐标豁免（相对仓库根的固定路径；别处同名文件照扫——审查 §E 收窄）
+ROOT_SCOPED_EXEMPT = frozenset({
+    "pyproject.toml", "constraints.txt", "ops/clone_oss.sh", "ops/forbidden_names.txt",
+})
+#: 文件名豁免（任何目录）：锁文件 / PINNED / 词表副本坐标
+BASENAME_EXEMPT = frozenset({
+    "pinned.txt", "package-lock.json", "poetry.lock", "uv.lock", "pipfile.lock",
+})
 
 
 def load_patterns(wordlist_path: Path = WORDLIST_PATH) -> list[tuple[str, re.Pattern[str]]]:
@@ -70,12 +79,13 @@ def iter_files(root: Path, strict: bool = False):
     for path in sorted(root.rglob("*")):
         if not path.is_file():
             continue
+        rel = path.relative_to(root).as_posix().lower()
         dirs = {seg.lower() for seg in path.relative_to(root).parts[:-1]}
         # *.egg-info 等构建产物目录：生成物元数据（同 .venv，gitignore 覆盖，非源码）
         if dirs & EXCLUDED_DIRS or any(seg.endswith(".egg-info") for seg in dirs):
             continue
         name = path.name.lower()
-        if name in ALWAYS_EXCLUDED_FILES or name.startswith("license"):
+        if rel in ROOT_SCOPED_EXEMPT or name in BASENAME_EXEMPT or name.startswith("license"):
             continue
         if path.suffix.lower() not in suffixes:
             continue
