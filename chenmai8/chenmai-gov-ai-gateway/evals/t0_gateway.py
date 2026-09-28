@@ -9,7 +9,8 @@ exit 0 = 通过。检查项（对应任务单 T0.4 完成定义：普通样例�
    config/app.yaml + 真实 config/dept_keys.yaml，audit 内存表注入）；
 2. healthz / v1/models：存活与路由目标清单（仅名字）；
 3. 鉴权：无 key / 错 key → 401 unauthorized（信封形状 §5.6）；演示部门 key 命中 → 200；
-4. 请求体校验：非法 JSON / 空 messages / stream=true → 400 bad_request；
+4. 请求体校验：非法 JSON / 空 messages → 400 bad_request（``stream=true`` 的
+   SSE 流式链路自 T0.5 起生效，由 evals.t0_stream 专项验收）；
 5. 普通样例（U1 缩小版）：身份证+手机号 → route=INTERNET（x-anongw-* 三头齐全）；
    mock8901 收到**全占位符**（/admin/text bytes 级零原值）；客户端拿到**还原答案**
    （占位符形状零残留、原值在位）；上游请求模型名缺省取上游清单首项；
@@ -191,12 +192,7 @@ def step_body_validation(ctx: dict[str, Any]) -> str:
                                         headers=_auth_headers())
             if r_empty.status_code != 400:
                 raise AssertionError(f"empty messages: {r_empty.status_code}")
-            r_stream = await client.post("/v1/chat/completions",
-                                         json=_chat_body(CLEAN_TEXT, stream=True),
-                                         headers=_auth_headers())
-            if r_stream.status_code != 400:
-                raise AssertionError(f"stream=true should be explicit 400 in v0: {r_stream.status_code}")
-        return "invalid JSON / empty messages / stream=true -> 400 bad_request"
+        return "invalid JSON / empty messages -> 400 bad_request (streaming covered by evals.t0_stream)"
     return asyncio.run(run())
 
 

@@ -1,9 +1,11 @@
-"""网关 FastAPI 应用（骨架 v0）：/v1/chat/completions 非流式 + 调试/健康端点。
+"""网关 FastAPI 应用（骨架 v0）：/v1/chat/completions 非流式+流式 + 调试/健康端点。
 
 端点（§5.6，v0 实装子集；文件/管理面端点由对应任务补全）::
 
-    POST /v1/chat/completions   OpenAI 兼容非流式；鉴权 Authorization: Bearer <dept_key>；
-                                响应附 x-anongw-route / x-anongw-request-id / x-anongw-session-id
+    POST /v1/chat/completions   OpenAI 兼容（``stream=true`` 走 SSE 流式）；鉴权
+                                Authorization: Bearer <dept_key>；响应附
+                                x-anongw-route / x-anongw-request-id / x-anongw-session-id；
+                                流式成功另附 x-anongw-ai-label: 1（§6 M5，AI 生成标识头）
     GET  /v1/models             路由目标清单（脱敏视图，仅名字）
     POST /internal/detect       {text} → findings（调试）
     POST /internal/anonymize    {text, session_id} → 占位符版本（调试/演示对比屏）
@@ -11,13 +13,16 @@
     GET  /healthz               存活
 
 请求体上限：Content-Length > 网关上限即 413（畸形输入用例由 e2e 任务补全）。
+流式语义（§6 M1/T0.5）：BLOCK / 上游不可达 / 上游协议错误在开流前决出，
+返回普通 JSON 错误信封；开流后为 ``text/event-stream``，AI 标识以内容尾注 +
+finish chunk ``annotations`` 元数据注入（gateway/sse.py 组合管线）。
 """
 from __future__ import annotations
 
 from typing import Any
 
 from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 
 from audit.store import InMemoryAuditStore, RawPiiLeakError
 from common.config import (
@@ -111,8 +116,28 @@ def create_app(
         session_id = request.headers.get("x-anongw-session-id") or deps.new_session_id()
         request_id = deps.new_request_id()
 
-        # 5) 主链路
+        # 5) 主链路（流式 / 非流式分流；校验与错误信封两形态一致）
+        wants_stream = body.get("stream") is True
         try:
+            if wants_stream:
+                result = await service.handle_chat_stream(body, dept=dept, session_id=session_id,
+                                                          request_id=request_id)
+                if result.events is not None:
+                    log.info("chat.completed", extra={
+                        "request_id": request_id, "session_id": session_id, "dept": dept,
+                        "route": result.headers.get("x-anongw-route"), "status": 200,
+                        "stream": True,
+                    })
+                    return StreamingResponse(result.events, status_code=result.status_code,
+                                             media_type="text/event-stream",
+                                             headers=result.headers)
+                log.info("chat.completed", extra={
+                    "request_id": request_id, "session_id": session_id, "dept": dept,
+                    "route": result.headers.get("x-anongw-route"), "status": result.status_code,
+                    "stream": True,
+                })
+                return JSONResponse(result.payload, status_code=result.status_code,
+                                    headers=result.headers)
             result = await service.handle_chat(body, dept=dept, session_id=session_id,
                                                request_id=request_id)
         except ChatBodyError as exc:

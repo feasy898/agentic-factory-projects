@@ -110,6 +110,11 @@ class SessionMapper:
 
         return RESTORE_PATTERN.sub(_sub, text)
 
+    def lookup(self, placeholder: str) -> str | None:
+        """单条占位符 → 原值；映射表外返回 None（流式还原状态机的查找入口）。"""
+        entry = self._by_placeholder.get(placeholder)
+        return entry.normalized if entry is not None else None
+
     def entries(self) -> list[MappingEntry]:
         return list(self._by_placeholder.values())
 

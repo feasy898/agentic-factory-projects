@@ -1,40 +1,60 @@
-"""网关非流式主链路（T0.4）：detect → mask → route → 转发 → 还原 → audit v0。
+"""网关主链路（T0.4 非流式 + T0.5 流式）：detect → mask → route → 转发 → 还原 → audit v0。
 
-请求处理顺序（开发指令 §3 数据流，v0 覆盖非流式）::
+请求处理顺序（开发指令 §3 数据流）::
 
     1 auth(dept key，app 层) → 2 detect(recognizers.rule v0) → 3 mask(会话稳定占位符)
-    → 4 route(routing.engine v0) → 5 转发(gateway.provider，非流式)
+    → 4 route(routing.engine v0) → 5 转发(gateway.provider，非流式/流式两形态)
     → 6 还原(占位符→原值) → 7 audit(audit.store 内存版，零明文硬闸)
 
-范围与取舍（v0，后续任务扩展时保持类与方法形状）：
-- 仅非流式：``stream=true`` 明确报 400（流式链路任务接管 SSE 管线）；
+非流式与流式共用 :meth:`GatewayService._prepare`（detect+mask+route，纯前置）；
+差异只在转发与还原形态：
+- 非流式：整体 JSON 转发 → 整段正则还原（正文 + 工具参数串级）；
+- 流式（§8.2）：``stream=true`` 打开上游 SSE，经 :mod:`gateway.sse` 组合管线
+  逐块透传——文本增量过 :class:`masking.remap.StreamRestorer`（占位符跨 chunk
+  缓冲还原）、工具参数 hold-to-finish、finish 时注入 AI 生成标识（§5.6 流式方式）。
+
+范围与取舍（后续任务扩展时保持类与方法形状）：
 - 多段 content：文本段逐段检测/脱敏后原位替换，非文本段（如图片引用）原样保留；
-- 工具调用：响应 ``tool_calls[].function.arguments`` 做占位符串级还原
-  （参数级 JSON 还原由脱敏任务补全）；
-- 上游错误（非 2xx）透明传递上游协议错误体；网络层失败映射 502 错误信封。
+- BLOCK/上游不可达/上游协议错误在**开流前**决出，仍返回普通 JSON 信封；
+  开流后（已 200）的中途断流只能以 SSE 错误事件收尾；
+- 流式审计在流收尾时落账（response_preview 为**还原前**占位符版本）；
+  零明文硬闸失败时事件不落库并大声记日志（流已 200，500 无法回传）。
 
 审计红线：prompt/response 预览只存**占位符版本**（≤500 字符）；
-入库前经 :func:`audit.store.assert_no_raw_pii` 硬闸，失败映射 500 且不落库。
+入库前经 :func:`audit.store.assert_no_raw_pii` 硬闸。
 """
 from __future__ import annotations
 
+import json
 import os
 import time
 from collections import Counter
+from collections.abc import AsyncIterator
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
+import httpx
+
 from audit.models import AuditEvent
-from audit.store import InMemoryAuditStore
+from audit.store import InMemoryAuditStore, RawPiiLeakError
 from common.config import AppConfig
+from common.logs import get_logger
+from gateway import sse
 from gateway.models import ApiError, ErrorBody
-from gateway.provider import UpstreamUnavailableError, forward_chat
-from masking.mapper import SessionRegistry
+from gateway.provider import (
+    UpstreamStream,
+    UpstreamUnavailableError,
+    forward_chat,
+    open_stream_chat,
+)
+from masking.mapper import SessionMapper, SessionRegistry
 from recognizers.models import Finding
 from recognizers.rule.detect import detect
 from routing.engine import decide
 from routing.models import RouteDecision
+
+log = get_logger(__name__)
 
 #: 错误信封 code 词表（§5.6：BLOCK 固定 content_blocked，其余复用同一信封）
 CODE_BAD_REQUEST = "bad_request"
@@ -49,6 +69,9 @@ STATUS_UPSTREAM_UNAVAILABLE = 502
 #: BLOCK 拦截的固定提示文案（§5.6 错误语义；代答/拒答模板由输出侧任务接管）
 BLOCK_MESSAGE = "涉密/涉敏内容已拦截，请通过保密渠道办理或删除敏感标识后重试"
 
+#: AI 生成标识响应头（§6 M5：x-anongw-ai-label: 1；流式响应随 SSE 头下发）
+HEADER_AI_LABEL = "x-anongw-ai-label"
+
 
 class ChatBodyError(ValueError):
     """请求体校验失败（映射 400 bad_request）。"""
@@ -56,11 +79,21 @@ class ChatBodyError(ValueError):
 
 @dataclass
 class GatewayResult:
-    """单次请求处理结果：HTTP 状态码 + 响应 JSON + 追加响应头。"""
+    """非流式单次请求处理结果：HTTP 状态码 + 响应 JSON + 追加响应头。"""
 
     status_code: int
     payload: dict[str, Any]
     headers: dict[str, str] = field(default_factory=dict)
+
+
+@dataclass
+class GatewayStreamResult:
+    """流式请求处理结果：``events`` 非 None ⇒ 200 SSE 流；否则为普通 JSON 信封。"""
+
+    status_code: int
+    headers: dict[str, str] = field(default_factory=dict)
+    payload: dict[str, Any] | None = None
+    events: AsyncIterator[str] | None = None
 
 
 @dataclass
@@ -93,6 +126,20 @@ def _error_payload(code: str, message: str,
     return {"error": ErrorBody(code=code, message=message, reasons=reasons or []).model_dump()}
 
 
+@dataclass
+class _Prepared:
+    """非流式/流式共用的前置产物（detect+mask+route 一次完成）。"""
+
+    findings: list[Finding]
+    segments_by_message: dict[int, list[_Segment]]
+    masked_contents: dict[tuple[int, int], str]
+    prompt_preview: str
+    mapper: SessionMapper
+    decision: RouteDecision
+    headers: dict[str, str]
+    used_values: set[str]
+
+
 class GatewayService:
     """网关服务：持有配置、会话映射注册表与审计存储，处理 /v1/chat/completions 链路。"""
 
@@ -114,14 +161,180 @@ class GatewayService:
             if upstream.route in ("INTERNET", "GOVCLOUD") and upstream.route not in self._upstream_for:
                 self._upstream_for[upstream.route] = upstream.name
 
-    # ── 主入口 ────────────────────────────────────────────────────
+    # ── 主入口：非流式 ────────────────────────────────────────────
     async def handle_chat(
         self, body: Any, *, dept: str, session_id: str, request_id: str
     ) -> GatewayResult:
         started = time.perf_counter()
         self._validate_body(body)
-        messages: list[dict[str, Any]] = body["messages"]
+        prep = self._prepare(body["messages"], session_id=session_id, request_id=request_id)
+        decision = prep.decision
+        headers = prep.headers
+        prompt_preview = prep.prompt_preview
 
+        def finish(status_code: int, payload: dict[str, Any], *, upstream_name: str | None,
+                   response_preview: str, flags: list[str]) -> GatewayResult:
+            """审计落账（零明文硬闸失败时 RawPiiLeakError 向上抛，映射 500）并组装结果。"""
+            self._audit(
+                request_id=request_id, session_id=session_id, dept=dept,
+                decision=decision, findings=prep.findings,
+                prompt_preview=prompt_preview, response_preview=response_preview,
+                upstream_name=upstream_name, latency_ms=int((time.perf_counter() - started) * 1000),
+                flags=flags, normalized_values=sorted(prep.used_values),
+            )
+            return GatewayResult(status_code, payload, headers)
+
+        # ── BLOCK：拦截（403 语义），上游不感知 ──
+        if decision.route == "BLOCK":
+            payload = ApiError.content_blocked(BLOCK_MESSAGE, reasons=decision.reasons).model_dump()
+            return finish(403, payload, upstream_name=None, response_preview="", flags=[])
+
+        upstream = self._resolve_upstream(decision)
+        if upstream is None:
+            return finish(
+                500,
+                _error_payload(CODE_INTERNAL_ERROR, f"route target misconfigured: {decision.upstream!r}"),
+                upstream_name=None, response_preview="", flags=["route_misconfigured"],
+            )
+
+        out_payload = self._out_payload(body, prep, upstream, stream=False)
+        api_key = os.environ.get(upstream.api_key_env) or None
+        try:
+            status, data = await forward_chat(upstream, out_payload, api_key=api_key)
+        except UpstreamUnavailableError as exc:
+            return finish(
+                STATUS_UPSTREAM_UNAVAILABLE,
+                _error_payload(CODE_UPSTREAM_ERROR, str(exc)),
+                upstream_name=upstream.name, response_preview="", flags=["upstream_unavailable"],
+            )
+        if status != 200:
+            # 上游协议错误体透明传递（含上游错误形状），网关不改写
+            return finish(status, data, upstream_name=upstream.name,
+                          response_preview="", flags=[f"upstream_status_{status}"])
+
+        # 6) 还原：占位符 → 原值（正文 + 工具参数；预览保留占位符版本）
+        response_preview = self._first_choice_content(data)
+        self._restore_choices(data, prep.mapper)
+        return finish(200, data, upstream_name=upstream.name,
+                      response_preview=response_preview, flags=[])
+
+    # ── 主入口：流式（T0.5）───────────────────────────────────────
+    async def handle_chat_stream(
+        self, body: Any, *, dept: str, session_id: str, request_id: str
+    ) -> GatewayStreamResult:
+        started = time.perf_counter()
+        self._validate_body(body)
+        prep = self._prepare(body["messages"], session_id=session_id, request_id=request_id)
+        decision = prep.decision
+        headers = prep.headers
+
+        def finish(status_code: int, payload: dict[str, Any], *, upstream_name: str | None,
+                   flags: list[str]) -> GatewayStreamResult:
+            """开流前决出的终态（BLOCK/错误）：普通 JSON 信封，无 SSE。"""
+            self._audit(
+                request_id=request_id, session_id=session_id, dept=dept,
+                decision=decision, findings=prep.findings,
+                prompt_preview=prep.prompt_preview, response_preview="",
+                upstream_name=upstream_name, latency_ms=int((time.perf_counter() - started) * 1000),
+                flags=flags, normalized_values=sorted(prep.used_values),
+            )
+            return GatewayStreamResult(status_code=status_code, headers=headers, payload=payload)
+
+        # ── BLOCK：拦截（403 语义），上游不感知；流式同样先拦再谈 ──
+        if decision.route == "BLOCK":
+            payload = ApiError.content_blocked(BLOCK_MESSAGE, reasons=decision.reasons).model_dump()
+            return finish(403, payload, upstream_name=None, flags=[])
+
+        upstream = self._resolve_upstream(decision)
+        if upstream is None:
+            return finish(
+                500,
+                _error_payload(CODE_INTERNAL_ERROR, f"route target misconfigured: {decision.upstream!r}"),
+                upstream_name=None, flags=["route_misconfigured"],
+            )
+
+        out_payload = self._out_payload(body, prep, upstream, stream=True)
+        api_key = os.environ.get(upstream.api_key_env) or None
+        stream: UpstreamStream
+        try:
+            stream = await open_stream_chat(upstream, out_payload, api_key=api_key)
+        except UpstreamUnavailableError as exc:
+            return finish(
+                STATUS_UPSTREAM_UNAVAILABLE,
+                _error_payload(CODE_UPSTREAM_ERROR, str(exc)),
+                upstream_name=upstream.name, flags=["upstream_unavailable"],
+            )
+        if stream.status_code != 200:
+            # 上游协议错误体透明传递（body 已随 aread() 读尽、连接已释放）
+            raw_body = await stream.aread()
+            try:
+                data = json.loads(raw_body)
+            except ValueError:
+                return finish(
+                    STATUS_UPSTREAM_UNAVAILABLE,
+                    _error_payload(CODE_UPSTREAM_ERROR, f"upstream {upstream.name} returned non-JSON body"),
+                    upstream_name=upstream.name, flags=["upstream_non_json"],
+                )
+            if not isinstance(data, dict):
+                return finish(
+                    STATUS_UPSTREAM_UNAVAILABLE,
+                    _error_payload(CODE_UPSTREAM_ERROR, f"upstream {upstream.name} returned non-object JSON"),
+                    upstream_name=upstream.name, flags=["upstream_non_json"],
+                )
+            return finish(stream.status_code, data, upstream_name=upstream.name,
+                          flags=[f"upstream_status_{stream.status_code}"])
+
+        # 200：进入 SSE 组合管线（还原 + 工具 hold + AI 标识）；审计随流收尾落账
+        ai_label = (self.cfg.ai_label or "").strip() or None
+        if ai_label:
+            headers = {**headers, HEADER_AI_LABEL: "1"}
+        preview_parts: list[str] = []
+        composed = sse.compose_chat_stream(
+            stream.aiter(), mapper=prep.mapper, ai_label=ai_label,
+            on_content=preview_parts.append,
+        )
+
+        async def guarded() -> AsyncIterator[str]:
+            """组合管线 + 连接释放 + 中途断流 SSE 错误事件 + 流收尾审计。"""
+            interrupted = False
+            try:
+                try:
+                    async for text in composed:
+                        yield text
+                except (httpx.HTTPError, UpstreamUnavailableError) as exc:
+                    interrupted = True
+                    log.error("chat_stream.upstream_interrupted", extra={
+                        "request_id": request_id, "exc_type": type(exc).__name__,
+                    })
+                    yield sse.format_sse(json.dumps({
+                        "error": {"message": "upstream stream interrupted",
+                                  "type": "upstream_error", "param": None, "code": None},
+                    }, ensure_ascii=False))
+                finally:
+                    await stream.aclose()
+            finally:
+                # 流式审计：response_preview 取还原前占位符版本；硬闸失败=不落库
+                try:
+                    self._audit(
+                        request_id=request_id, session_id=session_id, dept=dept,
+                        decision=decision, findings=prep.findings,
+                        prompt_preview=prep.prompt_preview,
+                        response_preview="".join(preview_parts),
+                        upstream_name=upstream.name,
+                        latency_ms=int((time.perf_counter() - started) * 1000),
+                        flags=(["upstream_stream_interrupted"] if interrupted else []),
+                        normalized_values=sorted(prep.used_values),
+                    )
+                except RawPiiLeakError as exc:
+                    log.error("audit.raw_pii_gate.tripped", extra={
+                        "request_id": request_id, "kind": exc.kind,
+                    })
+
+        return GatewayStreamResult(status_code=200, headers=headers, payload=None, events=guarded())
+
+    # ── 前置（detect + mask + route，非流式/流式共用）────────────
+    def _prepare(self, messages: list[dict[str, Any]], *, session_id: str,
+                 request_id: str) -> _Prepared:
         # 2) detect：逐消息逐段检测；fid 按 消息→段→span位置 顺序编放（请求内自增）
         findings: list[Finding] = []
         findings_by_segment: dict[tuple[int, int], list[Finding]] = {}
@@ -165,58 +378,11 @@ class GatewayService:
             "x-anongw-session-id": session_id,
         }
         prompt_preview = self._prompt_preview(messages, segments_by_message, masked_contents)
-
-        def finish(status_code: int, payload: dict[str, Any], *, upstream_name: str | None,
-                   response_preview: str, flags: list[str]) -> GatewayResult:
-            """审计落账（零明文硬闸失败时 RawPiiLeakError 向上抛，映射 500）并组装结果。"""
-            self._audit(
-                request_id=request_id, session_id=session_id, dept=dept,
-                decision=decision, findings=findings,
-                prompt_preview=prompt_preview, response_preview=response_preview,
-                upstream_name=upstream_name, latency_ms=int((time.perf_counter() - started) * 1000),
-                flags=flags, normalized_values=sorted(used_values),
-            )
-            return GatewayResult(status_code, payload, headers)
-
-        # ── BLOCK：拦截（403 语义），上游不感知 ──
-        if decision.route == "BLOCK":
-            payload = ApiError.content_blocked(BLOCK_MESSAGE, reasons=decision.reasons).model_dump()
-            return finish(403, payload, upstream_name=None, response_preview="", flags=[])
-
-        # 5) 转发（非流式）：按决策选择上游，模型缺省取该上游清单首项
-        upstream = self._upstreams_by_name.get(decision.upstream or "")
-        if upstream is None:
-            return finish(
-                500,
-                _error_payload(CODE_INTERNAL_ERROR, f"route target misconfigured: {decision.upstream!r}"),
-                upstream_name=None, response_preview="", flags=["route_misconfigured"],
-            )
-
-        out_payload = {k: v for k, v in body.items() if k not in ("messages", "stream")}
-        out_payload["model"] = str(body.get("model") or (upstream.models[0] if upstream.models else "default"))
-        out_payload["messages"] = [
-            self._masked_message(message, masked_contents, msg_index)
-            for msg_index, message in enumerate(messages)
-        ]
-        api_key = os.environ.get(upstream.api_key_env) or None
-        try:
-            status, data = await forward_chat(upstream, out_payload, api_key=api_key)
-        except UpstreamUnavailableError as exc:
-            return finish(
-                STATUS_UPSTREAM_UNAVAILABLE,
-                _error_payload(CODE_UPSTREAM_ERROR, str(exc)),
-                upstream_name=upstream.name, response_preview="", flags=["upstream_unavailable"],
-            )
-        if status != 200:
-            # 上游协议错误体透明传递（含上游错误形状），网关不改写
-            return finish(status, data, upstream_name=upstream.name,
-                          response_preview="", flags=[f"upstream_status_{status}"])
-
-        # 6) 还原：占位符 → 原值（正文 + 工具参数；预览保留占位符版本）
-        response_preview = self._first_choice_content(data)
-        self._restore_choices(data, mapper)
-        return finish(200, data, upstream_name=upstream.name,
-                      response_preview=response_preview, flags=[])
+        return _Prepared(
+            findings=findings, segments_by_message=segments_by_message,
+            masked_contents=masked_contents, prompt_preview=prompt_preview,
+            mapper=mapper, decision=decision, headers=headers, used_values=used_values,
+        )
 
     # ── 校验与组装 ────────────────────────────────────────────────
     @staticmethod
@@ -229,8 +395,24 @@ class GatewayService:
         for message in messages:
             if not isinstance(message, dict):
                 raise ChatBodyError("each message must be a JSON object")
-        if body.get("stream") is True:
-            raise ChatBodyError("streaming is not supported in this build; retry with stream=false")
+
+    def _resolve_upstream(self, decision: RouteDecision):
+        """RouteDecision.upstream → 上游配置；BLOCK/配置缺失返回 None。"""
+        return self._upstreams_by_name.get(decision.upstream or "")
+
+    def _out_payload(self, body: dict[str, Any], prep: _Prepared, upstream, *,
+                     stream: bool) -> dict[str, Any]:
+        """上游请求体：剥离 messages/stream 重建（模型缺省取该上游清单首项）。"""
+        out_payload = {k: v for k, v in body.items() if k not in ("messages", "stream")}
+        out_payload["model"] = str(body.get("model")
+                                   or (upstream.models[0] if upstream.models else "default"))
+        out_payload["messages"] = [
+            self._masked_message(message, prep.masked_contents, msg_index)
+            for msg_index, message in enumerate(body["messages"])
+        ]
+        if stream:
+            out_payload["stream"] = True
+        return out_payload
 
     @staticmethod
     def _masked_message(message: dict[str, Any], masked_contents: dict[tuple[int, int], str],
