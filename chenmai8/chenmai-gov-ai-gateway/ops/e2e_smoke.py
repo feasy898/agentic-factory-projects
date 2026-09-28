@@ -22,11 +22,13 @@
 - U2 流式：同 prompt，SSE 逐 delta 拼接后同 U1 断言（外加流式 AI 生成标识尾注）；
   再以 mock 默认 1–7 字符随机切块模式重放 20 次，逐次全等断言（覆盖占位符被
   切进相邻两个 SSE chunk 的还原）；
-- U3 三路由（材料化）：三份 seeded 材料物化为夹具文件（data/fixtures/materials/，
-  确定性/幂等）后**从夹具加载**发送——普通公文（零命中，messages 全文逐字原样）
-  →INTERNET/:8901；低保名单（低保对象敏感个人信息 + ≥3 身份证：人名×3/身份证×3/
-  手机×1 全量占位符化，全文=脱敏版）→GOVCLOUD/:8902；机密★材料→403 且两 mock
-  均零新增；
+- U3 三路由（材料化·真实文件内容驱动）：三份 seeded 真实形态材料由 T1.1 生成器
+  （benchmark/generator/materials.py）确定性产出为 docx/pdf 夹具文件
+  （data/fixtures/materials/，双构建字节一致自证），U3 经 filechannel 文本层
+  权威解析抽取**文件正文**作为 prompt 发送——普通公文 docx（零命中，messages
+  全文逐字原样）→INTERNET/:8901；低保名单 docx（正文+名单表格：低保对象敏感
+  个人信息 + ≥3 身份证：人名×3/身份证×3/手机×1 全量占位符化，全文=脱敏版）
+  →GOVCLOUD/:8902；机密★材料 pdf→403 且两 mock 均零新增；
 - U4 工具调用：tools 定义 + arguments 中文含人名/PII → 上游 messages 与
   tool_arguments **全文 = 原文脱敏版**、客户端收到还原版（JSON 全等、占位符
   零残留）；U4b：历史 assistant.tool_calls.arguments 藏密级词 → 403 整单拦截、
@@ -55,7 +57,6 @@ import subprocess
 import sys
 import threading
 import time
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -68,12 +69,21 @@ if str(REPO_ROOT) not in sys.path:
 
 from audit.store import assert_db_no_raw_pii  # noqa: E402
 from audit.writer import SqliteAuditWriter  # noqa: E402
+from benchmark.generator.materials import (  # noqa: E402
+    CLASSIFIED_MATERIAL,
+    ORDINARY_MATERIAL,
+    ROSTER_MATERIAL,
+    build_materials,
+    material_plain_text,
+    spec_of,
+)
 from common.config import (  # noqa: E402
     load_app_config,
     load_dept_keys,
     load_env_file,
     resolve_secret,
 )
+from filechannel.parsers import parse_any  # noqa: E402
 from gateway.app import create_app, resolve_db_path  # noqa: E402
 from gateway.mock_upstream import ECHO_MARKER  # noqa: E402
 from masking.mapper import RESTORE_PATTERN  # noqa: E402
@@ -123,78 +133,63 @@ U_TEXT = (f"居民{PERSON}（身份证{ID_A}、{ID_B}），联系电话{PHONE_A}
 U_RESTORED = (f"居民{PERSON}（身份证{ID_A}、{ID_B}），联系电话{PHONE_A}、"
               f"{PHONE_B}、{PHONE_C}，请核对其低保申领材料并回电。")
 
-# ── seeded 三路由材料（§9 U3 / §10 场景 2 演示同源；材料化入 fixtures）─────
-# 三份材料以**夹具文件**为载体：每轮运行前确定性物化到 data/fixtures/materials/
-# （幂等），U3 从夹具文件加载后发送——断言对象是夹具内容本身，不是脚本内常量。
+# ── seeded 三路由材料（§9 U3 / §10 场景 2 演示同源；真实形态夹具）─────────
+# 三份材料由 T1.1 生成器（benchmark/generator/materials.py）确定性产出为真实
+# docx/pdf 文件：每轮运行前物化到 data/fixtures/materials/（幂等 + 双构建字节
+# 一致自证），U3 经 filechannel 文本层抽取**文件正文**后发送——断言对象是真实
+# 文件内容，不是脚本内构造的 JSON/纯文本。期望脱敏面（下表）为本侧独立声明的
+# 验收契约：不回读被测检测器，值层面与生成器/evals.m6 的独立副本同源冻结。
 MATERIALS_DIR = REPO_ROOT / "data" / "fixtures" / "materials"
 
+#: 低保名单材料（docx 正文+名单表格）的期望脱敏面 (表面形式, 类别, 归一化值)：
+#: 人名×3 + 身份证×3 + 手机号×1（全量占位符化；低保对象/低保户为 ROUTE_FLAG
+#: 词不脱敏）。U3 断言「每个声明的表面形式确在文件正文里」后再用于全文 diff。
+U3_ROSTER_SPANS: list[tuple[str, EntityClass, str]] = [
+    ("李四", EntityClass.PERSON, "李四"),
+    ("王五", EntityClass.PERSON, "王五"),
+    ("赵六", EntityClass.PERSON, "赵六"),
+    (ID_A, EntityClass.ID_CARD, ID_A),
+    (ID_C, EntityClass.ID_CARD, ID_C),
+    (ID_D, EntityClass.ID_CARD, ID_D),
+    (PHONE_A, EntityClass.PHONE_MOBILE, PHONE_A),
+]
 
-@dataclass(frozen=True)
-class SeededMaterial:
-    """一份 seeded 三路由材料：夹具文件名 + 原文 + 期望脱敏面（验收契约）。"""
 
-    filename: str
-    text: str
-    #: 期望被脱敏的表面形式 (表面原文, 类别, 归一化值)——手工声明，不回读被测检测器
-    spans: tuple[tuple[str, EntityClass, str], ...] = ()
+def _extract_material_text(path: Path) -> str:
+    """材料文件 → 正文文本（filechannel 文本层权威解析，非脚本内常量）。
 
-
-ORDINARY_MATERIAL = SeededMaterial(
-    "ordinary_flood_drill_notice.txt",
-    "某镇人民政府办公室\n"
-    "关于开展全镇防汛演练的通知\n"
-    "\n"
-    "各村（居）委会：\n"
-    "为检验防汛应急预案的可操作性，定于本周四上午九点在镇政府大院开展防汛演练，\n"
-    "请各村网格员提前到场并做好记录，演练结束后将情况汇总报镇党政办。\n"
-    "\n"
-    "特此通知。",
-)
-
-# 低保名单：敏感个人信息（低保对象/低保户 → SENSITIVE_ATTR）+ ≥3 身份证（批量名单）
-# 双判定 → GOVCLOUD；期望脱敏面 = 人名×3 + 身份证×3 + 手机号×1（全量占位符化）。
-ROSTER_MATERIAL = SeededMaterial(
-    "low_income_roster_202610.txt",
-    f"某县民政局低保对象名单（2026年10月·节选）\n"
-    f"\n"
-    f"经入户核查与县级联审，现将本月新增低保户名单公示如下：\n"
-    f"一、李四，公民身份号码{ID_A}，联系电话{PHONE_A}；\n"
-    f"二、王五，公民身份号码{ID_C}；\n"
-    f"三、赵六，公民身份号码{ID_D}。\n"
-    f"对名单有异议的，请在公示期内向县民政局社会救助科反映。",
-    spans=(
-        ("李四", EntityClass.PERSON, "李四"),
-        ("王五", EntityClass.PERSON, "王五"),
-        ("赵六", EntityClass.PERSON, "赵六"),
-        (ID_A, EntityClass.ID_CARD, ID_A),
-        (ID_C, EntityClass.ID_CARD, ID_C),
-        (ID_D, EntityClass.ID_CARD, ID_D),
-        (PHONE_A, EntityClass.PHONE_MOBILE, PHONE_A),
-    ),
-)
-
-CLASSIFIED_MATERIAL = SeededMaterial(
-    "classified_cadre_minutes.txt",
-    f"机密★某县干部考察纪要（内部资料·注意保密）\n"
-    f"\n"
-    f"考察对象：{PERSON}，联系电话{PHONE_BLOCKED}。\n"
-    f"考察组意见：该同志政治素质过硬、工作实绩突出，建议进一步培养使用。\n"
-    f"本纪要不得外传，请按规定归档管理。",
-)
-
-MATERIALS: tuple[SeededMaterial, ...] = (
-    ORDINARY_MATERIAL, ROSTER_MATERIAL, CLASSIFIED_MATERIAL,
-)
+    docx = 非空段落+表格段；pdf = 逐页文本（单页即整页文本）。
+    """
+    parsed = parse_any(path.name, path.read_bytes())
+    return "\n".join(seg.text for seg in parsed.segments)
 
 
 def materialize_materials() -> None:
-    """三份 seeded 材料物化为夹具文件（确定性、幂等），回读校验字节内容一致。"""
-    MATERIALS_DIR.mkdir(parents=True, exist_ok=True)
-    for mat in MATERIALS:
-        path = MATERIALS_DIR / mat.filename
-        path.write_text(mat.text, encoding="utf-8", newline="\n")
-        if path.read_text(encoding="utf-8") != mat.text:
-            raise RuntimeError(f"material fixture round-trip mismatch: {path}")
+    """三份 seeded 材料经 T1.1 生成器物化为真实 docx/pdf 夹具（幂等）。
+
+    每轮自证三件事：①双构建字节级一致（生成器确定性）；②文件正文经文本层
+    抽取 == 构造面预测（material_plain_text，往返完整性——文件形态损坏即响亮
+    失败）；③本侧独立声明的期望脱敏面（U3_ROSTER_SPANS 等）确在正文里
+    （值层面同源冻结的漂移哨兵）。最后清理上一代 .txt 夹具并落 manifest。
+    """
+    first = build_materials(MATERIALS_DIR)
+    second = build_materials(MATERIALS_DIR)
+    if [e["sha256"] for e in first] != [e["sha256"] for e in second]:
+        raise RuntimeError("material build not byte-deterministic (T1.1 writers)")
+    for entry in first:
+        path = MATERIALS_DIR / entry["filename"]
+        spec = spec_of(entry["filename"])
+        extracted = _extract_material_text(path)
+        if extracted != material_plain_text(spec):
+            raise RuntimeError(f"material round-trip mismatch: {path}")
+        for surface, _etype in spec.spans:
+            if surface not in extracted:
+                raise RuntimeError(
+                    f"declared span missing from material body: {surface!r} in {path}")
+    for legacy in MATERIALS_DIR.glob("*.txt"):
+        legacy.unlink()  # 上一代 .txt 材料（本代升级为 docx/pdf 真实形态）
+    (MATERIALS_DIR / "materials_manifest.json").write_text(
+        json.dumps(first, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 TOOL_TEXT = f"查询{PERSON}名下低保发放记录，证件号{ID_D}，联系电话{PHONE_A}"
 TOOL_RESTORED = f"查询{PERSON}名下低保发放记录，证件号{ID_D}，联系电话{PHONE_A}"
@@ -651,13 +646,13 @@ def case_u2(ctx: dict[str, Any]) -> str:
     return f"200 SSE；首传 + {U2_REPLAYS} 次随机切块重放全等；上游 messages 全文=原文脱敏版；AI 标识尾注在位"
 
 
-# ── U3 三路由（§9 U3；材料化：seeded 材料从 data/fixtures/ 夹具加载）──────
-def _load_material(filename: str) -> str:
-    """加载 seeded 材料夹具（main() 已物化；缺失即 FAIL 而非静默回退常量）。"""
-    path = MATERIALS_DIR / filename
+# ── U3 三路由（§9 U3；真实文件内容驱动：docx/pdf 夹具 → 文本层抽取 → 发送）──
+def _load_material_text(spec) -> str:
+    """加载 seeded 材料夹具正文（main() 已物化；缺失即 FAIL 而非静默回退常量）。"""
+    path = MATERIALS_DIR / spec.filename
     if not path.is_file():
         raise AssertionError(f"material fixture missing: {path}")
-    return path.read_text(encoding="utf-8")
+    return _extract_material_text(path)
 
 
 def case_u3(ctx: dict[str, Any]) -> str:
@@ -665,8 +660,9 @@ def case_u3(ctx: dict[str, Any]) -> str:
     base1, base2 = ctx["mock_internet"], ctx["mock_govcloud"]
     b1, b2 = _mock_count(base1), _mock_count(base2)
 
-    # ① 普通公文（夹具）→ INTERNET / :8901（零敏感命中 → messages 逐字原文）
-    ordinary = _load_material(ORDINARY_MATERIAL.filename)
+    # ① 普通公文（T1.1 生成器 docx，零敏感命中）→ INTERNET / :8901
+    #    （messages 全文 diff 负例分支：逐字原文，一字不动）
+    ordinary = _load_material_text(ORDINARY_MATERIAL)
     status, headers, frames, raw = _send_chat(
         client, _plain_body(ordinary), "sess_e2e_u3a", ctx)
     if status != 200 or headers.get("x-anongw-route") != "INTERNET":
@@ -676,10 +672,15 @@ def case_u3(ctx: dict[str, Any]) -> str:
     if _mock_count(base1) != b1 + 1 or _mock_count(base2) != b2:
         raise AssertionError("ordinary forward split wrong")
     _assert_upstream_messages(_mock_last_record(base1), ordinary, "mock:8901 ordinary")
+    _assert_no_raw(_mock_text(base1), RAW_VALUES, "mock:8901 ordinary")
 
-    # ② 低保名单（夹具：敏感个人信息 + ≥3 身份证）→ GOVCLOUD / :8902，脱敏深度 =
-    #    上游 messages 全文 == 「原文脱敏版」逐字全等 + 占位符计数精确 + bytes 零原值
-    roster = _load_material(ROSTER_MATERIAL.filename)
+    # ② 低保名单（docx 正文+名单表格：敏感个人信息 + ≥3 身份证批量双判定）
+    #    → GOVCLOUD / :8902，脱敏深度 = 上游 messages 全文 == 「文件正文脱敏版」
+    #    逐字全等 + 占位符计数精确 + bytes 零原值 + 客户端还原逐值在位
+    roster = _load_material_text(ROSTER_MATERIAL)
+    for surface, _etype, _normalized in U3_ROSTER_SPANS:
+        if surface not in roster:
+            raise AssertionError(f"roster material missing declared span: {surface!r}")
     status, headers, frames, raw = _send_chat(
         client, _plain_body(roster, model=None), "sess_e2e_u3b", ctx)
     if status != 200 or headers.get("x-anongw-route") != "GOVCLOUD":
@@ -694,11 +695,11 @@ def case_u3(ctx: dict[str, Any]) -> str:
     up = _mock_last_record(base2)
     _assert_placeholder_counts(up["last_user_content"], U3_ROSTER_EXPECTED_PLACEHOLDERS)
     _assert_upstream_messages(
-        up, _expected_masked(ctx, "sess_e2e_u3b", roster, ROSTER_MATERIAL.spans), "mock:8902")
+        up, _expected_masked(ctx, "sess_e2e_u3b", roster, U3_ROSTER_SPANS), "mock:8902")
     _assert_no_raw(_mock_text(base2), RAW_VALUES, "mock:8902")
 
-    # ③ 机密★材料（夹具）→ 403 拦截，两 mock 均零新增
-    classified = _load_material(CLASSIFIED_MATERIAL.filename)
+    # ③ 机密★材料（pdf 文本层）→ 403 拦截，两 mock 均零新增
+    classified = _load_material_text(CLASSIFIED_MATERIAL)
     status, headers, frames, raw = _send_chat(
         client, _plain_body(classified), "sess_e2e_u3c", ctx)
     if status != 403:
@@ -715,9 +716,9 @@ def case_u3(ctx: dict[str, Any]) -> str:
     _assert_no_raw(_mock_text(base1) + _mock_text(base2),
                    (PHONE_BLOCKED, PERSON, "李四", "王五", "赵六",
                     "机密★", "内部资料", "注意保密", "不得外传"), "mocks")
-    return ("材料化三路由：普通公文→8901 逐字原文 / 低保名单→8902（人名×3+身份证×3"
-            "+手机号×1 全量脱敏，全文=脱敏版）/ 机密★→403（reasons[0]=CLASSIFICATION_MARK）；"
-            "上游零原值")
+    return ("真实文件三路由（docx/pdf 夹具正文驱动）：普通公文 docx→8901 逐字原文 / "
+            "低保名单 docx→8902（人名×3+身份证×3+手机号×1 全量脱敏，全文=脱敏版）/ "
+            "机密★ pdf→403（reasons[0]=CLASSIFICATION_MARK）；上游零原值")
 
 
 # ── U4 工具调用（§9 U4）───────────────────────────────────────────────

@@ -360,11 +360,13 @@ def check_scan_pdf() -> str:
     return "blank pdf → kind=scan_pdf / 零命中 / pages=1"
 
 
-# ── 5. 三路由材料（与 ops/e2e_smoke SeededMaterial 值层面同源冻结）────
-# 说明：本检查不 import ops.e2e_smoke（其模块级 import 牵引网关链路，T3.3 并行
-# 开发中），而是持有同一批 seeded 值的独立副本，物化到本 eval 专属目录
+# ── 5. 三路由材料（与 ops/e2e_smoke / benchmark.generator.materials 值层面同源冻结）────
+# 说明：本检查不 import ops.e2e_smoke / benchmark.generator.materials（前者模块级
+# import 牵引网关链路），而是持有同一批 seeded 值的独立副本，物化到本 eval 专属目录
 # （data/fixtures/filesvc/materials/，不与 e2e 的 data/fixtures/materials/
 # 共写同一文件，避免两 eval 互相覆盖）；ops/e2e_smoke 常量如变更需同步本表。
+# （T2.4 起 e2e 材料升级为 benchmark/generator/materials.py 产出的 docx/pdf
+# 真实形态夹具，seeded 值层面冻结不变，本表无需变更。）
 
 
 def _valid_id(prefix17: str) -> str:
