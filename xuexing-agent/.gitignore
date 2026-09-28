@@ -8,3 +8,4 @@ specs/drafts/
 *.egg-info/
 _research_tmp/
 nul
+data/items/_parts/

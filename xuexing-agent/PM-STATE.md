@@ -25,7 +25,7 @@
 | M0 | 环境+脚手架 | ✅ | Python 3.12.10, deps OK, git init |
 | M1 | 原型 v0 = oracle | ✅ | `9ab7789`，`python -m pytest` = 110 passed（63 常规 + 47 契约） |
 | M1.5 | 契约测试框架 | ✅ | tests/contract + tools/run_contract.py（支持 --impl-dir 注入重生成实例） |
-| M2 | 工作流#1：规格起草→对抗评审→冻结→重生成第1轮→测试门→失败归因 | 🔄 进行中 | 工作流 dwfrun（见 .zcode） |
+| M2 | 工作流#1：规格起草→对抗评审→冻结→重生成第1轮→测试门→失败归因 | 🔄 运行中 | dwfrun-2182efc1（子代理=GLM-5.3-Flash）；完成后：审查 specs/frozen/ → git commit → 提交 M3 |
 | M3 | 工作流#2：知识注入（课标图谱扩充、题库/母题、误解库、策略库） | ⬜ | 待 M2 完成后提交 |
 | M4 | 重生成第2/3轮至达标 → 终版重生成入库 | ⬜ | 达标判据：连续两轮 100% |
 | M5 | 夜间迭代 saved workflow + BACKLOG 持续清库 | ⬜ | |
