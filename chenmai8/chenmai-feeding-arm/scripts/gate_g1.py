@@ -10,7 +10,10 @@
   2. pytest tests/ 全量用例全绿；
   3. 模块 eval 入口逐个执行：cs_sim / cs_mouth / cs_voice 的 eval，
      加 cs_food 接口测试（tests/test_food_interface.py），全部 exit 0；
-  4. cs_dashboard 冒烟：后台起服务 → httpx 探活（/api/health 与首页均 200）→ 关闭。
+  4. 报告独立复核（scripts/verify_g1_reports.py，审查 B8）：只读各模块
+     证据 JSON，用独立比较逻辑重算 metrics vs thresholds，与模块自报
+     pass/checks 交叉核对——不一致即 FAIL；
+  5. cs_dashboard 冒烟：后台起服务 → httpx 探活（/api/health 与首页均 200）→ 关闭。
 
 实现约定：
   - 本脚本自身只需系统 Python（纯标准库），内部定位仓库根并统一改用
@@ -18,6 +21,8 @@
   - 各模块 eval 在包根 ``chengshao/`` 下执行（与各 eval 文档用法一致），
     证据 JSON 由 eval 自身落 ``chengshao/reports/``；本门禁另落
     ``chengshao/reports/gate_g1.json`` 汇总（字段遵循开发指令 §10.2）。
+  - 复核脚本（verify_g1_reports.py）同样纯标准库、不 import 任何
+    chengshao 模块——它是对写报告代码的独立第二双眼睛。
   - 冒烟服务使用随机空闲端口与临时数据库，不触碰 ``data/care.db``。
 """
 
@@ -174,6 +179,15 @@ def gate_module_evals_plan(venv: Path) -> list[tuple[str, object]]:
     return plan
 
 
+def gate_verify_reports(venv: Path) -> tuple[bool, str, str]:
+    """④ 报告独立复核：回读 eval 证据 JSON，独立重算并交叉核对（审查 B8）。"""
+    argv = [str(venv), str(REPO_ROOT / "scripts" / "verify_g1_reports.py"),
+            "--report-dir", str(PKG_ROOT / "reports")]
+    code, secs, out = _run_checked(argv, REPO_ROOT)
+    label = "verify_g1_reports 报告独立复核（重算 metrics vs thresholds）"
+    return code == 0, label, _fmt_cmd(argv, REPO_ROOT) + f"  [exit={code}, {secs:.1f}s]\n{out}"
+
+
 def gate_dashboard_smoke(venv: Path) -> tuple[bool, str, str]:
     """④ 看板冒烟：后台起服务 → httpx 探活 200 → 关闭。"""
     tmp_dir = Path(tempfile.mkdtemp(prefix="gate_g1_dash_"))
@@ -265,11 +279,13 @@ def main() -> int:
             _print_tail(detail, TAIL_LINES if passed else FAIL_TAIL_LINES)
 
     py = venv
-    _do(1, 6, lambda: gate_naming(py), "① 中性命名扫描零命中")
-    _do(2, 6, lambda: gate_pytest_full(py), "② pytest tests/ 全量全绿")
+    total_steps = 7
+    _do(1, total_steps, lambda: gate_naming(py), "① 中性命名扫描零命中")
+    _do(2, total_steps, lambda: gate_pytest_full(py), "② pytest tests/ 全量全绿")
     for offset, (label, runner) in enumerate(gate_module_evals_plan(py), start=3):
-        _do(offset, 6, runner, label)
-    _do(6, 6, lambda: gate_dashboard_smoke(py), "④ cs_dashboard 冒烟")
+        _do(offset, total_steps, runner, label)
+    _do(6, total_steps, lambda: gate_verify_reports(py), "④ 报告独立复核（重算指标）")
+    _do(7, total_steps, lambda: gate_dashboard_smoke(py), "⑤ cs_dashboard 冒烟")
 
     n_fail = sum(1 for passed, _, _ in steps if not passed)
     step_records: list[dict] = [
