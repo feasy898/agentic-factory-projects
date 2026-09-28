@@ -7,9 +7,13 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 __all__ = ["LAYERS", "EXPECTED_FILES", "ep_dir", "create_workspace", "expected_path"]
+
+#: 集 ID 白名单（安全：ep 是路径组件，来自 CLI --ep，禁止穿越/绝对路径/空名）
+_EP_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 
 #: 13 层目录 → 子目录（相对 ep 工作区根）
 LAYERS: dict[str, tuple[str, ...]] = {
@@ -61,7 +65,16 @@ EXPECTED_FILES: dict[str, tuple[str, ...]] = {
 
 
 def ep_dir(ep: str, jobs_dir: str | Path) -> Path:
-    """ep 工作区根目录路径。"""
+    """ep 工作区根目录路径（ep 经白名单校验，杜绝 ``--ep ../x`` 类路径穿越）。
+
+    合法集 ID：字母/数字开头，仅含字母、数字、点、下划线、连字符
+    （如 ``ep01``）；含路径分隔符、``..``、空串或绝对路径一律拒绝。
+    """
+    if not isinstance(ep, str) or not _EP_RE.match(ep):
+        raise ValueError(
+            f"非法集 ID: {ep!r}（须为匹配 {_EP_RE.pattern} 的字符串，"
+            "禁止路径分隔符 / .. / 空串）"
+        )
     return Path(jobs_dir) / ep
 
 

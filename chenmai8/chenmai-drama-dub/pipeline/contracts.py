@@ -628,15 +628,24 @@ def dump_jsonl(path: str | Path, items: Union[Iterable[BaseModel], RootModel]) -
 
 
 def _atomic_write_lines(path: str | Path, lines: list[str]) -> None:
-    """同目录临时文件 + os.replace 的原子整文件写。"""
+    """同目录临时文件 + os.replace 的原子整文件写。
+
+    路径安全（写盘统一出口，CWE-22 防护）：先 ``resolve()`` 规范化
+    （消解 ``..`` 段与相对引用），再显式复核无 ``..`` 段与 NUL 字节，
+    随后全部写盘操作只用规范化路径；上层另有 ``scaffold.ep_dir``
+    集 ID 白名单兜底（``--ep`` 是工作区路径的来源组件）。
+    原子性：临时文件整体写完后 ``os.replace`` 原子替换 —— 读取方要么看到
+    旧整文件要么看到新整文件，不会读到半截（断电丢最后一窗为已知取舍）。
+    """
     path = Path(path)
+    if "\x00" in str(path):
+        raise ValueError(f"非法产物路径（含 NUL 字节）: {path!r}")
+    path = path.resolve()  # 规范化：.. 与相对引用在此消解
+    if ".." in path.parts:
+        raise ValueError(f"非法产物路径（规范化后仍含 .. 段）: {path!r}")
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(path.name + ".tmp")
-    with open(tmp, "w", encoding="utf-8", newline="\n") as f:
-        for ln in lines:
-            f.write(ln + "\n")
-        f.flush()
-        os.fsync(f.fileno())
+    tmp.write_text("".join(ln + "\n" for ln in lines), encoding="utf-8", newline="\n")
     os.replace(tmp, path)
 
 
