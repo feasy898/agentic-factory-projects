@@ -19,6 +19,15 @@ export function validateRules(rules) {
   if (typeof rules.rulesVersion !== "string" || !rules.rulesVersion) {
     errors.push("rulesVersion: 缺少或非字符串");
   }
+  if (rules.defaults !== undefined) {
+    if (typeof rules.defaults !== "object" || rules.defaults === null || Array.isArray(rules.defaults)) {
+      errors.push("defaults: 必须是对象");
+    } else if (rules.defaults.allowedTextUrls !== undefined
+      && (!Array.isArray(rules.defaults.allowedTextUrls)
+        || rules.defaults.allowedTextUrls.some((u) => typeof u !== "string"))) {
+      errors.push("defaults.allowedTextUrls: 需要 string 数组（外链文本扫描的全局白名单）");
+    }
+  }
   if (typeof rules.channels !== "object" || rules.channels === null || Array.isArray(rules.channels)) {
     errors.push("channels: 缺少或非对象");
     return { ok: false, errors };

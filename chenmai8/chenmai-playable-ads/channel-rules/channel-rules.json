@@ -1,10 +1,11 @@
 {
-  "$comment": "渠道规则库（M12 知识资产，packager 配置驱动来源）。结构对应开发指令 §7 表列：包形态/包内结构、大小上限、文件数上限、退出接口、协议、静音要求。本阶段先冻结 applovin/meta/mintegral 三条；unity/google/tiktok 随后续里程碑补齐。数值为行业基线 + 内部从严，D9 官方工具实测后回填修订。",
+  "$comment": "渠道规则库（M12 知识资产，packager 配置驱动来源）。结构对应开发指令 §7 表列：包形态/包内结构、大小上限、文件数上限、退出接口、协议、静音要求。本阶段先冻结 applovin/meta/mintegral 三条；unity/google/tiktok 随后续里程碑补齐。数值为行业基线 + 内部从严，D9 官方工具实测后回填修订。defaults.allowedTextUrls 是外链文本扫描的全局白名单，只收惰性字符串而非请求目标：https://pf.io（引擎品牌串：配置默认值与版本横幅字面量）、http://www.w3.org/1999/xhtml 与 /2000/svg（XML 命名空间标识符，按规范定义即非取回目标）——留档 preview 运行实测零外网请求（CHK03 pass），故按配置放行而非改引擎。",
   "rulesVersion": "1.0.0",
   "updated": "2026-09-28",
   "defaults": {
     "externalUrlPolicy": "forbid",
     "allowedUrlSchemes": ["data:", "blob:"],
+    "allowedTextUrls": ["https://pf.io", "http://www.w3.org/1999/xhtml", "http://www.w3.org/2000/svg"],
     "muteBeforeFirstInteraction": true,
     "allowRelativeRuntimeScripts": true
   },

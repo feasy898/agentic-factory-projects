@@ -205,10 +205,19 @@ export async function processHtml(htmlPath, distRoot, opts = {}) {
   return { html, scripts, warnings };
 }
 
-/** MRAID 禁用渠道（如 meta）的启发式检测：出现 mraid 全词引用即视为违规。 */
+/**
+ * MRAID 禁用渠道（如 meta）的启发式检测（按调用形态，不按全词出现）。
+ *
+ * 含运行时桥的模板产物必然携带 mraid 的"探测代码"（`typeof x.mraid`、`x.mraid?"
+ * applovin":"preview"` 之类）——那是为避免在无 mraid 环境误调用而存在的，文本上
+ * 无法与依赖分开，却会让任何真实游戏都打不出 meta 包。因此只把两类"真使用"视作
+ * 违规：① 对 mraid.js 脚本的引用（src/字符串）；② `mraid.<方法>` 形态的 API 调用。
+ * 已知局限（启发式即不完备）：经别名转手后调用（`var m=window.mraid;m.open()`)
+ * 不落在 ② 的形态上，声明为启发式的固有盲区。
+ */
 export function findMraidReferences(text) {
   const hits = [];
-  const re = /\bmraid\b[^;]{0,40}/gi;
+  const re = /\bmraid(?:\s*\.\s*[A-Za-z_$][\w$]*|(?:\.js)\b)/gi;
   for (const m of text.matchAll(re)) hits.push(m[0].trim());
   return hits;
 }

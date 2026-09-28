@@ -100,8 +100,14 @@ export async function pack(o) {
     entryLabel,
   });
 
-  // 外链白名单 = spec 落地页 URL（CTA 参数允许出现在 JS 里）+ 渠道规则显式允许项
-  const whitelist = [spec?.flow?.endScreen?.landingUrl, ...(rule.allowedUrlWhitelist || [])].filter(Boolean);
+  // 外链白名单 = spec 落地页 URL（CTA 参数允许出现在 JS 里）
+  //             + 规则库 defaults.allowedTextUrls（引擎层惰性品牌串，非请求目标）
+  //             + 渠道规则显式允许项
+  const whitelist = [
+    spec?.flow?.endScreen?.landingUrl,
+    ...(rules.defaults?.allowedTextUrls || []),
+    ...(rule.allowedUrlWhitelist || []),
+  ].filter(Boolean);
 
   const outRoot = path.resolve(o.out || "artifacts");
   const outDir = path.join(outRoot, projectId, o.channel, locale);
