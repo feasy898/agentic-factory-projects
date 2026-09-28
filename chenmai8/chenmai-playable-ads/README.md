@@ -1,15 +1,36 @@
 # 试玩广告生产线
 
-面向小游戏 / 休闲游戏出海买量的 HTML5 试玩广告自动化生产线：输入模板选择 + 素材，几分钟输出多渠道、多语言、通过自动质检的可玩广告。
+面向小游戏 / 休闲游戏出海买量的 HTML5 试玩广告自动化生产线：输入一份 PlayableSpec JSON，
+一条命令产出通过自动质检的多渠道可玩广告包（演示默认语言：中文）。
 
-**核心能力**
+**已接通**（仓库内可复现，2026-09-29 演示走查核实）
 
-- 模板库：三消 / 叠叠消、合成类、拔针救援、拧螺丝排序等副玩法模板，参数化配置
-- 一份 PlayableSpec JSON 描述玩法、素材、流程、文案，驱动整条产线
-- 多渠道导出：AppLovin、Unity、Google、Meta、TikTok/Pangle、Mintegral 规则内建
-- 自动质检：包体大小、外网请求拦截、首次交互静音、横竖屏、跳转接口模拟、自动试玩
-- 多语言：含阿拉伯语 RTL 排版
-- 截图 / 录屏生成试玩（演示级）与 Cocos 工程接入
+- 规格驱动：PlayableSpec JSON（schema v1 + 不变式）描述玩法、文案、渠道与质检预算；
+  `python -m pfcore validate` 双校验（JSON Schema + Python 模型），`specs-eval/bad/` 6 个坏样本
+  全部被拒且错误定位到字段路径
+- 一条命令全流水线：`python -m pfcore make` = 校验 → 三消模板构建（真实可玩单 HTML）→
+  按渠道规则库打包 → qacore 无头质检（真实指针事件自动试玩到胜利结束页）→
+  汇总页 + 局域网二维码 + 墙钟计时 + `artifacts/demo-prebuilt/` 兜底目录；
+  质检不过即退出 1，不产出二维码与兜底目录
+- 三渠道打包（规则库已冻结的三投放渠道）：AppLovin / Meta 单 HTML，Mintegral zip
+  （Template.html + build.js），各带 pack-manifest 旁车
+- 自动质检（qacore 十项）：包体上限、外网请求拦截、首点前静音、横竖屏、文案与替换素材上屏
+  （CHK10）等；未实装项如实标 skip，不算通过
+- 演示走查：`python scripts/demo_walkthrough.py` 自动改 spec（中文标题 + seed+1）→ 跑 make →
+  断言预览 / 三渠道 / 报告 / 二维码 / 兜底目录全部落盘并打印墙钟计时（2026-09-29 留档 28.9s，
+  预算 180s、反馈理想值 90s）
+- 局域网伺服：`python -m pfcore serve` 伺服既有产物目录，现场重建汇总页与二维码（演示日兜底）
+- 运行时桥（engine-bridge）：六渠道退出路由与静音策略有单元测试覆盖，零运行时第三方依赖
+- LLM 网关（llmgw）：超时 / 重试 / 降级 / 图片 / JSON 模式 + 离线 mock 自测通过（暂无生产调用方）
+
+**预留**（规格 / 占位，未接入演示路径）
+
+- 模板：合成、拔针、排序（可解性算法已入校验器，游戏本体未实现）；
+  `pfcore build` / `pack` / `rules-check` 为占位子命令（exit 2）
+- 渠道：unity / google / tiktok 不在规则库；qacore 暂只质检单 HTML（zip 渠道包不质检）
+- AI 生成：director（截图 / 录屏 → spec 草稿）仅有包占位、修复循环未开工——
+  模型接口已留，不演示生成
+- 素材流水线（assetkit，仅包占位）、webui 操作界面、截图 / 录屏生成试玩、Cocos 工程接入：未实现
 
 **仓库结构（建设中）**
 
