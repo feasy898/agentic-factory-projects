@@ -42,6 +42,7 @@ OUTGUARD_CASES_MIN = 12                # 标识（流/非流）/文案/代答/�
 FILE_SIZE_MAX_BYTES = 50 * 1024 * 1024
 FILE_FIXTURES_PER_KIND = 5             # docx/xlsx/pdf seeded 夹具各 5 份
 FILE_EXPORT_RESIDUAL_ALLOWED = 0       # 导出物重解析 seeded PII 命中数上限
+FILE_GRADED_SEEDED_MIN = 80            # T3.1 文本层：15 份夹具可评级 seeded 命中总数下限
 OCR_ID_CARD_RECALL_MIN = 0.90          # 扫描件身份证召回（D4）
 OCR_SEEDED_SCANS = 3
 

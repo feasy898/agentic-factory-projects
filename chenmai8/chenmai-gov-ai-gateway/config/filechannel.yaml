@@ -1,0 +1,5 @@
+# 文件通道（filechannel）依赖坐标。
+# 铁律 E（公开仓库卫生）：第三方库模块名只允许出现在 config/（本文件默认档不被
+# ops/name_lint.py 扫描），源码经 importlib 按本配置动态加载、不得硬编码库名。
+pdf_text_reader:
+  module: pypdfium2     # PDF 文本层读取与逐字符坐标（坐标级文本抽取）
