@@ -19,8 +19,11 @@ build/
 *.key
 secrets/
 
-# Data & models (large artifacts)
-data/
+# Data & models (large artifacts) —— data/ 全部忽略，仅数据集说明文档随 git 跟踪
+data/*
+!data/datasets/
+data/datasets/*
+!data/datasets/README.md
 models/
 *.onnx
 *.pt
