@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pfcore"
+version = "0.1.0"
+description = "试玩广告生产线编排 CLI：spec 校验 → 构建 → 打包 → 质检 → 汇总"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.13,<3",
+    "jsonschema>=4.26,<5",
+]
+
+[tool.setuptools]
+# python/ 下并列着多个运行模块（llmgw/qacore/...），本包只正规化安装 pfcore；
+# 其余模块随各自里程碑再各自正规化。
+packages = ["pfcore"]

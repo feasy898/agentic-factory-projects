@@ -2,5 +2,11 @@
   "name": "@pf/spec",
   "version": "0.1.0",
   "private": true,
-  "description": "PlayableSpec 模式定义、TS 类型与示例（M1 占位）"
+  "type": "module",
+  "description": "PlayableSpec v1 契约：JSON Schema（draft 2020-12）、TS 类型与双侧同源校验器（schema/不变式自 v1.0.0 冻结）",
+  "exports": {
+    ".": "./index.mjs",
+    "./schema": "./playable-spec.schema.json"
+  },
+  "types": "./src/types.ts"
 }
