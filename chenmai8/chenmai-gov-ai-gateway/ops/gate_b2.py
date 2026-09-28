@@ -8,18 +8,19 @@
 
 行为（任务单 T2.5；结构沿用 ops/gate_b1.py / ops/gate_d0.py，编号 = 任务单原文）：
 1. 内部 chdir 到仓库根，统一设 PYTHONUTF8=1，stdout/stderr 重配为 UTF-8；
-2. 依次运行（①–⑦ 用仓库 .venv 解释器 .venv/Scripts/python.exe，cwd=仓库根）：
-   ① -m ops.name_lint        公开仓库禁用词守卫（零命中为过）
-   ② -m evals.m0_infra       基础设施 + 配置 + §5 契约模型（全部检查通过为过）
-   ③ -m evals.m4_routing     §5.2 决策矩阵逐格 + 优先级冲突（§6 M4）
-   ⑤ -m evals.m5_outguard    输出侧标识/拦截文案/代答/复检钩子（§6 M5）
-   ⑥ -m evals.m3_masking     可逆脱敏/流式还原/工具缓冲（§6 M3）
-   ⑦ -m evals.m10_e2e        §9 端到端回归（U6 文件通道 DEFERRED 不计通过）
-   ⑧ 既有门回归：ops/gate_d0.py 与 ops/gate_b1.py 各原样跑一遍
-     （用启动本门的解释器 sys.executable——两门自身即以「系统 python 任意 cwd」
-      为契约，回归即按其文档用法调用；输出全量透传）；
+2. 依次用仓库 .venv 解释器（.venv/Scripts/python.exe，cwd=仓库根）运行十项：
+   ①    -m ops.name_lint        公开仓库禁用词守卫（零命中为过）
+   ②-1  -m evals.m0_infra       基础设施 + 配置 + §5 契约模型（批次0/1 回归）
+   ②-2  -m evals.m10_e2e        §9 端到端回归（U6 文件通道 DEFERRED 不计通过）
+   ②-3  -m evals.m8_generator   生成器 seed 复现/规模/数据质量/seeded 夹具（回归）
+   ②-4  -m evals.m2_recognizers 规则层达标验收（含逐类达标线表，§6 M2；回归）
+   ②-5  -m evals.m7_audit       审计落库/零明文硬闸/会话存储（回归）
+   ②-6  -m evals.t0_labels      标签体系文档自验收（回归）
+   ③-1  -m evals.m4_routing     §5.2 决策矩阵逐格 + 优先级冲突（本批新 eval）
+   ③-2  -m evals.m5_outguard    输出侧标识/拦截文案/代答/复检钩子（本批新 eval）
+   ③-3  -m evals.m3_masking     可逆脱敏/流式还原/工具缓冲（本批新 eval）
 3. 每项透传完整输出并打印 [PASS]/[FAIL] 与退出码；末尾汇总表抓取各 eval
-   自报摘要行与两门的结果行；任何 FAIL → 本脚本退出码 1。
+   自报摘要行；任何 FAIL → 本脚本退出码 1。
 
 本脚本对运行环境只依赖标准库（系统 python 无第三方依赖也能定位仓库、
 启动子进程、汇总结果）。
@@ -35,37 +36,44 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[1]
 VENV_PYTHON = REPO_ROOT / ".venv" / "Scripts" / "python.exe"
 
-#: 启动本门的解释器（⑧ 既有门回归用：两门自身契约即「系统 python 任意 cwd」）
-GATE_PYTHON = sys.executable or "python"
+EVAL_TIMEOUT_S = 1800  # 单项上限（m8 双跑复现 / m10 起服重放 / m3 全口径 fuzz）
 
-EVAL_TIMEOUT_S = 1800   # 单个 eval 上限（m10 起服重放 / m3 全口径 fuzz）
-GATE_TIMEOUT_S = 3600   # ⑧ 既有整门回归上限（gate_b1 内含 7 项，每项另有自家超时）
-
-#: (显示名, 完整命令 argv, 超时秒)；①–⑦ 统一 .venv 解释器、cwd=仓库根；
-#: ⑧ 用启动本门的解释器按两门文档用法原样调用（编号沿用任务单，无④）。
+#: (显示名, 完整命令 argv, 超时秒)；十项统一 .venv 解释器、cwd=仓库根
+#: （顺序 = 任务单原文：① → ② 六项回归 → ③ 三项新 eval）。
 CHECKS: list[tuple[str, list[str], int]] = [
     ("① name_lint", [str(VENV_PYTHON), "-m", "ops.name_lint"], EVAL_TIMEOUT_S),
-    ("② evals.m0_infra", [str(VENV_PYTHON), "-m", "evals.m0_infra"], EVAL_TIMEOUT_S),
-    ("③ evals.m4_routing", [str(VENV_PYTHON), "-m", "evals.m4_routing"], EVAL_TIMEOUT_S),
-    ("⑤ evals.m5_outguard", [str(VENV_PYTHON), "-m", "evals.m5_outguard"], EVAL_TIMEOUT_S),
-    ("⑥ evals.m3_masking", [str(VENV_PYTHON), "-m", "evals.m3_masking"], EVAL_TIMEOUT_S),
-    ("⑦ evals.m10_e2e", [str(VENV_PYTHON), "-m", "evals.m10_e2e"], EVAL_TIMEOUT_S),
-    ("⑧ 回归 ops/gate_d0.py", [GATE_PYTHON, str(REPO_ROOT / "ops" / "gate_d0.py")],
-     GATE_TIMEOUT_S),
-    ("⑧ 回归 ops/gate_b1.py", [GATE_PYTHON, str(REPO_ROOT / "ops" / "gate_b1.py")],
-     GATE_TIMEOUT_S),
+    ("②-1 回归 evals.m0_infra", [str(VENV_PYTHON), "-m", "evals.m0_infra"],
+     EVAL_TIMEOUT_S),
+    ("②-2 回归 evals.m10_e2e", [str(VENV_PYTHON), "-m", "evals.m10_e2e"],
+     EVAL_TIMEOUT_S),
+    ("②-3 回归 evals.m8_generator", [str(VENV_PYTHON), "-m", "evals.m8_generator"],
+     EVAL_TIMEOUT_S),
+    ("②-4 回归 evals.m2_recognizers", [str(VENV_PYTHON), "-m", "evals.m2_recognizers"],
+     EVAL_TIMEOUT_S),
+    ("②-5 回归 evals.m7_audit", [str(VENV_PYTHON), "-m", "evals.m7_audit"],
+     EVAL_TIMEOUT_S),
+    ("②-6 回归 evals.t0_labels", [str(VENV_PYTHON), "-m", "evals.t0_labels"],
+     EVAL_TIMEOUT_S),
+    ("③-1 新 evals.m4_routing", [str(VENV_PYTHON), "-m", "evals.m4_routing"],
+     EVAL_TIMEOUT_S),
+    ("③-2 新 evals.m5_outguard", [str(VENV_PYTHON), "-m", "evals.m5_outguard"],
+     EVAL_TIMEOUT_S),
+    ("③-3 新 evals.m3_masking", [str(VENV_PYTHON), "-m", "evals.m3_masking"],
+     EVAL_TIMEOUT_S),
 ]
 
-#: 各 eval 的自报摘要行 + 两门的结果行（透传输出中抓取，进汇总表）
+#: 各 eval 的自报摘要行（透传输出中抓取，进汇总表）
 _SUMMARY_PATTERNS = (
     re.compile(r"^name_lint: .+"),
     re.compile(r"^M0 INFRA: .+"),
+    re.compile(r"^e2e_smoke: .+"),
+    re.compile(r"^M8 GENERATOR: .+"),
+    re.compile(r"^M2 RECOGNIZERS: .+"),
+    re.compile(r"^M7 AUDIT.*: .+"),
+    re.compile(r"^T0 LABELS: .+"),
     re.compile(r"^M4 ROUTING: .+"),
     re.compile(r"^M5 OUTGUARD: .+"),
     re.compile(r"^M3 MASKING: .+"),
-    re.compile(r"^e2e_smoke: .+"),
-    re.compile(r"^\[gate_d0\] 结果: .+"),
-    re.compile(r"^\[gate_b1\] 结果: .+"),
 )
 
 
