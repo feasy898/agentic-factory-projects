@@ -26,7 +26,7 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from ops import name_lint  # noqa: E402
-from recognizers.models import EntityClass, SENSITIVE_ATTR_SUBTYPES  # noqa: E402
+from recognizers.models import SENSITIVE_ATTR_SUBTYPES, EntityClass  # noqa: E402
 from recognizers.rule.detect import DEFAULT_CLASSIFICATION_TERMS  # noqa: E402
 
 LABELS_DOC = REPO_ROOT / "docs" / "contracts" / "labels.md"
@@ -68,7 +68,7 @@ REQUIRED_SECTIONS = (
     "## 4. SENSITIVE_ATTR 子类型",
     "## 5. 政务特有身份",
     "## 6. 密级标识与内部资料词表",
-    "## 7. 白名单词表候选",
+    "## 7. 白名单词表",  # 标题后缀随落地状态演进（候选→已落地），前缀恒定（§9-7 回更纪律）
     "## 8. 占位符中文标签",
     "## 9. 不确定项清单",
     "## 10. 变更纪律",

@@ -45,28 +45,28 @@
 
 ## 3. EntityClass 总表（冻结）
 
-下表与 `recognizers/models.py` 的 `EntityClass` 定义一字不差（19 类；常量值即 `Finding.type` 与审计 `class_counts` 键；中文标签即占位符标签，全表唯一）。"检测载体"与"路由影响"两列为实现口径的**当前事实**（标注 v0 已实现者可在代码中复核），不改变 §5.2 冻结矩阵。
+下表与 `recognizers/models.py` 的 `EntityClass` 定义一字不差（19 类；常量值即 `Finding.type` 与审计 `class_counts` 键；中文标签即占位符标签，全表唯一）。"检测载体"与"路由影响"两列为实现口径的**当前事实**（规则层全类别已于 M2 落地，可在 `recognizers/rule/detect.py` 复核），不改变 §5.2 冻结矩阵。
 
 | 常量值 | 中文标签 | 检测载体（MVP 口径） | 默认 action_hint | 路由影响（§5.2 矩阵） |
 |---|---|---|---|---|
 | `PERSON` | 人名 | NER 适配器（P0 空实现，预留）；生成器模板姓名 | MASK | 单个结构化 PII → INTERNET（脱敏后） |
 | `ADDRESS` | 住址 | NER 适配器（P0 空实现，预留） | MASK | 同上 |
-| `ID_CARD` | 身份证 | 规则正则 + GB11643 校验位（v0 已实现） | MASK | 单个 → INTERNET；同请求 ≥3 → GOVCLOUD（批量名单） |
-| `PHONE_MOBILE` | 手机号 | 规则正则（v0 已实现） | MASK | 单个 → INTERNET（脱敏后） |
-| `PHONE_LANDLINE` | 座机 | 规则层计划：区号-号码，白名单可豁免 | MASK | 同上 |
-| `BANK_CARD` | 银行卡 | 规则层计划：Luhn 校验 | MASK | 单个 → INTERNET；同请求 ≥3 → GOVCLOUD（批量名单） |
-| `USCC` | 信用代码 | 规则层计划：GB32174 校验位 | MASK | 单个 → INTERNET（脱敏后） |
-| `PLATE` | 车牌 | 规则层计划：含新能源牌照 | MASK | 同上 |
-| `EMAIL` | 邮箱 | 规则层计划 | MASK | 同上 |
-| `IP` | 地址 | 规则层计划：IPv4 | MASK | 同上 |
-| `SECRET_KEY` | 密钥 | 规则层计划：密钥前缀/长熵串特征 | MASK | 同上 |
-| `DATE_BIRTH` | 出生日期 | 规则层计划：配合"出生/生于"上下文 | MASK | 同上 |
-| `SENSITIVE_ATTR` | 敏感属性 | 政务身份/敏感属性词表（规则层计划）+ 语义层适配器；子类型见 §4 | MASK | **GOVCLOUD（即便已脱敏）** |
-| `WORK_SECRET` | 工作秘密 | 词表（规则层计划） | MASK | **GOVCLOUD（即便已脱敏）** |
-| `CLASSIFICATION_MARK` | 密级标识 | 密级词表逐词匹配（v0 已实现，见 §6） | BLOCK_FLAG | **BLOCK** |
+| `ID_CARD` | 身份证 | 规则正则 + GB11643 校验位（M2 已实现） | MASK | 单个 → INTERNET；同请求 ≥3 → GOVCLOUD（批量名单） |
+| `PHONE_MOBILE` | 手机号 | 规则正则（M2 已实现） | MASK | 单个 → INTERNET（脱敏后） |
+| `PHONE_LANDLINE` | 座机 | 规则正则：0 区号+本地 7-8 位；单位号段白名单可豁免（M2 已实现） | MASK | 同上 |
+| `BANK_CARD` | 银行卡 | 规则正则 + Luhn 校验（M2 已实现） | MASK | 单个 → INTERNET；同请求 ≥3 → GOVCLOUD（批量名单） |
+| `USCC` | 信用代码 | 规则正则 + GB32174 校验位（M2 已实现） | MASK | 单个 → INTERNET（脱敏后） |
+| `PLATE` | 车牌 | 规则正则：含新能源 6 位牌（M2 已实现） | MASK | 同上 |
+| `EMAIL` | 邮箱 | 规则正则（M2 已实现） | MASK | 同上 |
+| `IP` | 地址 | 规则正则：IPv4 逐段 0-255（M2 已实现） | MASK | 同上 |
+| `SECRET_KEY` | 密钥 | 规则正则：sk- 前缀/AKIA 访问键/PEM 块/长熵串（M2 已实现） | MASK | 同上 |
+| `DATE_BIRTH` | 出生日期 | 规则正则 + 「出生/生于」上下文门控（M2 已实现） | MASK | 同上 |
+| `SENSITIVE_ATTR` | 敏感属性 | 政务身份/敏感属性词表（M2 已实现，带 §4 子类型）+ 语义层适配器（P0 空实现） | MASK | **GOVCLOUD（即便已脱敏）** |
+| `WORK_SECRET` | 工作秘密 | 词表（M2 已实现，词表可选层） | MASK | **GOVCLOUD（即便已脱敏）** |
+| `CLASSIFICATION_MARK` | 密级标识 | 密级词表逐词匹配（已实现，见 §6） | BLOCK_FLAG | **BLOCK** |
 | `INJECTION` | 注入指令 | 语义层适配器（P0 空；回退规则词表） | BLOCK_FLAG | **BLOCK** |
 | `ORG_INTERNAL` | 内部机构 | 词表/模板来源（按需） | MASK | §5.2 矩阵未单列；v0 引擎按 action_hint 处理（见 §9-8） |
-| `DOC_NUMBER` | 文号 | 规则层计划：公开文号格式，默认 whitelisted | MASK | 命中白名单 → 不参与脱敏与路由（INTERNET） |
+| `DOC_NUMBER` | 文号 | 规则正则：公开文号格式，默认 whitelisted（M2 已实现） | MASK | 命中白名单 → 不参与脱敏与路由（INTERNET） |
 | `OTHER` | 其他 | 兜底（正常情况下不产出） | MASK | §5.2 矩阵未单列；v0 引擎按 action_hint 处理 |
 
 注：`DOC_NUMBER` 的"默认 whitelisted"指规则层计划口径（公开文号默认豁免），不是词表冻结；白名单候选见 §7。
@@ -127,15 +127,20 @@ GB/T 45574-2025 摘要的类别清单不直接命名政务救助与基层治理�
 - **工作秘密（WORK_SECRET）**：语义上指不属于国家秘密、但不宜公开的工作事项，契约上路由 **GOVCLOUD** 而非 BLOCK。如未来需要把部分警示语从 BLOCK 降级为 GOVCLOUD，属"词表拆分 + 矩阵增补"的契约增补事项，走变更纪律（§10）。
 - 背景（常识性，**本文未核对法律/公文格式标准原文**，词表匹配不依赖之）："绝密/机密/秘密"三级为我国国家秘密的法定密级划分；`★` 为公文密级标志的常见排印形式。词表按**字面**匹配，不解析密级期限等扩展写法（见 §9-6）。
 
-## 7. 白名单词表候选（未冻结）
+## 7. 白名单词表（M2 已落地）
 
-白名单命中 → `Finding.whitelisted=true` → 不参与脱敏与路由。候选口径（规划文档 §6 M2）：
+白名单命中 → `Finding.whitelisted=true` → 不参与脱敏与路由（§5.2「仅白名单命中」）。四类候选已随规则层（M2，2026-09-28）落地：
 
-- 政务服务热线 `12345`；报警/急救/火警 `110/119/120`；
-- 公开文号格式（`〔20XX〕N号` 形态）→ 识别为 `DOC_NUMBER` 且默认 whitelisted；
-- 单位座机号段（单位配置）。
+| 类别 | 配置 / 机制 | 命中语义 |
+|---|---|---|
+| 政务服务热线 / 应急短号 | `config/whitelist.yaml` `hotline_numbers`（12345、110/119/120/122/12395） | 按**归一化值全等**回查结构化号码判定，命中即号码形态不脱敏 |
+| 单位座机号段 | `config/whitelist.yaml` `unit_landline_prefixes`（默认 `08986763`＝区号+局向） | 归一化座机号**前缀**匹配 → `PHONE_LANDLINE` whitelisted |
+| 公开文号 | 规则层 `DOC_NUMBER` 识别（机关代字+`〔20XX〕N号` 形态） | 识别即 `DOC_NUMBER` 且默认 whitelisted（§3 表口径） |
+| 公开职务姓名 | `config/whitelist.yaml` `public_titles` + `Whitelist.public_title_before()`（NER 层 PERSON 豁免钩子：称谓结尾紧贴姓名起点） | 规则层不产出 PERSON，钩子在 NER 接入前为休眠路径（接口与配置在位，单测覆盖） |
 
-状态：**M2 规则层任务落地，本文不冻结具体词表**（见 §9-7）。
+- 配置缺文件/缺键逐项回退内置默认（`recognizers/rule/whitelist.py` `DEFAULT_*`，与上表一致），进程级缓存；
+- **类别四分法与「命中即豁免」语义冻结；号段/称谓等数值域可扩充、数值本身未冻结**（改 `config/whitelist.yaml` 即可，不改代码语义）；
+- 验收：`evals.m2_recognizers`——白名单误报率 ≤1%（whitelisted 正确标记不算误报）+ 白名单实体须被识别并正确标记（≥80% 下限，防「全瞎检测器」假阳性通过）。
 
 ## 8. 占位符中文标签
 
@@ -155,7 +160,7 @@ GB/T 45574-2025 摘要的类别清单不直接命名政务救助与基层治理�
 | 4 | `犯罪记录` 属"其他敏感个人信息" | **已核实（摘要）**：仅二手解读举例提及 | 保留子类型；引用时注明系解读口径 |
 | 5 | 生物识别/宗教信仰/未成年人未设 v0 类别 | **范围决策**（非遗漏） | 文本层需求出现时按契约增补处理 |
 | 6 | 密级词表仅 6 词、不解析密级期限等扩展写法 | v0 范围 | M2 以密级测评样例（≥20 条）回填扩充词表并同步 §6.1 |
-| 7 | 白名单具体词表（单位座机段等） | **未冻结**（M2 落地） | M2 交付时回更 §7 |
+| 7 | 白名单具体词表（单位座机段等） | **已落地**（M2，2026-09-28，四分法见 §7）；号段/称谓数值域**未冻结**、可扩充 | 扩充只改 `config/whitelist.yaml`，不改命中语义；评测经 `evals.m2_recognizers` 把关 |
 | 8 | `ORG_INTERNAL`/`OTHER` 的路由地位 | §5.2 矩阵未单列；v0 引擎按 action_hint 处理（可复核 `routing/engine.py`） | D2 矩阵冻结评审时显式确认或增补矩阵行 |
 | 9 | 法定密级三级划分与 `★` 标志格式 | **常识性背景，未核对法律/公文格式标准原文** | 仅作 §6.4 背景说明；词表按字面匹配，不依赖该背景 |
 
