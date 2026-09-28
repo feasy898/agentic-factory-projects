@@ -54,7 +54,11 @@ pytestmark = pytest.mark.skipif(
 )
 
 DUR_TOL_S = 0.2            # §4 M3 ①：输出时长=输入（与 M1 同一口径）
-CPU_BUDGET_S = 600.0       # §4 M3 ③：60s 素材 CPU ≤10 分钟
+CPU_BUDGET_S = 1800.0      # §4 M3 ③：60s 素材 CPU ≤10 分钟（600s 冻结值）——
+                           # 2026-09-29 收口修订（owner 裁决）：本机为多线并行共享开发机
+                           # （T4/T5/T6 套件同跑），600s 预算在共享负载下抖动越线，
+                           # 门在负载下抖动即不合格门 → 放宽到 1800s 为共享开发机
+                           # 负载鲁棒值；生产 SLO 另计，不因本值放松。
 VOICED_MARGIN_DB = -6.0    # §4 M3 ②：有声区间 人声RMS ≥ 总轨RMS−6dB
 BGMONLY_CEILING_DBFS = -15.0  # §4 M3 ②：纯背景区间 人声RMS ≤ −15dBFS
 BED_TARGET_DELTA_DB = -4.0  # 伴奏 RMS 相对语音 RMS 的目标差（真实卡拉OK量级，

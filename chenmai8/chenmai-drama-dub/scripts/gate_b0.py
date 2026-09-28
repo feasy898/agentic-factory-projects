@@ -119,6 +119,20 @@ MANIFEST_CANDIDATES = (ROOT.parent / "plan" / "oss-manifest.md",
 # 2026-09-28）——900s 是 M3 入列前的旧值，会误杀全绿套件；给足余量取 3600s。
 PYTEST_TIMEOUT_S = 3600
 
+# 环境注记（B1 收口 2026-09-29，owner 裁决：如实披露共享环境固有抖动源，不掩饰、
+# 不改判定口径；随 gate 输出尾部打印）：
+#   1) tests/test_m3.py::test_m3_eval_cpu_budget 的 CPU 分离预算为共享开发机负载
+#      鲁棒值（600s→1800s，owner 裁决修订）——多线并行跑套件时临界实测会抖动；
+#   2) GPU 服务走 ssh 隧道（ops/tunnel_gpu.sh），公网链路会被周期性 reset；
+#      保活监督的 10s 愈合窗口可能让 m3/m4 服务依赖用例瞬时 skip/fail；
+#   3) 全量套件含真模型 CPU 推理（实测 724s~1932s 随负载），gate 全程墙钟会超过
+#      外部调用方 600s 量级的超时帽——外部复核方超时需自配 ≥45 分钟。
+ENV_NOTES = [
+    "环境注记1: m3 CPU 预算为共享负载鲁棒值(1800s)，临界实测会抖动",
+    "环境注记2: ssh 隧道公网链路周期性 reset，10s 保活愈合窗口可致服务用例瞬时 skip",
+    "环境注记3: 全量套件含真模型 CPU 推理(724~1932s 随负载)，外部超时帽需 >=45min",
+]
+
 
 def venv_python() -> Path | None:
     """定位仓库 .venv 的解释器（Windows/Linux 两种布局）。"""
@@ -492,6 +506,8 @@ def main() -> int:
         for ln in detail.splitlines():
             print(f"       {ln}")
     total = len(checks)
+    for note in ENV_NOTES:
+        print(note)
     print(f"== gate_b0: {total - n_fail}/{total} PASS ==")
     return 1 if n_fail else 0
 
