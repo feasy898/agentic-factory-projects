@@ -1,0 +1,25 @@
+{
+  "session_id": "sess-demo-001",
+  "user_id": "elder-demo",
+  "started_ns": 1790553600000000000,
+  "ended_ns": null,
+  "bites": [
+    {
+      "bite_id": 1,
+      "ts_start_ns": 1790553605000000000,
+      "ts_end_ns": 1790553620000000000,
+      "outcome": "success",
+      "grams_before": null,
+      "grams_after": null
+    },
+    {
+      "bite_id": 2,
+      "ts_start_ns": 1790553630000000000,
+      "ts_end_ns": 1790553650000000000,
+      "outcome": "retry",
+      "grams_before": null,
+      "grams_after": null
+    }
+  ],
+  "total_grams": null
+}

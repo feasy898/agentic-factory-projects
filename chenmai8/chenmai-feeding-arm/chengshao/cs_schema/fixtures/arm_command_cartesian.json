@@ -1,0 +1,7 @@
+{
+  "mode": "cartesian",
+  "target": [0.32, 0.03, 0.2, 0.0, 0.0, 0.0, 1.0],
+  "max_speed": 0.15,
+  "timeout_s": 2.0,
+  "frame": "base"
+}

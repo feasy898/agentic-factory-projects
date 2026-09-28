@@ -1,0 +1,7 @@
+{
+  "ts_ns": 1790553605100000000,
+  "estop_latched": true,
+  "human_zone_violation": true,
+  "violation": "face_in_zone",
+  "clear_to_move": false
+}

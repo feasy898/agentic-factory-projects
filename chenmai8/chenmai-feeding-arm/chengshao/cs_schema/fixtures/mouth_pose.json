@@ -1,0 +1,14 @@
+{
+  "ts_ns": 1790553600123456789,
+  "valid": true,
+  "x": 0.41,
+  "y": -0.04,
+  "z": 0.24,
+  "jaw_open": 0.62,
+  "frown": 0.08,
+  "head_yaw": 0.05,
+  "head_pitch": -0.03,
+  "head_roll": 0.01,
+  "source": "mono",
+  "confidence": 0.91
+}

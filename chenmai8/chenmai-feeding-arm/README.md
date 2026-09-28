@@ -12,8 +12,10 @@
 **仓库结构（建设中）**
 
 ```
+.venv/          Python 3.12 虚拟环境（仓库根）
+tests/          跨模块 pytest（pytest 自仓库根运行）
 chengshao/
-  cs_schema/     数据契约：跨模块数据结构与枚举的唯一事实来源
+  cs_schema/     数据契约：跨模块数据结构与枚举的唯一事实来源（契约冻结 v1.0）
   cs_sim/        仿真：模型加载、FK/IK、可达空间、安全包络验证
   cs_arm/        执行：机械臂接口 + Mock 臂 + 真机通道 + 安全包络执行器
   cs_mouth/      感知：口部三维估计（单目 / 深度双后端）
@@ -24,7 +26,6 @@ chengshao/
   scripts/       演示、标定、采样与检查脚本
   assets/        人脸 / 语音 / 勺上帧等样本资产
   config/        工作区、先验与限位等默认配置
-  tests/         跨模块 pytest
   reports/       逐模块 eval 报告 JSON（评审证据链）
 ```
 
