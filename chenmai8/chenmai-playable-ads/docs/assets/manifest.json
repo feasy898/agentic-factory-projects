@@ -1,5 +1,5 @@
 {
-  "$comment": "资产包总表。模块按『逻辑模块』组织（物理位置在 physicalLocations 标注）：五个核心（M1 规格 / M2 桥 / M3 模板插件 / M4 打包器 / M8 质检）+ 两个合并逻辑模块（模型适配器 = M6+M7+M11；编排器 = M9+M10）+ 一个构建时函数（M5 素材处理）+ 数据文件（channel-rules，非模块）+ 两个验收门脚本（eval 资产）。status 取值：frozen=已实现且验收全绿；frozen-prototype=雏形已冻结、全量在后续里程碑；partial=部分子命令 frozen 其余占位；planned=未开工（spec 为草案或开工前置）；deferred=明确暂缓（只有边界说明，无可重生 spec）。所有 eval 命令在仓库根执行、均已实测通过（2026-09-28）。",
+  "$comment": "资产包总表。模块按『逻辑模块』组织（物理位置在 physicalLocations 标注）：五个核心（M1 规格 / M2 桥 / M3 模板插件 / M4 打包器 / M8 质检）+ 两个合并逻辑模块（模型适配器 = M6+M7+M11；编排器 = M9+M10）+ 一个构建时管线（M5 素材处理）+ 数据文件（channel-rules，非模块）+ 三个验收门脚本（eval 资产）。status 取值：frozen=已实现且验收全绿；frozen-prototype=雏形已冻结、全量在后续里程碑；partial=部分子命令 frozen 其余占位；planned=未开工（spec 为草案或开工前置）；deferred=明确暂缓（只有边界说明，无可重生 spec）。所有 eval 命令在仓库根执行、均已实测通过（2026-09-28/29）。",
   "assetPack": {
     "name": "试玩广告生产线 · spec+eval 资产包",
     "version": "1.0.0",
