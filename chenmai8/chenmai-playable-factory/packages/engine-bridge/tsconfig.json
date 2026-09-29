@@ -1,0 +1,7 @@
+{
+  // @pf/engine-bridge（M2）：typecheck 门用（tsc --noEmit，strict）。
+  // 运行时走 Node 22 原生类型剥离（可擦除语法纪律见 tsconfig.base.json 注释）；
+  // 模板/打包器以 esbuild 直接打包 src/*.ts，不走 tsc 产物。
+  "extends": "../../tsconfig.base.json",
+  "include": ["src/**/*.ts"]
+}

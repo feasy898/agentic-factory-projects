@@ -3,5 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "M2 运行时桥（同构重实现，契约逐条对齐；26 用例冻结 eval 字节复用 + coverage≥80% + tsc strict，D3）。批次 1 模块任务落地（届时补 src 与 exports）。"
+  "description": "M2 运行时桥（同构重实现，契约逐条对齐）：window.PF 全局 + pf:* 事件 + 按渠道路由退出接口 + 首交互前强制静音；零 npm 运行时依赖（模板经 esbuild 直接打包 src/*.ts）。冻结 eval：26 用例 + coverage>=80% + tsc strict（D3）。",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/types.ts",
+  "scripts": {
+    "test": "node --test test/",
+    "coverage": "c8 --include src/** --check-coverage --lines 80 --reporter text node --test test/",
+    "typecheck": "tsc --noEmit"
+  }
 }
