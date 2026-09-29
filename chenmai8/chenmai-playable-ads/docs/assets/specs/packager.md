@@ -38,8 +38,9 @@ node packages/packager/bin.mjs channels [--rules <path>]     # 列出规则库�
 - **规则库**（结构由 `validateRules` 强制，违规直接抛错）：
   `rulesVersion`；`channels.<id>{ package{format: "single-html"|"zip", entry, structure?},
   maxBytes>0, maxFiles>0, exit{protocol, call}, runtime{muteBeforeFirstInteraction, injectRelativeScripts?,
-  forbidMraid?}, allowedUrlWhitelist? }`。zip 的 `structure` 必须含 entry；实现还要求 zip 恰为
-  `[bundle, entry]` 两项（否则抛错）。
+  forbidMraid?}, allowedUrlWhitelist? }`。zip 的 `structure` 必须含 entry；实现还要求非入口且非
+  generated 的合并脚本至多 1 个（否则抛错）——故 structure 项数随渠道面变（如 mintegral
+  `[build.js, Template.html]`、google `[index.html]`、tiktok `[index.html, config.json, js-sdk.js]`）。
 
 ### 3.1.1 规则库当前内容全量（rulesVersion 1.1.0，再生时逐字节对照 `channel-rules/channel-rules.json`）
 
@@ -86,15 +87,17 @@ node packages/packager/bin.mjs channels [--rules <path>]     # 列出规则库�
 ```
 
 manifest 字段：`packager("@pf/packager"), rulesVersion, channel, locale, project, specPath, dist, maxBytes,
-packageFiles[], files[{path,bytes,sha256,role}], warnings[]`。role ∈ `package|entry-in-zip|bundle-in-zip`；
-`totalBytes` 只累计 role=package。
+packageFiles[], files[{path,bytes,sha256,role}], warnings[]`。role ∈
+`package|entry-in-zip|bundle-in-zip|generated-in-zip`——第四值 `generated-in-zip`（T2.4 增）=
+规则库 `package.generated` 声明、打包器按 spec 现生成的附加文件（tiktok 的 `config.json`/`js-sdk.js`
+各记一项）；`totalBytes` 只累计 role=package。
 
 **files[] / packageFiles 形状（按通道，冻结）**：
 
 | 通道 | files[] | packageFiles[] |
 |---|---|---|
 | single-html | `[{path:"index.html", bytes, sha256, role:"package"}]`（1 项） | `["index.html"]` |
-| zip | **3 项**：`[{path:"<projectId>-<locale>.zip", role:"package"}, {path:"Template.html", role:"entry-in-zip"}, {path:"build.js", role:"bundle-in-zip"}]` | **仅 1 项**：`["<projectId>-<locale>.zip"]`（zip 内条目不进 packageFiles） |
+| zip | **项数随渠道 structure 变化**（前 2 项恒为 package+entry-in-zip；structure 无合并脚本则不 push bundle-in-zip）：google/unity **2 项**——`[{zip, package}, {index.html, entry-in-zip}]`；mintegral **3 项**——`[{zip, package}, {Template.html, entry-in-zip}, {build.js, bundle-in-zip}]`；tiktok **4 项**——`[{zip, package}, {index.html, entry-in-zip}, {config.json, generated-in-zip}, {js-sdk.js, generated-in-zip}]` | **仅 1 项**：`["<projectId>-<locale>.zip"]`（zip 内条目不进 packageFiles） |
 
 **specVersion 位置**：打包器读的是**顶格** `spec.specVersion`（`loadSpecFields`），不在 `meta` 内；
 连同 `meta.projectId`（正则 `/^[A-Za-z0-9][A-Za-z0-9._-]*$/`）是打包器仅取的两个 spec 结构字段。

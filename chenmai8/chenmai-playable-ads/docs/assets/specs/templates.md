@@ -95,7 +95,9 @@ Python 权威侧实算回填期望）为准，本节如实概括：
 
 - **玩法**：盘面 cols×rows 恒满；一步 = 源格向 dir 拖动，相邻**同阶**棋子合成升一阶（升级弹跳），
   源格清空 → 源列重力下落 → 列顶补出生棋子（tier ∈ 1..spawnTierMax）；出现 ≥ goalTier 即胜
-  （`pf:end {win:true}`）。无 move 上限参数，软上限 = cols×rows×2（卡死兜底）；死局自动重排
+  （`pf:end {win:true}`）。无 move 上限参数，但有**硬步数预算**：`movesLeft` 初始 =
+  cols×rows×2，每步合成减一，**耗尽时 `pf:end {win:false}` 真实败局**（句式同 §7.3 sort
+  moveLimit——它是真实收束，不是"卡死兜底"的软上限；最优线远用不到）；死局自动重排
   （保留棋子重摆，不耗步）；满阶棋子为终态不再合成。§4.1 merge params 全生效（cols/rows/maxTier/
   spawnTierMax/goalTier/spriteKeys 驱动程序化贴图形状配色）。生成期贪心最优线模拟做可玩性校验
   （排除"初始盘面已含 goalTier"的秒胜盘面，≤64 次重试）。

@@ -50,8 +50,10 @@ python -m qacore run <artifact.html> [--channel preview] [--out <report.json>]
 - `window.__pfprobe = { ready,start,end,endWin,first,cta, audio:{created,running}, media:{unmuted,playing,playsBeforeFirst}, rtc }`（时刻为 `performance.now()`，相对导航起点）。
 - 监听的 5 个 `pf:*` 事件名单（冻结，各取首个时刻；`pf:end` 记录 `detail.win`）：
   `pf:ready`→`ready`、`pf:start`→`start`、`pf:first-interaction`→`first`、`pf:cta`→`cta`、
-  `pf:end`→`end`。另在捕获阶段监听 `pointerdown`/`touchstart` 记首个真实指针时刻
-  （与 `pf:first-interaction` 先到者占 `first`）。
+  `pf:end`→`end`。`probe.first` **只**由 `pf:first-interaction` 事件经 `once('first')` 设置；
+  探针另在捕获阶段**只监听 `pointerdown`**（无 touchstart）记首个真实指针时刻，存入独立变量
+  `firstGestureAt`，该时刻**仅用于 `playsBeforeFirst` 计数**（判定首交互前的媒体 `play()`），
+  不写 `probe.first`——两个时刻各来自各自的源，不存在"先到者占 `first`"。
 - **CHK08 的隐含前提（2026-09-29 回炉成文）**：`route.abort()` 拦截外链后，Chromium 会把
   被拦/失败的资源加载写进 DevTools Log（`Log.entryAdded`），Playwright 将其透传为 console
   error（文本形如 **`Failed to load resource: net::ERR_FAILED`**）。CHK08 的判定语义是页内
