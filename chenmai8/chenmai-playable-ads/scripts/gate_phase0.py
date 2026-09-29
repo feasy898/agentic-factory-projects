@@ -20,7 +20,8 @@
 
 六个门项（对应 Phase 0 / D1 的跑通标志 + 审查收紧项）：
   1. pfcore 编排 CLI 骨架可用：
-     `--help` 文本含全部子命令名（validate/build/run/pack/rules-check）；
+     `--help` 文本含全部子命令名（validate/build/make/pack/rules-check/serve，
+     与本脚本 PFCORE_SUBCOMMANDS 一致；占位 run 已删）；
      最小成功命令 = validate golden spec（exit 0）；
      最小失败命令 = validate bad 样本（exit 1）。
   2. packager 打包器 CLI 骨架可用：
