@@ -64,6 +64,11 @@ AUDIT_SESSION_STABILITY_VALUES = 100   # T1.3 会话稳定抽查值数（全量 
 SESSION_TTL_PROBE_MS = 150             # T1.3 会话过期探针 TTL
 AUDIT_FLUSH_TIMEOUT_S = 10.0           # T1.3 写队列排干等待上限
 
+# ── M7 审计（T5.1：/admin/api/* 查询面，只增）──────────────────────
+AUDIT_PAGE_LIMIT_DEFAULT = 100         # /admin/api/audit 缺省页大小
+AUDIT_PAGE_LIMIT_MAX = 1000            # /admin/api/audit 单页上限（越界 400）
+AUDIT_ADMIN_EVENTS = 20                # T5.1 管理面验收混合请求数（§6 M7：20 个混合请求）
+
 # ── M8 生成器/基线/质量 ────────────────────────────────────────────
 CORPUS_DOCS_MIN = 5000
 CORPUS_TEMPLATE_CLASSES_MIN = 30

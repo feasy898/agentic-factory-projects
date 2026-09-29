@@ -60,9 +60,17 @@ _INSERT_SQL = (
     "reasons, class_counts, prompt_preview, response_preview, upstream, latency_ms, flags) "
     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 )
-_ROW_SQL = (
+#: 行读出 SQL（T5.1 查询面 audit/query.py 共用其列子句：只在此追加排序/分页片段）
+ROW_SQL = (
     "SELECT id, ts, request_id, session_id, dept, route, blocked, reasons, class_counts, "
-    "prompt_preview, response_preview, upstream, latency_ms, flags FROM audit_events ORDER BY id"
+    "prompt_preview, response_preview, upstream, latency_ms, flags FROM audit_events"
+)
+#: 行读出 SQL（id 升序完整形态）——execute 直接吃整串常量，调用点零拼接
+#: （门禁口径：SQL 语句不得由字符串拼接/format/f-string 组装，一律整常量+参数绑定）
+ROW_SQL_ORDERED = (
+    "SELECT id, ts, request_id, session_id, dept, route, blocked, reasons, class_counts, "
+    "prompt_preview, response_preview, upstream, latency_ms, flags FROM audit_events "
+    "ORDER BY id"
 )
 
 
@@ -90,7 +98,7 @@ def _event_to_row(event: AuditEvent) -> tuple:
     )
 
 
-def _row_to_event(row: tuple[Any, ...]) -> AuditEvent:
+def row_to_event(row: tuple[Any, ...]) -> AuditEvent:
     return AuditEvent(
         ts=parse_utc(row[1]), request_id=row[2], session_id=row[3], dept=row[4],
         route=row[5], blocked=bool(row[6]),
@@ -113,10 +121,10 @@ def read_events(db_path: str | Path) -> list[tuple[int, AuditEvent]]:
     """重开库直读全部事件（按 id 升序）；元素 = (id, AuditEvent)。"""
     conn = sqlite3.connect(str(db_path))
     try:
-        rows = conn.execute(_ROW_SQL).fetchall()
+        rows = conn.execute(ROW_SQL_ORDERED).fetchall()
     finally:
         conn.close()
-    return [(int(r[0]), _row_to_event(r)) for r in rows]
+    return [(int(r[0]), row_to_event(r)) for r in rows]
 
 
 class SqliteAuditWriter:
@@ -199,8 +207,8 @@ class SqliteAuditWriter:
     def fetch_all(self) -> list[tuple[int, AuditEvent]]:
         """全部已落库事件（按 id 升序）；元素 = (id, AuditEvent)。"""
         with self._sql_lock:
-            rows = self._conn.execute(_ROW_SQL).fetchall()
-        return [(int(r[0]), _row_to_event(r)) for r in rows]
+            rows = self._conn.execute(ROW_SQL_ORDERED).fetchall()
+        return [(int(r[0]), row_to_event(r)) for r in rows]
 
     def journal_mode(self) -> str:
         with self._sql_lock:
