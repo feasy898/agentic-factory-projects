@@ -1306,7 +1306,10 @@ def main() -> int:
         for base in (ctx["mock_internet"], ctx["mock_govcloud"]):
             httpx.post(f"{base}/admin/reset", timeout=5.0)
         _start_gateway(ctx)
-        ctx["client"] = httpx.Client(base_url=GATEWAY_BASE, timeout=httpx.Timeout(30.0))
+        # 客户端超时=健壮性护栏非性能断言（T8.3 run4 实锤：共享机负载峰值下回环
+        # 新建连接可 >30s——m11 的并发超时已因「本机回环新连 ~1s」放宽至 240s，
+        # 同口径放宽到 120s；功能断言（状态/形状/内容）不受超时值影响）
+        ctx["client"] = httpx.Client(base_url=GATEWAY_BASE, timeout=httpx.Timeout(120.0))
 
         cases: list[tuple[str, Any]] = [
             ("U1 非流式往返", case_u1),
