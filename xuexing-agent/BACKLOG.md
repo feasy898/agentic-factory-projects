@@ -153,5 +153,20 @@
   测试 + validate_knowledge --min-items-per-kp 3（321/321 dual-agent-verified 保留）
   + run_contract 参考实现 / --impl-dir src/xuexing 平铺目录注入（单模块与
   --suite full）全绿）
-- [ ] **机构多租户**：server 加 org 维度数据隔离（org_id 贯穿 store/attempt/api）
+- [x] **机构多租户**：server 加 org 维度数据隔离（org_id 贯穿 store/attempt/api）
+  （完成于本轮，待主会话提交：src/xuexing/multitenant.py（确定性内核，纯 stdlib 零
+  xuexing 依赖：resolve_org 缺省归并 None/空白→"default"、org_key 长度前缀单射复合键
+  （分隔符歧义对不碰撞）、OrgStore/AttemptCounter 按 (org, learner) 嵌套分域且容器内
+  强制归并、枚举恒升序）+ specs/drafts/multitenant.spec.md（I1–I11 全可检验）+
+  tests/contract/test_multitenant_contract.py（31 项：内核层键/容器隔离 + HTTP 层
+  X-Org-Id 穿线——缺省等价（无头≡""≡"default"）、跨 org profile/plan/trace/recommend
+  404 隔离与不漂移、next_item 双 org 各自独立耗尽且同态首选题逐位相同、/orgs 只读
+  升序逐字节稳定、org 头全容忍、org 不改领域值（与 diagnose/trace 内核直调对拍））；
+  server.py 附加式穿线：7 个有状态端点加可选 X-Org-Id 头（store=OrgStore、
+  attempt=AttemptCounter）、新增只读 GET /orgs，无状态端点忽略该头，create_app 签名
+  与既有端点响应形状不动、不带头的请求与单租户时代逐字节一致（既有
+  test_server_contract / tests/unit/test_server.py 未改一字全绿）；已登记 run_contract
+  与根 conftest MODULES；全套 558 测试 + validate_knowledge --min-items-per-kp 3
+  （321/321 dual-agent-verified 保留）+ run_contract 参考实现 / --impl-dir
+  src/xuexing 平铺目录注入（multitenant 单模块与 multitenant,server --suite full）全绿）
 - [ ] **契约冻结第二波**：把 kt/blueprint/grading/recommend 等新规格草稿走冻结工作流（对抗评审+两轮重生成达标）
