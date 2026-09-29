@@ -1,0 +1,313 @@
+{
+  "$comment": "资产包总表（机器可读版，与 manifest.md 同源）。模块按逻辑组织；status 取值 frozen / frozen-prototype / partial / planned / deferred。verified 字段如实记录本资产包撰写日（2026-09-29）的真实运行结果；prerequisite 标注环境前提（cs_sim 参考模型件，详见 specs/cs_sim.md §8 坑 1 与 REGENERATE.md §0）。所有命令在仓库根或包根执行（cwd 字段注明）。",
+  "assetPack": {
+    "name": "澄勺助餐机器人 · spec+eval 资产包",
+    "version": "1.0.0",
+    "updated": "2026-09-29",
+    "contractVersion": "cs_schema v1.1.0（2026-09-28 冻结）",
+    "documents": {
+      "manifest": "docs/assets/manifest.md",
+      "contracts": "docs/assets/CONTRACTS.md",
+      "regenerate": "docs/assets/REGENERATE.md",
+      "specsDir": "docs/assets/specs/"
+    }
+  },
+  "modules": [
+    {
+      "id": "cs_schema",
+      "name": "数据契约层（8 模型 + 7 枚举 + 常量 + 夹具）",
+      "status": "frozen",
+      "lang": "Python（pydantic v2，依赖-free）",
+      "responsibility": "跨模块数据结构与词表的唯一事实来源：extra=forbid、NaN/Inf 拒绝、赋值即校验、跨字段不变式。",
+      "physicalLocations": [
+        "chengshao/cs_schema/（models.py enums.py constants.py fixtures.py fixtures/*.json CHANGELOG.md）"
+      ],
+      "contract": {
+        "models": "MouthPose/ArmState/ArmCommand/SafetyState/SpoonCheck/VoiceIntent/BiteRecord/MealSession",
+        "constants": "N_ARM_JOINTS=6 / MOUTH_PRIOR_DEFAULT_M=0.42 / IPD_DEFAULT_M=0.063 / JAW_OPEN_THRESHOLD=0.35 / HEAD_YAW_TURN_THRESHOLD_RAD=0.4363 / FROWN_ASK_THRESHOLD=0.5 / DEFAULT_DISH_REGISTRY=(芋泥,南瓜粥,椰子冻)",
+        "version": "SCHEMA_VERSION=1.1.0, CONTRACT_FROZEN_DATE=2026-09-28"
+      },
+      "dependsOn": [],
+      "eval": {
+        "cwd": "repo root",
+        "commands": [".venv/Scripts/python.exe -m pytest tests/test_schema.py -q"],
+        "passLine": "exit 0，用例全绿（含 ≥12 非法值负例）"
+      },
+      "verified": "2026-09-29 实测 exit 0（83 passed）",
+      "regenOrder": 1,
+      "specDoc": "docs/assets/specs/cs_schema.md"
+    },
+    {
+      "id": "cs_sim",
+      "name": "仿真层（模型回退链 / FK-IK / 可达空间 / 安全包络 / 对抗 oracle）",
+      "status": "frozen",
+      "lang": "Python（numpy + 物理引擎 + ikpy + matplotlib Agg）",
+      "responsibility": "机械模型三级回退装载与校验；阻尼最小二乘 IK（确定性多起点）；可达空间体素与 PNG；安全包络（禁区/限速场/关节轨迹/连杆扫掠/送达停点与数值安全余量）；独立违规轨迹 oracle。",
+      "physicalLocations": [
+        "chengshao/cs_sim/（model_source.py backends.py frames.py arm_model.py ik_solver.py reachability.py safety_envelope.py adversarial.py eval.py）",
+        "chengshao/config/workspace.json（包络缺省）",
+        "chengshao/reports/upstream_lock.md（参考件内部代号与锁定 commit）"
+      ],
+      "contract": {
+        "fallbackChain": "auto: _vendor/*/Simulation/*/…xml(mjcf) → 同名 .urdf(urdf_mujoco) → 同目录 URDF ikpy 链(chain_urdf_ikpy) → 内置名义链(chain_builtin)；任一层装载/校验失败自动降级",
+        "ik": "DLS iters=250 pos_tol=0.5mm ori_tol=5mrad max_step=0.5rad 重启=32 确定性 rng_seed=0；对外线 5mm/0.05rad",
+        "envelope": "face 球 (0.42,0,0.30) r=0.12；torso 胶囊 x=0.48 r=0.15；限速 approach 0.15 near_face 0.10(≤0.15m)；关节 1.5rad/s；连杆半径 0.03；加密步长 0.05rad",
+        "deliveryMargin": "stop=0.12+0.05=0.17m（球外）；margin=0.17−勺尖0.08−跟踪0.02−感知0.05=0.02m ≥ 0.005m"
+      },
+      "dependsOn": ["cs_schema"],
+      "prerequisite": "_vendor 参考模型件在位（内部代号 vendor-arm-model；公开克隆无件时 auto 落 tier3 内置 5 关节链，与契约 6 关节不符，见 specs/cs_sim.md §8）",
+      "eval": {
+        "cwd": "chengshao/",
+        "commands": ["../.venv/Scripts/python.exe -m cs_sim.eval --model auto --report reports/sim_eval.json"],
+        "passLine": "exit 0，22 checks 全 True：IK 200 目标 ≥98% 且 ≤5mm/0.05rad；500 违规轨迹 100% 拒；对抗 124 条 100% 拒且类别命中；margin ≥5mm；reach_map.png 产出"
+      },
+      "verified": "2026-09-29 实测 exit 0（tier=mjcf，99.5%/100%/100%，wall≈742s）",
+      "regenOrder": 2,
+      "specDoc": "docs/assets/specs/cs_sim.md"
+    },
+    {
+      "id": "cs_arm",
+      "name": "执行层（ArmInterface + SafetyEnvelope 硬闸 + MockArm + FeetechArm 骨架）",
+      "status": "partial",
+      "lang": "Python",
+      "responsibility": "执行器统一抽象；唯一执行通道安全硬闸（限速/禁入区/软件急停/看门狗，拒绝=零运动）；仿真内速度受限积分虚拟臂；真机串口通道接口与参数占位。",
+      "physicalLocations": [
+        "chengshao/cs_arm/（interface.py safety.py kinematics.py mock_arm.py feetech.py clock.py eval_mock.py）"
+      ],
+      "contract": {
+        "interface": "read/write/enable/disable + halt()/heartbeat_ns 只增；ArmCommandRejected(reason,detail) 拒绝即零运动",
+        "envelopeWritePath": "禁入区巡检 → 闩锁/使能检查 → 目标解析（cartesian 经 IK 改写为 joints，夹爪保持）→ 速度硬限（joints 1.5rad/s / cartesian 0.15m/s）→ 软限速拉长时长 → 包络校验 → 下发",
+        "estop": "同步闩锁；violation=watchdog（estop_latched 区分）；reset 复查禁入区",
+        "watchdog": "0.5s 无心跳 → watchdog + disable；巡检不喂心跳"
+      },
+      "dependsOn": ["cs_schema", "cs_sim"],
+      "prerequisite": "同 cs_sim（MockArm/包络需 load_arm）",
+      "eval": {
+        "cwd": "repo root + chengshao/",
+        "commands": [
+          ".venv/Scripts/python.exe -m pytest tests/test_arm_mock.py -q",
+          "../.venv/Scripts/python.exe -m cs_arm.eval_mock --report reports/arm_mock_eval.json"
+        ],
+        "passLine": "急停 ≤100ms 且冻结+全拒；1000 注入 0 违规执行；跟踪 ≤2mm；看门狗 0.5s 必跳安静不跳；margin ≥5mm"
+      },
+      "verified": "2026-09-29 实测 eval_mock exit 0（时延 0.058ms/1000 注入 0 违规/误差 0.3mm）",
+      "regenOrder": 3,
+      "specDoc": "docs/assets/specs/cs_arm.md"
+    },
+    {
+      "id": "cs_mouth",
+      "name": "感知·口部三维（mono 固定先验 / 腕部 IPD 双职 / depth 保留）",
+      "status": "frozen",
+      "lang": "Python（478 关键点推理 + OpenCV/numpy）",
+      "responsibility": "BGR→MouthPose（base 系）：口中心=上下内唇 13/14 均值；张嘴=几何口径比线性映射；皱眉=mouthFrown；转头=|yaw|>25°；距离按 mode/cam_pose 三模式切换。",
+      "physicalLocations": [
+        "chengshao/cs_mouth/（estimator.py prior.py _schema.py imgio.py synth.py bootstrap.py eval.py）",
+        "chengshao/config/mouth_prior.json",
+        "chengshao/models/face_landmarker.task（权重不入库，scripts/fetch_models.py 下载）",
+        "chengshao/assets/face_samples/（seeds+bundled+labels，README 实测记录）"
+      ],
+      "contract": {
+        "jawCalib": "ratio=gap/eye（归一化坐标）；jaw=clip((ratio−0.11)/(0.23−0.11))；blendshape jawOpen 实测不区分张闭嘴（弃用）",
+        "ipd": "Z=fx×ipd_m/ipd_px（iris 468/473 像素距；ipd_m=0.063；ipd_px<20 或 Z∉[0.10,0.80] 失效）；source=wrist",
+        "camPose": "T_base_cam=T_base_flange(FK)×T_flange_cam（腕部手眼 npz 优先，名义值兜底）",
+        "invalidFrame": "valid=False confidence=0，坐标沿用上一有效值（无历史 [0.42,0,0.25]）"
+      },
+      "dependsOn": ["cs_schema"],
+      "eval": {
+        "cwd": "chengshao/",
+        "commands": ["../.venv/Scripts/python.exe -m cs_mouth.eval --input assets/face_samples --report reports/mouth_eval.json"],
+        "passLine": "检出 ≥95%、拒识 ≥95%、张闭嘴 ≥90%（或 AUC≥0.9）、转头 100%、p95 ≤70ms；--wrist-view/--static-distance 样本缺失 exit 2（接口冻结）"
+      },
+      "verified": "2026-09-29 实测 exit 0（detect=1.0 lat_p95=39.7ms 空载；并行重负载下延迟阈值会假失败——验收须空载跑）",
+      "regenOrder": 4,
+      "specDoc": "docs/assets/specs/cs_mouth.md"
+    },
+    {
+      "id": "cs_voice",
+      "name": "交互·语音（VAD → 离线 ASR → 意图 → TTS）",
+      "status": "frozen",
+      "lang": "Python（funasr 主 / sherpa-onnx 回退 / pyttsx3+SAPI）",
+      "responsibility": "麦克风常驻→能量 VAD→离线识别→关键词意图 VoiceIntent；TTS 播报；无麦克风/无声卡自动降级注入模式。",
+      "physicalLocations": [
+        "chengshao/cs_voice/（vad.py asr.py intent.py tts.py link.py _compat.py eval.py）",
+        "chengshao/assets/voice_samples/（20 条 wav + labels.json）"
+      ],
+      "contract": {
+        "voiceLink": "start/poll/say 冻结；poll=清空积压只留最新",
+        "intentPriority": "done > select > pause > next > resume > greet；select 槽位只取注册菜名表；置信度 0.95/0.90/0.75/0.30",
+        "asrFallback": "funasr（本地缓存优先，torch 单线程）→ sherpa-onnx（CS_VOICE_ONNX_DIR）；富标签剥除",
+        "tts": "合成=pyttsx3 进程级单例工作线程；播放=一次性线程原生 SAPI COM 异步+10s 硬超时"
+      },
+      "dependsOn": ["cs_schema"],
+      "eval": {
+        "cwd": "chengshao/",
+        "commands": ["../.venv/Scripts/python.exe -m cs_voice.eval --input assets/voice_samples --report reports/voice_eval.json"],
+        "passLine": "20 条 ≥18 对、单条 ≤2.5s、eval 期间零外联"
+      },
+      "verified": "2026-09-29 实测 exit 0（20/20，max 0.736s；ASR 冷缓存首载 ≈172s 须预热）",
+      "regenOrder": 5,
+      "specDoc": "docs/assets/specs/cs_voice.md"
+    },
+    {
+      "id": "cs_food",
+      "name": "感知·勺上检查 + 选碗",
+      "status": "frozen",
+      "lang": "Python（OpenCV HSV/ArUco）",
+      "responsibility": "勺区 BGR→SpoonCheck（HSV 并集掩码占比阈值，偏保守宁可重舀）；场景帧→基准码检测→bowl_sel（最大可见码，未登记码忽略）。",
+      "physicalLocations": [
+        "chengshao/cs_food/（spoons.py bowls.py config.py eval.py）",
+        "chengshao/config/food_hsv.json",
+        "chengshao/config/bowl_markers.json"
+      ],
+      "contract": {
+        "protocol": "SpoonClassifier.from_bgr(crop)->SpoonCheck 签名冻结（学习型分类器无感替换）",
+        "hsv": "6 段区间含跨 0 环绕；min_food_ratio=0.15；H∈[0,179]",
+        "bowl": "DICT_4X4_50；marker 0/1/2→碗 0/1/2；min_side_px=20；select=边长最大者"
+      },
+      "dependsOn": ["cs_schema"],
+      "eval": {
+        "cwd": "repo root + chengshao/",
+        "commands": [
+          ".venv/Scripts/python.exe -m pytest tests/test_food_interface.py -q",
+          "../.venv/Scripts/python.exe -m cs_food.eval --report reports/food_eval.json"
+        ],
+        "passLine": "接口/配置负例全绿（54 用例）；合成自检 8 例全对 + 3 码检出 + 选碗正确；真实帧 eval 为 D4 后条目（启发式仅记录不设硬线）"
+      },
+      "verified": "2026-09-29 实测两项均 exit 0",
+      "regenOrder": 6,
+      "specDoc": "docs/assets/specs/cs_food.md"
+    },
+    {
+      "id": "cs_dashboard",
+      "name": "数据层（HTTP 契约 + SQLite + 单页看板 + SSE）",
+      "status": "frozen",
+      "lang": "Python（FastAPI + SQLite）+ 本地化静态页",
+      "responsibility": "会话/单口唯一持久化点；冻结 HTTP 契约 + SSE 实时；离线单页看板（零第三方外链）。",
+      "physicalLocations": [
+        "chengshao/cs_dashboard/（app.py store.py __main__.py static/ vendor/chart.umd.js）",
+        "data/care.db（运行期，gitignore）"
+      ],
+      "contract": {
+        "http": "POST /api/session/start {user_id}→{session_id}；POST /api/bite (BiteRecord)→204；GET /api/session/current→MealSession；GET /api/stream (SSE)；追加 health/summary/session/end/events",
+        "errors": "无会话/重复 bite_id/重复开session → 409；校验失败 422",
+        "grams": "全有称重 Σmax(0,before−after)；任一缺失 total_grams=None",
+        "sse": "snapshot 连接即推；bite/session_started/session_ended 实时；15s keepalive；慢消费者丢帧不阻塞"
+      },
+      "dependsOn": ["cs_schema"],
+      "eval": {
+        "cwd": "repo root",
+        "commands": [".venv/Scripts/python.exe -m pytest tests/test_dashboard.py -q"],
+        "passLine": "5 用例绿：30 口无丢失、聚合一致、首页与静态 200、零一方外链、SSE 收达、409/422 负例"
+      },
+      "verified": "2026-09-29 实测 exit 0（5 passed）",
+      "regenOrder": 7,
+      "specDoc": "docs/assets/specs/cs_dashboard.md"
+    },
+    {
+      "id": "cs_orchestra",
+      "name": "编排层（50Hz 行为树 + 相机角色台账 + mock 验收）",
+      "status": "frozen",
+      "lang": "Python（py_trees + numpy）",
+      "responsibility": "进食全流程行为树（选碗→舀取→勺检→送达→等咬合→勺空→撤回→记录）+ 安全/交互打断分支 + camera_role 恰 2 次切换与曝光稳定窗时序。",
+      "physicalLocations": [
+        "chengshao/cs_orchestra/（core.py nodes.py runtime.py mock.py eval.py）",
+        "chengshao/config/orchestra.json"
+      ],
+      "contract": {
+        "phaseTable": "SELECT_BOWL→SCOOP→SPOON_CHECK→DELIVER→WAIT_OPEN→WAIT_BITE→SPOON_EMPTY→RETRACT→RECORD（core.py docstring 即冻结表）",
+        "cameraRole": "进送达口恰 2 次切换：scene→wrist_mouth(delivery_entry，进运动前)；wrist_mouth→scene(retract_complete/estop_abort/zone_abort/done_retract)；未进送达口 0 次；切换后 0.5s 曝光稳定窗内口部帧不采信",
+        "interrupts": "estop/zone→停+切回+aborted+原路退回；转头/人脸丢失>1s→保持+播报；pause 悬停；done terminal；next 仅等待阶段；select 下口生效；frown>0.5 暂停询问",
+        "jaw": "张嘴 >0.35（schema 冻结）；闭嘴 <0.20（编排层 JAW_CLOSED_THRESHOLD）"
+      },
+      "dependsOn": ["cs_schema", "cs_sim", "cs_arm", "cs_mouth", "cs_voice", "cs_food", "cs_dashboard"],
+      "prerequisite": "同 cs_sim（mock 臂经 load_arm）",
+      "eval": {
+        "cwd": "chengshao/",
+        "commands": ["../.venv/Scripts/python.exe -m cs_orchestra.eval --mock --episodes 30 --report reports/orchestra_eval.json --trace reports/orchestra_trace.jsonl"],
+        "passLine": "30/30 回合：结局表全符（12=aborted/15=rejected/其余 success）、每进送达口恰 2 次切换、settle ≥0.5s、中位 ≤20s、0 违规/0 意外"
+      },
+      "verified": "2026-09-29 实测 exit 0（30/30，中位 19.74s，wall≈25min；环境前提同 cs_sim）",
+      "regenOrder": 8,
+      "specDoc": "docs/assets/specs/cs_orchestra.md"
+    },
+    {
+      "id": "e2e-gates",
+      "name": "e2e 门 + 验收工具（e2e_mock_run / gate_g1 / verify_g1_reports / check_naming）",
+      "status": "frozen",
+      "lang": "Python（标准库垫片 + 全链 mock）",
+      "responsibility": "无硬件端到端 30 口总验收；一键门禁（8 步）；报告独立复核（重算 metrics vs thresholds）；对外命名零泄漏扫描。",
+      "physicalLocations": [
+        "scripts/（gate_g1.py verify_g1_reports.py e2e_mock_run.py check_naming.py 垫片）",
+        "chengshao/scripts/（真实实现）",
+        "chengshao/reports/（证据 JSON + trace JSONL）"
+      ],
+      "contract": {
+        "e2e": "全链同进程 + 真实看板 HTTP；trace 镜像；exit 0 判据 12 项（结局表/时延/estop/margin/角色切换等）",
+        "gate": "①命名 ②pytest 全量 ③a-d 模块 eval ④独立复核 ⑤看板冒烟；单步超时 1800s；PYTHONUTF8=1",
+        "naming": "一级禁用（含依赖清单）+ 二级禁用（requirements 包名位豁免）+ 警告级；symlink 不跟随"
+      },
+      "dependsOn": ["cs_orchestra"],
+      "eval": {
+        "cwd": "repo root",
+        "commands": [
+          "python scripts/e2e_mock_run.py",
+          "python scripts/gate_g1.py",
+          "python scripts/verify_g1_reports.py",
+          ".venv/Scripts/python.exe chengshao/scripts/check_naming.py"
+        ],
+        "passLine": "e2e exit 0（2026-09-29 实测达标）；naming forbidden=0（2026-09-29 实测）；gate 8 步全 PASS（当日为红：cs_sim 模型件前提破坏，恢复后复跑）"
+      },
+      "verified": "2026-09-29 实测：e2e exit 0（早前全绿运行）；naming exit 0；全量 pytest 36 failed/260 passed（红，根因模型件前提）；schema+dashboard+food 接口+mouth+voice 独立复验全绿",
+      "regenOrder": 9,
+      "specDoc": "docs/assets/specs/e2e-and-gates.md"
+    },
+    {
+      "id": "training-assets",
+      "name": "延后训练资产包（只写不跑）",
+      "status": "frozen-prototype",
+      "lang": "Python（torch 相关仅配置层）",
+      "responsibility": "策略训练命令生成（fail-closed）、勺上分类器脚本、拖动示教录制（CS_HW_SESSION 才可执行）、COS 传输计划；本机零真实训练。",
+      "physicalLocations": [
+        "chengshao/training/（act/ spoon_cls/ record/ transfer/ common.py config/ runbook_act.md runbook_gpu.md requirements-gpu.txt）"
+      ],
+      "contract": {
+        "entryName": "训练框架入口名不入仓库文本：--train-cmd > CS_TRAIN_CMD > train.local.json（gitignore）> config runtime.train_cmd；全链未解析 exit 2",
+        "spoonCls": "MobileNetV3-Small+MLP；回合切分 70/15/15；acc ≥95% 且漏检 <3%",
+        "discipline": "V100=sm_70 只用 fp16；wandb 强制关闭；action_dim=6"
+      },
+      "dependsOn": ["cs_schema"],
+      "eval": {
+        "cwd": "repo root",
+        "commands": [".venv/Scripts/python.exe -m pytest tests/test_training_scripts.py -q"],
+        "passLine": "22 dry-run 用例绿（无入口名 exit 2、注入后命令含关键参数、录制/传输计划生成）"
+      },
+      "verified": "随全量 pytest 当日为红（同环境前提无涉，红因在 arm 侧用例；本模块用例见全量复跑）——单独复验未在本日执行，如实标注",
+      "regenOrder": 11,
+      "specDoc": "docs/assets/specs/training-assets.md"
+    },
+    {
+      "id": "hw-toolchain",
+      "name": "真机工具链（FeetechArm 骨架 + bring-up 清单）",
+      "status": "planned",
+      "lang": "Python（串口通道待实现）",
+      "responsibility": "真机执行器占位：接口与参数冻结、fail-closed（HardwareUnavailable）；bring-up 流程与真机 eval 清单（标定/冒烟/成功率/安全演练）。",
+      "physicalLocations": [
+        "chengshao/cs_arm/feetech.py",
+        "chengshao/config/calib/（handeye_*.npz，标定产出，gitignore 外）"
+      ],
+      "contract": {
+        "config": "port/baudrate=1M/servo_ids 恰 6 互异正整数/joint_speed_limit=1.5/return_delay_time_us=250",
+        "failClosed": "骨架阶段一切触达硬件方法显式失败；硬闸单点在包络层；心跳只由控制活动驱动"
+      },
+      "dependsOn": ["cs_arm"],
+      "eval": {
+        "cwd": "repo root",
+        "commands": ["（骨架期无独立 eval；config 校验由 tests/test_arm_mock.py 覆盖）"],
+        "passLine": "真机 eval 全部 planned（spec §3 原表如实标注未实现）"
+      },
+      "verified": "未验证（硬件未到货）——占位即契约",
+      "regenOrder": 12,
+      "specDoc": "docs/assets/specs/hw-toolchain.md"
+    }
+  ]
+}
