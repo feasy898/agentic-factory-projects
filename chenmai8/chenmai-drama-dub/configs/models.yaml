@@ -345,3 +345,30 @@ components:
     version: TBD
     fallback: []
     volta_status: na
+
+  # ---- 编排（纯本地逻辑，无上游依赖/权重）----
+  align-m8:
+    task: duration-align       # 时长对齐（T14/M8）：syl2dur 占位 → duration_factor 二分
+                               # → 换下一候选 → atempo 收口；产物 C5 synth_plan.<lang>.jsonl
+                               # （duration_factor[0.5,2.0] / atempo[0.9,1.1] 窗见 pipeline.yaml m8 段）
+    langs: [en, es, ar]
+    device: cpu
+    precision: null
+    weights: null
+    version: "2026-09-29 (T14)"  # 上游：无外部依赖，纯编排（规划 §4 M8）
+    fallback: []
+    volta_status: na
+
+  mix-m9:
+    task: mix-and-compose      # 混音 + 成片合成（T15/M9）：新人声按 C2 句窗摆原时间轴 →
+                               # bgm 确定性侧链 ducking（对白区 -6dB / 句心再 -3dB）→ 48k 立体声
+                               # mix.wav（EBU R128 -16 LUFS，ffmpeg loudnorm 两趟）→ 12_out 成片
+                               # （ASS 字幕 + C7 隐式 AI 标识元数据位；显式/C2PA/水印归 M12）
+                               # （电平/斜坡/响度常量见 pipeline.yaml m9 段）
+    langs: [en, es, ar]
+    device: cpu
+    precision: null
+    weights: null
+    version: "2026-09-29 (T15)"  # 上游：无外部模型/权重；ffmpeg loudnorm/libass 为系统级依赖
+    fallback: []
+    volta_status: na
