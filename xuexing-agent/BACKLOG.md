@@ -133,6 +133,25 @@
   根 conftest MODULES；全套 501 测试 + validate_knowledge --min-items-per-kp 3
   （321/321 dual-agent-verified 保留）+ run_contract 参考实现 / --impl-dir 平铺目录
   注入（单模块）+ --suite full 全绿）
-- [ ] **OMR 答题卡对接规范**：answer-sheet.json（题号-选项映射）+ OMRChecker 输出适配层
+- [x] **OMR 答题卡对接规范**：answer-sheet.json（题号-选项映射）+ OMRChecker 输出适配层
+  （完成于本轮，待主会话提交：src/xuexing/omr_sheet.py（确定性内核：build_answer_sheet
+  题号-选项映射文档——卷面题号 1..N 与 paper_layout 同编号语义/choice 出涂点
+  q<题号>·气泡值 A–Z/fill·solve 标 manual 不出涂点/outputColumns 自然排序/
+  fieldBlocks 字段串（q1..10 含端点）+ parse_omr_results 解析 OMRChecker Results
+  CSV（表头 file_id,input_path,output_path,score,<列…>，单元格=涂点拼接串、
+  未涂=空串）+ to_responses 涂点→Response（未涂 None/False、单涂=该选项 options
+  原文全串并与 grading.grade_choice 跨模块同判、多涂拼接串恒 False 不猜、manual
+  题不产 Response、sheet/bank 漂移与未知涂点一律 OMRError 硬失败）+
+  parse_option/field_label/parse_field_ranges/natural_sort_key 积木；OMRChecker
+  对接事实当日实读 Udayraj123/OMRChecker master 源码核对：Results CSV 表头与行
+  （src/utils/file.py、src/entry.py）、涂点拼接与 emptyValue=""（src/core.py）、
+  字段串 q1..10 含端点与自然排序（src/utils/parsing.py）、QTYPE_MCQ4 气泡值表
+  （src/constants/common.py））+ specs/drafts/omr_sheet.spec.md +
+  tests/contract/test_omr_sheet_contract.py（26 项，自封闭鸭子夹具，闭式现算核实，
+  含与 paper_layout.parse_option / grading.grade_choice 的零 import 跨模块锁定与
+  generate_paper 端到端）；已登记 run_contract 与根 conftest MODULES；全套 527
+  测试 + validate_knowledge --min-items-per-kp 3（321/321 dual-agent-verified 保留）
+  + run_contract 参考实现 / --impl-dir src/xuexing 平铺目录注入（单模块与
+  --suite full）全绿）
 - [ ] **机构多租户**：server 加 org 维度数据隔离（org_id 贯穿 store/attempt/api）
 - [ ] **契约冻结第二波**：把 kt/blueprint/grading/recommend 等新规格草稿走冻结工作流（对抗评审+两轮重生成达标）
