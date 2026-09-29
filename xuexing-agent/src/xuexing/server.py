@@ -1,23 +1,40 @@
-"""确定性 REST API：出卷 / 提交作答 / 查画像 / 查计划 / 复习打卡。
+"""确定性 REST API：出卷 / 提交作答 / 查画像 / 查计划 / 复习打卡，以及新模块
+API（/trace /blueprint /grade /recommend /itembank/v2/validate
+/coverage/standard）。
 
 薄胶水层：所有逻辑都在内核模块里，这里只做 HTTP 编解码与会话存储。
-"""
-from __future__ import annotations
+领域校验失败（内核 ValueError 族）映射 400，资源不存在映射 404，
+请求体形态违规由 pydantic 映射 422；端点不实现任何领域算法。
 
+导入约定：绝对导入（from xuexing.xxx import ...）——与重生成注入装载约定一致
+（见 specs/drafts/server.spec.md §2），本文件可被
+run_contract.py --impl-dir <dir> --modules server 装载。
+"""
 from datetime import date
+from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
-from .agent_shell import MockLLM, attribute_error
-from .diagnosis import aggregate_to_clusters, diagnose
-from .itembank import ItemBank
-from .kpgraph import KPGraph
-from .paper import generate_paper, select_next_item
-from .pedagogy import StrategyLibrary
-from .route import build_plan
-from .scheduler import ReviewLog, schedule
-from .types import Misconception, Response, to_dict
+from xuexing.agent_shell import MockLLM, attribute_error
+from xuexing.blueprint import build_blueprint
+from xuexing.diagnosis import aggregate_to_clusters, diagnose
+from xuexing.grading import grade_to_response
+from xuexing.itembank import ItemBank
+from xuexing.itembank_v2 import source_counts, validate_bank_v2, verification_stats
+from xuexing.kpgraph import KPGraph
+from xuexing.kt import KTEvent, trace, to_profile
+from xuexing.paper import generate_paper, select_next_item
+from xuexing.pedagogy import StrategyLibrary
+from xuexing.recommend import (
+    attach_recommendations,
+    recommend_for_kp,
+    recommend_for_profile,
+)
+from xuexing.route import build_plan
+from xuexing.scheduler import ReviewLog, schedule
+from xuexing.standard_coverage import check_coverage_dicts
+from xuexing.types import Misconception, Response, to_dict
 
 
 class BlueprintIn(BaseModel):
@@ -40,6 +57,57 @@ class SubmitIn(BaseModel):
 class ReviewIn(BaseModel):
     rating: int
     days_since_last: int = 0
+
+
+# ---- 新模块 API 请求体（specs/drafts/server.spec.md §3）----
+
+class KTEventIn(BaseModel):
+    item_id: str
+    correct: bool
+    day: float
+
+
+class TraceIn(BaseModel):
+    events: list[KTEventIn]
+    learner_id: str = ""
+    prior: float = 0.5
+    half_life_days: float = 7.0
+
+
+class BlueprintReq(BaseModel):
+    targets: list[str]
+    budget: int
+    ratios: dict[str, float] | None = None
+
+
+class GradeAnswerIn(BaseModel):
+    item_id: str
+    learner_answer: str | None = None
+
+
+class GradeIn(BaseModel):
+    item_id: str | None = None
+    learner_answer: str | None = None
+    answers: list[GradeAnswerIn] | None = None
+
+
+class RecommendIn(BaseModel):
+    learner_id: str = ""
+    kp_id: str = ""
+    mastery_threshold: float = 0.65
+    limit: int | None = None
+    attach: bool = False
+
+
+class ItemsV2In(BaseModel):
+    # 元素刻意为任意 JSON 值：itembank_v2 校验器是全函数，
+    # "非 dict → item is not a dict" 的语义要能经 HTTP 观察。
+    items: list[Any]
+
+
+class CoverageIn(BaseModel):
+    kp_dicts: list[dict]
+    topics: dict
 
 
 def create_app(
@@ -130,5 +198,135 @@ def create_app(
             raise HTTPException(404, "item not found")
         mc = attribute_error(item, learner_answer, misconceptions, MockLLM())
         return {"misconception_id": mc}
+
+    # ---- 新模块 API（specs/drafts/server.spec.md §3.1-§3.6）----
+
+    @app.post("/trace")
+    def kt_trace(body: TraceIn):
+        events = [KTEvent(item_id=e.item_id, correct=e.correct, day=e.day)
+                  for e in body.events]
+        try:
+            snapshots = trace(events, bank, graph,
+                              prior=body.prior, half_life_days=body.half_life_days)
+        except ValueError as e:
+            raise HTTPException(400, str(e))
+        saved = False
+        if body.learner_id:
+            if not snapshots:  # 无快照可存
+                raise HTTPException(400, "cannot save profile: trace has no snapshots")
+            entry = store.setdefault(body.learner_id, {"responses": [], "history": []})
+            entry["profile"] = to_profile(snapshots[-1], body.learner_id)
+            saved = True
+        return {
+            "learner_id": body.learner_id or None,
+            "profile_saved": saved,
+            "snapshots": [
+                {"day": s.day, "item_id": s.item_id, "correct": s.correct,
+                 "mastery": s.mastery, "evidence": s.evidence}
+                for s in snapshots
+            ],
+        }
+
+    @app.post("/blueprint")
+    def make_blueprint(body: BlueprintReq):
+        try:
+            bp = build_blueprint(body.targets, body.budget, graph, body.ratios)
+        except ValueError as e:
+            raise HTTPException(400, str(e))
+        return {
+            "targets": bp.targets,
+            "budget": bp.budget,
+            "ratios": bp.ratios,
+            "allocation": bp.allocation,
+            "dimension_totals": bp.dimension_totals,
+            "counts": bp.counts(),
+            "per_dimension": [
+                {"dimension": dim, "counts": sub, "difficulty_target": dt}
+                for dim, sub, dt in bp.per_dimension()
+            ],
+        }
+
+    @app.post("/grade")
+    def grade_answers(body: GradeIn):
+        if body.answers is not None:  # 批量优先（I5）；原子：先验存在性再判分（I4）
+            items = []
+            for a in body.answers:
+                item = bank.get(a.item_id)
+                if item is None:
+                    raise HTTPException(404, f"item not found: {a.item_id}")
+                items.append(item)
+            results = []
+            for item, a in zip(items, body.answers):
+                try:
+                    resp = grade_to_response(item, a.learner_answer)
+                except ValueError as e:
+                    raise HTTPException(400, str(e))
+                results.append(to_dict(resp))
+            return {"mode": "batch", "n": len(results), "results": results}
+        if body.item_id is None:
+            raise HTTPException(400, "provide item_id or answers")
+        item = bank.get(body.item_id)
+        if item is None:
+            raise HTTPException(404, f"item not found: {body.item_id}")
+        try:
+            resp = grade_to_response(item, body.learner_answer)
+        except ValueError as e:
+            raise HTTPException(400, str(e))
+        return to_dict(resp)
+
+    @app.post("/recommend")
+    def recommend(body: RecommendIn):
+        try:
+            if body.kp_id:  # kp 模式优先（I5）
+                ids = recommend_for_kp(body.kp_id, bank, misconceptions, body.limit)
+                return {"mode": "kp", "kp_id": body.kp_id, "item_ids": ids}
+            if body.learner_id:
+                entry = store.get(body.learner_id)
+                if not entry or "profile" not in entry:
+                    raise HTTPException(404, "learner not found")
+                profile = entry["profile"]
+                if body.attach:
+                    plan = build_plan(profile, bank, graph, strategies, date.today())
+                    attached = attach_recommendations(plan, bank, misconceptions, body.limit)
+                    return {"mode": "plan", "plan": to_dict(attached)}
+                recs = recommend_for_profile(profile, bank, misconceptions,
+                                             mastery_threshold=body.mastery_threshold,
+                                             limit=body.limit)
+                return {"mode": "profile", "recommendations": to_dict(recs)}
+        except ValueError as e:
+            raise HTTPException(400, str(e))
+        raise HTTPException(400, "provide kp_id or learner_id")
+
+    @app.post("/itembank/v2/validate")
+    def item_v2_validate(body: ItemsV2In):
+        # 校验器是全函数：任意输入不抛异常，恒 200（I2/I7 只读）
+        errors = validate_bank_v2(body.items)
+        total, verified = verification_stats(body.items)
+        return {
+            "valid": not errors,
+            "errors": errors,
+            "counts": source_counts(body.items),
+            "total": total,
+            "verified": verified,
+        }
+
+    @app.post("/coverage/standard")
+    def coverage_standard(body: CoverageIn):
+        try:
+            report = check_coverage_dicts(body.kp_dicts, body.topics)
+        except ValueError as e:
+            raise HTTPException(400, str(e))
+        return {
+            "coverage_rate": report.coverage_rate,
+            "is_complete": report.is_complete(),
+            "uncovered_topic_ids": list(report.uncovered_topic_ids),
+            "unmatched_kp_ids": list(report.unmatched_kp_ids),
+            "matched_kp_ids": list(report.matched_kp_ids),
+            "covered_topic_ids": list(report.covered_topic_ids),
+            "matches": [
+                {"kp_id": m.kp_id, "topic_ids": list(m.topic_ids)}
+                for m in report.matches
+            ],
+        }
 
     return app

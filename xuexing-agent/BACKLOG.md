@@ -75,7 +75,19 @@
 
 ## P2（第二波，2026-09-29 夜 按产品价值排序）
 
-- [ ] **server 暴露新模块 API**：kt/blueprint/grading/recommend/itembank_v2/standard_coverage 的 HTTP 端点 + 集成测试（/trace /blueprint /grade /recommend）
+- [x] **server 暴露新模块 API**：kt/blueprint/grading/recommend/itembank_v2/standard_coverage 的 HTTP 端点 + 集成测试（/trace /blueprint /grade /recommend）
+  （完成于本轮，待主会话提交：src/xuexing/server.py 扩展六个端点（/trace /blueprint
+  /grade /recommend /itembank/v2/validate /coverage/standard；相对导入改绝对导入
+  以满足注入装载约定），create_app 签名与既有端点不动 + specs/drafts/server.spec.md
+  （薄胶水层规格：内核等价/错误映射 400-404-422/共享 store 组装闭环/批量判分原子性
+  九条不变量）+ tests/contract/test_server_contract.py（29 项，自封闭夹具，闭式
+  现算核实）+ tests/integration/test_module_apis.py（9 项，grade7 真实数据：
+  trace→recommend attach 全链路推荐闭式 ["m7_010","m7_011","m7_012","m7_115"]、
+  129 题 v2 诚实披露 verified=0、课标 37 KP 归属缺口 0/覆盖 12/28），已登记
+  run_contract（module=server；server 为不重生成胶水层，regen/round* 冻结八模块
+  目录不含 server.py，--impl-dir 需平铺全模块目录）；全套 405 测试 +
+  validate_knowledge --min-items-per-kp 3 + run_contract 全模块参考/平铺目录
+  --impl-dir 注入（含 --suite full）全绿）
 - [ ] **双代理独立复验题库**：321 题逐题由两个独立解题代理验算，分歧提交人工仲裁；回填 verification 字段（当前 0/321）
 - [ ] **静态卷 PDF 输出**：Paper -> 打印友好排版 JSON（题号/选项/留白/页眉），为机构分发与离线渠道落格式
 - [ ] **xAPI 学习事件导出**：Response/ReviewEntry/PlanStep -> xAPI statement JSON，附学习记录标准符合性测试
