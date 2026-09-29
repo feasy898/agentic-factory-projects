@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>政务 AI 安全网关 · 审计看板</title>
+  <style>
+    body { font-family: system-ui, "Microsoft YaHei", sans-serif; margin: 2rem auto; max-width: 1080px; color: #1f2937; }
+    h1 { font-size: 1.4rem; border-bottom: 2px solid #2563eb; padding-bottom: .4rem; }
+    h2 { font-size: 1.05rem; margin: 1.4rem 0 .5rem; }
+    .muted { color: #6b7280; font-size: .85rem; }
+    .cards { display: flex; gap: .8rem; flex-wrap: wrap; margin-top: 1rem; }
+    .card { border: 1px solid #d1d5db; border-radius: 8px; padding: .7rem 1rem; min-width: 150px; background: #f9fafb; }
+    .card .num { font-size: 1.6rem; font-weight: 700; }
+    .card .cap { font-size: .8rem; color: #6b7280; }
+    .card.block .num { color: #b91c1c; }
+    .charts { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .chart-box { border: 1px solid #e5e7eb; border-radius: 8px; padding: .6rem .8rem; }
+    .chart-label { font-size: 12px; fill: #374151; }
+    .chart-value { font-size: 12px; fill: #111827; font-weight: 600; }
+    table { border-collapse: collapse; width: 100%; margin-top: .6rem; font-size: .85rem; }
+    th, td { border: 1px solid #d1d5db; padding: .4rem .55rem; text-align: left; vertical-align: top; }
+    th { background: #f3f4f6; white-space: nowrap; }
+    .badge { display: inline-block; padding: .1rem .45rem; border-radius: 999px; font-size: .72rem; font-weight: 700; color: #fff; }
+    .badge-internet { background: #2563eb; }
+    .badge-govcloud { background: #047857; }
+    .badge-block { background: #b91c1c; }
+    .preview { max-width: 260px; overflow-wrap: anywhere; color: #4b5563; }
+    code, .rid { font-family: Consolas, monospace; font-size: .78rem; color: #6b7280; }
+    .pager { margin-top: .7rem; display: flex; gap: .9rem; align-items: center; font-size: .88rem; }
+    .pager a { color: #2563eb; text-decoration: none; border: 1px solid #d1d5db; border-radius: 6px; padding: .15rem .6rem; }
+    .pager a.off { color: #9ca3af; pointer-events: none; }
+    .pager a.cur { background: #2563eb; color: #fff; border-color: #2563eb; }
+    .empty { margin-top: 1rem; border: 1px dashed #d1d5db; border-radius: 8px; padding: 1rem; color: #6b7280; }
+  </style>
+</head>
+<body>
+  <h1>{{ page_title }}<span class="muted">（指标卡 · 路由/部门/类别 SVG 柱状图 · 审计明细分页）</span></h1>
+  <p class="muted">数据服务端直读审计存储（只存脱敏内容，§5.4 零明文硬闸）；统计日界为 UTC。
+     产生新事件后点 <a href="/webui/dashboard?page={{ page }}&amp;page_size={{ page_size }}">刷新</a>；
+     对话入口见 <a href="/webui/chat">对话双屏</a>。</p>
+
+  <div class="cards">
+    <div class="card"><div class="num" id="kpi-today-total">{{ kpi.today_total }}</div>
+      <div class="cap">今日请求（UTC）</div></div>
+    <div class="card block"><div class="num" id="kpi-today-blocked">{{ kpi.today_blocked }}</div>
+      <div class="cap">今日拦截</div></div>
+    <div class="card"><div class="num">{{ kpi.today_block_rate }}%</div>
+      <div class="cap">今日拦截率</div></div>
+    <div class="card"><div class="num" id="kpi-total">{{ kpi.total }}</div>
+      <div class="cap">累计事件</div></div>
+    <div class="card block"><div class="num">{{ kpi.blocked_total }}</div>
+      <div class="cap">累计拦截</div></div>
+  </div>
+
+  <h2>路由分布</h2>
+  <div class="charts">
+    <div class="chart-box" id="chart-routes">{{ svg_routes | safe }}</div>
+    <div class="chart-box" id="chart-depts">{{ svg_depts | safe }}</div>
+    <div class="chart-box" id="chart-categories">{{ svg_categories | safe }}</div>
+  </div>
+
+  <h2>审计明细</h2>
+  {% if rows %}
+  <table>
+    <thead><tr>
+      <th>时间（UTC）</th><th>部门</th><th>路由</th><th>理由</th><th>标记</th>
+      <th>类别计数</th><th>上游</th><th>耗时</th><th>prompt 预览（已脱敏）</th><th>request_id</th>
+    </tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr class="audit-row">
+        <td class="rid">{{ r.ts }}</td>
+        <td>{{ r.dept }}</td>
+        <td>{{ r.badge | safe }}</td>
+        <td>{{ r.reasons }}</td>
+        <td>{{ r.flags }}</td>
+        <td>{{ r.counts }}</td>
+        <td>{{ r.upstream }}</td>
+        <td>{{ r.latency_ms }} ms</td>
+        <td class="preview">{{ r.preview }}</td>
+        <td class="rid">{{ r.request_id }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="pager">
+    {% set q = "&page_size=" ~ page_size %}
+    {% if page > 1 %}<a href="/webui/dashboard?page={{ page - 1 }}{{ q }}">上一页</a>
+    {% else %}<a class="off" href="/webui/dashboard?page={{ page }}{{ q }}">上一页</a>{% endif %}
+    <span>第 {{ page }} / {{ total_pages }} 页 · 共 {{ total }} 条</span>
+    {% if page < total_pages %}<a id="pager-next" href="/webui/dashboard?page={{ page + 1 }}{{ q }}">下一页</a>
+    {% else %}<a class="off" id="pager-next" href="/webui/dashboard?page={{ page }}{{ q }}">下一页</a>{% endif %}
+    <span class="muted">每页
+      {% for ps in page_sizes %}
+      {% if ps == page_size %}<b>{{ ps }}</b>{% else %}<a href="/webui/dashboard?page=1&amp;page_size={{ ps }}">{{ ps }}</a>{% endif %}
+      {% endfor %}
+    条</span>
+  </div>
+  {% else %}
+  <div class="empty">暂无审计事件——到 <a href="/webui/chat">对话双屏</a> 发起对话，或运行演示控制页的场景材料后再回来看板。</div>
+  {% endif %}
+</body>
+</html>

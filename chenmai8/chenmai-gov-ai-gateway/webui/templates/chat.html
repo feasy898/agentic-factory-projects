@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>政务 AI 安全网关 · 对话双屏</title>
+  <style>
+    body { font-family: system-ui, "Microsoft YaHei", sans-serif; margin: 1.5rem auto; max-width: 1180px; color: #1f2937; }
+    h1 { font-size: 1.4rem; border-bottom: 2px solid #2563eb; padding-bottom: .4rem; }
+    .muted { color: #6b7280; font-size: .85rem; }
+    .panes { display: flex; gap: 1rem; align-items: stretch; }
+    .pane { flex: 1; border: 1px solid #d1d5db; border-radius: 8px; padding: 1rem; min-width: 0; }
+    .pane h2 { font-size: 1rem; margin: 0 0 .6rem; }
+    .pane.upstream { background: #f8fafc; }
+    #history { min-height: 320px; max-height: 460px; overflow-y: auto; }
+    .msg { margin: .5rem 0; padding: .5rem .7rem; border-radius: 8px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .msg.user { background: #eff6ff; border: 1px solid #bfdbfe; }
+    .msg.assistant { background: #f0fdf4; border: 1px solid #bbf7d0; }
+    .msg .badge { margin-right: .4rem; }
+    .msg.bubble-blocked { background: #fef2f2; border: 1px solid #fecaca; }
+    .badge { display: inline-block; padding: .1rem .45rem; border-radius: 999px; font-size: .72rem; font-weight: 700; color: #fff; }
+    .badge-internet { background: #2563eb; }
+    .badge-govcloud { background: #047857; }
+    .badge-block { background: #b91c1c; }
+    .toolbar { display: flex; gap: .6rem; flex-wrap: wrap; align-items: center; margin: .8rem 0; }
+    textarea#input { width: 100%; min-height: 84px; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 8px; padding: .55rem; font-size: .92rem; }
+    button { border: 0; border-radius: 6px; background: #2563eb; color: #fff; font-size: .92rem; font-weight: 600; padding: .45rem 1.1rem; cursor: pointer; }
+    button.off { background: #9ca3af; cursor: not-allowed; }
+    select { padding: .3rem .4rem; border: 1px solid #d1d5db; border-radius: 6px; font-size: .88rem; }
+    label { font-size: .88rem; }
+    #upstream-log { min-height: 200px; max-height: 420px; overflow-y: auto; }
+    .u-block { border: 1px solid #cbd5e1; border-radius: 8px; padding: .5rem .7rem; margin: .5rem 0; background: #fff; }
+    .u-block .head { font-size: .78rem; color: #475569; margin-bottom: .3rem; }
+    .u-text { font-family: Consolas, monospace; font-size: .82rem; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .u-map { font-size: .74rem; color: #64748b; margin-top: .3rem; }
+    code { background: #f3f4f6; padding: 0 .3rem; }
+  </style>
+</head>
+<body>
+  <h1>{{ page_title }}<span class="muted">（左栏：脱敏后对话；右栏：上游实际收到内容 · §10 场景1 双屏对比）</span></h1>
+  <p class="muted">演示模式（无登录，部门 Key 为演示明文）。页面对话流：
+    <code>/internal/anonymize</code> 实时取右栏脱敏视图 →
+    <code>/v1/chat/completions</code> 出网（勾选流式时经 <code>text/event-stream</code> SSE 逐 delta 渲染） →
+    响应头 <code>x-anongw-route</code> 路由徽标；涉密/注入命中 403 拦截卡。
+    审计明细见 <a href="/webui/dashboard">审计看板</a>。</p>
+
+  <div class="toolbar">
+    <label>部门 <select id="dept-select">
+      {% for d in depts %}<option value="{{ d.key }}">{{ d.name }}</option>{% endfor %}
+    </select></label>
+    <label>模型 <select id="model-select">
+      {% for m in models %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+    </select></label>
+    <label><input type="checkbox" id="stream-toggle" checked> 流式（SSE）</label>
+    <span class="muted">会话 <span id="session-id" class="rid" style="font-family:Consolas,monospace;font-size:.78rem"></span></span>
+    <label><input type="checkbox" id="reuse-session" checked> 携带 x-anongw-session-id 续接同会话</label>
+  </div>
+
+  <div class="panes">
+    <div class="pane">
+      <h2>对话（客户端视角 · 还原后原值回显）</h2>
+      <div id="history"></div>
+      <textarea id="input" placeholder="输入消息（含敏感信息即可见脱敏效果），Ctrl+Enter 发送"></textarea>
+      <div style="margin-top:.5rem; display:flex; gap:.6rem; align-items:center;">
+        <button id="send-btn">发送</button>
+        <span id="status" class="muted"></span>
+      </div>
+    </div>
+    <div class="pane upstream">
+      <h2>上游实际收到内容（脱敏视图）</h2>
+      <p class="muted">经 <code>/internal/anonymize</code>（同 session、同 MASK_KEY）实时取占位符版本——与上游真实收到的 prompt 一致；客户端侧由网关还原为原值。</p>
+      <div id="upstream-log"></div>
+    </div>
+  </div>
+
+<script>
+"use strict";
+const DEPTS = {{ depts | tojson }};
+const CHAT_URL = "/v1/chat/completions";
+const ANONYMIZE_URL = "/internal/anonymize";
+const MATERIAL_TEXT_URL = "/webui/demo/materials";
+const history = [];
+let sessionId = "sess_" + Array.from(crypto.getRandomValues(new Uint8Array(8)),
+  b => b.toString(16).padStart(2, "0")).join("");
+
+const $ = id => document.getElementById(id);
+$("session-id").textContent = sessionId;
+
+function deptKey() { return $("dept-select").value; }
+function authHeaders() {
+  const h = { "Authorization": "Bearer " + deptKey() };
+  if ($("reuse-session").checked) h["x-anongw-session-id"] = sessionId;
+  return h;
+}
+function routeBadge(route) {
+  const cls = route === "GOVCLOUD" ? "badge-govcloud" : (route === "BLOCK" ? "badge-block" : "badge-internet");
+  return '<span class="badge ' + cls + '">' + route + "</span>";
+}
+function addMessage(cls, html) {
+  const div = document.createElement("div");
+  div.className = "msg " + cls;
+  div.innerHTML = html;
+  $("history").appendChild(div);
+  div.scrollIntoView({ block: "end" });
+  return div;
+}
+function upstreamBlock(head, text, mappingNote) {
+  const div = document.createElement("div");
+  div.className = "u-block";
+  div.innerHTML = '<div class="head">' + head + '</div><div class="u-text"></div>' +
+    (mappingNote ? '<div class="u-map"></div>' : "");
+  div.querySelector(".u-text").textContent = text;
+  if (mappingNote) div.querySelector(".u-map").textContent = mappingNote;
+  $("upstream-log").appendChild(div);
+  div.scrollIntoView({ block: "end" });
+}
+
+async function showUpstreamReceived(text) {
+  const resp = await fetch(ANONYMIZE_URL, {
+    method: "POST", headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify({ text: text, session_id: sessionId }),
+  });
+  if (!resp.ok) {
+    upstreamBlock("上游实收视图获取失败（HTTP " + resp.status + "）", "—");
+    return;
+  }
+  const data = await resp.json();
+  const n = Array.isArray(data.mappings) ? data.mappings.length : 0;
+  upstreamBlock("本轮上游实收（" + (n ? n + " 条占位符替换" : "无占位符") + "）",
+                data.masked || "", data.session_id ? "session: " + data.session_id : "");
+}
+
+async function consumeStream(resp, bubble) {
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let buf = "", answer = "", frameNo = 0, finish = "";
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += decoder.decode(value, { stream: true });
+    let idx;
+    while ((idx = buf.indexOf("\n\n")) >= 0) {
+      const frame = buf.slice(0, idx); buf = buf.slice(idx + 2);
+      if (!frame.trim()) continue;
+      const line = frame.split("\n").find(l => l.startsWith("data:"));
+      if (!line) continue;
+      const payload = line.slice(5).trim();
+      if (payload === "[DONE]") { frameNo++; continue; }
+      frameNo++;
+      let ev;
+      try { ev = JSON.parse(payload); } catch (e) { continue; }
+      const c = ev.choices && ev.choices[0];
+      if (!c) continue;
+      if (c.delta && typeof c.delta.content === "string") {
+        answer += c.delta.content;
+        bubble.querySelector(".content").textContent = answer;
+      }
+      if (c.finish_reason) finish = c.finish_reason;
+    }
+  }
+  bubble.querySelector(".meta").textContent = "finish=" + finish + " · SSE " + frameNo + " 帧";
+  return answer;
+}
+
+async function send() {
+  const text = $("input").value.trim();
+  if (!text) return;
+  $("send-btn").classList.add("off"); $("send-btn").disabled = true;
+  $("status").textContent = "发送中…";
+  try {
+    addMessage("user", esc(text));
+    $("input").value = "";
+    await showUpstreamReceived(text);
+
+    const stream = $("stream-toggle").checked;
+    const messages = [...history, { role: "user", content: text }];
+    const resp = await fetch(CHAT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...authHeaders() },
+      body: JSON.stringify({ model: $("model-select").value, messages: messages, stream: stream }),
+    });
+    const route = resp.headers.get("x-anongw-route") || "";
+    if (!resp.ok) {
+      let payload = {};
+      try { payload = await resp.json(); } catch (e) { /* 非 JSON 错误体 */ }
+      const err = payload.error || {};
+      // content_blocked = 涉密/涉敏拦截（§5.6 403 语义）；upstream_error 等泛化错误同卡渲染
+      const code = err.code || "error";
+      const isBlocked = code === "content_blocked";
+      addMessage("bubble-blocked",
+        (route ? routeBadge(route)
+               : '<span class="badge badge-block">HTTP ' + resp.status + "</span>") +
+        " <b>" + esc(code) + "</b>" + (isBlocked ? "（涉密/涉敏或注入指令拦截）" : "") +
+        "<br>" + esc(err.message || "请求失败") +
+        (Array.isArray(err.reasons) && err.reasons.length
+          ? '<div class="muted">reasons: ' + esc(err.reasons.join("、")) + "</div>" : ""));
+      $("status").textContent = "已拦截/失败（HTTP " + resp.status + "）";
+      return;
+    }
+    const bubble = addMessage("assistant",
+      (route ? routeBadge(route) : "") + '<div class="content"></div><div class="meta muted"></div>');
+    let answer;
+    if (stream) {
+      answer = await consumeStream(resp, bubble);
+    } else {
+      const data = await resp.json();
+      answer = (data.choices && data.choices[0].message && data.choices[0].message.content) || "";
+      bubble.querySelector(".content").textContent = answer;
+      bubble.querySelector(".meta").textContent = "非流式 · 200";
+    }
+    history.push({ role: "user", content: text }, { role: "assistant", content: answer });
+    $("status").textContent = "完成" + (route ? " · route=" + route : "");
+  } catch (e) {
+    $("status").textContent = "发送失败: " + e.message;
+  } finally {
+    $("send-btn").classList.remove("off"); $("send-btn").disabled = false;
+  }
+}
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g,
+    ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+}
+
+$("send-btn").addEventListener("click", send);
+$("input").addEventListener("keydown", e => { if (e.ctrlKey && e.key === "Enter") send(); });
+
+// 演示控制页一键载入：?material=<白名单文件名> → 取场景材料纯文本填入输入框
+(async () => {
+  const name = new URLSearchParams(location.search).get("material");
+  if (!name) return;
+  try {
+    const resp = await fetch(MATERIAL_TEXT_URL + "/" + encodeURIComponent(name) + "/text");
+    if (!resp.ok) throw new Error("HTTP " + resp.status);
+    const data = await resp.json();
+    $("input").value = data.text || "";
+    $("status").textContent = "已载入场景材料 " + name + "（" + (data.text || "").length + " 字符）";
+  } catch (e) {
+    $("status").textContent = "场景材料载入失败: " + e.message;
+  }
+})();
+</script>
+</body>
+</html>
