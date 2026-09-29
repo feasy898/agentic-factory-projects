@@ -29,8 +29,19 @@
 
 ## P1（知识工程）
 
-- [ ] **课标覆盖检查器**：`tools/check_standard_coverage.py`——knowledge json 的 standard_ref 与
+- [x] **课标覆盖检查器**：`tools/check_standard_coverage.py`——knowledge json 的 standard_ref 与
   课标主题清单对照，报告缺口。
+  （完成于本轮，待主会话提交：src/xuexing/standard_coverage.py（确定性内核）+
+  tools/check_standard_coverage.py（CLI：--grades/--format text|json，退出码 0/1/2）+
+  data/curriculum/math_standard_2022_topics.json（2022 课标第四学段主题清单 28 条，领域/
+  主题结构经课标原文核实，aliases 经全库 101 条 standard_ref 逐条核验：全归属+全覆盖，
+  无跨条目重复关键词）+ specs/drafts/standard_coverage.spec.md +
+  tests/contract/test_standard_coverage_contract.py（19 项）+
+  tests/data/test_standard_coverage_data.py（6 项，含 7 个已知多归属闭式与 7 年级子库
+  16 条覆盖缺口闭式），已登记 run_contract 与根 conftest MODULES；全套 312 测试 +
+  validate_knowledge + run_contract --impl-dir 注入自检全绿。附带修复：
+  kp_rta_apply 的 standard_ref 截断（检查器显形后按课标原句补全，math_grade9.json 与
+  生成物 math_all.json 各 1 行））
 - [ ] **误解库扩充管线**：把 Eedi "错误→误解模式"思想落地：每 KP ≥2 条典型误解 + signature 答案 +
   教学提示，数据测试强制（每 KP 有误解或显式声明无）。
 - [ ] **题库 schema v2**：加 source（原创/真题改编/LLM生成+验证）、verification（双代理独立解题一致性）

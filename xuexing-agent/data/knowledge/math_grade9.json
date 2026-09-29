@@ -44,6 +44,6 @@
     {"id": "kp_trig_def", "name": "锐角三角函数的定义", "subject": "math", "grade": 9, "cluster": "锐角三角函数", "description": "在直角三角形中，利用相似（比值不变）认识锐角三角函数：sin A=对边/斜边，cos A=邻边/斜边，tan A=对边/邻边", "standard_ref": "2022课标：利用相似的直角三角形，探索并认识锐角三角函数（sin A、cos A、tan A）", "prereqs": ["kp_angles", "kp_similar_judge"]},
     {"id": "kp_trig_special", "name": "特殊角的三角函数值", "subject": "math", "grade": 9, "cluster": "锐角三角函数", "description": "30°、45°、60° 角的正弦、余弦、正切值及其应用，含简单的互余关系 sin A=cos(90°-A) 的运用", "standard_ref": "2022课标：知道 30°、45°、60° 角的三角函数值", "prereqs": ["kp_trig_def"]},
     {"id": "kp_rta_solve", "name": "解直角三角形", "subject": "math", "grade": 9, "cluster": "锐角三角函数", "description": "已知直角三角形的两个元素（至少一个是边），利用勾股关系、两锐角互余及边角关系（三角函数）求出其余元素", "standard_ref": "2022课标：能用锐角三角函数解直角三角形", "prereqs": ["kp_trig_def", "kp_trig_special", "kp_pythagorean"]},
-    {"id": "kp_rta_apply", "name": "解直角三角形的实际应用", "subject": "math", "grade": 9, "cluster": "锐角三角函数", "description": "仰角与俯角、坡度与坡角、方位角等问题：把实际问题抽象为直角三角形模型，选择恰当的三角函数求解", "standard_ref": "2022课标：能用相关知识解决一些简单的实际问题", "prereqs": ["kp_rta_solve"]}
+    {"id": "kp_rta_apply", "name": "解直角三角形的实际应用", "subject": "math", "grade": 9, "cluster": "锐角三角函数", "description": "仰角与俯角、坡度与坡角、方位角等问题：把实际问题抽象为直角三角形模型，选择恰当的三角函数求解", "standard_ref": "2022课标：能用锐角三角函数解直角三角形，能用相关知识解决一些简单的实际问题", "prereqs": ["kp_rta_solve"]}
   ]
 }

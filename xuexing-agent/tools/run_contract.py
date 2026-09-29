@@ -27,6 +27,7 @@ MODULE_TEST_FILES = {
     "blueprint": ["test_blueprint_contract.py"],
     "grading": ["test_grading_contract.py"],
     "recommend": ["test_recommend_contract.py"],
+    "standard_coverage": ["test_standard_coverage_contract.py"],
 }
 
 
