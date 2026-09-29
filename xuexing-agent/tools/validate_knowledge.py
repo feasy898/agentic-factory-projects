@@ -1,6 +1,6 @@
 """知识库验证器：图谱/题库/误解库/母题库的合并完整性检查。
 
-用法：python tools/validate_knowledge.py [--min-items-per-kp 3]
+用法：python tools/validate_knowledge.py [--min-items-per-kp 3] [--min-mc-per-kp 2]
 退出码 0=通过；非 0=有错误（错误清单打印到 stdout）。
 """
 import argparse
@@ -14,6 +14,7 @@ sys.path.insert(0, os.path.join(ROOT, "src"))
 
 from xuexing.itembank import itembank_from_dict  # noqa: E402
 from xuexing.kpgraph import kpgraph_from_dict  # noqa: E402
+from xuexing.misconception_coverage import audit, parse_bank  # noqa: E402
 
 GRADE_FILES = {
     7: os.path.join(ROOT, "data", "knowledge", "math_grade7.json"),
@@ -25,6 +26,8 @@ GRADE_FILES = {
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--min-items-per-kp", type=int, default=3)
+    ap.add_argument("--min-mc-per-kp", type=int, default=2,
+                    help="每个知识点最少的典型误解条数（或显式声明无误解）")
     args = ap.parse_args()
     errors: list[str] = []
 
@@ -98,21 +101,31 @@ def main() -> int:
             if n < args.min_items_per_kp:
                 errors.append(f"coverage: {kp_id} has {n} primary items (< {args.min_items_per_kp})")
 
-    # ---------- 3) 误解库 ----------
-    mc_ids: set[str] = set()
-    for path in sorted(glob.glob(os.path.join(ROOT, "data", "misconceptions", "*.json"))):
+    # ---------- 3) 误解库：结构校验 + 覆盖门（每 KP ≥ N 条或显式声明无） ----------
+    all_entries, all_exemptions = [], []
+    mc_files = sorted(glob.glob(os.path.join(ROOT, "data", "misconceptions", "*.json")))
+    if not mc_files:
+        errors.append("no misconception files found")
+    for path in mc_files:
+        tag = os.path.basename(path)
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
-        for mc in data["misconceptions"]:
-            if mc["id"] in mc_ids:
-                errors.append(f"duplicate misconception id: {mc['id']}")
-            mc_ids.add(mc["id"])
-            if mc.get("kp_id") not in kp_ids:
-                errors.append(f"{mc['id']}: unknown kp {mc.get('kp_id')}")
-            if not str(mc.get("hint", "")).strip():
-                errors.append(f"{mc['id']}: empty hint")
-            if not mc.get("signature"):
-                errors.append(f"{mc['id']}: empty signature")
+        try:
+            entries, exemptions = parse_bank(data)
+        except Exception as e:  # noqa: BLE001
+            errors.append(f"misconception bank {tag}: {e}")
+            continue
+        all_entries.extend(entries)
+        all_exemptions.extend(exemptions)
+    mc_ids = {e.id for e in all_entries}
+    try:
+        rep = audit(kp_ids, all_entries, all_exemptions, min_per_kp=args.min_mc_per_kp)
+        errors.extend(
+            f"misconception coverage: {kp} has {count} (< {args.min_mc_per_kp}, "
+            f"且无'无误解'声明)"
+            for kp, count in rep.counts if kp in rep.deficient_kp_ids)
+    except Exception as e:  # noqa: BLE001
+        errors.append(f"misconception coverage: {e}")
     for it in all_items:
         for m in it.get("misconceptions", []):
             if m not in mc_ids:
@@ -158,7 +171,8 @@ def main() -> int:
         return 1
     print(
         f"VALIDATION OK: {len(kp_ids)} kps, {len(all_items)} items, "
-        f"{len(mc_ids)} misconceptions, {len(seen_arch)} archetypes"
+        f"{len(mc_ids)} misconceptions (>= {args.min_mc_per_kp} per kp "
+        f"or exempt, {len(all_exemptions)} exempt), {len(seen_arch)} archetypes"
     )
     return 0
 

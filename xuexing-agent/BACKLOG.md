@@ -42,8 +42,16 @@
   validate_knowledge + run_contract --impl-dir 注入自检全绿。附带修复：
   kp_rta_apply 的 standard_ref 截断（检查器显形后按课标原句补全，math_grade9.json 与
   生成物 math_all.json 各 1 行））
-- [ ] **误解库扩充管线**：把 Eedi "错误→误解模式"思想落地：每 KP ≥2 条典型误解 + signature 答案 +
+- [x] **误解库扩充管线**：把 Eedi "错误→误解模式"思想落地：每 KP ≥2 条典型误解 + signature 答案 +
   教学提示，数据测试强制（每 KP 有误解或显式声明无）。
+  （完成于本轮，待主会话提交：src/xuexing/misconception_coverage.py（确定性内核：
+  parse_bank/audit/audit_dicts，结构校验 + 覆盖门 + 豁免语义 + 同 KP 签名去重）+
+  specs/drafts/misconception_coverage.spec.md + tests/contract/test_misconception_coverage_contract.py
+  （20 项）+ tests/data/test_misconception_coverage_data.py（7 项，含覆盖门咬合与算术闭式抽查）；
+  误解库数据 65→202 条（g7 +49 / g8 +38 / g9 +50，全部逐条验算，101 KP 恰各 2 条，
+  签名跨条目同 KP 不重复）；validate_knowledge.py 新增 --min-mc-per-kp 覆盖门（默认 2）；
+  已登记 run_contract 与根 conftest MODULES；全套 339 测试 + validate_knowledge +
+  run_contract --impl-dir 注入自检全绿）
 - [ ] **题库 schema v2**：加 source（原创/真题改编/LLM生成+验证）、verification（双代理独立解题一致性）
   字段，validate_item 校验 v2 字段完整性。
 
