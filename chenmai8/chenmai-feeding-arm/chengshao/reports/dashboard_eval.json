@@ -6,7 +6,7 @@
     "passed": 5,
     "failed": 0,
     "errors": 0,
-    "exit_status": 1,
+    "exit_status": 0,
     "page_http_status": 200,
     "static_assets_all_200": true,
     "first_party_external_refs": 0,
@@ -33,5 +33,5 @@
     "sse_required": true,
     "offline_external_refs_allowed": 0
   },
-  "pass": false
+  "pass": true
 }

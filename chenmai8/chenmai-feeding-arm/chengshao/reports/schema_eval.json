@@ -6,11 +6,11 @@
     "passed": 83,
     "failed": 0,
     "errors": 0,
-    "exit_status": 1
+    "exit_status": 0
   },
   "thresholds": {
     "all_green": true,
     "negative_validation_cases_min": 12
   },
-  "pass": false
+  "pass": true
 }
