@@ -1,0 +1,195 @@
+# =====================================================================
+# M5 RulesV0 · 规则表（beaneye/classify/rules.py 的数据源）
+# ---------------------------------------------------------------------
+# 阈值即数据：本文件是 RulesV0 的全部类别知识，代码不含任何类别阈值。
+# 阈值标定口径：程序化合成盘（beaneye/synth，开发种子 604100-604112，13 盘
+# 448 粒）逐粒特征分布的 p05/p95 之间取分界；D7 真实豆照片回填时只改本
+# 文件（另见 docs/collect_protocol.md 回灌约定）。
+#
+# schema（未列出的键拒绝加载；错误信息带路径）：
+#   version            schema 版本，当前 1
+#   defaults.normal_conf  无规则命中时 normal 的置信度 [0,1]
+#   features.{...}     特征提取参数（beaneye.classify.features.FeatureParams
+#                      字段名；缺省 = 代码缺省值，全部 ≥ 0 数值）
+#   references         CIE76 色差参考点（CIE L*a*b* 量纲）：
+#                      black_ref_cie / premium_ref_cie 各 [L,a,b]
+#   rules[]            规则列表（顺序不影响裁决）：
+#     defect           taxonomy 缺陷类 key（不得为 normal）
+#     conf             规则命中强度 [0,1]
+#     when[]           条件列表（全部 AND 命中才算命中）：
+#       {feat, op, value}
+#       feat ∈ beaneye.classify.features.FEATURE_NAMES
+#       op  ∈ lt | le | gt | ge
+#
+# 裁决语义（开发指令 §4 M5）：全部规则逐条评估；多规则命中取 severity 高者
+# （severity_rank 从 configs/taxonomy.yaml 读，单一真源），平级取 conf 高者；
+# 无命中 → normal。
+#
+# 特征标度速记（lab8 = OpenCV 8-bit LAB：L∈[0,255]，a/b=128 为中性）。
+# 逐类主指纹（合成类画像 beaneye/synth/beans.py CLASS_PROFILES 下，4 个开发
+# 种子基础 × 13 盘 × 34 粒的 pooled 实测分界，p05/p95）：
+#   black    亮度极低（l_mean 41-82）且 b 通道低（<141）、低纹理（l_std 小）；
+#   sour     a 通道偏红（a_mean 唯一 >128.5 的类）；
+#   dried    轮廓波纹 → circularity 0.62-0.82（其余类 ≥0.89）；
+#   insect   内部深色圆孔带受蚀亮圈（n_holes_with_rim ≥1）或多孔（≥2 圆斑）；
+#   elephant 尺寸显著大（eq_d p50 7.7mm，其余类 ≤7.2mm）+ 长轴 ≥8mm；
+#   shell    单条贴边深色空腔弧（l_p50_minus_p05 98-132，无亮环）；
+#   peaberry 近圆（aspect 1.04-1.26）且无中缝（crease_contrast 低）；
+#   immature 高亮度偏绿（l_mean ≥151 且 a_mean ≤118）+ 有中缝 + 小粒
+#            + 距精品参考色差偏大（de_premium）；
+#   faded    极高亮度（l_mean 183-223）且 a 偏中性（≥120）且无中缝；
+#   mold     亮斑（l_p95_minus_p50 高）或暗/亮双高（花斑底）；
+#   brocade  多枚深色圆斑，或「对比度+纹理+色相发散」三联（花斑把色相直方
+#            摊薄，hue_peak_frac ≤0.95 为花脸强指纹，好豆 p25=0.988）；
+#   broken   弦切真直边（straight_seg_mm ≥3.0；光滑椭圆平侧弦 ≤2.7mm、
+#            干瘪波纹径向偏差 ≥0.16mm，与弦口锯齿 ≤0.10mm 由真直边定义分离）。
+# 交叉防护（规则条件里显式写出的排他项，防 severity 高者误吞）：
+#   - dried/broken 同为低圆度：dried 规则带 straight<2.85、broken 规则带
+#     straight≥3.0 且 eq<7.0（排除象豆被 broken 吞），互斥；
+#   - peaberry 与破碎弓形段同为「近圆无中缝」：peaberry 规则带
+#     straight<2.8 排除带弦切口的弓形段，a<126 排除酸豆；
+#   - mold 高亮斑与虫孔亮缘相似：mold 两规则均带 n_holes_with_rim<1；
+#   - shell 深色主指纹与 mold 暗底混淆：shell 规则带 bright_frac<0.06；
+#   - immature 高亮角与亮盘好豆重叠：a<117 + de_premium≥7.6 + eq<5.45
+#     三重收紧（阈值用 4 开发种子 pooled 分布验证 normal 误报 ≤1/160）；
+#   - faded 与 immature 同为高亮：以 a_mean（绿/中性）+中缝有无区分。
+# =====================================================================
+version: 1
+
+defaults:
+  normal_conf: 0.6
+
+features:
+  erode_px: 2
+  hole_rim_margin: 22.0
+  hole_max_elong: 2.0
+  blob_dark_margin: 14.0
+
+references:
+  black_ref_cie: [25.0, 6.0, 7.0]
+  premium_ref_cie: [55.0, -12.0, 22.0]
+
+rules:
+  - defect: black
+    conf: 0.92
+    when:
+      - {feat: lab_l_mean, op: lt, value: 95.0}
+      - {feat: lab_a_mean, op: gt, value: 124.0}
+      - {feat: lab_b_mean, op: lt, value: 141.0}
+      - {feat: lab_l_std, op: lt, value: 11.5}
+      - {feat: n_holes_with_rim, op: lt, value: 1.0}
+      - {feat: bright_frac, op: lt, value: 0.015}
+
+  - defect: mold
+    conf: 0.90
+    when:
+      - {feat: l_p95_minus_p50, op: ge, value: 26.0}
+      - {feat: lab_a_mean, op: lt, value: 126.5}
+      - {feat: lab_l_mean, op: ge, value: 95.0}
+      - {feat: n_holes_with_rim, op: lt, value: 1.0}
+
+  - defect: mold
+    conf: 0.82
+    when:
+      - {feat: dark_frac, op: ge, value: 0.15}
+      - {feat: bright_frac, op: ge, value: 0.03}
+      - {feat: lab_a_mean, op: lt, value: 126.5}
+      - {feat: lab_l_mean, op: ge, value: 95.0}
+      - {feat: n_holes_with_rim, op: lt, value: 1.0}
+
+  - defect: sour
+    conf: 0.88
+    when:
+      - {feat: lab_a_mean, op: gt, value: 128.5}
+      - {feat: circularity, op: ge, value: 0.88}
+      - {feat: lab_l_mean, op: ge, value: 90.0}
+
+  - defect: dried
+    conf: 0.85
+    when:
+      - {feat: circularity, op: lt, value: 0.82}
+      - {feat: straight_seg_mm, op: lt, value: 2.85}
+      - {feat: lab_l_mean, op: ge, value: 85.0}
+      - {feat: lab_l_mean, op: lt, value: 150.0}
+
+  - defect: insect
+    conf: 0.90
+    when:
+      - {feat: n_holes_with_rim, op: ge, value: 1.0}
+      - {feat: lab_l_mean, op: ge, value: 85.0}
+
+  - defect: insect
+    conf: 0.80
+    when:
+      - {feat: n_dark_round_holes, op: ge, value: 2.0}
+      - {feat: lab_l_mean, op: ge, value: 95.0}
+      - {feat: bright_frac, op: lt, value: 0.10}
+
+  - defect: elephant
+    conf: 0.85
+    when:
+      - {feat: eq_diameter_mm, op: ge, value: 7.5}
+      - {feat: length_mm, op: ge, value: 8.0}
+
+  - defect: shell
+    conf: 0.85
+    when:
+      - {feat: l_p50_minus_p05, op: ge, value: 70.0}
+      - {feat: lab_l_mean, op: ge, value: 95.0}
+      - {feat: bright_frac, op: lt, value: 0.06}
+
+  - defect: peaberry
+    conf: 0.85
+    when:
+      - {feat: aspect_mm, op: lt, value: 1.28}
+      - {feat: crease_contrast, op: lt, value: 18.0}
+      - {feat: straight_seg_mm, op: lt, value: 2.8}
+      - {feat: lab_l_mean, op: lt, value: 165.0}
+      - {feat: lab_a_mean, op: lt, value: 126.0}
+      - {feat: eq_diameter_mm, op: lt, value: 6.9}
+
+  - defect: immature
+    conf: 0.85
+    when:
+      - {feat: lab_l_mean, op: ge, value: 146.5}
+      - {feat: lab_a_mean, op: lt, value: 117.0}
+      - {feat: de_premium, op: ge, value: 7.6}
+      - {feat: crease_contrast, op: ge, value: 20.0}
+      - {feat: straight_seg_mm, op: lt, value: 2.8}
+      - {feat: eq_diameter_mm, op: lt, value: 5.45}
+
+  - defect: faded
+    conf: 0.88
+    when:
+      - {feat: lab_l_mean, op: ge, value: 168.0}
+      - {feat: lab_a_mean, op: ge, value: 120.0}
+      - {feat: crease_contrast, op: lt, value: 20.0}
+
+  - defect: brocade
+    conf: 0.85
+    when:
+      - {feat: n_dark_blobs, op: ge, value: 2.0}
+      - {feat: l_p95_minus_p50, op: ge, value: 19.0}
+      - {feat: lab_l_mean, op: ge, value: 95.0}
+      - {feat: l_p50_minus_p05, op: lt, value: 70.0}
+      - {feat: bright_frac, op: lt, value: 0.10}
+
+  - defect: brocade
+    conf: 0.78
+    when:
+      - {feat: l_p95_minus_p50, op: ge, value: 19.0}
+      - {feat: lab_l_std, op: ge, value: 12.5}
+      - {feat: hue_peak_frac, op: le, value: 0.95}
+      - {feat: lab_a_mean, op: lt, value: 126.0}
+      - {feat: lab_l_mean, op: ge, value: 95.0}
+      - {feat: l_p50_minus_p05, op: lt, value: 70.0}
+      - {feat: bright_frac, op: lt, value: 0.10}
+
+  - defect: broken
+    conf: 0.85
+    when:
+      - {feat: straight_seg_mm, op: ge, value: 3.0}
+      - {feat: eq_diameter_mm, op: lt, value: 7.0}
+      - {feat: lab_l_mean, op: ge, value: 95.0}
+      - {feat: lab_l_mean, op: lt, value: 165.0}
+      - {feat: lab_a_mean, op: lt, value: 126.5}
