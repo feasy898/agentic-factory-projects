@@ -132,7 +132,9 @@ DEMO_KEY = "dk_5e6f7a8b"        # 演示明文；config/dept_keys.yaml 只存其
 
 AI_LABEL = "本内容由AI生成"      # config/app.yaml ai_label
 
-READY_TIMEOUT_S = 20.0
+READY_TIMEOUT_S = 60.0          # mock/网关子进程冷启动就绪等待（T8.3 收官批 20→60：
+                                # 共享机 AV/索引峰值下 python+uvicorn 冷启动可 >20s——
+                                # 就绪等待≠性能断言，性能预算在 thresholds 另有常量）
 AUDIT_SETTLE_TIMEOUT_S = 10.0
 U2_REPLAYS = 20                 # §9 U2：流式重放次数
 
@@ -441,7 +443,18 @@ def _start_mock(port: int) -> subprocess.Popen:
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
-    _wait_ready(port, label=f"mock:{port}", proc=proc)
+    # 就绪等待失败（超时/提前退出）→ 先收掉自己的子进程再抛——
+    # T8.3 run2 实锤：等待超时路径抛出时 proc 尚未注册进 main 的 mocks 清单，
+    # finally 收尾不到 → 残留监听进程毒化后续 eval（m5 fixtures 报 port occupied）
+    try:
+        _wait_ready(port, label=f"mock:{port}", proc=proc)
+    except BaseException:
+        proc.terminate()
+        try:
+            proc.wait(timeout=5.0)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+        raise
     return proc
 
 

@@ -131,6 +131,12 @@ QUALITY_REPORT = REPO_ROOT / "data" / "bench" / "quality_report.json"
 GPU_TUNNEL_HEALTH_URL = "http://127.0.0.1:9004/health"
 GPU_TUNNEL_HEALTH_TIMEOUT_S = 4.0
 
+#: 门间残留监听端口（e2e :9000/:8901/:8902/:9010；m11 专用 :9012/:9013/:8911-8913）。
+#: 每项开跑前收割其上的 LISTENING 残留进程（门脚本是子进程，其异常退出路径留下的
+#: 子进程本门够不到——run2 实锤：e2e mock 就绪超时路径泄漏子进程 → 后续 m5 端点
+#: 占用 FAIL）。只收割本门九项用到的端口，不碰其他（含 :9004 隧道）。
+GATE_MANAGED_PORTS = (9000, 8901, 8902, 9010, 9012, 9013, 8911, 8912, 8913)
+
 METRIC_MISS = "（未取到）"
 
 
@@ -157,6 +163,38 @@ def _preflight_tunnel() -> str:
         return f"响应异常 status={resp.status} loaded={body.get('loaded')}（按 DOWN 注记）"
     except Exception as exc:  # noqa: BLE001 — 预检注记，任何异常都归为 DOWN
         return f"DOWN（{type(exc).__name__}: {exc}）—— ⑦ 按其自身口径 SKIP-GPU 计过"
+
+
+def _reap_leftover_listeners() -> list[str]:
+    """收割九项检查所用端口上的残留 LISTENING 进程（返回「端口<-pid」注记列表）。
+
+    netstat 解析失败/无残留都安静返回；只对 GATE_MANAGED_PORTS 生效。
+    """
+    reaped: list[str] = []
+    try:
+        proc = subprocess.run(["netstat", "-ano", "-p", "tcp"],
+                              capture_output=True, timeout=60)
+    except (OSError, subprocess.TimeoutExpired):
+        return reaped
+    pid_by_port: dict[int, str] = {}
+    for line in proc.stdout.decode("utf-8", errors="replace").splitlines():
+        parts = line.split()
+        if len(parts) < 5 or parts[3].upper() != "LISTENING":
+            continue
+        for port in GATE_MANAGED_PORTS:
+            if parts[1].endswith(f":{port}"):
+                pid_by_port.setdefault(port, parts[4])
+                break
+    for port, pid in sorted(pid_by_port.items()):
+        if not pid.isdigit() or pid == "0":
+            continue
+        try:
+            subprocess.run(["taskkill", "/F", "/PID", pid],
+                           capture_output=True, timeout=60)
+            reaped.append(f"{port}<-pid {pid}")
+        except (OSError, subprocess.TimeoutExpired):
+            reaped.append(f"{port}<-pid {pid}(kill 失败)")
+    return reaped
 
 
 def _run_check(name: str, argv: list[str], timeout_s: int) -> tuple[bool, list[str], str, float]:
@@ -334,6 +372,9 @@ def main() -> int:
     items: dict[str, tuple[bool, str]] = {}
     summary_rows: list[tuple[str, bool, list[str], float]] = []
     for name, argv, timeout_s in CHECKS:
+        reaped = _reap_leftover_listeners()
+        if reaped:
+            print(f"[gate_final] 项前端口清理: {'；'.join(reaped)}", flush=True)
         ok, summaries, output, elapsed = _run_check(name, argv, timeout_s)
         items[name] = (ok, output)
         summary_rows.append((name, ok, summaries, elapsed))

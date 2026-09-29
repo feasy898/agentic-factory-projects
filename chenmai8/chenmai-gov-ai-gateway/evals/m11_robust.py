@@ -103,7 +103,8 @@ MASK_KEY = "ab" * 32
 TMP_DIR = REPO_ROOT / "tmp"
 AUDIT_DB = TMP_DIR / "m11_robust_audit.db"
 
-READY_TIMEOUT_S = 20.0
+READY_TIMEOUT_S = 60.0          # 自起服务冷启动就绪等待（T8.3 收官批 20→60：共享机
+                                # AV/索引峰值下冷启动可 >20s；就绪等待≠性能断言）
 FILES_TIMEOUT_S = 120.0         # 51MB 上传的宽限（挂死即 FAIL 的上界）
 AUDIT_SETTLE_TIMEOUT_S = 10.0
 
