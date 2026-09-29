@@ -19,8 +19,13 @@
   tests/contract/test_grading_contract.py（115 项）+ tests/data/test_grading_data.py（4 项），
   已登记 run_contract 与根 conftest MODULES；全套 271 测试 + validate_knowledge +
   run_contract --impl-dir 注入自检全绿）
-- [ ] **知识点掌握 -> 母题推荐**：route.py 的 steps 里挂 recommended_item_ids（从题库按误解标签挑
+- [x] **知识点掌握 -> 母题推荐**：route.py 的 steps 里挂 recommended_item_ids（从题库按误解标签挑
   针对性题）。
+  （完成于本轮，待主会话提交：src/xuexing/recommend.py + specs/drafts/recommend.spec.md +
+  tests/contract/test_recommend_contract.py（16 项）；types.PlanStep 增补默认字段
+  recommended_item_ids（附加式，route 自身按冻结规格非目标不改动，挂载由
+  recommend.attach_recommendations 纯步骤完成）；已登记 run_contract 与根 conftest MODULES；
+  全套 287 测试 + validate_knowledge + run_contract --impl-dir 注入自检全绿）
 
 ## P1（知识工程）
 

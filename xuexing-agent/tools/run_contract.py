@@ -26,6 +26,7 @@ MODULE_TEST_FILES = {
     "kt": ["test_kt_contract.py"],
     "blueprint": ["test_blueprint_contract.py"],
     "grading": ["test_grading_contract.py"],
+    "recommend": ["test_recommend_contract.py"],
 }
 
 

@@ -91,6 +91,9 @@ class PlanStep:
     strategy_id: str
     rationale: str = ""
     target_mastery: float = 0.85
+    # 学习计划步骤的针对性练习题推荐（由 recommend.attach_recommendations 填充；
+    # route 产出的步骤缺省为空列表——route 自身不做内容推荐，见冻结规格非目标）。
+    recommended_item_ids: list[str] = field(default_factory=list)
 
 
 @dataclass
