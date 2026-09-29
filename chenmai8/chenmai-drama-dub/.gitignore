@@ -44,3 +44,6 @@ out/
 jobs/
 *.db
 .mimosa/
+
+# 重生成试验目录（实体在上仓库级 D:\workspace\澄迈8项目\_regen2，此处仅为 junction，勿入库）
+/_regen2/
