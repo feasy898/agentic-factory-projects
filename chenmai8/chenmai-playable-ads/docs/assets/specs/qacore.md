@@ -187,7 +187,9 @@ python/.venv/Scripts/python.exe -m pfcore make --spec specs-eval/demo-zh.json
 | MUT-04 超体积 | 在产物尾部注入垃圾字节使包体 > 渠道 maxBytes | CHK01 | 其余全部不受扰 |
 
 - 后续第二波（对齐规划 §6-M8）：console error 注入（→CHK08）、退出接口缺失（→CHK06 实装后）等。
-- 验收通过线：4/4 mutant 各自精确命中；金标层保持全 pass。
+- 验收通过线（与门禁实装对齐）：**门禁实装 3/3 mutant（MUT-01/02/04）各自精确命中；金标层保持
+  全 pass**。MUT-03 结束页不可达的构造算法已在案（`__PF_QC__.hint()` 恒返回 null 且无死局重排，
+  见下表设计意图），其实装列 M8 全量里程碑，落地后通过线升 4/4。
 - 实装状态：**MUT-01/02/04 已实装**（2026-09-28 收紧，固化于 `scripts/gate_phase0.py` 门项 6：
   对 mini.html 夹具的最小变异，断言 qacore exit 1 且恰好命中对应 CHK；MUT-03 结束页不可达与
   `mutation-test` 独立子命令仍列 M8 全量里程碑）。

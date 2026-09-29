@@ -34,7 +34,7 @@
 - gitignore 约定：`artifacts/`、`tmp/`、`coverage/`、`_vendor/` 不入库；门禁先清旧产物再跑
   （"存在"必须是本次运行的真事实）。
 
-## C4 channel-rules 数据结构（rulesVersion 1.0.0）
+## C4 channel-rules 数据结构（rulesVersion 1.1.0）
 
 ```
 { rulesVersion, updated, defaults{externalUrlPolicy:"forbid", allowedUrlSchemes:["data:","blob:"],
@@ -45,7 +45,8 @@
                  allowedUrlWhitelist[], source } }
 ```
 
-- 现有渠道：`preview / applovin / meta / mintegral`（frozen）；`unity / google / tiktok` planned。
+- 现有渠道（七渠道全 frozen）：`preview / applovin / meta / mintegral / google / unity / tiktok`
+  （google / unity / tiktok 于 rulesVersion 1.1.0 起 frozen）。
 - 结构校验：packager `validateRules`（违例即抛错）。每渠道适配器明细（是否传 URL/就绪条件/注入/禁用）：
   见 [channel-adapters](specs/channel-adapters.md)。
 - `maxBytes` 上限值（内部从严线）：applovin 5,242,880 / meta 3,145,728 / mintegral 5,242,880 / preview 5,242,880。
@@ -81,10 +82,11 @@
 | 8 | 可解性算法双实现（Python/JS 镜像）且与模板运行时随机流分叉（LCG vs mulberry32；I3 判的是校验器自己的盘面） | 每加一个玩法要改三处；两侧人工保持同步 | **可解性单一真源**：模板导出 `check(spec)`，Python 校验器调用（[spec-contract §5](specs/spec-contract.md)） |
 | 9 | 命令名漂移：规划 `make` vs 占位 `run` | 新 agent 会造出第三种流水线入口 | [pipeline-contract §1](specs/pipeline-contract.md) 裁决后删除另一名 |
 | 10 | "渠道规范变化只改配置"在退出路由上不成立（`exit.call` 是人读字符串，新渠道要改规则 JSON + 桥代码两处） | 扩渠道成本被低估 | 接受两处改动的现实并写进扩渠道流程（channel-adapters §4）；或 v2 把 call 变为可执行适配器注册 |
+| 11 | 可解性双实现（Python invariants + TS 镜像）随 Phase2 四模板全实现扩为 **×4 模板**的同步面（痛点 8 的量级升级：每模板的生成/可解性逻辑两语言各一份） | 任一模板可解性/不变式改动需 Python+JS 两侧各改一遍，×4 模板人工保持同步，成本随模板数线性增长 | 收敛方案**待 owner 批准**（候选含 [spec-contract §5](specs/spec-contract.md) 单一真源等）；批准前维持现状登记，不自行改架构 |
 
 ## 版本与变更流程（冻结）
 
-- **版本锚**：PlayableSpec `specVersion = "1.0.0"`（schema 内 const）；规则库 `rulesVersion = "1.0.0"`；
+- **版本锚**：PlayableSpec `specVersion = "1.0.0"`（schema 内 const）；规则库 `rulesVersion = "1.1.0"`；
   桥 `PF_VERSION = "0.1.0"`；包版本见各 package.json。
 - **谁批准**：契约（C1–C6 与痛点候选）变更由仓库 owner / PM 批准；实现者不得单方面变更。
 - **怎么广播**（每次契约变更必须全做）：

@@ -8,10 +8,13 @@
 - 规格驱动：PlayableSpec JSON（schema v1 + 不变式）描述玩法、文案、渠道与质检预算；
   `python -m pfcore validate` 双校验（JSON Schema + Python 模型），`specs-eval/bad/` 6 个坏样本
   全部被拒且错误定位到字段路径
-- 一条命令全流水线：`python -m pfcore make` = 校验 → 三消模板构建（真实可玩单 HTML）→
+- 一条命令全流水线：`python -m pfcore make` = 校验 → 模板构建（三消 / 合成 / 拔针 / 排序
+  四模板，真实可玩单 HTML）→
   按渠道规则库打包 → qacore 无头质检（真实指针事件自动试玩到胜利结束页）→
   汇总页 + 局域网二维码 + 墙钟计时 + `artifacts/demo-prebuilt/` 兜底目录；
   质检不过即退出 1，不产出二维码与兜底目录
+- 四模板全矩阵验收（gate_phase2）：4 golden × {en, zh} × 6 冻结渠道 = 48 包全量
+  真实构建 → 打包 → 逐包 qacore 质检，0 fail 且在预算内（`scripts/gate_phase2.py`）
 - 六渠道打包（规则库已冻结的六投放渠道）：AppLovin / Meta 单 HTML；Mintegral zip
   （Template.html + build.js）；Google / Unity zip（入口 index.html 全内联）；TikTok/Pangle zip
   （index.html + config.json + js-sdk 桩），各带 pack-manifest 旁车
@@ -19,8 +22,8 @@
 - 自动质检（qacore 十项）：包体上限、外网请求拦截、首点前静音、横竖屏、文案与替换素材上屏
   （CHK10）等；未实装项如实标 skip，不算通过
 - 演示走查：`python scripts/demo_walkthrough.py` 自动改 spec（中文标题 + seed+1）→ 跑 make →
-  断言预览 / 三渠道 / 报告 / 二维码 / 兜底目录全部落盘并打印墙钟计时（2026-09-29 留档 28.9s，
-  预算 180s、反馈理想值 90s）
+  断言预览 / 三渠道 / 报告 / 二维码 / 兜底目录全部落盘并打印墙钟计时
+  （留档 28.9s、最近 45.36s，均在 90s 反馈理想值内；预算 180s）
 - 局域网伺服：`python -m pfcore serve` 伺服既有产物目录，现场重建汇总页与二维码（演示日兜底）
 - Web 操作台（webui，M10）：`python -m webui.app --port 8788` 起本地界面（FastAPI + 单页、
   零外链、无登录仅局域网）——选模板 / 传 PNG 素材（按槽位键替换）/ 填文案（每语言内置可改缺省）
@@ -34,15 +37,15 @@
 
 **预留**（规格 / 占位，未接入演示路径）
 
-- 模板：合成、拔针、排序（可解性算法已入校验器，游戏本体未实现）；
-  `pfcore build` / `pack` / `rules-check` 为占位子命令（exit 2）
+- 模板与全矩阵已接通（见上）：三消 / 合成 / 拔针 / 排序四模板 48 包全矩阵 gate_phase2；
+  尚留 `pfcore build` / `pack` / `rules-check` 占位子命令（exit 2，全流水线统一走 make）
 - 渠道：六渠道规则已冻结并全出包实测；qacore 单命令仍只收单 HTML（zip 渠道包由
   e2e_matrix / finalize 先按规则库入口解包再质检）；CHK02 文件数、CHK06 退出接口两项未实装，
   各渠道报告如实记 skip
 - AI 生成：director（截图 / 录屏 → spec 草稿）仅有包占位、修复循环未开工——
   模型接口已留，不演示生成
-- 素材流水线（assetkit，仅包占位）、截图 / 录屏生成试玩、Cocos 工程接入：未实现；
-  webui 的 sort 模板入口随模板构建器注册后开放（当前可选三消 / 合成 / 拔针）
+- 截图 / 录屏生成试玩、Cocos 工程接入：未实现；素材流水线 assetkit 已实现并在 make
+  接线（见上）；webui 的 sort 模板入口待 specgen 注册后开放（当前可选三消 / 合成 / 拔针）
 
 **仓库结构（建设中）**
 
