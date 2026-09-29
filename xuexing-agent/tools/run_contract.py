@@ -23,6 +23,7 @@ MODULE_TEST_FILES = {
     "pedagogy": ["test_scheduler_pedagogy_contract.py"],
     "route": ["test_route_contract.py"],
     "agent_shell": ["test_agent_shell_contract.py"],
+    "kt": ["test_kt_contract.py"],
 }
 
 

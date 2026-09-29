@@ -4,8 +4,10 @@
 
 ## P0（核心能力闭环）
 
-- [ ] **KT 时序追踪**：在 diagnosis 旁加 `kt.py`——同一学习者跨多次会话的掌握度轨迹（遗忘曲线衰减 +
+- [x] **KT 时序追踪**：在 diagnosis 旁加 `kt.py`——同一学习者跨多次会话的掌握度轨迹（遗忘曲线衰减 +
   新证据更新），契约：轨迹单调可解释、可重放。数据基础：XES3G5M 格式对接。
+  （完成于本轮，待主会话提交：src/xuexing/kt.py + specs/drafts/kt.spec.md +
+  tests/contract/test_kt_contract.py（22 项），已登记 run_contract；全套 134 测试 + validate_knowledge 全绿）
 - [ ] **诊断卷蓝图生成器**：`blueprint.py`——输入目标知识点集合+预算题数+认知维度（记忆/理解/应用，
   参考 TIMSS 二维框架），输出 blueprint（供 generate_paper）。契约：认知维度配比约束、覆盖约束。
 - [ ] **主观题判分接口**：Response.correct 目前要求外部给定；加 `grading.py`：数值答案归一化比对
