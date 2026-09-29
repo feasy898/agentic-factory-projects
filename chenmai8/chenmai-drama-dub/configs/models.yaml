@@ -8,7 +8,7 @@
 #   asr_align(:9001, B1/M4)    | /data/xdng/venv-asr | 2.5.1+cu118 | 5.13.0       | asr-core, align-core, emo-tag
 #   tts(:9002, T12/M7)         | /data/xdng/venv     | 2.5.1+cu118 | 4.52.1       | dub-tts（fp32 常驻 cuda:0）；alt-tts-b 懒加载 cuda:1
 #   mt(:9004, T12/M6)          | /data/xdng/venv     | 2.5.1+cu118 | 4.52.x(T12 核实钉版；不兼容则照 venv-asr 的 .pth 复用法另建 venv-mt) | mt-core
-#   TTS/口型组（B2 常驻预留）  | /data/xdng/venv     | 2.5.1+cu118 | 4.52.1       | dub-tts, alt-tts-b, lip-fast, lip-pro
+#   lip(:9003, T16/M10)        | /data/xdng/venv     | 2.5.1+cu118 | 4.52.1       | lip-fast（fp16 常驻物理 cuda:1，另需 diffusers/mmpose/mmcv/face-detection）
 #   本机 windev（CPU，OCR 等） | <repo>/.venv        | 2.14.0(cpu) | 无（paddle 组）| cap-ocr, facemesh, cap-clean
 #   两组 transformers（4.52.x 与 5.13）不可共存于同一解释器；安装脚本：
 #   gpu/setup_gpu.sh（主 venv）/ gpu/setup_asr_venv.sh（venv-asr）。
@@ -316,6 +316,15 @@ components:
     version: "2026-09-28@0a89dec"
     fallback: []
     volta_status: ok           # D1 实测：2s/50帧片段全流程 41s（含模型加载+预处理+合成+回贴），fp16
+    runtime_notes: >-
+      T16 服务化（:9003，2026-09-29）：fp16 常驻物理 cuda:1（CUDA_VISIBLE_DEVICES
+      独占式；引擎装载 28.1s），只监听 GPU 机 127.0.0.1，本机经隧道访问
+      （TUNNEL_LOCAL_PORT=9003）。逐帧口径：上传音频硬对齐到恰 帧数/fps 秒，
+      输出帧数=输入帧数（回贴按帧号拼接的前提）。执行降级链冻结镜像：精口型
+      未部署（TBD-D1）→ 服务 503 → 客户端按 fallback 落本引擎。显存：物理 #1
+      实测与 mt 服务（16.3GB）共卡仍有 8.1GB 余（口型权重+上下文 7.6GB）；
+      编解码器须带 libx264（系统 ffmpeg 8.0.1 缺失 → LIP_FFMPEG 注入静态构建，
+      docs/lip_service_deps.md §3）。
   lip-pro:
     task: lip-sync             # 精口型：512×512，推理约 18GB，独占 cuda:1，只给重点镜头
     langs: [multi]
