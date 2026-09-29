@@ -25,6 +25,7 @@ MODULE_TEST_FILES = {
     "agent_shell": ["test_agent_shell_contract.py"],
     "kt": ["test_kt_contract.py"],
     "blueprint": ["test_blueprint_contract.py"],
+    "grading": ["test_grading_contract.py"],
 }
 
 

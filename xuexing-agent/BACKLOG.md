@@ -13,8 +13,12 @@
   （完成于本轮，待主会话提交：src/xuexing/blueprint.py + specs/drafts/blueprint.spec.md +
   tests/contract/test_blueprint_contract.py（18 项），已登记 run_contract 与根 conftest MODULES；
   全套 152 测试 + validate_knowledge + run_contract --impl-dir 注入自检全绿）
-- [ ] **主观题判分接口**：Response.correct 目前要求外部给定；加 `grading.py`：数值答案归一化比对
+- [x] **主观题判分接口**：Response.correct 目前要求外部给定；加 `grading.py`：数值答案归一化比对
   （分数/小数/单位），choice 自动判。契约：归一化规则表 + 判分确定性。
+  （完成于本轮，待主会话提交：src/xuexing/grading.py + specs/drafts/grading.spec.md +
+  tests/contract/test_grading_contract.py（115 项）+ tests/data/test_grading_data.py（4 项），
+  已登记 run_contract 与根 conftest MODULES；全套 271 测试 + validate_knowledge +
+  run_contract --impl-dir 注入自检全绿）
 - [ ] **知识点掌握 -> 母题推荐**：route.py 的 steps 里挂 recommended_item_ids（从题库按误解标签挑
   针对性题）。
 
