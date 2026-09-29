@@ -29,7 +29,8 @@
 | M4a | 注入器提升根 conftest + run_contract --suite full | ✅ | 56 项测试在参考实现与 round3 实例上双绿 |
 | M4b | 终版重生成工作流 | ✅ | 8/8 一次性通过契约+集成+数据 56 项联合门，相似度 0.08-0.65 |
 | M4c | 终版实例替换 src/xuexing/ | ✅ | 110 测试全绿；commit d162578；**tag v0.1.0**。spec 驱动闭环完成：oracle→冻结→契约内重生成→终版入库 |
-| M3 | 工作流#2：知识注入 | 🔄 运行中 | dwfrun-63db4f64；验收门 validate_knowledge.py；完成后审查 data/ 并提交 |
+| M3 | 工作流#2：知识注入 | ✅ | commit ab541ec：101 知识点（带课标出处）、321 题（每知识点≥3 道、独立审题员验算）、65 误解模式、52 母题模式；validate_knowledge 通过；抽样 5 题人工验算正确 | 
+| M5 | night-iteration saved workflow + BACKLOG 清库 | 🔄 持续中 | 工作流 .zcode/workflows/night-iteration.dwf.ts；每项：规格草稿+契约测试+实现+全套测试门≤3轮。**配额注意：2026-09-29 上午 bigmodel-individual-coding-plan 周/月限额耗尽（1310，13:10:19 重置），已切换子代理到 account:bigmodel-offpeak-idle-plan/GLM-5.3-Flash；若闲时池也耗尽，则 13:11 后用原模型 resume。当前项：KT 时序追踪（dwfrun-574fd8ec，闲时池；注意：AmendWorkflow 重放会丢 args，必须用 CreateWorkflow saved 方式带 args 重发） |
 | M5 | night-iteration saved workflow + BACKLOG 持续清库 | ⬜ | 待 M4c/M3 完成后建立 |
 
 ## 模块与契约清单（重生成范围）
