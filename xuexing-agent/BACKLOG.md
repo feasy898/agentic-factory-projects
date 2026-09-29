@@ -8,8 +8,11 @@
   新证据更新），契约：轨迹单调可解释、可重放。数据基础：XES3G5M 格式对接。
   （完成于本轮，待主会话提交：src/xuexing/kt.py + specs/drafts/kt.spec.md +
   tests/contract/test_kt_contract.py（22 项），已登记 run_contract；全套 134 测试 + validate_knowledge 全绿）
-- [ ] **诊断卷蓝图生成器**：`blueprint.py`——输入目标知识点集合+预算题数+认知维度（记忆/理解/应用，
+- [x] **诊断卷蓝图生成器**：`blueprint.py`——输入目标知识点集合+预算题数+认知维度（记忆/理解/应用，
   参考 TIMSS 二维框架），输出 blueprint（供 generate_paper）。契约：认知维度配比约束、覆盖约束。
+  （完成于本轮，待主会话提交：src/xuexing/blueprint.py + specs/drafts/blueprint.spec.md +
+  tests/contract/test_blueprint_contract.py（18 项），已登记 run_contract 与根 conftest MODULES；
+  全套 152 测试 + validate_knowledge + run_contract --impl-dir 注入自检全绿）
 - [ ] **主观题判分接口**：Response.correct 目前要求外部给定；加 `grading.py`：数值答案归一化比对
   （分数/小数/单位），choice 自动判。契约：归一化规则表 + 判分确定性。
 - [ ] **知识点掌握 -> 母题推荐**：route.py 的 steps 里挂 recommended_item_ids（从题库按误解标签挑

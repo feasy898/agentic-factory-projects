@@ -24,6 +24,7 @@ MODULE_TEST_FILES = {
     "route": ["test_route_contract.py"],
     "agent_shell": ["test_agent_shell_contract.py"],
     "kt": ["test_kt_contract.py"],
+    "blueprint": ["test_blueprint_contract.py"],
 }
 
 
