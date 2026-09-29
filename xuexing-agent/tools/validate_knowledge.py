@@ -13,6 +13,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "src"))
 
 from xuexing.itembank import itembank_from_dict  # noqa: E402
+from xuexing.itembank_v2 import validate_bank_v2, verification_stats  # noqa: E402
 from xuexing.kpgraph import kpgraph_from_dict  # noqa: E402
 from xuexing.misconception_coverage import audit, parse_bank  # noqa: E402
 
@@ -90,6 +91,8 @@ def main() -> int:
         bank = itembank_from_dict({"items": all_items})
         errs = bank.validate_all(valid_kp_ids=kp_ids)
         errors.extend(f"itembank: {e}" for e in errs)
+        # schema v2 完整性：source 枚举/改编溯源/LLM 双代理验证记录
+        errors.extend(f"item v2: {e}" for e in validate_bank_v2(all_items))
         # 覆盖率：每个知识点至少 N 道主知识点题
         primary_count: dict[str, int] = {}
         for it in all_items:
@@ -169,10 +172,12 @@ def main() -> int:
         if len(errors) > 80:
             print(f"  ... and {len(errors) - 80} more")
         return 1
+    total_items, verified_items = verification_stats(all_items)
     print(
         f"VALIDATION OK: {len(kp_ids)} kps, {len(all_items)} items, "
         f"{len(mc_ids)} misconceptions (>= {args.min_mc_per_kp} per kp "
-        f"or exempt, {len(all_exemptions)} exempt), {len(seen_arch)} archetypes"
+        f"or exempt, {len(all_exemptions)} exempt), {len(seen_arch)} archetypes, "
+        f"schema v2 source ok, {verified_items}/{total_items} items dual-agent-verified"
     )
     return 0
 

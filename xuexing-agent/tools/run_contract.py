@@ -29,6 +29,7 @@ MODULE_TEST_FILES = {
     "recommend": ["test_recommend_contract.py"],
     "standard_coverage": ["test_standard_coverage_contract.py"],
     "misconception_coverage": ["test_misconception_coverage_contract.py"],
+    "itembank_v2": ["test_itembank_v2_contract.py"],
 }
 
 

@@ -52,8 +52,18 @@
   签名跨条目同 KP 不重复）；validate_knowledge.py 新增 --min-mc-per-kp 覆盖门（默认 2）；
   已登记 run_contract 与根 conftest MODULES；全套 339 测试 + validate_knowledge +
   run_contract --impl-dir 注入自检全绿）
-- [ ] **题库 schema v2**：加 source（原创/真题改编/LLM生成+验证）、verification（双代理独立解题一致性）
+- [x] **题库 schema v2**：加 source（原创/真题改编/LLM生成+验证）、verification（双代理独立解题一致性）
   字段，validate_item 校验 v2 字段完整性。
+  （完成于本轮，待主会话提交：src/xuexing/itembank_v2.py（确定性内核：validate_item_v2/
+  validate_bank_v2/source_counts/verification_stats，全函数不抛异常、错误消息目录冻结）+
+  specs/drafts/itembank_v2.spec.md + tests/contract/test_itembank_v2_contract.py（24 项）+
+  tests/data/test_itembank_v2_data.py（4 项，含 12 题算术闭式现算抽查）；冻结 itembank 的
+  validate_item（R1..R9c 目录）按规格不动，v2 完整性由独立模块承担、validate_knowledge.py
+  接线（item v2 错误前缀 + 摘要行 dual-agent-verified 计数）；数据侧 321 题全部标注
+  source=original（M3 原创、无真题标记，逐项核实），verification 语义定为 original/adapted
+  允许 null（诚实未验证）、llm_generated 强制通过记录（0/321 真实披露，不伪造）；
+  已登记 run_contract 与根 conftest MODULES；全套 367 测试 + validate_knowledge
+  （含负向门：坏 source 退出码 1）+ run_contract --impl-dir 注入自检全绿）
 
 ## P2（产品化）
 
