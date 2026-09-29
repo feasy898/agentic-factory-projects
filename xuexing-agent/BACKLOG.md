@@ -67,10 +67,7 @@
 
 ## P2（产品化）
 
-- [ ] **静态卷 PDF 输出**：paper -> 排版 JSON -> (可选) LaTeX/exam 文档；离线分发渠道的落地格式。
-- [ ] **OMR 答题卡对接规范**：定义 answer-sheet.json（题号-选项映射），为 OMRChecker 输出做适配层。
-- [ ] **机构多租户**：server 加 org 维度（数据隔离）。
-- [ ] **xAPI 学习事件导出**：Response/ReviewEntry -> xAPI statement。
+（已并入下方「P2（第二波）」队列，按更细的验收标准执行）
 
 ## 已完成
 
