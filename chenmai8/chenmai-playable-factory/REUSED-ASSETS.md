@@ -101,7 +101,8 @@ Git 的 GNU tar 1.35，**不能读 zip**，故按绝对路径定位 bsdtar——
     { "path": "packages/engine-bridge/test/index.js", "source": "repo/packages/engine-bridge/test/index.js", "bytes": 707, "sha256": "736e32d985495e6f9f653a4edf5f15e45f9238816d8667752598d49360edab2b" },
     { "path": "packages/engine-bridge/test/run.mjs", "source": "repo/packages/engine-bridge/test/run.mjs", "bytes": 745, "sha256": "0b1de84412531b65f327941a24a8ecff99d31d9c5bef7ef85cc422c763195ce6" },
     { "path": "packages/engine-bridge/testsupport/fixture.mjs", "source": "repo/packages/engine-bridge/testsupport/fixture.mjs", "bytes": 4210, "sha256": "9726c3becca43f3cbfe48d21c20ca9971d1a5fdc1569e4668a6f311a34fd8963" },
-    { "path": "docs/specs/engine-bridge.md", "source": "repo/docs/assets/specs/engine-bridge.md", "bytes": 11193, "sha256": "1b4866e8b63150549493f37f8cd451585925e3349af99b363318345fb4872a28" }
+    { "path": "docs/specs/engine-bridge.md", "source": "repo/docs/assets/specs/engine-bridge.md", "bytes": 11193, "sha256": "1b4866e8b63150549493f37f8cd451585925e3349af99b363318345fb4872a28" },
+    { "path": "packages/spec/test/ajv-check.mjs", "source": "repo/packages/spec/test/ajv-check.mjs", "bytes": 2724, "sha256": "18b98572e7ff342e6258da3cb79b47f2488e5d7f168f5b6307e79cf908114b8c" }
   ]
 }
 ```
@@ -112,7 +113,7 @@ Git 的 GNU tar 1.35，**不能读 zip**，故按绝对路径定位 bsdtar——
 |---|---|---|---|
 | 桥冻结测试（26 用例：events/channels/mute + index.js + run.mjs + testsupport/fixture.mjs） | `repo/packages/engine-bridge/test/`、`testsupport/` | `packages/engine-bridge/test/` | **M2 已落**（A 节 #26–#31 字节登记；26/26 exit 0 + coverage 97.6% + tsc strict 实测过） |
 | packager 冻结自验收（46 断言：run.mjs + fixture/gen-pngs.mjs + fixture/match3-dist/） | `repo/packages/packager/test/` | `packages/packager/test/` | **M4 已落**（run.mjs 含 P5 单点移植，见 A 节注；fixture/gen-pngs 已字节登记） |
-| spec 冻结 ajv-check | `repo/packages/spec/test/ajv-check.mjs` | `packages/spec/test/` | M1（模块任务） |
+| spec 冻结 ajv-check | `repo/packages/spec/test/ajv-check.mjs` | `packages/spec/test/` | **M1 已落**（A 节末条 #33 字节登记，cmp 与 oracle 字节全等；经 `src/validate.mjs` 壳原样跑通 AJV-CHECK: PASS exit 0，2026-09-30） |
 | qacore mini.html 夹具 | `repo/python/qacore/tests/fixtures/mini.html` | `qacore/tests/fixtures/` | M8 |
 
 （M1.1 验收口径：A 节 16 项与 oracle 逐项 sha256 一致——已实测全 MATCH；B 节按所属模块批次拷贝并登记。）

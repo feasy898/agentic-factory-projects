@@ -10,11 +10,16 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..');
 
-test('verify-reused-assets.mjs 真实执行 exit 0（登记册 16 项 sha256 逐项重算一致）', () => {
+test('verify-reused-assets.mjs 真实执行 exit 0（登记册全项 sha256 逐项重算一致，项数随模块批次增长）', () => {
+  // 项数从登记册 JSON 动态取（M1.1 时 16 项；各模块批次按纪律追加登记，写死会假失败）。
+  // 锚定小节与 verify-reused-assets.mjs 同一正则，防误取文档其他 json 围栏。
+  const md = readFileSync(join(root, 'REUSED-ASSETS.md'), 'utf8');
+  const registry = JSON.parse(md.match(/### 机器可读登记册[\s\S]*?```json\r?\n([\s\S]*?)```/)[1]);
+  const expectCount = registry.assets.length;
   const res = spawnSync(process.execPath, ['scripts/verify-reused-assets.mjs'], { cwd: root, encoding: 'utf8' });
   assert.equal(res.status, 0, `stdout=${res.stdout}\nstderr=${res.stderr}`);
-  assert.match(res.stdout, /16 项已核对/);
-  assert.equal((res.stdout.match(/MATCH /g) ?? []).length, 16);
+  assert.match(res.stdout, new RegExp(`${expectCount} 项已核对`));
+  assert.equal((res.stdout.match(/MATCH /g) ?? []).length, expectCount);
 });
 
 test('channel-rules 锚点：rulesVersion 1.1.0 + 七渠道', () => {

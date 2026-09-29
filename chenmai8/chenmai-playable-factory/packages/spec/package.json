@@ -3,5 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "M1 单源校验器：playable-spec.schema.json（draft 2020-12，字节复用，sha 见 REUSED-ASSETS.md）+ ajv + invariants(TS 单份) + 模板 check(spec) 进程内注册制(P1)。M1.1 仅落 schema 资产与 ajv 实测骨架；校验器本体为 M1 模块任务（届时补 index.mjs 与 exports）。"
+  "description": "M1 单源校验器（TS）：playable-spec.schema.json（draft 2020-12，字节复用，sha 见 REUSED-ASSETS.md）+ ajv + invariants.ts（四模板不变式 I1–I5，可解性单一真源，决策 §2.1）+ 模板 check(spec) 进程内注册制（P1 接缝）。公开面照 spec-contract §2.5；冻结测试 test/ajv-check.mjs 经 src/validate.mjs 壳原样复用。",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json"
+  }
 }
