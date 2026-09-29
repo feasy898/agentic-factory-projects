@@ -1,6 +1,6 @@
-"""网关 FastAPI 应用（骨架 v0）：/v1/chat/completions 非流式+流式 + 文件通道 + 调试/健康端点。
+"""网关 FastAPI 应用（骨架 v0）：/v1/chat/completions 非流式+流式 + 文件通道 + 管理面 + 调试/健康端点。
 
-端点（§5.6，实装子集；管理面端点由 T5.1 补全）::
+端点（§5.6）::
 
     POST /v1/chat/completions   OpenAI 兼容（``stream=true`` 走 SSE 流式）；鉴权
                                 Authorization: Bearer <dept_key>；响应附
@@ -13,6 +13,9 @@
                                 上传者自带文件内容回显，演示模式不做部门 Key 鉴权）
     POST /v1/files/export       multipart 上传 + ``mode=sanitize`` → 清理后文件流，
                                 响应头附 ``X-Report-Id``（导出前体检报告 id）
+    GET  /admin/api/audit      分页查询（dept/from/to/route/blocked；T5.1，需部门 Key）
+    GET  /admin/api/metrics    按部门/路由/拦截类别聚合（T5.1，需部门 Key）
+    GET  /admin/api/report.csv 保密自查报告导出（T5.1，需部门 Key）
     POST /internal/detect       {text} → findings（调试；需部门 Key）
     POST /internal/anonymize    {text, session_id} → 占位符版本（调试/演示对比屏；需部门 Key）
     POST /internal/restore      {text, session_id} → 还原版本（调试/演示对比屏；需部门 Key）
@@ -22,6 +25,8 @@
 /internal/* 调试端点（审查 §A1）：复用与 /v1/chat/completions 同一部门 Key 鉴权
 （Authorization: Bearer <dept_key>），未命中 → 401——响应含 Finding.raw/还原原文，
 绝不无鉴权暴露；生产部署另须仅经本地管理面/内网访问（见 README 安全注记）。
+/admin/api/* 管理面查询端点（T5.1）：同为部门 Key 鉴权，只读审计库（脱敏预览），
+形状与鉴权口径见 gateway/admin_api.py 模块文档。
 
 落库形态（T1.3）：不注入时审计走 SQLite 写队列（cfg.audit_db）、会话映射走
 SessionStore（cfg.session_db，TTL=cfg.session_ttl_h，lifespan 挂清理协程）——
@@ -370,6 +375,11 @@ def create_app(
             session_id = deps.new_session_id()
         mapper = service.registry.get(session_id)
         return JSONResponse({"session_id": session_id, "restored": mapper.restore(body["text"])})
+
+    # 管理面查询 API（T5.1：/admin/api/audit|metrics|report.csv，部门 Key 鉴权，只读审计库）
+    from gateway.admin_api import mount as mount_admin  # noqa: PLC0415 — 延迟导入避免环
+
+    mount_admin(app)
 
     # 演示前端（M9，无框架 Jinja2 + 原生 JS；体检页骨架先行，其余页面 T5.2 补全）
     from webui.pages import mount as mount_webui  # noqa: PLC0415 — 延迟导入避免环

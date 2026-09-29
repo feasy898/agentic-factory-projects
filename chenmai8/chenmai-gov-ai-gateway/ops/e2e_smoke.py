@@ -13,7 +13,8 @@
 - 网关在本进程内以 uvicorn 线程拉起（真实配置 + 真实端口 :9000，客户端走真实 TCP）；
   审计/会话映射走 config 指定的 SQLite 库文件（T1.3 默认落库形态，与生产一致），
   §9 U5 的"行数断言 + bytes 级零明文扫描"以**审计库文件（含 WAL 旁挂）**为对象；
-  /admin/api/audit 上线后自动改为 HTTP 交叉核对。
+  §9 U5 自 T5.1 起经 /admin/api/audit|metrics|report.csv（部门 Key 鉴权）做
+  HTTP 侧交叉核对（含无 Key → 401 负例）。
 
 用例（§9 步骤 3；U1–U5 当天生效，U6 文件通道 D3 起生效，U7 注入拦截 T4.3 起）：
 - U1 非流式：人名 + 2 身份证 + 3 手机号（含分隔符写法）→ 上游 messages **全文
@@ -35,7 +36,8 @@
   上游零感知（出站全量检测面）；
 - U5 审计：行数 == 本次发送的全部 /v1/chat/completions 请求数；事件字段形状齐全；
   审计 SQLite 库文件（主文件 + WAL 旁挂）bytes 级扫描全部原值（含人名与密级词，
-  审查 §B）→ 零命中；
+  审查 §B）→ 零命中；/admin/api/audit|metrics|report.csv（部门 Key 鉴权）HTTP
+  交叉核对（total/路由分布/报告行数；无 Key → 401）；
 - U6 文件：inspect+export seeded docx → 重解析零命中（文件通道未上线时输出
   DEFERRED，不计失败）；
 - U7 注入拦截（§10 场景4 防注入 e2e 化，T4.3）：检索网页存档 seeded 材料
@@ -54,6 +56,7 @@
 """
 from __future__ import annotations
 
+import csv
 import http.client
 import io
 import json
@@ -847,22 +850,43 @@ def case_u5(ctx: dict[str, Any]) -> str:
     # 双保险：全部事件序列化后同样扫一遍（与库文件扫描互相独立）
     blob = "\n".join(e.model_dump_json() for e in events).encode("utf-8")
     _assert_no_raw(blob, RAW_VALUES, "audit events json")
-    # 管理面查询 API（T5.1 落地后自动启用交叉核对；未上线仅提示）
-    note = ""
-    try:
-        resp = ctx["client"].get("/admin/api/audit", timeout=5.0)
-    except Exception:  # noqa: BLE001
-        resp = None
-    if resp is not None and resp.status_code == 200:
-        payload = resp.json()
-        n = payload.get("total", len(payload.get("events", payload.get("items", []))))
-        if n != expected:
-            raise AssertionError(f"/admin/api/audit rows={n} != {expected}")
-        note = "；/admin/api/audit 交叉核对一致"
-    else:
-        note = "；/admin/api/audit 未上线（T5.1 落地后自动交叉核对）"
+    # 管理面查询 API（T5.1 起在位）：带部门 Key 交叉核对行数与聚合；无 Key → 401 负例
+    auth = {"Authorization": f"Bearer {DEMO_KEY}"}
+    resp = ctx["client"].get("/admin/api/audit", headers=auth, timeout=5.0)
+    if resp.status_code != 200:
+        raise AssertionError(f"/admin/api/audit status={resp.status_code} {resp.text[:200]!r}")
+    page = resp.json()
+    n = page.get("total", len(page.get("events", [])))
+    if n != expected:
+        raise AssertionError(f"/admin/api/audit rows={n} != {expected}")
+    if len(page.get("events", [])) > n:
+        raise AssertionError("/admin/api/audit events exceed total")
+    unauth = ctx["client"].get("/admin/api/audit", timeout=5.0)
+    if unauth.status_code != 401:
+        raise AssertionError(f"/admin/api/audit 无 Key 应 401：{unauth.status_code}")
+    report = ctx["client"].get("/admin/api/report.csv", headers=auth, timeout=5.0)
+    if report.status_code != 200 or "text/csv" not in report.headers.get("content-type", ""):
+        raise AssertionError(f"/admin/api/report.csv 异常: {report.status_code}")
+    csv_rows = list(csv.reader(io.StringIO(report.content.decode("utf-8-sig"), newline="")))
+    if len(csv_rows) != expected + 1:
+        raise AssertionError(f"report.csv 行数 {len(csv_rows)} != {expected}+表头")
+    if csv_rows[0][0] != "id" or csv_rows[0][5] != "route" or csv_rows[0][6] != "blocked":
+        raise AssertionError(f"report.csv 表头异常: {csv_rows[0]}")
+    metrics = ctx["client"].get("/admin/api/metrics", headers=auth, timeout=5.0)
+    if metrics.status_code != 200:
+        raise AssertionError(f"/admin/api/metrics status={metrics.status_code}")
+    agg = metrics.json()
+    if agg.get("requests") != expected or agg.get("blocked") != 2:
+        raise AssertionError(f"metrics 聚合不符: requests={agg.get('requests')} "
+                             f"blocked={agg.get('blocked')}")
+    if agg.get("routes", {}).get("BLOCK") != 2 or agg.get("routes", {}).get("GOVCLOUD") != 1:
+        raise AssertionError(f"metrics 路由分布不符: {agg.get('routes')}")
+    if [d.get("dept") for d in agg.get("by_dept", [])] != [DEPT]:
+        raise AssertionError(f"metrics 按部门聚合: {agg.get('by_dept')}")
     return (f"{expected} 行落库（2 BLOCK + 1 GOVCLOUD + {expected - 3} INTERNET）；"
-            f"预览占位符版本；库文件 bytes 级扫描 {scanned} 字节零明文（含人名/密级词）{note}")
+            f"预览占位符版本；库文件 bytes 级扫描 {scanned} 字节零明文（含人名/密级词）；"
+            f"/admin/api/audit total={n}、report.csv {expected}+表头、metrics 路由分布"
+            f"交叉核对一致（无 Key 401 负例通过）")
 
 
 # ── U6 文件通道（§9 U6；D3 起生效）────────────────────────────────────
