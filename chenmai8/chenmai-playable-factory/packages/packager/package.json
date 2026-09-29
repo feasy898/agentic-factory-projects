@@ -1,7 +1,13 @@
 {
   "name": "@pf/packager",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
-  "description": "M4 打包器（同构重实现；46 断言冻结 eval 字节复用；zip 交叉验证改系统 tar，P5 去venv化）。批次 1 模块任务落地（届时补 src 与 exports）。"
+  "description": "M4 打包器：dist + PlayableSpec + channel-rules → 渠道包（单 HTML 全内联 / 规则声明 zip）。配置驱动、宁失败不出超规包。规格源 docs/specs/packager.md。",
+  "bin": {
+    "pf-packager": "bin.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
 }
