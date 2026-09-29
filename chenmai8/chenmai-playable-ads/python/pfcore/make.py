@@ -33,6 +33,7 @@ PACKAGER_BIN = REPO_ROOT / "packages" / "packager" / "bin.mjs"
 # spec.game.template → 模板构建脚本（能产出"真实可玩 HTML"的模板才可入表）
 TEMPLATE_BUILDERS: dict[str, Path] = {
     "match3": REPO_ROOT / "packages" / "templates" / "tmpl-match3" / "build.mjs",
+    "merge": REPO_ROOT / "packages" / "templates" / "tmpl-merge" / "build.mjs",
 }
 
 DEFAULT_SERVE_PORT = 8618
