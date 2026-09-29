@@ -15,6 +15,15 @@ exit 0 = 通过。检查项：
    models.py）：字段名与 §5 一字不差、§5 示例 JSON 逐字可解析、序列化往返全等、
    UTC Z 时间戳、审计事件零 raw、枚举/字面量值域与边界约束生效；
    另对全部契约模型做未知字段拒绝负例（删掉 extra="forbid" 必须变红，审查 §C）。
+
+公开导出树冒烟（T8.2）::
+
+    cd <导出树> && <任一 venv python> -m pytest evals/m0_infra --pythonpath <导出树>
+
+同一套检查在导出树运行的三处环境容差（源仓库行为不变，门禁仍走模块入口）：
+- check_venv：导出树无 .venv → 接受外部解释器（部署者自备 venv）；
+- check_deps：``_BY_DEPLOYER_`` 占位条目跳过（部署方注入坐标，见 DEPS.txt）；
+- check_constraints：constraints.txt 不随公开仓分发 → 改验 DEPS.txt 在位。
 """
 from __future__ import annotations
 
@@ -39,6 +48,8 @@ from common.config import (  # noqa: E402
 from ops import name_lint  # noqa: E402
 
 INSTALL_CHECK = REPO_ROOT / "config" / "install_check.json"
+#: 公开导出树（ops/export_public.py）中部署方注入坐标的占位值（T8.2）
+DEPLOYER_PLACEHOLDER = "_BY_DEPLOYER_"
 RESULTS: list[tuple[bool, str]] = []
 
 
@@ -80,6 +91,10 @@ def _version_at_least(version: str, floor: str) -> bool:
 def check_venv() -> str:
     running = Path(sys.executable).resolve()
     expected = (REPO_ROOT / ".venv" / "Scripts" / "python.exe").resolve()
+    if not expected.exists():
+        # 公开导出树（T8.2）：树内无 .venv，部署者以自备解释器 + --pythonpath 冒烟。
+        # 源仓库恒有 .venv → 门禁的严格绑定不受影响。
+        return f"export tree (no .venv): external interpreter {running}"
     if running != expected:
         raise AssertionError(f"not running under repo venv: {running}")
     return str(running)
@@ -98,8 +113,13 @@ def check_deps(group: str):
     def run() -> str:
         problems: list[str] = []
         versions: list[str] = []
+        skipped = 0
         for entry in entries:
             dist = entry["dist"]
+            if DEPLOYER_PLACEHOLDER in (dist, entry.get("import", "")):
+                # 公开导出树（T8.2）：部署方注入坐标占位，不参与本机自检（见 DEPS.txt）
+                skipped += 1
+                continue
             try:
                 ver = md.version(dist)
             except md.PackageNotFoundError:
@@ -117,7 +137,10 @@ def check_deps(group: str):
             versions.append(f"{dist}=={ver}")
         if problems:
             raise AssertionError("; ".join(problems))
-        return f"{len(entries)} dists ok ({'; '.join(versions)})"
+        detail = f"{len(entries) - skipped} dists ok ({'; '.join(versions)})"
+        if skipped:
+            detail += f"; {skipped} _BY_DEPLOYER_ entries skipped (deployer-provided)"
+        return detail
 
     return run
 
@@ -205,7 +228,7 @@ def check_dept_keys() -> str:
 # ── 3. 名称守卫 ────────────────────────────────────────────────────
 def check_name_lint() -> str:
     violations, scanned = name_lint.lint_repo(REPO_ROOT)
-    assert not violations, "; ".join(f"{r}:{l}:{t}" for r, l, t in violations[:20])
+    assert not violations, "; ".join(f"{r}:{ln}:{t}" for r, ln, t in violations[:20])
     wordlist = (REPO_ROOT / "ops" / "forbidden_names.txt").read_text(encoding="utf-8")
     entries = [ln for ln in wordlist.splitlines() if ln.strip() and not ln.strip().startswith("#")]
     assert len(entries) >= 10, f"wordlist too small: {len(entries)}"
@@ -224,7 +247,13 @@ def check_env_example_and_gitignore() -> str:
 
 def check_constraints() -> str:
     path = REPO_ROOT / "constraints.txt"
-    assert path.exists(), "constraints.txt missing (run: pip freeze > constraints.txt)"
+    if not path.exists():
+        # 公开导出树（T8.2）：冻结清单不随公开仓分发 → 改验 DEPS.txt 承接面
+        deps = REPO_ROOT / "DEPS.txt"
+        assert deps.exists(), "constraints.txt missing and DEPS.txt missing (export tree must carry DEPS.txt)"
+        text = deps.read_text(encoding="utf-8")
+        assert len(text) >= 200 and "pip install" in text, "DEPS.txt too thin (install record required)"
+        return "export tree: constraints.txt not distributed, DEPS.txt in place"
     lines = [ln for ln in path.read_text(encoding="utf-8").splitlines() if ln.strip()]
     assert len(lines) >= 20, f"constraints.txt too thin: {len(lines)} lines"
     assert not any(ln.startswith(("-e ", "common")) for ln in lines), "constraints must be pure freeze (no -e lines)"
@@ -481,6 +510,27 @@ def main() -> int:
     total = len(RESULTS)
     print(f"M0 INFRA: {passed}/{total} checks passed")
     return 0 if passed == total else 1
+
+
+def test_m0_smoke():
+    """pytest 冒烟入口（T8.2）：全量检查一次跑齐，任一失败即本测试失败。
+
+    同一入口服务两处，语义一致：
+    - 源仓库：等价 ``python -m evals.m0_infra``（各门禁仍走模块入口，不受影响）；
+    - 公开导出树：``cd <导出树> && <venv python> -m pytest evals/m0_infra
+      --pythonpath <导出树>``，用外部 venv 冒烟导出树（容差分支见模块 docstring）。
+
+    先断言「所测即本树」：``common`` 必须从本树加载——若 pip 可编辑安装的
+    meta_path finder 抢先解析到源仓库，冒烟就测错了对象，必须响亮失败。
+    """
+    import common
+
+    loaded = Path(common.__file__).resolve()
+    assert loaded.is_relative_to(REPO_ROOT.resolve()), (
+        f"smoke must exercise this tree ({REPO_ROOT}), but 'common' loaded from {loaded} "
+        "(可编辑安装 finder 劫持？核对 --pythonpath 是否指向本树)"
+    )
+    assert main() == 0
 
 
 if __name__ == "__main__":
