@@ -44,6 +44,31 @@ speed_window: [0.9, 1.1]      # 语速可接受窗（M8 duration_factor）
 atempo_max: 0.05              # 音频变速滤镜只做 ±5% 最终微调
 loudness_lufs: -16            # 响度归一目标（短剧平台惯例）
 
+m8:                           # M8 时长对齐（T14 增补段；契约只增不改名）
+  engine: dub-tts             # C5 默认合成引擎（语种链路由由 M7 auto 处理）
+  df_range: [0.5, 2.0]        # duration_factor 二分域（C5 契约域）
+  atempo_window: [0.9, 1.1]   # atempo 微调窗（T14 收口口径；变速不变调）
+  bisect_rounds: 10           # 二分轮数（区间 1.5/2^10 ≈ 1.5e-3 分辨率）
+  min_align_rate_mvp: 0.70    # 全片对齐率（±10% 命中）通过线（时长可控翻译训练前）
+
+m9:                           # M9 混音 + 成片合成（T15 增补段；契约只增不改名）
+  # 响度归一目标：顶层 loudness_lufs:-16 为单一事实源；此处仅显式覆盖时生效
+  # tp_dbtp / lra 缺省取 pipeline/m1_ingest.py 的 EBU R128 惯例常量（-1.5 / 11）
+  duck_db: 6.0                # ducking 窗内压低（"bgm 侧链 -6dB"）
+  duck_extra_db: 3.0          # 句心（C2 句窗内）再压低（"句内再 -3dB"）
+  window_pad_s: 0.15          # ducking 窗相对 C2 句窗的外扩提前量（语音前 bgm 就位）
+  attack_s: 0.05              # 压低沿（快，防语音削头）
+  release_s: 0.30             # 恢复沿（慢，防抽吸）
+  core_ramp_s: 0.02           # 句心额外压低的斜坡
+  voice_gain_db: 0.0          # 人声增益台（0=不台）
+  bgm_gain_db: 0.0            # 背景增益台（0=不台）
+  min_ratio_db: 8.0           # 对白可懂度冻结线（人声段/bg 峰值比）
+  label:                      # AI 隐式标识位（11_labels/labels.json C7 缺省时兜底）
+    metadata_field: XMP:aiGeneratedContent
+    service_provider: 未申报主体
+  # 产物口径固定于 pipeline/m9_mix.py 常量：mix 48k 立体声 pcm_s16le、
+  # dubbed 48k 单声道、成片 AAC 192k/48k/立体声；显式 drawtext/C2PA/音频水印归 M12
+
 budget:                       # 译文时长预算（C4.budget）
   lo_ratio: 0.9
   hi_ratio: 1.1
