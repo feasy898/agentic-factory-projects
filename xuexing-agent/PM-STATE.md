@@ -30,8 +30,14 @@
 | M4b | 终版重生成工作流 | ✅ | 8/8 一次性通过契约+集成+数据 56 项联合门，相似度 0.08-0.65 |
 | M4c | 终版实例替换 src/xuexing/ | ✅ | 110 测试全绿；commit d162578；**tag v0.1.0**。spec 驱动闭环完成：oracle→冻结→契约内重生成→终版入库 |
 | M3 | 工作流#2：知识注入 | ✅ | commit ab541ec：101 知识点（带课标出处）、321 题（每知识点≥3 道、独立审题员验算）、65 误解模式、52 母题模式；validate_knowledge 通过；抽样 5 题人工验算正确 | 
-| M5 | night-iteration saved workflow + BACKLOG 清库 | 🔄 持续中 | 工作流 .zcode/workflows/night-iteration.dwf.ts；每项：规格草稿+契约测试+实现+全套测试门≤3轮。**配额注意：2026-09-29 上午 bigmodel-individual-coding-plan 周/月限额耗尽（1310，13:10:19 重置），已切换子代理到 account:bigmodel-offpeak-idle-plan/GLM-5.3-Flash；若闲时池也耗尽，则 13:11 后用原模型 resume。当前项：KT 时序追踪（dwfrun-574fd8ec，闲时池；注意：AmendWorkflow 重放会丢 args，必须用 CreateWorkflow saved 方式带 args 重发） |
-| M5 | night-iteration saved workflow + BACKLOG 持续清库 | ⬜ | 待 M4c/M3 完成后建立 |
+| M5 | night-iteration + 契约冻结第二波 | ✅ **整夜完成** | 夜间 13 项迭代（KT/蓝图/判分/母题/课标/误解/schema v2/server API/双代理复验 321-321/版面/xAPI/OMR/多租户）+ 契约冻结第二波（8/8 新规格冻结、各 3 轮重生成全过）；终版替换 src → commit c0a116f → **tag v0.2.0 → 558 测试全绿、BACKLOG 清零** |
+
+## 当前状态（下一会话从这里开始）
+
+- 仓库在 **v0.2.0**（commit c0a116f），BACKLOG 全清。下一批候选（待用户定优先级）：
+  新学科（物理/英语）、高中段、机构 OpenAPI 聚合层、多模态批改接入、总部数据看板。
+- 恢复协议：读本文件 → `python -m pytest`（应 558 passed）→ 定新 BACKLOG →
+  用 night-iteration(saved workflow) 逐项跑 → 每次完成通知后审查+提交+发下一项。
 
 ## 模块与契约清单（重生成范围）
 
