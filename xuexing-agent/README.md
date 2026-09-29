@@ -24,18 +24,33 @@ uvicorn xuexing.server:create_app --factory   # 启动 API（需先注入知识�
          │ MCP/REST                  │
 ┌────────┴───────────────────────────┴───────────────────────┐
 │  确定性内核（纯 Python，同输入同输出）                       │
-│  kpgraph(知识图谱)  itembank(题库/Q-matrix)                  │
-│  diagnosis(认知诊断)  paper(组卷/CAT选题)                     │
-│  route(学习路线)  scheduler(SM-2/FSRS)  pedagogy(策略规则)   │
-│  server(FastAPI: /papers /learners /attribute)              │
+│  【测量】kpgraph itembank diagnosis paper scheduler          │
+│  【规划】route pedagogy blueprint recommend                  │
+│  【能力】grading kt xapi paper_layout omr_sheet multitenant │
+│  【数据】itembank_v2 dual_verify standard_coverage           │
+│         misconception_coverage                              │
+│  server(FastAPI: 全模块端点 + X-Org-Id 多租户)              │
 └────────△───────────────────────────△───────────────────────┘
          │                           │
 ┌────────┴─────────┐      ┌──────────┴──────────────────┐
 │ 知识库 data/      │      │ 渠道：小程序 / 静态卷 / 机构 │
 │ 图谱·题库·误解·   │      │                              │
-│ 母题·策略         │      │                              │
+│ 母题·策略·验证台账│    │                              │
 └──────────────────┘      └──────────────────────────────┘
 ```
+
+## 模块总览（v0.1.0 起，v0.2.0 起全部契约冻结+重生成达标）
+
+| 层 | 模块 | 职责 |
+|---|---|---|
+| 知识层 | kpgraph / itembank / itembank_v2 | 知识点先序图、题库与 Q-matrix、schema v2（来源/双代理验证） |
+| 诊断层 | diagnosis / kt | 单卷认知诊断、跨会话掌握度轨迹（遗忘衰减） |
+| 出卷层 | paper / blueprint / paper_layout / omr_sheet | 组卷+CAT、TIMSS 认知域蓝图、打印版面、OMR 答题卡 |
+| 教学层 | route / pedagogy / recommend | 学习路线、循证策略库、误解针对性推荐 |
+| 工程层 | grading / xapi / multitenant / server / agent_shell | 判分、学习事件导出、多租户、REST API、Agent 壳 |
+| 数据工程 | dual_verify / standard_coverage / misconception_coverage | 双代理复验、课标覆盖检查、误解覆盖管线 |
+
+契约状态：`specs/frozen/` 共 16 份（v0.1.0 八模块 + 夜间新增八模块），每份均经对抗评审冻结、连续 3 轮独立重生成 100% 通过。
 
 ## 契约驱动重生成方法论
 
