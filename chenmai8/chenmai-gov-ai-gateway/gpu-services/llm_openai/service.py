@@ -19,6 +19,12 @@
       流式响应：SSE，`data: {chat.completion.chunk}` 序列 + 终止 `data: [DONE]`；
             首 delta 携带 role，内容增量携带 content，末帧 finish_reason=stop，
             末帧附 usage/timing_ms 扩展字段。
+  GET  /admin/records[?limit=N] / GET /admin/text / POST /admin/reset
+      请求环形缓冲（e2e U8 断言「上游收到过什么」的唯一事实来源，与网关仓
+      mock 上游同口径）：内存记录最近 N 条请求的 messages 全文（逐条 JSON 序列
+      化中文原样，供 bytes 级脱敏断言）。凭据红线：Authorization 只记是否在位
+      及其 SHA256 前 8 位指纹（``auth_key_sha8``，不可逆），**不记原值**——
+      e2e 据此断言 internet / govcloud 两 profile 携带了不同的 key 头。
 
 推理约束（与 gpu-services 既有服务同纪律）：fp16 + sdpa；无 bf16；不依赖重型
 推理运行时；生成串行化（单卡单进程份额，threading.Lock）。
@@ -34,6 +40,7 @@ GPU 机侧常驻保活 = gpu/llm_keepalive.sh。
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import queue
@@ -42,10 +49,17 @@ import sys
 import threading
 import time
 import uuid
+from collections import deque
 from contextlib import asynccontextmanager
+from datetime import UTC, datetime
 from typing import Any
 
 from pydantic import BaseModel
+
+try:  # 仅供 FastAPI 注解解析（Request 对象注入 → Authorization 指纹）；服务运行必然有 fastapi
+    from fastapi import Request  # noqa: F401
+except ImportError:  # pragma: no cover
+    Request = Any  # type: ignore[assignment, misc]
 
 MODEL_DIR = os.environ.get("LLM_MODEL_DIR", "/data/xdng/models/llm-chat-8b")
 DEVICE = os.environ.get("LLM_DEVICE", "cuda:0")  # 配合 CUDA_VISIBLE_DEVICES 选物理卡
@@ -72,6 +86,66 @@ status: dict[str, Any] = {
 }
 _M: dict[str, Any] = {}  # tokenizer/model 常驻
 _INFER_LOCK = threading.Lock()
+
+
+class RingBuffer:
+    """线程安全的请求环形缓冲（e2e 断言「真实上游收到过什么」的唯一事实来源）。
+
+    与网关仓 mock 上游的 RingBuffer 同口径：``texts()`` 逐条产出 messages 数组
+    的 JSON 序列化全文（``ensure_ascii=False`` 中文原样，bytes 级脱敏扫描才会
+    真实命中）。本服务为单进程自足部署（GPU 机平铺单文件，无仓库内依赖），
+    故此处内置实现而不跨包导入。
+    """
+
+    def __init__(self, maxlen: int = 200) -> None:
+        self._lock = threading.Lock()
+        self._items: deque[dict[str, Any]] = deque(maxlen=max(1, maxlen))
+        self._seq = 0
+
+    def add(self, record: dict[str, Any]) -> int:
+        with self._lock:
+            self._seq += 1
+            item = {"seq": self._seq, **record}
+            self._items.append(item)
+            return self._seq
+
+    def snapshot(self) -> list[dict[str, Any]]:
+        with self._lock:
+            return [dict(item) for item in self._items]
+
+    def texts(self) -> list[str]:
+        with self._lock:
+            items = [dict(item) for item in self._items]
+        return [json.dumps(it.get("messages", []), ensure_ascii=False, sort_keys=True)
+                for it in items]
+
+    def reset(self) -> int:
+        with self._lock:
+            cleared = len(self._items)
+            self._items.clear()
+            return cleared
+
+    def __len__(self) -> int:
+        with self._lock:
+            return len(self._items)
+
+
+_RING = RingBuffer()  # 本服务唯一 ring：internet / govcloud 两 profile 共用同一进程
+
+
+def _auth_fingerprint(request: Any) -> tuple[bool, str]:
+    """Authorization 指纹：(是否在位, bearer 值 SHA256 前 8 位)；原值永不落缓冲。"""
+    auth = ""
+    try:
+        headers = getattr(request, "headers", None)
+        auth = headers.get("authorization", "") if headers is not None else ""
+    except Exception:  # noqa: BLE001 —— 指纹面取不到不挡主链路
+        auth = ""
+    if not auth:
+        return False, ""
+    parts = auth.split(None, 1)
+    bearer = parts[1].strip() if len(parts) > 1 else auth.strip()
+    return True, hashlib.sha256(bearer.encode("utf-8")).hexdigest()[:8]
 
 
 def _load_model() -> None:
@@ -309,7 +383,7 @@ def _clean_text(text: str) -> str:
 
 
 @app.post("/v1/chat/completions")
-def chat_completions(payload: dict[str, Any]) -> Any:
+def chat_completions(payload: dict[str, Any], request: Request) -> Any:
     """OpenAI 兼容入口：按 payload.stream 分流（流式返回 StreamingResponse）。"""
     from fastapi import HTTPException
     from fastapi.responses import JSONResponse, StreamingResponse
@@ -329,6 +403,22 @@ def chat_completions(payload: dict[str, Any]) -> Any:
         raise HTTPException(status_code=400, detail=f"对话模板失败: {exc}") from exc
 
     max_new = min(int(opts.get("max_tokens") or 512), MAX_NEW_CAP)
+    auth_present, auth_sha8 = _auth_fingerprint(request)
+    peer = ""
+    try:  # request.client 在某些 ASGI 形态下可为 None
+        peer = f"{request.client.host}:{request.client.port}" if request.client else ""
+    except Exception:  # noqa: BLE001 —— 指纹面取不到不挡主链路
+        peer = ""
+    _RING.add({
+        "ts": datetime.now(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z"),
+        "model": str(payload.get("model") or SERVE_MODEL),
+        "stream": want_stream,
+        "max_tokens": max_new,
+        "auth_header_present": auth_present,
+        "auth_key_sha8": auth_sha8,
+        "messages": messages,
+        "peer": peer,
+    })
     if want_stream:
         return StreamingResponse(
             _sse_stream(prompt, max_new, opts, t0),
@@ -364,6 +454,29 @@ def chat_completions(payload: dict[str, Any]) -> Any:
         "timing_ms": int((time.perf_counter() - t0) * 1000),
     }
     return JSONResponse(status_code=200, content=body)
+
+
+@app.get("/admin/records")
+def admin_records(limit: int = 0) -> dict[str, Any]:
+    """ring 快照（e2e U8 断言面）：count + records（messages 全文 + key 指纹，无原值）。"""
+    records = _RING.snapshot()
+    if limit > 0:
+        records = records[-limit:]
+    return {"service": "llm_openai", "count": len(records), "records": records}
+
+
+@app.get("/admin/text")
+def admin_text() -> Any:
+    """收到的全文（逐条 messages JSON 序列化、中文原样）——bytes 级脱敏断言对象。"""
+    from fastapi.responses import Response
+
+    return Response("\n".join(_RING.texts()), media_type="text/plain; charset=utf-8")
+
+
+@app.post("/admin/reset")
+def admin_reset() -> dict[str, Any]:
+    """清空 ring buffer（e2e 用例开跑前复位）。"""
+    return {"service": "llm_openai", "cleared": _RING.reset()}
 
 
 def _sse_stream(prompt: str, max_new: int, opts: dict[str, Any], t0: float) -> Any:
