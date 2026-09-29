@@ -1,9 +1,9 @@
 """M5 分类包（plan/开发指令.md §4 M5）。
 
 当前内容：``RulesV0``——规则表驱动的经典分类器（逐粒 LAB/几何/纹理特征 +
-``configs/rules_v0.yaml`` 规则表 → 缺陷类别）。``ONNXCls``（未来训练产物
-``models/cls.onnx``）与 ``RFDETRJoint``（联合检测分类）按同一冻结
-``ClsModel`` Protocol 后续并入本包。
+``configs/rules_v0.yaml`` 规则表 → 缺陷类别）。NN 权重加载占位（未来训练
+产物 ``models/cls.onnx``）与「检测+分类联合」实现按同一冻结 ``ClsModel``
+Protocol 后续并入本包。
 
 装配约定（``beaneye.app.components``）：本包暴露 ``build_default(**kwargs)``
 工厂，应用壳探测到即可零改动接线。
