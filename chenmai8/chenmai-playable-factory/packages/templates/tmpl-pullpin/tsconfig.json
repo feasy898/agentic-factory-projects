@@ -1,0 +1,17 @@
+{
+  // @pf/tmpl-pullpin：typecheck 门用（tsc --noEmit，strict）。运行时走 Node 22 原生
+  // 类型剥离 + esbuild 打包（tsconfig.base.json 注释）。跨包单源以 paths 显式指源
+  // （@pf/spec = 可解性单一真源；@pf/engine-bridge = M2 桥），tsc 与 esbuild 同图。
+  // noUncheckedIndexedAccess 在本包放宽（base 开启）：模板场景层大量数组直取，按
+  // oracle 移植保形；逻辑层正确性由 tests/logic-test.ts 冻结数值向量与 qacore 承担。
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "paths": {
+      "@pf/spec": ["../../spec/index.ts"],
+      "@pf/engine-bridge": ["../../engine-bridge/src/index.ts"]
+    },
+    "noUncheckedIndexedAccess": false
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "exclude": ["tests"]
+}
