@@ -4,3 +4,6 @@ tmp/
 .mimosa/
 *.log
 .DS_Store
+# 模板包内引擎副本：构建时从 packages/templates/vendor/engine.js 母本字节复制
+# （sha256 锚定校验），母本唯一入库（REUSED-ASSETS.md #16），副本不入库。
+packages/templates/*/src/vendor/engine.js

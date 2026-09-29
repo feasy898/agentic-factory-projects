@@ -21,10 +21,11 @@ test('workspaces 同时含 packages/* 与 packages/templates/*（坑 14）', () 
   assert.equal(pkg.engines.node, '>=22');
 });
 
-test('npm run build 空跑 exit 0（尚无包定义 build 脚本）', () => {
-  const res = spawnSync('npm', ['run', 'build', '--silent'], { cwd: root, encoding: 'utf8', shell: true });
+test('npm run build exit 0（批次 2 起：模板包真实构建；批次 1 曾为无包空跑）', () => {
+  const res = spawnSync('npm', ['run', 'build', '--silent'], { cwd: root, encoding: 'utf8', shell: true, maxBuffer: 16 * 1024 * 1024 });
   assert.equal(res.status, 0, `stdout=${res.stdout}\nstderr=${res.stderr}`);
-  assert.match(res.stdout, /空跑通过/);
+  assert.doesNotMatch(res.stdout, /失败（exit/, 'build 脚本零失败行');
+  assert.match(res.stdout, /构建完成/, '至少一个包真实构建完成（模板包 build 契约）');
 });
 
 test('单栈守卫：入库树范围（除 node_modules/.git/tmp/artifacts）零 .py 文件', () => {

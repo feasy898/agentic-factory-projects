@@ -4,6 +4,10 @@
   // 本文件仅作登记/追溯，不跑 tsc -b（包配置无 composite，避免与 noEmit 冲突）。
   "files": [],
   "references": [
-    { "path": "packages/engine-bridge" }
+    { "path": "packages/engine-bridge" },
+    { "path": "packages/templates/tmpl-match3" },
+    { "path": "packages/templates/tmpl-merge" },
+    { "path": "packages/templates/tmpl-pullpin" },
+    { "path": "packages/templates/tmpl-sort" }
   ]
 }
