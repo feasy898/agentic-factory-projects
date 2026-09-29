@@ -9,7 +9,7 @@ oracle `repo/docs/assets/specs/`（12 件）是**唯一规格源**（封存只�
 |---|---|---|---|
 | M1-spec | `spec-contract.md` | `packages/spec/`（校验器本体） | **M1.2a 已落**（TS 单源校验器，[spec.md](spec.md)：冻结 ajv-check 原样过 exit 0 + 11 件裁定矩阵与 oracle 双侧全等 + 算例逐值 + tsc strict；差分证据 artifacts/diff/M1.2a-spec-eval.json） |
 | M2-engine-bridge | `engine-bridge.md` | `packages/engine-bridge/` | **批次 1 完成（M1.2b）**（spec 字节落位本目录；冻结 26 用例 exit 0 + c8 行覆盖 97.6%≥80%（--lines=100 门真实性已验）+ tsc strict 过） |
-| M3-templates ×4 | `templates.md` + `match3-rules-card.md` | `packages/templates/tmpl-*` | 批次 2 待做 |
+| M3-templates ×4 | `templates.md` + `match3-rules-card.md` | `packages/templates/tmpl-*` | **批次 2 进行中**（spec 字节落位本目录 #34–#35；tmpl-match3/tmpl-merge 已落 M2.1a：按规则卡+templates.md 全新实现，冻结 logic-test 字节复用 exit 0（6/6、10/10）+ tsc strict + 构建 exit 0 + oracle qacore --autoplay 0 FAIL（pf:end 25464ms/9321ms，M2.2 前临时验收）；tmpl-pullpin/tmpl-sort 归 M2.1b） |
 | M4-packager | `packager.md` | `packages/packager/` | **批次 1 完成**（spec 字节落位本目录；46 断言冻结 eval + 六渠道结构断言 exit 0） |
 | M5-assetkit | `assetkit.md` | `packages/assetkit/` | 批次 3 待做 |
 | M8-qacore | `qacore.md` | `qacore/` | 批次 2 待做 |

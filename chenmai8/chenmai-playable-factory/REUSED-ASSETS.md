@@ -56,6 +56,15 @@
 注（#32，M1.2b 批次追加）：M2 资产 spec 文档字节复制（oracle docs/assets/ 是唯一规格源，决策 §0；
 与 #25 同一处置方式）。
 注（#25，M4 批次追加）：M4 资产 spec 文档字节复制（oracle docs/assets/ 是唯一规格源，决策 §0）。
+注（#34–#35，M2.1a 批次追加）：M3 资产 spec 文档字节复制（templates.md + match3-rules-card.md，
+oracle docs/assets/ 是唯一规格源，决策 §0；与 #25/#32 同一处置方式）。
+注（#36–#37，M2.1a 批次追加）：tmpl-match3 / tmpl-merge 冻结 logic-test **字节复用**
+（决策 §2.1 M3 行"数值向量原样复用"：规则卡 §12 算例、LCG/mulberry32 向量、hint 线=模拟线断言
+全部保留）。实现代码（src/*.ts、build.mjs）为按规则卡+templates.md 的全新实现，不在登记册；
+包内 `src/vendor/engine.js` 为母本 #16 的构建期字节复制（sha256 锚定校验见各包 build.mjs，
+根 .gitignore 不入库）。2026-09-30 实测：两包 logic-test 本机直跑 exit 0（match3 6/6、
+merge 10/10）+ tsc strict 过 + 构建 exit 0 + oracle qacore --autoplay 0 FAIL（pf:end 25464ms /
+9321ms ≤ 45000ms，M2.2 前临时验收）。
 注：冻结自验收 `packages/packager/test/run.mjs` **不在**字节登记册——按决策 §2.1 M4 行 +
 P5 预declare 做**且仅做**一处移植：python zipfile 交叉验证断言 → 系统 bsdtar
 （Windows 自带 `C:\Windows\System32\tar.exe`，libarchive 3.8.4；本机 `where tar` 首位是
@@ -102,7 +111,11 @@ Git 的 GNU tar 1.35，**不能读 zip**，故按绝对路径定位 bsdtar——
     { "path": "packages/engine-bridge/test/run.mjs", "source": "repo/packages/engine-bridge/test/run.mjs", "bytes": 745, "sha256": "0b1de84412531b65f327941a24a8ecff99d31d9c5bef7ef85cc422c763195ce6" },
     { "path": "packages/engine-bridge/testsupport/fixture.mjs", "source": "repo/packages/engine-bridge/testsupport/fixture.mjs", "bytes": 4210, "sha256": "9726c3becca43f3cbfe48d21c20ca9971d1a5fdc1569e4668a6f311a34fd8963" },
     { "path": "docs/specs/engine-bridge.md", "source": "repo/docs/assets/specs/engine-bridge.md", "bytes": 11193, "sha256": "1b4866e8b63150549493f37f8cd451585925e3349af99b363318345fb4872a28" },
-    { "path": "packages/spec/test/ajv-check.mjs", "source": "repo/packages/spec/test/ajv-check.mjs", "bytes": 2724, "sha256": "18b98572e7ff342e6258da3cb79b47f2488e5d7f168f5b6307e79cf908114b8c" }
+    { "path": "packages/spec/test/ajv-check.mjs", "source": "repo/packages/spec/test/ajv-check.mjs", "bytes": 2724, "sha256": "18b98572e7ff342e6258da3cb79b47f2488e5d7f168f5b6307e79cf908114b8c" },
+    { "path": "docs/specs/templates.md", "source": "repo/docs/assets/specs/templates.md", "bytes": 11087, "sha256": "c6239e824c56919c5427166d9437af3f7057af9515447792f4fa375ab019dd8c" },
+    { "path": "docs/specs/match3-rules-card.md", "source": "repo/docs/assets/specs/match3-rules-card.md", "bytes": 19509, "sha256": "25861fb75ef4c0c8e6fb6404ed21e94da698203eb25d4b5d21a5e99117dce675" },
+    { "path": "packages/templates/tmpl-match3/tests/logic-test.ts", "source": "repo/packages/templates/tmpl-match3/tests/logic-test.ts", "bytes": 3545, "sha256": "bb6da679e50ea1d38bece7e73727b4e83db95ac100b9e2341857fe10633083c1" },
+    { "path": "packages/templates/tmpl-merge/tests/logic-test.ts", "source": "repo/packages/templates/tmpl-merge/tests/logic-test.ts", "bytes": 5255, "sha256": "28d87ad6288959f95127b56b87f89d7ab61d8571d0f53287a807fbb8d307d3d6" }
   ]
 }
 ```
