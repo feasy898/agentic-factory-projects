@@ -64,6 +64,13 @@ async function boot(): Promise<void> {
       height: window.innerHeight,
     },
     fps: { target: 60 },
+    // 引擎 WebAudio 关闭（CHK04 合规，M2.2 复验回修）：玩法音效一律经 PF.audio
+    // （桥管理的 HTMLAudio 元素，首交互前强制静音）。引擎自带 WebAudio 管理器会在
+    // 启动期创建 AudioContext，且无头/真机浏览器授予 autoplay 时可能创建即 running
+    // ——形成"首交互前 running AudioContext"的真实违规（channel-rules
+    // muteBeforeFirstInteraction）。引擎原生支持 noAudio（NoAudioSoundManager，
+    // 不创建任何 AudioContext）；CHK04 的媒体探针（play()/<audio>/<video>）不受影响。
+    audio: { noAudio: true },
     scene: [scene],
   });
   void game; // 场景持有全部引用，Game 实例保存在闭包防回收
