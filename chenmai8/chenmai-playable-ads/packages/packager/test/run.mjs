@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * M4 packager 自验收（T1.3）：对 match3 占位工程跑三条渠道并逐项断言。
+ * M4 packager 自验收（T1.3 起步，T2.4 扩六渠道）：对 match3 占位工程跑六条渠道并逐项断言。
  *
  * 用法：node packages/packager/test/run.mjs
  * 全过 exit 0；任一断言失败 exit 1。
@@ -10,6 +10,10 @@
  *   meta      单 HTML：≤3MB（rules+spec override 上限）、零外链、无 MRAID 引用
  *   mintegral zip：条目结构恰为 [build.js, Template.html]、zip ≤5MB、条目内零外链、
  *              Template.html 引用 build.js；python zipfile 交叉验证（有 venv 时）
+ *   google    zip：条目恰为 [index.html]（全内联入口）、≤5MB、零外链、资源内联
+ *   unity     zip：条目恰为 [index.html]、≤5MB、含 mraid.js 相对注入、零外链
+ *   tiktok    zip：条目恰为 [config.json, index.html, js-sdk.js]、≤5MB、入口引用
+ *              js-sdk.js、桩定义 window.openAppStore、config.json 可解析含 spec 字段
  *   负向      dist 混入外链 → 构建失败；meta 混入 MRAID → 构建失败；未知渠道 → 失败
  *   复现性    同输入两次构建字节一致
  */
@@ -153,6 +157,107 @@ async function main() {
     }
   }
 
+  // ---------- 3b) google：zip，条目恰为 [index.html]（全内联入口） ----------
+  {
+    const r = build("google", FIXTURE);
+    const dir = path.join(OUT, "golden-match3", "google", "en");
+    const files = r.status === 0 ? listPackageFiles(dir) : [];
+    check("google: build exit 0", r.status === 0, r.status === 0 ? [] : [r.stderr.trim()]);
+    const zipPath = files.find((f) => f.endsWith(".zip"));
+    check("google: 产物为 zip", Boolean(zipPath), [`目录内容: ${files.join(", ")}`]);
+    if (zipPath) {
+      const abs = path.join(dir, zipPath);
+      const bytes = statSync(abs).size;
+      check(`google: zip ≤5MB（实际 ${bytes} B ≤ 5242880）`, bytes <= 5 * MB);
+      const entries = readZip(readFileSync(abs));
+      const names = [...entries.keys()];
+      check(
+        "google: 包内结构恰为 [index.html]",
+        JSON.stringify(names.sort()) === JSON.stringify(["index.html"]),
+        [`实际条目: ${names.join(", ")}`],
+      );
+      const html = entries.get("index.html").toString("utf8");
+      check("google: 白名单外零外链", externalUrls(html).length === 0,
+        externalUrls(html).map((u) => `外链: ${u}`));
+      check("google: 资源已内联（含 base64 data URI）", html.includes("data:image/png;base64,"));
+      check("google: 无 mraid/js-sdk 运行时注入（规则库声明为空）",
+        !html.includes('src="mraid.js"') && !html.includes('src="js-sdk.js"'));
+    }
+  }
+
+  // ---------- 3c) unity：zip，条目恰为 [index.html]，mraid.js 相对注入 ----------
+  {
+    const r = build("unity", FIXTURE);
+    const dir = path.join(OUT, "golden-match3", "unity", "en");
+    const files = r.status === 0 ? listPackageFiles(dir) : [];
+    check("unity: build exit 0", r.status === 0, r.status === 0 ? [] : [r.stderr.trim()]);
+    const zipPath = files.find((f) => f.endsWith(".zip"));
+    check("unity: 产物为 zip", Boolean(zipPath), [`目录内容: ${files.join(", ")}`]);
+    if (zipPath) {
+      const abs = path.join(dir, zipPath);
+      const bytes = statSync(abs).size;
+      check(`unity: zip ≤5MB（实际 ${bytes} B ≤ 5242880）`, bytes <= 5 * MB);
+      const entries = readZip(readFileSync(abs));
+      const names = [...entries.keys()];
+      check(
+        "unity: 包内结构恰为 [index.html]",
+        JSON.stringify(names.sort()) === JSON.stringify(["index.html"]),
+        [`实际条目: ${names.join(", ")}`],
+      );
+      const html = entries.get("index.html").toString("utf8");
+      check("unity: mraid.js 已按规则注入（相对引用，容器提供，不占包内条目）",
+        html.includes('<script src="mraid.js"></script>'));
+      check("unity: 白名单外零外链", externalUrls(html).length === 0,
+        externalUrls(html).map((u) => `外链: ${u}`));
+      check("unity: 资源已内联（含 base64 data URI）", html.includes("data:image/png;base64,"));
+    }
+  }
+
+  // ---------- 3d) tiktok：zip = index.html + config.json + js-sdk.js 桩 ----------
+  {
+    const r = build("tiktok", FIXTURE);
+    const dir = path.join(OUT, "golden-match3", "tiktok", "en");
+    const files = r.status === 0 ? listPackageFiles(dir) : [];
+    check("tiktok: build exit 0", r.status === 0, r.status === 0 ? [] : [r.stderr.trim()]);
+    const zipPath = files.find((f) => f.endsWith(".zip"));
+    check("tiktok: 产物为 zip", Boolean(zipPath), [`目录内容: ${files.join(", ")}`]);
+    if (zipPath) {
+      const abs = path.join(dir, zipPath);
+      const bytes = statSync(abs).size;
+      check(`tiktok: zip ≤5MB（实际 ${bytes} B ≤ 5242880）`, bytes <= 5 * MB);
+      const entries = readZip(readFileSync(abs));
+      const names = [...entries.keys()];
+      check(
+        "tiktok: 包内结构恰为 [config.json, index.html, js-sdk.js]",
+        JSON.stringify(names.sort()) === JSON.stringify(["config.json", "index.html", "js-sdk.js"]),
+        [`实际条目: ${names.join(", ")}`],
+      );
+      const html = entries.get("index.html").toString("utf8");
+      const sdk = entries.get("js-sdk.js").toString("utf8");
+      check("tiktok: 入口以相对路径引用 js-sdk.js（规则库注入项）",
+        html.includes('<script src="js-sdk.js"></script>'));
+      check("tiktok: js-sdk 桩兜底定义 window.openAppStore（容器已实现时让位）",
+        sdk.includes("window.openAppStore") && sdk.includes("typeof window.openAppStore"));
+      const cfgText = entries.get("config.json").toString("utf8");
+      let cfg = null;
+      try {
+        cfg = JSON.parse(cfgText);
+      } catch {
+        cfg = null;
+      }
+      check("tiktok: config.json 可解析", cfg !== null, [cfgText.slice(0, 120)]);
+      const spec = JSON.parse(readFileSync(SPEC, "utf8"));
+      check("tiktok: config.json 含 spec 派生字段（orientation/gameName）",
+        cfg !== null && cfg.orientation === spec.channels.orientation
+        && typeof cfg.gameName === "string" && cfg.gameName.length > 0
+        && typeof cfg.version === "string",
+        cfg ? [`orientation=${cfg.orientation} gameName=${cfg.gameName}`] : []);
+      const bad = [...externalUrls(html), ...externalUrls(sdk), ...externalUrls(cfgText)];
+      check("tiktok: 条目内白名单外零外链", bad.length === 0, bad.map((u) => `外链: ${u}`));
+      check("tiktok: 入口资源已内联（含 base64 data URI）", html.includes("data:image/png;base64,"));
+    }
+  }
+
   // ---------- 4) 可复现性：同输入两次构建字节一致 ----------
   {
     const a = path.join(OUT, "golden-match3", "applovin", "en", "index.html");
@@ -180,9 +285,9 @@ async function main() {
     const r2 = build("meta", path.join(badDist, "d2"));
     check("负向: meta 产物混入 MRAID → 拒绝", r2.status !== 0, (r2.stderr || "").trim().split("\n").slice(0, 2));
 
-    // 5c. 本阶段未冻结的渠道：拒绝（规则库只有 applovin/meta/mintegral）
-    const r3 = build("google", FIXTURE);
-    check("负向: 未知/未冻结渠道（google）→ 拒绝", r3.status !== 0, (r3.stderr || "").trim().split("\n").slice(0, 2));
+    // 5c. 规则库没有的渠道：拒绝（T2.4 起六投放渠道已冻结，改用不存在的渠道名）
+    const r3 = build("not-a-channel", FIXTURE);
+    check("负向: 未知渠道（not-a-channel）→ 拒绝", r3.status !== 0, (r3.stderr || "").trim().split("\n").slice(0, 2));
 
     rmSync(badDist, { recursive: true, force: true });
   }

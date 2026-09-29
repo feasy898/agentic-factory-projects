@@ -55,6 +55,39 @@ export function validateRules(rules) {
           errors.push(`channels.${id}.package.structure: zip 需要声明包内结构（文件名清单）`);
         } else if (typeof pkg.entry !== "string" || !pkg.structure.includes(pkg.entry)) {
           errors.push(`channels.${id}.package.entry: 必须是 structure 清单中的入口文件`);
+        } else {
+          const names = new Set(pkg.structure);
+          if (names.size !== pkg.structure.length) {
+            errors.push(`channels.${id}.package.structure: 条目重名（${pkg.structure.join(", ")}）`);
+          }
+          // package.generated（可选，T2.4 增）：文件名 → 生成器名，声明由打包器按
+          // spec 生成的附加文件（如 tiktok 的 config.json / js-sdk.js 桩）。
+          if (pkg.generated !== undefined) {
+            const gen = pkg.generated;
+            if (typeof gen !== "object" || gen === null || Array.isArray(gen)) {
+              errors.push(`channels.${id}.package.generated: 必须是对象（文件名 → 生成器名）`);
+            } else {
+              for (const [name, kind] of Object.entries(gen)) {
+                if (!names.has(name)) {
+                  errors.push(`channels.${id}.package.generated.${name}: 不在 structure 清单中`);
+                }
+                if (typeof kind !== "string" || !kind) {
+                  errors.push(`channels.${id}.package.generated.${name}: 生成器名须为非空字符串`);
+                }
+                if (name === pkg.entry) {
+                  errors.push(`channels.${id}.package.generated.${name}: 不能覆盖入口文件`);
+                }
+              }
+            }
+          }
+          // 非入口且非生成文件的条目至多 1 个：它承载 dist 外链脚本合并产物（如
+          // mintegral 的 build.js）；没有则入口全内联（google/unity/tiktok 形态）。
+          const others = pkg.structure.filter(
+            (n) => n !== pkg.entry && !(pkg.generated && n in pkg.generated));
+          if (others.length > 1) {
+            errors.push(
+              `channels.${id}.package.structure: 非入口且非 generated 的合并脚本至多 1 个（当前 ${others.length}：${others.join(", ")}）`);
+          }
         }
       }
     }

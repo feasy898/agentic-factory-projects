@@ -1,7 +1,8 @@
 """pfcore make —— 全流水线编排（M9，反馈行动 1）。
 
 流程（pipeline-contract.md §1 冻结名 ``make``；墙钟口径 §5）：
-  validate → 模板构建（真实可玩单 HTML）→ 用该 HTML 打渠道包（applovin/meta/mintegral）
+  validate → 模板构建（真实可玩单 HTML）→ 用该 HTML 按规则库打渠道包（T2.4 起
+  六投放渠道全冻结，--channels all 即六渠道；演示兜底仍按调用方钉渠道集）
   → 对首个 single-html 渠道跑 qacore（--autoplay，质检是裁判）
   → summary.html + 二维码 + 预览链接 + 墙钟计时 → artifacts/demo-prebuilt/ 兜底目录
 
@@ -313,6 +314,9 @@ def build_summary_html(ctx: dict) -> str:
         f"<td><a href=\"{esc(p['rel'])}\">{esc(Path(p['rel']).name)}</a></td></tr>"
         for p in ctx["packages"]
     )
+    formats = sorted({p["format"] for p in ctx["packages"]})
+    fmt_note = "、".join(
+        f"{fmt} {sum(1 for p in ctx['packages'] if p['format'] == fmt)} 包" for fmt in formats)
     preview_rel = ctx["preview_rel"]
     qr_rel = "qr.png"
     pf = qa.get("pf") or {}
@@ -361,11 +365,11 @@ def build_summary_html(ctx: dict) -> str:
 </div>
 
 <div class="card">
-<h2 style="margin-top:0">渠道包（{esc(ctx["spec_rel"])} → 三渠道）</h2>
+<h2 style="margin-top:0">渠道包（{esc(ctx["spec_rel"])} → {len(ctx["packages"])} 包）</h2>
 <table><tr><th>渠道</th><th>语言</th><th>形态</th><th>字节</th><th>上限</th><th>警告</th><th>产物</th></tr>
 {chan_rows}</table>
-<p class="dim">来源：同一份真实可玩 match3 HTML（{esc(preview_rel)}）经 pf-packager 按渠道规则库出包；
-mintegral 为 zip（Template.html + build.js）。unity/google/tiktok 未在规则库冻结，不在本阶段范围。</p>
+<p class="dim">来源：同一份真实可玩 match3 HTML（{esc(preview_rel)}）经 pf-packager 按渠道规则库出包
+（{esc(fmt_note)}）；zip 渠道包内结构由规则库 package.structure 声明，单 HTML 渠道全内联零外链。</p>
 </div>
 
 <div class="card">

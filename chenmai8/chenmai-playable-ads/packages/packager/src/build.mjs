@@ -2,7 +2,10 @@
  * 打包编排：dist + spec + channel-rules → 渠道产物。
  *
  * - single-html（applovin/meta）：单 HTML 全内联（base64 资源、零外链），输出 <entry>
- * - zip（mintegral）：Template.html（壳，资源内联）+ build.js（合并脚本）按规则结构打包
+ * - zip：包内结构由规则库 package.structure 声明——
+ *   - 声明合并脚本（如 mintegral 的 build.js）：Template.html（壳，资源内联）+ build.js
+ *   - 仅入口（google/unity）：入口 index.html 全内联
+ *   - 入口 + package.generated 生成文件（tiktok）：index.html + config.json + js-sdk.js 桩
  *
  * 输出目录契约：artifacts/<projectId>/<channel>/<locale>/<files>
  * 构建过程强制执行规则库约束：maxBytes（含 spec override 收紧）、maxFiles、零外链、
@@ -12,6 +15,7 @@ import { createHash } from "node:crypto";
 import { mkdirSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
+import { generateExtra } from "./extras.mjs";
 import { processHtml, findMraidReferences, scanExternalUrls } from "./html.mjs";
 import { channelRule, effectiveMaxBytes, loadRules } from "./rules.mjs";
 import { createZip } from "./zip.mjs";
@@ -80,21 +84,24 @@ export async function pack(o) {
 
   const isZip = rule.package.format === "zip";
   const entryOutName = rule.package.entry || "index.html";
-  let bundleName = "build.js";
-  if (isZip) {
-    const others = rule.package.structure.filter((n) => n !== entryOutName);
-    if (others.length !== 1) {
-      throw new Error(
-        `渠道 ${o.channel} 的 package.structure 必须为 [bundle, "${entryOutName}"] 两项，当前: [${rule.package.structure.join(", ")}]`,
-      );
-    }
-    bundleName = others[0];
+  // 生成文件（package.generated，可选）：文件名 → 生成器名，按 spec 现生成（T2.4）。
+  const generatedSpec = (isZip && rule.package.generated) || {};
+  // 合并脚本 = structure 中既非入口也非生成文件的那个唯一文件（如 mintegral 的
+  // build.js），承载 dist 外链脚本合并产物；清单里没有 → 入口全内联（inline-script）。
+  const bundleCandidates = (rule.package.structure || []).filter(
+    (n) => n !== entryOutName && !(n in generatedSpec),
+  );
+  if (bundleCandidates.length > 1) {
+    throw new Error(
+      `渠道 ${o.channel} 的 package.structure 中非入口且非 generated 的合并脚本至多 1 个，当前: [${rule.package.structure.join(", ")}]`,
+    );
   }
+  const bundleName = bundleCandidates[0] || null;
 
-  const mode = isZip ? "extract-script" : "inline-script";
+  const mode = bundleName ? "extract-script" : "inline-script";
   const { html, scripts, warnings } = await processHtml(entryAbs, htmlDir, {
     mode,
-    bundleName,
+    bundleName: bundleName || "build.js",
     minify: o.minify !== false,
     injectScripts: rule.runtime?.injectRelativeScripts || [],
     entryLabel,
@@ -132,14 +139,21 @@ export async function pack(o) {
   let artifact;
   if (isZip) {
     enforceText(html, entryOutName);
-    const bundleCode = scripts.map((s) => s.code).join("\n;\n");
-    const bundleText = bundleCode || "/* pf-packager: 空 bundle（dist 无外链脚本） */";
-    enforceText(bundleText, bundleName);
+    const parts = new Map([[entryOutName, Buffer.from(html, "utf8")]]);
+    const entryBytes = parts.get(entryOutName).length;
+    if (bundleName) {
+      const bundleCode = scripts.map((s) => s.code).join("\n;\n");
+      const bundleText = bundleCode || "/* pf-packager: 空 bundle（dist 无外链脚本） */";
+      enforceText(bundleText, bundleName);
+      parts.set(bundleName, Buffer.from(bundleText, "utf8"));
+    }
+    // 生成文件（config.json / js-sdk 桩等）按规则库声明的生成器现生成，同过零外链关。
+    for (const [name, kind] of Object.entries(generatedSpec)) {
+      const text = generateExtra(kind, { spec });
+      enforceText(text, name);
+      parts.set(name, Buffer.from(text, "utf8"));
+    }
 
-    const parts = new Map([
-      [entryOutName, Buffer.from(html, "utf8")],
-      [bundleName, Buffer.from(bundleText, "utf8")],
-    ]);
     const entries = rule.package.structure.map((name) => {
       const data = parts.get(name);
       if (data === undefined) throw new Error(`包内结构声明了未知文件 "${name}"`);
@@ -156,9 +170,14 @@ export async function pack(o) {
     writeFileSync(artifact, zipBuf);
     files.push(
       { path: path.basename(artifact), bytes: zipBuf.length, sha256: sha256(zipBuf), role: "package" },
-      { path: entryOutName, bytes: parts.get(entryOutName).length, sha256: sha256(parts.get(entryOutName)), role: "entry-in-zip" },
-      { path: bundleName, bytes: parts.get(bundleName).length, sha256: sha256(parts.get(bundleName)), role: "bundle-in-zip" },
+      { path: entryOutName, bytes: entryBytes, sha256: sha256(parts.get(entryOutName)), role: "entry-in-zip" },
     );
+    if (bundleName) {
+      files.push({ path: bundleName, bytes: parts.get(bundleName).length, sha256: sha256(parts.get(bundleName)), role: "bundle-in-zip" });
+    }
+    for (const name of Object.keys(generatedSpec)) {
+      files.push({ path: name, bytes: parts.get(name).length, sha256: sha256(parts.get(name)), role: "generated-in-zip" });
+    }
   } else {
     enforceText(html, entryOutName);
     const htmlBuf = Buffer.from(html, "utf8");

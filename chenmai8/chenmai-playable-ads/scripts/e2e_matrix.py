@@ -8,8 +8,9 @@
     流程：对每个 golden spec × locale × channel：模板构建 → 渠道打包 →
           qacore run --autoplay 逐包质检
     断言：全部包质检 0 fail；总耗时打印；产物大小表输出 summary.json
-    --quick：仅 golden-match3 × en × 规则库冻结投放渠道（现三渠道），每日冒烟门，
-             硬预算 ≤90 秒（--budget-sec 可调；超预算即 exit 1）
+    --quick：仅 golden-match3 × en × 规则库冻结投放渠道（T2.4 起六渠道，随规则库
+             扩缩自动跟随），每日冒烟门，硬预算 ≤90 秒（--budget-sec 可调；超预算即
+             exit 1）
 
 与编排器（pfcore/make.py）同一条真实链路：模板构建器（tmpl-*/build.mjs）→
 渠道打包器（packages/packager/bin.mjs）→ qacore（质检是唯一裁判）。pack 子命令
@@ -379,10 +380,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="e2e_matrix",
         description="端到端矩阵门：golden spec × 语言 × 冻结渠道的构建→打包→逐包质检；"
-                    "--quick 为每日冒烟门（match3×en×三渠道，≤90 秒硬预算）",
+                    "--quick 为每日冒烟门（match3×en×规则库全部投放渠道，≤90 秒硬预算）",
     )
     parser.add_argument("--quick", action="store_true",
-                        help="快速门：仅 golden-match3 × en × 冻结投放渠道（现三渠道），预算 90s")
+                        help="快速门：仅 golden-match3 × en × 冻结投放渠道（T2.4 起六渠道），预算 90s")
     parser.add_argument("--locales", default=None,
                         help="逗号分隔语言（缺省：quick=en，全量=en,ar，规划 §8）")
     parser.add_argument("--channels", default=None,

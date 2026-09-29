@@ -4,8 +4,9 @@
  *
  * 输入：模板构建产物（dist）+ PlayableSpec + channel-rules 规则库
  * 输出：artifacts/<project>/<channel>/<locale>/ 下的渠道包
- *   - single-html 渠道（applovin/meta/unity…）：单 HTML 全内联（base64 资源、零外链）
- *   - zip 渠道（mintegral：build.js + Template.html；google/tiktok 随后继里程碑）
+ *   - single-html 渠道（applovin/meta）：单 HTML 全内联（base64 资源、零外链）
+ *   - zip 渠道（结构由规则库 package.structure 声明）：mintegral=build.js+Template.html；
+ *     google/unity=入口 index.html 全内联；tiktok=index.html+config.json+js-sdk 桩
  *
  * 零第三方运行时依赖；esbuild 仅作为根工作区 devDependency 用于 JS/CSS 压缩。
  */
