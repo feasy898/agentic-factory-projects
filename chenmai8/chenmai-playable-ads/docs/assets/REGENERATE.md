@@ -71,7 +71,7 @@ python scripts/gate_phase0.py    # 本机门禁：GATE PHASE0: PASS（5/5），�
 |---|---|---|
 | M1 schema/不变式 | 门项 1 全部 + 双侧一致性（Python/JS 同判） | bad 样本是否仍各自击中原检查项；CONTRACTS 痛点候选是否被影响 |
 | M2 桥 | 26 用例 + coverage + 门项 4（CHK04 静音链路真机语义） | 事件 detail 表无删改；退出路由单次锁语义 |
-| M3 三消 | 门项 4 + 规则卡 §12 缺口清单复核 | nearWin 仍单次触发；pf:end 时长无明显回退；包体 ≤5MB |
+| M3 三消 | 门项 4 + 规则卡 §13 缺口清单复核 | nearWin 仍单次触发；pf:end 时长无明显回退；包体 ≤5MB |
 | M4 打包器 | 自验收 22+ 断言 + 门项 3 | 重复构建字节一致仍成立（zip 时间戳）；零外链正则未被放松 |
 | 规则库 | M4 自验收 + 门项 3 + qacore CHK01 | 新数值与 channel-adapters 表一致 |
 | llmgw | selftest + gate_phase0 门项 4 扫描 | env 默认值表未漂移 |
@@ -108,6 +108,15 @@ python scripts/gate_phase0.py    # 本机门禁：GATE PHASE0: PASS（5/5），�
 | 1 | 2026-09-28 | M2 engine-bridge | 首跑 26/26 全绿，覆盖率 96.3%（通过） | coverage include 路径 bug 修复；spec 补时序/告警/locale 回退；本 SOP 建立 |
 | 2 | 2026-09-28 | M6 llmgw | 盲实现再生成功 | spec 补 schema 序列化形态/attempts 0 基与退避关系/错误类型速查/json_of 非 dict/模块级 chat() 参数表/最小 eval 环境 |
 | 2 | 2026-09-28 | M4 packager | 自测 3 次过；工作流门一次瞬时失败后主会话复跑 3 次全绿——**判定通过，暴露环境脆弱性** | spec 补：规则库三渠道内容全量、golden 夹具内容、**测试环境前置成文（run.mjs 路径假设/esbuild/venv SKIP 语义）**、manifest zip 形状与 specVersion 位置、MRAID 大小写与 maxFiles 语义；exit code 统一；SOP 增环境前置硬性条款 |
+| 3 | 2026-09-29 | M8 qacore | 盲实现再生成功（金标层 + MUT-01/02/04 恰命中 + 退出码契约全过） | spec 补：变异构造算法成文/CHK08 网络噪声过滤前提/探针 pf:* 事件名单/__PF_QC__ 形状与 everVisible/autoplay 只驱动竖屏/规则库数值与 runtime_stubs 机制/依赖最小集；报告字段表显式交叉引用 pipeline-contract §4 并修其 stem 命名矛盾 |
+| 3 | 2026-09-29 | M1 pfcore（validate） | 盲实现再生成功（golden 过 + bad 6/6 各自击中 + 冻结名门禁） | spec 补：bad03 "两层都收"登记/LCG 三自由度（先推进后取值、单流跨关卡、各生成器独立建流）+ 算例/merge "未覆盖即结构 stub" 声明/I2 终局形态（重放解至已解盘面）/CLI stdout 格式/eval 样本形状契约清单/ajv-check 归属标注 |
+| 3 | 2026-09-29 | M3 match3rules（规则核镜像） | 盲实现再生成功；**冻结 eval 抓出实现者自己的 2 个真实 bug（果冻跨波重复计数/循环导入）——eval 强度的正面证据** | 规则卡补：mulberry32 函数体内联（钉死 bryc 公版 `t|61`，实测 `*61` 变体即不同流）/hint 布局数学/各缺省值与方向钉死（seed 参数序、qc 缺省、spriteKeys、Fisher-Yates 降序、64 次重试同主流连续消耗、死局重排 k、steps[] schema、bestMove 并列取 allMoves 序靠前、nearWin 缺省 false、FNV 枚举序与调色板色值表）/模板侧范围标注/**新增 §12 数值算例（已知答案）** |
+
+**第三波通用教训（SOP 硬性条款，2026-09-29）**：**规则卡/数值表类 spec 必须自带"带期望输出的
+算例"**——本次三个试点全部靠"外部公知向量/手推构造盘"补位，这是可避免的脆弱性；mulberry32
+更实证了风险：卡只给函数名不给函数体时，"规范公版"与流传变体（`t|61` vs `*61`）是**不同的流**，
+各自自洽的 gate 都拦不住——算例必须随卡内联，函数体级别的常量也要成文。今后新规则卡/数值表
+（merge/pullpin/sort 规则卡开工时）不附算例视为 spec 缺口，回炉补齐后才许冻结。
 
 ## 6. 演示兜底（demo-prebuilt）
 
@@ -163,4 +172,5 @@ python scripts/gate_phase0.py    # 本机门禁：GATE PHASE0: PASS（5/5），�
 | `270bd76` | 周边逻辑模块 spec |
 | （本文件与 CONTRACTS 所在 commit） | 再生手册 + 契约汇总 |
 | （再生试验回炉 commit） | engine-bridge 再生试验回炉：coverage 空过 bug 修复 + spec 时序/告警/locale 补齐 + 再生试验 SOP |
+| （第三波回炉 commit，2026-09-29） | qacore/pfcore/match3rules 三试点回炉 30 项缺口：qacore.md 8 项 / spec-contract.md 7 项 / 规则卡 14 项（含新增 §12 数值算例）/ pipeline-contract stem 命名裁决 / 本 SOP 增"数值表类 spec 必须自带算例"硬性条款；对照表 `_gap-closure-wave3.md` |
 | `8e6782d`…`e50abdf` | 模块本体构建史（pfcore/qacore/llmgw/gate0/spec/bridge/packager/tmpl-match3/gate1） |
