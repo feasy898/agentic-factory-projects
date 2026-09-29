@@ -120,7 +120,19 @@
   MODULES；全套 468 测试 + validate_knowledge --min-items-per-kp 3（321/321
   dual-agent-verified 保留）+ run_contract 参考实现 / --impl-dir 平铺目录注入
   （单模块与 --suite full）全绿）
-- [ ] **xAPI 学习事件导出**：Response/ReviewEntry/PlanStep -> xAPI statement JSON，附学习记录标准符合性测试
+- [x] **xAPI 学习事件导出**：Response/ReviewEntry/PlanStep -> xAPI statement JSON，附学习记录标准符合性测试
+  （完成于本轮，待主会话提交：src/xuexing/xapi.py（确定性内核：三类事件产器
+  answered/review-scheduled/plan-assigned + export_statements/plan_statements 批量导出
+  + validate_statement 标准符合性校验器（xAPI 1.0.3 数据 API 离线 MUST 子集：
+  actor 恰一 IFI/verb IRI/Activity IRI/UUID id/ISO 8601 timestamp+duration/
+  version 1.0.0/score 约束/extensions 键 IRI）+ is_iri 等判定积木；statement id 用
+  uuid5 冻结命名空间派生——确定性、无时钟（timestamp 由调用方传入）、无随机、纯 stdlib，
+  鸭子类型零 xuexing 依赖；标准事实当日实读 adlnet/xAPI-Spec xAPI-Data.md 核对）+
+  specs/drafts/xapi.spec.md + tests/contract/test_xapi_contract.py（33 项，闭式现算
+  核实，符合性测试对产出 statement 另做独立正则/解析复核）；已登记 run_contract 与
+  根 conftest MODULES；全套 501 测试 + validate_knowledge --min-items-per-kp 3
+  （321/321 dual-agent-verified 保留）+ run_contract 参考实现 / --impl-dir 平铺目录
+  注入（单模块）+ --suite full 全绿）
 - [ ] **OMR 答题卡对接规范**：answer-sheet.json（题号-选项映射）+ OMRChecker 输出适配层
 - [ ] **机构多租户**：server 加 org 维度数据隔离（org_id 贯穿 store/attempt/api）
 - [ ] **契约冻结第二波**：把 kt/blueprint/grading/recommend 等新规格草稿走冻结工作流（对抗评审+两轮重生成达标）
