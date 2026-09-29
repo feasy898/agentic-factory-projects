@@ -40,8 +40,28 @@ function resolveAssetPath(rel, specDir) {
   return null;
 }
 
+/** assetkit（M5）接线：环境变量 PF_ASSET_OPTMAP 指向 assetkit 产物映射
+ *  （asset-optmap.json）时，spec 声明的素材按声明串精确匹配优化产物——命中且
+ *  文件在则内联优化后字节（manifest 如实记录来源与前后字节数）；未命中/产物
+ *  缺失/格式不支持则回退原素材并告警，构建行为与旧版完全一致。 */
+function loadAssetOptIndex() {
+  const optmapPath = process.env.PF_ASSET_OPTMAP;
+  if (!optmapPath || !existsSync(optmapPath)) return null;
+  try {
+    const parsed = JSON.parse(readFileSync(optmapPath, "utf8"));
+    const byKey = new Map();
+    for (const e of parsed.entries || []) {
+      if (e && typeof e.key === "string" && typeof e.out === "string") byKey.set(e.key, e);
+    }
+    return { byKey, outDir: parsed.outDir ? path.resolve(parsed.outDir) : path.dirname(path.resolve(optmapPath)) };
+  } catch (err) {
+    console.warn(`[tmpl-match3] 警告: PF_ASSET_OPTMAP 不可读，忽略（${err.message}）`);
+    return null;
+  }
+}
+
 /** 构建期内联素材：返回 (内联 data URI 表, 真实嵌入清单)。 */
-function buildAssetMap(spec, specDir) {
+function buildAssetMap(spec, specDir, optIndex) {
   const sprites = (spec.assets && spec.assets.sprites) || {};
   const map = {};
   const manifest = [];
@@ -51,6 +71,23 @@ function buildAssetMap(spec, specDir) {
     if (!abs) {
       console.warn(`[tmpl-match3] 警告: 素材文件缺失，跳过嵌入（运行期回退程序化贴图）: ${key}=${rel}`);
       continue;
+    }
+    if (optIndex) {
+      const opt = optIndex.byKey.get(rel);
+      const optAbs = opt ? path.resolve(optIndex.outDir, opt.out) : null;
+      if (optAbs && existsSync(optAbs)) {
+        const optMime = ASSET_MIME[path.extname(optAbs).toLowerCase()];
+        if (optMime) {
+          const bytes = readFileSync(optAbs);
+          map[key] = `data:${optMime};base64,${bytes.toString("base64")}`;
+          manifest.push({
+            spriteKey: key, path: rel, bytes: bytes.length,
+            source: "assetkit", originalBytes: opt.originalBytes, optimizedBytes: bytes.length,
+          });
+          continue;
+        }
+      }
+      console.warn(`[tmpl-match3] 警告: assetkit 优化产物缺失或格式不支持，回退原素材: ${key}=${rel}`);
     }
     const mime = ASSET_MIME[path.extname(abs).toLowerCase()];
     if (!mime) {
@@ -103,7 +140,7 @@ async function main() {
 
   const localeTag = o.locale || (spec.i18n && spec.i18n.defaultLocale) || "en";
   const title = (spec.meta && spec.meta.title) || "Playable";
-  const { map: assetMap, manifest } = buildAssetMap(spec, path.dirname(path.resolve(o.spec)));
+  const { map: assetMap, manifest } = buildAssetMap(spec, path.dirname(path.resolve(o.spec)), loadAssetOptIndex());
   const html = `<!doctype html>
 <html lang="${localeTag}">
 <head>

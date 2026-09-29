@@ -15,5 +15,6 @@ dependencies = [
 [tool.setuptools]
 # python/ 下并列着多个运行模块，随各自里程碑逐个正规化。
 # pfcore：编排 CLI（M1 起已正规化）；qacore：质检器（T1.4 起正规化，
-# 验收命令 `python -m qacore run ...` 不再依赖仓库根 cwd 或 .pth hack）。
-packages = ["pfcore", "qacore"]
+# 验收命令 `python -m qacore run ...` 不再依赖仓库根 cwd 或 .pth hack）；
+# assetkit：素材管线（M5 起正规化，验收命令 `python -m assetkit run ...`）。
+packages = ["pfcore", "qacore", "assetkit"]

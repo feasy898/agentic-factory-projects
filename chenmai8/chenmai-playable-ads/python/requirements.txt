@@ -10,4 +10,5 @@ pydantic==2.13.5
 jsonschema==4.26.0
 pillow==12.3.0
 fonttools==4.66.0
+brotli==1.2.0
 qrcode==8.2

@@ -55,16 +55,46 @@ def _log(msg: str) -> None:
     print(f"[make] {msg}", flush=True)
 
 
-def _run(cmd: list[str], label: str, timeout_sec: float = 600) -> str:
+def _run(cmd: list[str], label: str, timeout_sec: float = 600,
+         env: dict | None = None) -> str:
     """跑子进程，失败时抛 MakeError（exit 1，附 stderr 尾部）。"""
     proc = subprocess.run(
         cmd, cwd=REPO_ROOT, capture_output=True, text=True,
-        encoding="utf-8", errors="replace", timeout=timeout_sec,
+        encoding="utf-8", errors="replace", timeout=timeout_sec, env=env,
     )
     if proc.returncode != 0:
         tail = "\n".join((proc.stderr or proc.stdout or "").strip().splitlines()[-8:])
         raise MakeError(f"{label} 失败（exit {proc.returncode}）：\n{tail or '(无输出)'}")
     return proc.stdout
+
+
+def _run_assetkit(spec_path: Path, spec: dict, out_root: Path) -> dict | None:
+    """素材管线步骤（M5 assetkit，--no-assetkit 跳过）。
+
+    对 spec 声明且真实存在的素材（sprites/background/audio/fontSubset）跑
+    assetkit（压图/转音频/字体子集/图集），产物落在 <out_root>/assetkit/，
+    返回给打包输入接线的 optmap 路径放进返回 dict。spec 无声明素材时是零
+    开销空跑（不产 node 子进程）。素材管线失败按流水线失败处理（exit 1）：
+    质检是裁判，宁可失败不可带病出包。
+    """
+    from assetkit import AssetkitError, OPTMAP_NAME, REPORT_NAME
+    from assetkit.pipeline import run_assetkit
+
+    ak_dir = out_root / "assetkit"
+    try:
+        report = run_assetkit(inputs=[], out=ak_dir, spec=spec_path)
+    except AssetkitError as exc:
+        raise MakeError(f"素材管线（assetkit）失败：{exc}", exc.exit_code if exc.exit_code else 1)
+    totals = report.get("totals") or {}
+    _log(f"素材管线：{totals.get('count', 0)} 个素材，"
+         f"{totals.get('originalBytes', 0):,}B → {totals.get('optimizedBytes', 0):,}B"
+         f"（降 {totals.get('reductionPct', 0)}%）")
+    return {
+        "dir": str(ak_dir),
+        "optmap": str(ak_dir / OPTMAP_NAME),
+        "report": str(ak_dir / REPORT_NAME),
+        "totals": totals,
+    }
 
 
 def _load_rules() -> dict:
@@ -453,12 +483,23 @@ def _make_impl(args: argparse.Namespace, started_epoch: float, t0: float) -> int
 
     qc = spec.get("qc") or {}
 
+    # ---- 0.5) 素材管线（M5 assetkit；--no-assetkit 跳过） ----------------
+    # spec 声明且存在的素材先过 assetkit（压图/转音频/字体子集/图集），模板构建
+    # 经 PF_ASSET_OPTMAP 接线内联优化产物；未命中/被跳过时构建行为与旧版一致。
+    assetkit_info: dict | None = None
+    builder_env: dict | None = None
+    if not getattr(args, "no_assetkit", False):
+        assetkit_info = _run_assetkit(spec_path, spec, out_root)
+        if assetkit_info:
+            builder_env = {**os.environ, "PF_ASSET_OPTMAP": assetkit_info["optmap"]}
+
     # ---- 1) 模板构建（真实可玩 HTML）+ 组装打包器输入 dist ----------------
     previews: dict[str, Path] = {}
     for locale in locales:
         out_html = preview_dir / f"{project}-{locale}.html"
         _run(["node", str(builder), "--spec", str(spec_path),
-              "--locale", locale, "--out", str(out_html)], f"模板构建（{locale}）")
+              "--locale", locale, "--out", str(out_html)],
+             f"模板构建（{locale}）", env=builder_env)
         previews[locale] = out_html
         loc_dir = dist_dir / locale
         loc_dir.mkdir(parents=True, exist_ok=True)
@@ -637,6 +678,8 @@ def _make_impl(args: argparse.Namespace, started_epoch: float, t0: float) -> int
             "note": "二维码可扫 = qr.png 落盘且静态伺服端口 TCP 监听实测通过",
         },
         "locales": locales, "channels": channels,
+        "assetkit": {"dir": assetkit_info["dir"], "report": assetkit_info["report"],
+                     "totals": assetkit_info["totals"]} if assetkit_info else None,
         "preview": {"html": str(preview_html), "url": preview_url},
         "serve": {"host": host, **serve, "root": str(demo_dir),
                   "stateFile": str(out_root / SERVE_STATE_NAME)},

@@ -77,6 +77,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-serve", action="store_true",
         help="不启动/复用本地静态伺服（仍产出二维码与预览链接，自行伺服 demo-prebuilt）",
     )
+    p_make.add_argument(
+        "--no-assetkit", action="store_true",
+        help="跳过素材管线（M5 assetkit：spec 声明素材压图/转音频/字体子集/图集，"
+             "构建期经优化映射接线内联）。默认启用：声明素材存在时自动优化，"
+             "无声明素材时为空跑（零开销）",
+    )
 
     p_serve = sub.add_parser(
         "serve", help="局域网静态伺服演示产物目录（demo-prebuilt/裸预览）+ 重建汇总页与二维码"
