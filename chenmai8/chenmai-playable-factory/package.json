@@ -14,7 +14,8 @@
   "scripts": {
     "test": "node --test",
     "build": "node scripts/build.mjs",
-    "verify:assets": "node scripts/verify-reused-assets.mjs"
+    "verify:assets": "node scripts/verify-reused-assets.mjs",
+    "gate:m1": "node scripts/gate-m1.mjs"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
