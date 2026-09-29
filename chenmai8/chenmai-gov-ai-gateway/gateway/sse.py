@@ -25,9 +25,11 @@ import json
 from collections.abc import AsyncIterator, Callable
 
 from common.logs import get_logger
+from evals.thresholds import GATEWAY_SSE_LINE_MAX_BYTES
 from masking.mapper import SessionMapper
 from masking.remap import StreamRestorer
 from masking.toolbuf import ToolCallBuffer
+
 # AI 标识的常量/辅助函数自 T2.2 起归属 outguard 包（outguard/label.py 权威实现）；
 # 此处再导出保持既有引用（evals.t0_stream 等）不变。
 from outguard.label import (  # noqa: F401 — 再导出（权威实现在 outguard/label.py）
@@ -61,10 +63,15 @@ async def iter_sse_data_lines(chunks: AsyncIterator[bytes]) -> AsyncIterator[str
       逐行解析失败而原样透传绕过还原管线；单行 ``data:`` 事件行为与逐行解析完全
       兼容；
     - ``data:`` 以外的事件字段/注释行跳过；空行 = 事件边界；流结束时未遇空行的
-      残留 ``data:`` 行按一个事件产出。
+      残留 ``data:`` 行按一个事件产出；
+    - **超长行防护**（畸形输入加固 T7.2）：无换行的单行超过
+      :data:`GATEWAY_SSE_LINE_MAX_BYTES` 即丢弃该行（丢弃模式直到下一个换行，
+      期间内存有界）——畸形上游的无限长行不再能无界吃掉网关内存；该行对应
+      事件按丢失处理（记 WARNING），后续帧不受影响。
     """
     buffer = b""
     data_lines: list[str] = []
+    discarding = False   # 超长行丢弃模式：吞到下一个换行为止，期间不组帧
 
     def flush_event() -> str | None:
         if not data_lines:
@@ -78,8 +85,21 @@ async def iter_sse_data_lines(chunks: AsyncIterator[bytes]) -> AsyncIterator[str
             continue
         buffer += chunk
         while True:
+            if discarding:
+                nl = buffer.find(b"\n")
+                if nl < 0:
+                    buffer = b""   # 整块都在超长行内：全弃，内存有界
+                    break
+                buffer = buffer[nl + 1:]
+                discarding = False
+                continue
             nl = buffer.find(b"\n")
             if nl < 0:
+                if len(buffer) > GATEWAY_SSE_LINE_MAX_BYTES:
+                    log.warning("sse.oversized_line_discarded",
+                                extra={"bytes": len(buffer)})
+                    buffer = b""
+                    discarding = True
                 break
             line, buffer = buffer[:nl], buffer[nl + 1:]
             if line.rstrip(b"\r") == b"":  # 空行 = 事件边界（CRLF 兼容）
@@ -90,7 +110,7 @@ async def iter_sse_data_lines(chunks: AsyncIterator[bytes]) -> AsyncIterator[str
             payload = _data_payload(line)
             if payload is not None:
                 data_lines.append(payload)
-    if buffer:  # 流结束残留半行按一行处理
+    if not discarding and buffer:  # 流结束残留半行按一行处理
         payload = _data_payload(buffer)
         if payload is not None:
             data_lines.append(payload)

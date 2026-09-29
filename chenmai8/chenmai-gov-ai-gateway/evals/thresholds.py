@@ -85,3 +85,14 @@ GENERATOR_DATE_BIRTH_MIN = 20          # 出生日期正例下限
 GENERATOR_PERSON_MIN = 20              # 人名（NER 层计分）样例下限
 GENERATOR_ADDRESS_MIN = 20             # 住址（NER 层计分）样例下限
 GENERATOR_LANDLINE_MIN = 20            # 座机正例下限
+
+# ── M11 健壮性（批次7 T7.2：畸形输入与极端负载，只增）──────────────
+# 网关行为上限（gateway/app.py、gateway/pipeline.py、gateway/sse.py 引用）
+GATEWAY_JSON_MAX_DEPTH = 64                 # 请求体 JSON 嵌套深度上限（超过 400 拒绝）
+GATEWAY_TEXT_MAX_CHARS = 200_000            # 单条文本段/辅助面字符串叶长度上限（超过 400 拒绝）
+GATEWAY_SSE_LINE_MAX_BYTES = 8 * 1024 * 1024  # 上游单条 SSE 行缓冲上限（超长行丢弃，防内存失控）
+GATEWAY_BODY_DRAIN_MAX_BYTES = 2 * GATEWAY_BODY_MAX_BYTES  # 超限体排空上限（先排空再 413，保证响应可达）
+# eval 用例规模
+M11_CONCURRENCY_REQUESTS = 50               # 并发压测请求数（会话隔离/审计不错行）
+M11_MALFORMED_TIMEOUT_S = 60.0              # 单个畸形用例客户端超时（挂死即 FAIL）
+M11_CONCURRENCY_TIMEOUT_S = 240.0           # 并发批客户端总超时（本机新连回环 ~1s/连接的环境代价已放宽）

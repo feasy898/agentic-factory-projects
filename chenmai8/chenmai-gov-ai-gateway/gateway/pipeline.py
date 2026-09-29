@@ -47,6 +47,7 @@ from audit.models import AuditEvent
 from audit.store import AuditSink, InMemoryAuditStore, RawPiiLeakError, safe_preview
 from common.config import AppConfig
 from common.logs import get_logger
+from evals.thresholds import GATEWAY_TEXT_MAX_CHARS
 from gateway import sse
 from gateway.models import ApiError, ErrorBody
 from gateway.provider import (
@@ -573,9 +574,21 @@ class GatewayService:
         messages = body.get("messages")
         if not isinstance(messages, list) or not messages:
             raise ChatBodyError("'messages' must be a non-empty array")
-        for message in messages:
+        for index, message in enumerate(messages):
             if not isinstance(message, dict):
                 raise ChatBodyError("each message must be a JSON object")
+            # 单条文本段长度上限（畸形输入加固 T7.2：超长单行 400，不进检测面
+            # 拖垮延迟预算；识别/脱敏契约以有限文本为前提，阈值见 evals/thresholds.py）
+            for segment in _content_segments(message.get("content"), index):
+                if len(segment.text) > GATEWAY_TEXT_MAX_CHARS:
+                    raise ChatBodyError(
+                        f"message text too long: {len(segment.text)} chars "
+                        f"(limit {GATEWAY_TEXT_MAX_CHARS})")
+        for text in _aux_texts(body):
+            if len(text) > GATEWAY_TEXT_MAX_CHARS:
+                raise ChatBodyError(
+                    f"tools/history text too long: {len(text)} chars "
+                    f"(limit {GATEWAY_TEXT_MAX_CHARS})")
 
     def _resolve_upstream(self, decision: RouteDecision):
         """RouteDecision.upstream → 上游配置；BLOCK/配置缺失返回 None。"""

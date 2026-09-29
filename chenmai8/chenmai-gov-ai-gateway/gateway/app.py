@@ -31,7 +31,10 @@
 落库形态（T1.3）：不注入时审计走 SQLite 写队列（cfg.audit_db）、会话映射走
 SessionStore（cfg.session_db，TTL=cfg.session_ttl_h，lifespan 挂清理协程）——
 生产与注入两种形态见 :func:`create_app` 文档。
-请求体上限：Content-Length > 网关上限即 413（畸形输入用例由 e2e 任务补全）；
+请求体上限（畸形输入加固，批次7 T7.2，§11 风险 8）：有界读取——Content-Length
+预检超限或读取途中超限（chunked/说谎头）即有界排空后 413 错误信封；非法 JSON、
+嵌套超深（>GATEWAY_JSON_MAX_DEPTH）、非 JSON 对象体、单条文本超长
+（>GATEWAY_TEXT_MAX_CHARS）均 400 错误信封（验收：evals.m11_robust）；
 文件通道上限 50MB（evals.thresholds.FILE_SIZE_MAX_BYTES，§6 M6）。
 流式语义（§6 M1/T0.5）：BLOCK / 上游不可达 / 上游协议错误在开流前决出，
 返回普通 JSON 错误信封；开流后为 ``text/event-stream``，AI 标识以内容尾注 +
@@ -40,6 +43,7 @@ finish chunk ``annotations`` 元数据注入（gateway/sse.py 组合管线）。
 from __future__ import annotations
 
 import asyncio
+import json
 from contextlib import asynccontextmanager
 from datetime import timedelta
 from pathlib import Path
@@ -59,7 +63,13 @@ from common.config import (
     resolve_secret,
 )
 from common.logs import get_logger
-from evals.thresholds import FILE_SIZE_MAX_BYTES, GATEWAY_BODY_MAX_BYTES
+from evals.thresholds import (
+    FILE_SIZE_MAX_BYTES,
+    GATEWAY_BODY_DRAIN_MAX_BYTES,
+    GATEWAY_BODY_MAX_BYTES,
+    GATEWAY_JSON_MAX_DEPTH,
+    GATEWAY_TEXT_MAX_CHARS,
+)
 from filechannel.errors import DocumentParseError, FileTooLargeError, UnsupportedFileType
 from filechannel.service import BadModeError, ExportBlockedError, FileService
 from gateway import deps
@@ -89,6 +99,79 @@ CODE_EXPORT_BLOCKED = "export_blocked"
 def _error_response(status_code: int, code: str, message: str) -> JSONResponse:
     return JSONResponse(ApiError(error=ErrorBody(code=code, message=message)).model_dump(),
                         status_code=status_code)
+
+
+async def _drain_request_body(request: Request, limit: int) -> int:
+    """读弃请求体剩余字节（有界）：超限拒绝前先排空，413 才能完整送达客户端。
+
+    服务端若在客户端仍在发送时提前应答并关闭连接，未读数据会触发 RST、把
+    响应一起冲掉（客户端只见连接重置而非 413）——故超限后继续读弃，上限
+    ``limit`` 字节（防说谎头/无限流把排空变成无界工作）；到限即弃，由服务端
+    关闭连接（此时残余已超出任何合理请求，客户端无法救回属预期）。
+    """
+    drained = 0
+    async for _chunk in request.stream():
+        drained += len(_chunk)
+        if drained >= limit:
+            break
+    return drained
+
+
+def _json_depth(obj: Any) -> int:
+    """JSON 结构最大嵌套深度（迭代实现——深结构本身不允许再递归遍历）。"""
+    maximum = 0
+    stack: list[tuple[Any, int]] = [(obj, 1)]
+    while stack:
+        node, depth = stack.pop()
+        if depth > maximum:
+            maximum = depth
+        if isinstance(node, dict):
+            stack.extend((value, depth + 1) for value in node.values())
+        elif isinstance(node, list):
+            stack.extend((value, depth + 1) for value in node)
+    return maximum
+
+
+async def _read_json_body(request: Request) -> tuple[Any, JSONResponse | None]:
+    """有界读取 + 解析 JSON 请求体（畸形输入加固，§11 风险 8）。
+
+    返回 ``(body, None)`` 或 ``(None, error_response)``：
+
+    - Content-Length 预检超限，或读取途中超限（chunked / 头与实不符）：有界排空
+      后 413 错误信封——先排空再应答，客户端拿到完整 413 而非连接重置；
+      全程流式累计、从不整体驻留内存，读弃同样有界；
+    - JSON 解析失败（含深到解析器爆栈的 RecursionError）：400；
+    - 嵌套深度超 :data:`GATEWAY_JSON_MAX_DEPTH`：400（保护下游对 body 的
+      递归遍历不爆栈）。
+    """
+    try:
+        declared = int(request.headers.get("content-length", "0") or "0")
+    except ValueError:
+        declared = 0
+    if declared > GATEWAY_BODY_MAX_BYTES:
+        await _drain_request_body(request, GATEWAY_BODY_DRAIN_MAX_BYTES)
+        return None, _error_response(413, CODE_PAYLOAD_TOO_LARGE, "请求体超过网关上限")
+    buf = bytearray()
+    async for chunk in request.stream():
+        buf += chunk
+        if len(buf) > GATEWAY_BODY_MAX_BYTES:
+            await _drain_request_body(request, GATEWAY_BODY_DRAIN_MAX_BYTES)
+            return None, _error_response(413, CODE_PAYLOAD_TOO_LARGE, "请求体超过网关上限")
+    try:
+        body = json.loads(bytes(buf))
+    except Exception:  # noqa: BLE001 — 解析失败（含深结构爆栈）统一 400 错误信封
+        return None, _error_response(400, CODE_BAD_REQUEST, "request body is not valid JSON")
+    if _json_depth(body) > GATEWAY_JSON_MAX_DEPTH:
+        return None, _error_response(
+            400, CODE_BAD_REQUEST,
+            f"request body nesting deeper than {GATEWAY_JSON_MAX_DEPTH} levels")
+    return body, None
+
+
+def _text_too_long_response() -> JSONResponse:
+    return _error_response(
+        400, CODE_BAD_REQUEST,
+        f"text too long (limit {GATEWAY_TEXT_MAX_CHARS} chars)")
 
 
 def _content_disposition(filename: str) -> str:
@@ -185,7 +268,8 @@ def create_app(
                             file: Annotated[UploadFile, File(...)]) -> JSONResponse:
         """multipart 上传 → 公开前体检报告（§5.5 FileReport JSON）。
 
-        体积双闸：Content-Length 预检 + 实读字节复核（均 413）；
+        体积三闸：Content-Length 预检 + multipart 落盘尺寸预检 + 实读字节复核
+        （均 413；畸形输入加固 T7.2——超限文件不读入内存）；
         种类不识别/解析失败 → 400 错误信封（code 见 §5.6 复用面）。
         """
         try:
@@ -193,6 +277,9 @@ def create_app(
         except ValueError:
             content_length = 0
         if content_length > FILE_SIZE_MAX_BYTES:
+            return _error_response(413, CODE_PAYLOAD_TOO_LARGE,
+                                   f"文件超过上限 {FILE_SIZE_MAX_BYTES} 字节")
+        if file.size is not None and file.size > FILE_SIZE_MAX_BYTES:
             return _error_response(413, CODE_PAYLOAD_TOO_LARGE,
                                    f"文件超过上限 {FILE_SIZE_MAX_BYTES} 字节")
         data = await file.read()
@@ -212,6 +299,7 @@ def create_app(
 
     @app.post("/v1/files/export")
     async def files_export(
+            request: Request,
             file: Annotated[UploadFile, File(...)],
             mode: Annotated[str, Form()] = "sanitize") -> Response:
         """multipart 上传 + ``mode=sanitize`` → 删除式清理后的文件流（§5.6）。
@@ -221,7 +309,18 @@ def create_app(
         兜底，§6「重打码渲染版在报告中如实标注方式」）；``Content-Disposition``
         = sanitized_<原文件名>。命中无法物理定位/导出物零残留复核不净时 422
         export_blocked（宁可阻止不可漏删）。
+        体积三闸与 inspect 同口径（畸形输入加固 T7.2）。
         """
+        try:
+            content_length = int(request.headers.get("content-length", "0") or "0")
+        except ValueError:
+            content_length = 0
+        if content_length > FILE_SIZE_MAX_BYTES:
+            return _error_response(413, CODE_PAYLOAD_TOO_LARGE,
+                                   f"文件超过上限 {FILE_SIZE_MAX_BYTES} 字节")
+        if file.size is not None and file.size > FILE_SIZE_MAX_BYTES:
+            return _error_response(413, CODE_PAYLOAD_TOO_LARGE,
+                                   f"文件超过上限 {FILE_SIZE_MAX_BYTES} 字节")
         data = await file.read()
         try:
             result = files.export_bytes(file.filename or "", data, mode)
@@ -254,19 +353,13 @@ def create_app(
         if dept is None:
             return _error_response(401, CODE_UNAUTHORIZED, "无效部门 Key（Authorization: Bearer dk_***）")
 
-        # 2) 请求体上限（畸形输入完整防护由 e2e 任务补全）
-        try:
-            content_length = int(request.headers.get("content-length", "0") or "0")
-        except ValueError:
-            content_length = 0
-        if content_length > GATEWAY_BODY_MAX_BYTES:
-            return _error_response(413, CODE_PAYLOAD_TOO_LARGE, "请求体超过网关上限")
-
-        # 3) 解析 body
-        try:
-            body = await request.json()
-        except Exception:  # noqa: BLE001 — 任何解析失败都归一为 400 错误信封
-            return _error_response(400, CODE_BAD_REQUEST, "request body is not valid JSON")
+        # 2) 请求体：有界读取 + 解析（畸形输入加固 T7.2：超限 413 / 非法或超深
+        #    JSON 400，全为 §5.6 错误信封；超限拒绝前有界排空，保证响应可达）
+        body, err = await _read_json_body(request)
+        if err is not None:
+            return err
+        if not isinstance(body, dict):
+            return _error_response(400, CODE_BAD_REQUEST, "request body must be a JSON object")
 
         # 4) 标识：session 可由客户端携带（多轮稳定脱敏），request 每请求新生成
         session_id = request.headers.get("x-anongw-session-id") or deps.new_session_id()
@@ -318,13 +411,14 @@ def create_app(
             deps.extract_bearer(request.headers.get("authorization")), digests,
         ) is None:
             return _error_response(401, CODE_UNAUTHORIZED, "无效部门 Key（Authorization: Bearer dk_***）")
-        try:
-            body = await request.json()
-        except Exception:  # noqa: BLE001
-            return _error_response(400, CODE_BAD_REQUEST, "request body is not valid JSON")
+        body, err = await _read_json_body(request)
+        if err is not None:
+            return err
         text = body.get("text") if isinstance(body, dict) else None
         if not isinstance(text, str):
             return _error_response(400, CODE_BAD_REQUEST, "'text' must be a string")
+        if len(text) > GATEWAY_TEXT_MAX_CHARS:
+            return _text_too_long_response()
         found = detect_full(text)
         numbered = [f.model_copy(update={"fid": f"f_{i:04d}"}) for i, f in enumerate(found, start=1)]
         return JSONResponse({"findings": [f.model_dump() for f in numbered]})
@@ -335,12 +429,13 @@ def create_app(
             deps.extract_bearer(request.headers.get("authorization")), digests,
         ) is None:
             return _error_response(401, CODE_UNAUTHORIZED, "无效部门 Key（Authorization: Bearer dk_***）")
-        try:
-            body = await request.json()
-        except Exception:  # noqa: BLE001
-            return _error_response(400, CODE_BAD_REQUEST, "request body is not valid JSON")
+        body, err = await _read_json_body(request)
+        if err is not None:
+            return err
         if not isinstance(body, dict) or not isinstance(body.get("text"), str):
             return _error_response(400, CODE_BAD_REQUEST, "'text' must be a string")
+        if len(body["text"]) > GATEWAY_TEXT_MAX_CHARS:
+            return _text_too_long_response()
         session_id = body.get("session_id")
         if not isinstance(session_id, str) or not session_id:
             session_id = deps.new_session_id()
@@ -364,12 +459,13 @@ def create_app(
             deps.extract_bearer(request.headers.get("authorization")), digests,
         ) is None:
             return _error_response(401, CODE_UNAUTHORIZED, "无效部门 Key（Authorization: Bearer dk_***）")
-        try:
-            body = await request.json()
-        except Exception:  # noqa: BLE001
-            return _error_response(400, CODE_BAD_REQUEST, "request body is not valid JSON")
+        body, err = await _read_json_body(request)
+        if err is not None:
+            return err
         if not isinstance(body, dict) or not isinstance(body.get("text"), str):
             return _error_response(400, CODE_BAD_REQUEST, "'text' must be a string")
+        if len(body["text"]) > GATEWAY_TEXT_MAX_CHARS:
+            return _text_too_long_response()
         session_id = body.get("session_id")
         if not isinstance(session_id, str) or not session_id:
             session_id = deps.new_session_id()
