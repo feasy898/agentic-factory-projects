@@ -8,15 +8,15 @@ oracle `repo/docs/assets/specs/`（12 件）是**唯一规格源**（封存只�
 | 模块 ID | oracle 规格源（repo/docs/assets/specs/） | factory 落位 | 状态 |
 |---|---|---|---|
 | M1-spec | `spec-contract.md` | `packages/spec/`（校验器本体） | 批次 1 进行中（M1.1 已落 schema 资产） |
-| M2-engine-bridge | `engine-bridge.md` | `packages/engine-bridge/` | 批次 1 待做 |
+| M2-engine-bridge | `engine-bridge.md` | `packages/engine-bridge/` | **批次 1 完成（M1.2b）**（spec 字节落位本目录；冻结 26 用例 exit 0 + c8 行覆盖 97.6%≥80%（--lines=100 门真实性已验）+ tsc strict 过） |
 | M3-templates ×4 | `templates.md` + `match3-rules-card.md` | `packages/templates/tmpl-*` | 批次 2 待做 |
-| M4-packager | `packager.md` | `packages/packager/` | 批次 1 待做 |
+| M4-packager | `packager.md` | `packages/packager/` | **批次 1 完成**（spec 字节落位本目录；46 断言冻结 eval + 六渠道结构断言 exit 0） |
 | M5-assetkit | `assetkit.md` | `packages/assetkit/` | 批次 3 待做 |
 | M8-qacore | `qacore.md` | `qacore/` | 批次 2 待做 |
 | MODEL-ADAPTER | `model-adapter.md` / `llmgw.md` | `packages/llmgw/` | 批次 1 待做 |
 | ORCHESTRATOR | `orchestrator.md` | `pf/` | 批次 3 待做 |
 | M10-webui | —（oracle 内 webui/） | `webui/` | 批次 3 待做 |
-| CHANNEL-ADAPTERS | `channel-adapters.md` | `channel-rules/`（字节复用已完成）+ 各处实现 | 数据资产已复用；实现随 M4 |
+| CHANNEL-ADAPTERS | `channel-adapters.md` | `channel-rules/`（字节复用已完成）+ 各处实现 | 数据资产已复用；规则库消费端实现随 M4 落地（rules.mjs 配置驱动） |
 | PIPELINE-CONTRACT | `pipeline-contract.md` | 全局契约（报告字段/退出码） | 冻结，全程对齐 |
 
 各模块 spec 落地时，把（改写后的）spec 文档放进本目录并更新状态列。

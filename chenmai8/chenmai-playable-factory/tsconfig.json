@@ -1,6 +1,9 @@
 {
-  // solution 型根配置：本批（M1.1）无 TS 源，references 留空。
-  // 后续模块批次（M2 桥起）把各包 tsconfig（extends ../tsconfig.base.json）登记进 references。
+  // solution 型根配置：各模块批次把自己的包 tsconfig（extends tsconfig.base.json）登记进 references。
+  // 门禁口径：typecheck 以各包 `npm run typecheck -w <pkg>`（tsc --noEmit）为准；
+  // 本文件仅作登记/追溯，不跑 tsc -b（包配置无 composite，避免与 noEmit 冲突）。
   "files": [],
-  "references": []
+  "references": [
+    { "path": "packages/engine-bridge" }
+  ]
 }
