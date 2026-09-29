@@ -193,6 +193,13 @@ components:
     version: TBD
     fallback: []
     volta_status: pending
+    runtime_notes: >-
+      T8（2026-09-29）：重型擦除后端（cap-clean 权重与 CLI）**接口预留未安装**——
+      pipeline/m11_subs.py 的 vsr 后端选中即如实报错，不静默降级；M11 实际生产
+      走轻量双路径：delogo（ffmpeg delogo 时间窗插值，默认；擦除基带用无损
+      x264，擦除带外像素零改动，label_zone 哈希可判定）与 inpaint（cv2
+      TELEA 逐帧修复，质量高一档速度慢）。bbox=cap-ocr（M2）ocr_merged 行
+      外扩 erase_band.expand_px 并经 label_zone 排除后分时间窗逐条擦除。
 
   # ---- 音频 ----
   audiosplit:

@@ -44,8 +44,11 @@ C4_TRANS = """{"utt_id":"u0007","tgt":"en","context":["前两句译文","本句�
 
 C5_SYNTH = """{"utt_id":"u0007","engine":"dub-tts","voice_ref":"05_cast/voicebank/char_nan_ref.wav",
  "emo_ref":"04_dial/emo_refs/u0007.wav","emo_alpha":0.7,"duration_factor":1.0,
+ "atempo":1.0,
  "text":"What do you actually want?","out":"07_synth/wavs/u0007.wav","expect_dur":1.62,
  "keep_original":false}"""
+# 注：T14/M8 增补字段 atempo（契约只增不改名，冻结规则 11）—— 示例同步含该字段
+# 使严格往返（字段集一一对应）继续成立；缺省 1.0，存量无该字段的 C5 行向后兼容。
 
 C6_LIP = """{"utt_id":"u0007","shot_id":"s0003","engine":"lip-fast","priority":"normal",
  "window":[12.40,14.02],"face_track":0}"""
@@ -192,6 +195,7 @@ def test_c5_synth_plan_roundtrip():
     assert item.voice_ref.endswith("char_nan_ref.wav")
     assert item.emo_ref == "04_dial/emo_refs/u0007.wav"  # 音色/情绪参考分离
     assert item.emo_alpha == 0.7 and item.duration_factor == 1.0
+    assert item.atempo == 1.0  # T14/M8 增补（冻结规则 11）；缺省=不做微调
     assert item.expect_dur == 1.62 and item.keep_original is False
     assert_roundtrip(item, C5_SYNTH)
 
@@ -202,8 +206,15 @@ def test_c5_ranges():
         C.SynthPlanItem.model_validate({**base, "emo_alpha": 1.5})
     with pytest.raises(ValidationError):
         C.SynthPlanItem.model_validate({**base, "duration_factor": 0.3})
+    with pytest.raises(ValidationError):
+        C.SynthPlanItem.model_validate({**base, "atempo": 0.4})
     ok = C.SynthPlanItem.model_validate({**base, "emo_alpha": 0.85, "duration_factor": 0.9})
     assert ok.emo_alpha == 0.85 and ok.duration_factor == 0.9
+    # atempo schema 域 [0.5,2.0]（与 duration_factor 同款的宽松契约域）；
+    # M8 实际只在其微调窗 [0.9,1.1] 内取值（模块策略，见 pipeline.m8_align）
+    ok2 = C.SynthPlanItem.model_validate({**base, "atempo": 0.9})
+    ok3 = C.SynthPlanItem.model_validate({**base, "atempo": 1.1})
+    assert ok2.atempo == 0.9 and ok3.atempo == 1.1
 
 
 def test_c5_nonverbal_rule_documented():

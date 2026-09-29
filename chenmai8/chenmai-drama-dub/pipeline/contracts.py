@@ -25,9 +25,13 @@
    （:func:`make_utt_id`）；写盘一律「按 utt_id 替换后整文件重写」
    （:func:`upsert_jsonl`），禁止同 id 追加（追加会触发唯一性自锁）；
 10. 说话人段级契约 ``diar.jsonl``（B1 冻结）：:class:`DiarSegment`
-   （start/end/speaker），M4/VAD 只负责切分，``speaker`` 由 M5 聚类回填；
-   **M5 执行不在 B1 批次**（B1 出口 ``Utterance.speaker`` 保持 None），
-   归入 B2 批次（见 docs/b1_contract_notes.md §5）。
+    （start/end/speaker），M4/VAD 只负责切分，``speaker`` 由 M5 聚类回填；
+    **M5 执行不在 B1 批次**（B1 出口 ``Utterance.speaker`` 保持 None），
+    归入 B2 批次（见 docs/b1_contract_notes.md §5）。
+11. C5 ``atempo`` 增补字段（T14/M8，契约只增不改名）：ffmpeg ``atempo``
+    最终微调参数（0.9–1.1 为微调窗，1.0=不做微调）—— 时长对齐（M8）在
+    ``duration_factor`` 二分与换译之后的收口旋钮，合成引擎在变速不变调
+    的前提下应用。缺省 1.0，存量 C5 行无该字段时按缺省解析（向后兼容）。
 """
 
 from __future__ import annotations
@@ -436,6 +440,10 @@ class SynthPlanItem(_Frozen):
     emo_ref: Optional[str] = None
     emo_alpha: float = Field(default=0.7, ge=0.0, le=1.0)
     duration_factor: float = Field(default=1.0, ge=0.5, le=2.0)
+    #: atempo 最终微调（T14/M8 增补，冻结规则 11）：ffmpeg atempo 参数，
+    #: 0.9–1.1 微调窗 / 1.0=不做；duration_factor 二分与换译都未能落窗后，
+    #: 由 M8 定值写入，M7 合成时变速不变调应用。
+    atempo: float = Field(default=1.0, ge=0.5, le=2.0)
     text: str
     out: str = Field(min_length=1)
     expect_dur: Optional[NonNegSec] = None
