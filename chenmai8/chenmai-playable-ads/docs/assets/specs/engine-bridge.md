@@ -1,6 +1,7 @@
 # M2 运行时桥 spec（engine-bridge）
 
-> 状态：frozen。对照 `packages/engine-bridge/src/{index,channels,events,audio,types}.ts` 逐行核验于 2026-09-28。
+> 状态：frozen。对照 `packages/engine-bridge/src/{index,channels,events,audio,types}.ts` 逐行核验于 2026-09-28；
+> 2026-09-29 C2 盲评修正同步：§2.4 第 4 级 defaultLocale 的空串语义改为如实描述（`??` 只挡 nullish）。
 > 目标读者：只凭本页 + eval 重建本模块的新 agent。TS 实现，零 npm 运行时依赖；
 > 模板/打包器直接以 esbuild 打包 `src/*.ts`，Node 22+ 亦可原生加载。
 
@@ -60,11 +61,14 @@ defaultLocale?, readyTimeoutMs? }`。
 
 `options.locale` → `window.PF_LOCALE`（打包器/模板注入）→ URL `?locale=` → `options.defaultLocale` → `"en"`。
 
-**空串与缺失的逐级回退（精确语义，冻结）**：五级逐级取"**非空字符串**"，任何一级拿到非空串即停——
-- `options.locale` 为 undefined 或 `""` → 跳过；
+**空串与缺失的逐级回退（精确语义，冻结）**：前三级逐级取"**非空字符串**"（真值判定），任何一级拿到非空串即停——
+- `options.locale` 为 undefined 或 `""` → 跳过（真值判定）；
 - `window.PF_LOCALE` 非 string 或 `""` → 跳过；
 - URL `?locale=`：无 `location` 环境（如 jsdom 异常）整体 try/catch 跳过；参数缺省或空串 → 跳过；
-- `options.defaultLocale` undefined → 跳过（它不会与 `"en"` 合并兜底，二者是独立的两级）；
+- `options.defaultLocale`（第 4 级，语义与前三级**不同**）：实现为 `return options.defaultLocale ?? "en"`——
+  `??` 只挡 nullish，undefined/null → 跳过落到 `"en"`；**空串 `""` 原样返回、不回落 `"en"`**
+  （Node 实测 defaultLocale='' → `''`）。源码对此无注释声明空串为有意设计，判为**已知边界（变更候选）**：
+  如需空串同样跳过，须把 `??` 改为真值判定，走契约变更流程；
 - 全部跳过 → 兜底 `"en"`。
 
 ### 2.5 就绪等待与退出路由

@@ -1,6 +1,8 @@
 # M4 打包器 spec（packager）
 
-> 状态：frozen。对照 `packages/packager/{bin.mjs,src/*,test/run.mjs}` 与 README 逐行核验于 2026-09-28。
+> 状态：frozen。对照 `packages/packager/{bin.mjs,src/*,test/run.mjs}` 与 README 逐行核验于 2026-09-28；
+> 2026-09-29 C2 盲评修正同步：§3.1.1 升 rulesVersion 1.1.0 六渠道冻结表（T2.4）、§3.3 MRAID 检测规则
+> 改为实现真实调用形态正则、未知渠道语义改写（google 已在库，负向用例为 `not-a-channel`）。
 > 定位：配置驱动（channel-rules 是规则来源，打包器不改渠道知识）；**宁失败不出超规包**。
 
 ---
@@ -39,23 +41,30 @@ node packages/packager/bin.mjs channels [--rules <path>]     # 列出规则库�
   forbidMraid?}, allowedUrlWhitelist? }`。zip 的 `structure` 必须含 entry；实现还要求 zip 恰为
   `[bundle, entry]` 两项（否则抛错）。
 
-### 3.1.1 规则库当前内容全量（rulesVersion 1.0.0，再生时逐字节对照 `channel-rules/channel-rules.json`）
+### 3.1.1 规则库当前内容全量（rulesVersion 1.1.0，再生时逐字节对照 `channel-rules/channel-rules.json`）
 
 公共 `defaults`：`externalUrlPolicy: "forbid"`；`allowedUrlSchemes: ["data:", "blob:"]`；
-`muteBeforeFirstInteraction: true`；`allowRelativeRuntimeScripts: true`；`updated: "2026-09-28"`。
+`allowedTextUrls: ["https://pf.io", "http://www.w3.org/1999/xhtml", "http://www.w3.org/2000/svg"]`
+（外链文本扫描全局白名单，只收惰性字符串而非请求目标：引擎品牌串与 XML 命名空间标识符）；
+`muteBeforeFirstInteraction: true`；`allowRelativeRuntimeScripts: true`。库级 `updated: "2026-09-29"`。
 
-| 字段 | `applovin` | `meta` | `mintegral` | `preview` |
-|---|---|---|---|---|
-| package.format | `single-html` | `single-html` | `zip` | `single-html` |
-| package.entry | `index.html` | `index.html` | `Template.html` | `index.html` |
-| package.structure | —（无此键） | — | **`["build.js", "Template.html"]`** | — |
-| maxBytes | **5242880**（5MB） | **3145728**（3MB 内部从严） | **5242880** | **5242880** |
-| maxFiles | 1 | 1 | **100** | 1 |
-| exit.protocol / call | `mraid` / `mraid.open(url)` | `fb-playable` / `FbPlayableAd.onComplete()` | `mraid` / `mraid.open(url)` | `window-open` / `window.open(url)` |
-| exit.waitReadyBeforeRender | `true` | `false` | `true` | `false` |
-| runtime.injectRelativeScripts | **`["mraid.js"]`** | `[]` | **`["mraid.js"]`** | `[]` |
-| runtime.forbidMraid | `false` | **`true`** | `false` | `false` |
-| allowedUrlWhitelist | `[]` | `[]` | `[]` | `[]` |
+**T2.4（2026-09-29）起六条投放渠道全部冻结**：applovin / meta / mintegral / google / unity / tiktok
+（pangle 与 tiktok 同协议，桥归一为 tiktok，规则库不单列）；另有 `preview`（本地预览/QC 渠道，
+非投放渠道）共 **7 渠道在库**。
+
+| 字段 | `applovin` | `meta` | `mintegral` | `google` | `unity` | `tiktok` | `preview` |
+|---|---|---|---|---|---|---|---|
+| package.format | `single-html` | `single-html` | `zip` | `zip` | `zip` | `zip` | `single-html` |
+| package.entry | `index.html` | `index.html` | `Template.html` | `index.html` | `index.html` | `index.html` | `index.html` |
+| package.structure | —（无此键） | — | **`["build.js", "Template.html"]`** | `["index.html"]` | `["index.html"]` | **`["index.html", "config.json", "js-sdk.js"]`** | — |
+| package.generated | — | — | — | — | — | `{config.json: tiktok-config, js-sdk.js: js-sdk-stub}`（打包器按 spec 生成的附加文件） | — |
+| maxBytes | **5242880**（5MB） | **3145728**（3MB 内部从严） | **5242880** | **5242880** | **5242880** | **5242880** | **5242880** |
+| maxFiles | 1 | 1 | **100** | **512**（规划基线，内部目标 ≤200） | **512**（暂同 google 内部线） | **100** | 1 |
+| exit.protocol / call | `mraid` / `mraid.open(url)` | `fb-playable` / `FbPlayableAd.onComplete()` | `mraid` / `mraid.open(url)` | `exit-api` / `ExitApi.exit()` | `mraid` / `mraid.open(url)` | `js-sdk` / `window.openAppStore()` | `window-open` / `window.open(url)` |
+| exit.waitReadyBeforeRender | `true` | `false` | `true` | `false` | `true` | `false` | `false` |
+| runtime.injectRelativeScripts | **`["mraid.js"]`** | `[]` | **`["mraid.js"]`** | `[]` | **`["mraid.js"]`** | **`["js-sdk.js"]`** | `[]` |
+| runtime.forbidMraid | `false` | **`true`** | `false` | `false` | `false` | `false` | `false` |
+| allowedUrlWhitelist | `[]` | `[]` | `[]` | `[]` | `[]` | `[]` | `[]` |
 
 **mraid.js 注入片段原文**（`injectRelativeScripts` 命中且 HTML 尚无该引用时，插到 `<head…>` 开标签之后）：
 
@@ -107,9 +116,17 @@ packageFiles[], files[{path,bytes,sha256,role}], warnings[]`。role ∈ `package
   逃逸出 dist 根的相对路径。
 - **外链扫描**：正则 `\bhttps?://[^\s"'<>\\)\]}]+`（大小写不敏感）；白名单 = spec `flow.endScreen.landingUrl`
   （前缀匹配）+ 规则 `allowedUrlWhitelist`；HTML 与 bundle 文本分别扫描，命中即构建失败。
-- **MRAID 禁用**：`forbidMraid` 渠道（meta）产物中出现 `\bmraid\b[^;]{0,40}` 全词命中即失败（启发式）。
-  大小写规范：正则带 `gi` 标志 → **大小写不敏感**（`MRAID`/`Mraid`/`mraid` 都命中）；`\b` 全词边界以
-  `[A-Za-z0-9_]` 为词字符——`MRAID_TEST` 这类下划线接续的标识符**不**命中，`window.mraid` 命中。
+- **MRAID 禁用**：`forbidMraid` 渠道（meta）产物命中**调用形态正则**
+  `\bmraid(?:\s*\.\s*[A-Za-z_$][\w$]*|(?:\.js)\b)`（`gi`，`findMraidReferences`）——即
+  `mraid.<方法>` 的 API 调用形态、或对 `mraid.js` 脚本的引用——命中即失败（启发式）。
+  **设计理由（有意收窄，不按全词出现判定）**：含运行时桥的模板产物必然携带 mraid 的
+  *探测代码*（`typeof x.mraid`、`x.mraid?"applovin":"preview"` 之类），文本上无法与真依赖
+  分开；若按全词出现（早期草案 `\bmraid\b[^;]{0,40}`）判定，一切真实游戏都打不出 meta 包。
+  **判定边界（实测）**：`window.mraid`（裸引用）→ 不命中；`Mraid` / `MRAID_TEST` → 不命中
+  （`gi` 大小写不敏感，但裸名/下划线接续不构成调用形态）；`mraid.getState()` → 命中
+  `mraid.getState`；`src="mraid.js"` → 命中 `mraid.js`。
+  **漏检面（启发式固有盲区，非回归）**：别名转手后调用（`var m=window.mraid;m.open()`）
+  不落调用形态、不命中；字符串拼接出的 `mraid` 引用同理绕过——本检查只拦"文本可辨的真使用"。
 - **maxFiles 语义**：仅 **zip 通道强制**，且按 **zip 内条目数**计数（`entries.length > maxFiles` → 失败）；
   single-html 渠道打包器不检查 maxFiles（其"恰 1 个包文件"由门禁/使用方对产物目录断言）。
 
@@ -141,7 +158,7 @@ PNG 为纯色占位（零依赖生成器 `gen-pngs.mjs` 的一次性产物，仅
 - locale 校验 `/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/`；projectId/locale 用于路径拼接，禁路径符号。
 - dist 缺入口 / 内联资源缺失（带引用来源的报错）/ 白名单外外链 / MRAID / 超上限 / 超文件数 → 全部**构建失败
   而非告警**（zip 收益取舍：零外链与结构是红线）。
-- 未知渠道 → 抛错列出现有渠道（拼错渠道名不静默通过）。
+- 规则库未收录渠道（拼错或未冻结）→ 抛错列出现有渠道（拼错渠道名不静默通过）。
 
 ## 5. eval：精确命令与通过线
 
@@ -153,7 +170,9 @@ node packages/packager/test/run.mjs     # 全部断言过 exit 0
 applovin 单 HTML（存在 / ≤5MB / 白名单外零外链 / `mraid.js` 已注入 / data URI 内联 / 重复构建字节一致）；
 meta（≤3MB——规则 + spec override 生效 / 零外链 / 无 MRAID）；mintegral zip（结构恰 `[Template.html, build.js]`
 / Template.html 相对引用 build.js / 条目内零外链 / **python zipfile 交叉验证**）；负向：dist 混外链 → 拒、
-meta 产物混 MRAID → 拒、未知渠道（google）→ 拒。
+meta 产物混 MRAID → 拒、未知渠道（`not-a-channel`）→ 拒——google 自 rulesVersion 1.1.0 起为
+冻结投放渠道，其自验收为 **3b 正向断言组**（zip 构建 exit 0、条目恰 `[index.html]`、≤5MB、零外链、
+无运行时注入），不再是负向用例。
 
 - 门禁复验：`scripts/gate_phase1.py` 门项 3（对三渠道产物独立断言大小/结构/零外链/注入/禁用；
   `pack-manifest.json` 不计入包内文件）。

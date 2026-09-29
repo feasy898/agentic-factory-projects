@@ -1,7 +1,8 @@
 # M1 规格 spec（PlayableSpec schema v1 + 双侧校验器）
 
 > 状态：frozen（契约冻结，改动即破坏契约）。对照 `packages/spec/` 与 `python/pfcore/{validation,spec_model,invariants}.py`
-> 逐行核验于 2026-09-28。目标读者：只凭本页 + eval 重建本模块的新 agent。
+> 逐行核验于 2026-09-28；2026-09-29 C2 盲评修正同步：§2.2 I2 重放方向/前置域检查与 merge stub 字段
+> 改为如实描述实现。目标读者：只凭本页 + eval 重建本模块的新 agent。
 
 ---
 
@@ -40,17 +41,19 @@ json-path 字段路径并带稳定错误码。
 | ID | 内容 | 精确判定 |
 |---|---|---|
 | I1 | pullpin 逐关可解 | 针角色由 seed 经 `pullpin_level_roles` 生成（每关恰 1 救援针 + 1 机关针，其余中性）：`rescuee = below(pins)`；hazard 重抽至多 16 次（`PULLPIN_REROLL_MAX`）非 rescuee 的值，全撞则 `(rescuee+1) % pins`。`orderSolution` 逐关模拟：先拔到 hazard → 败；拔到 rescuee → 成；未拔到 → 败 |
-| I2 | sort 栈可逆 | 已解盘面 = 前 `min(colors,rods)` 柱各一色满柱 + 空柱；`sort_scramble` 恰走 `rods*layersPerRod` 步，候选步仅限"逆步合法"（搬回后目标柱顶同色或空、且不超容量），`mv = cands[below(len(cands))]`；validator 逐步重放：每步须 ∈ `sort_legal_moves` 且逆步合法，终局与生成器一致。"**终局与生成器一致**"的具体形态（2026-09-29 回炉钉死）：solution 重放完毕后，终盘必须**逐柱相等**于 `sort_solved_board`（前 `min(colors,rods)` 柱各一色满柱 + 空柱），不等 → `I2-sort-reversible`（"solution replay does not reach the generator's solved board"）。重放前的次级域检查：`colors ≥ 2`、`colors < rods`（无空柱则扰动/还原无从谈起）、`rods ≥ 3`、`layersPerRod ≥ 2`、solution 非空——任一不满足即短路返回对应 I2 码 |
+| I2 | sort 栈可逆 | 已解盘面 = 前 `min(colors,rods)` 柱各一色满柱 + 空柱（`sort_solved_board`）；`sort_scramble` 从已解盘面出发恰走 `rods*layersPerRod` 步，候选步仅限"逆步合法"（搬回后目标柱顶同色或空、且不超容量），`mv = cands[below(len(cands))]`。validator 重放（**方向钉死，2026-09-29 回炉**）：从 **`sort_solved_board` 出发正向应用 trace**，逐步断言每步 ∈ `sort_legal_moves`（否则 `I2-sort-scramble`）且逆步合法（否则 `I2-sort-reversible`——该码**只**用于逆步不合法）；重放完毕与**生成器盘面**（`sort_scramble` 返回的盘面）逐柱比对，不等 → `I2-sort-scramble`。I2 侧唯一前置域检查：`colors > rods` → `I2-sort-colors`；其余域约束（`colors ≥ 2`、`rods ≥ 3`、`layersPerRod ≥ 2` 等）属 schema 层（`schema-*` 码），**不**短路返回 I2 码 |
 | I3 | match3 存在可行步 | `match3_board(seed,rows,cols,colors)`（行优先逐格 `below(colors)`）生成盘面，`match3_find_move`（扫相邻交换，方向 (0,1)/(1,0)）无解即违规；另 colors ≤ len(spriteKeys) |
 | I4 | 时长预算 | `durationBudgetSec.max <= 30`（双保险，schema 亦限）；`target <= max` |
 | I5 | i18n 覆盖 | locales 每语言 strings 存在且五键非空白；`defaultLocale ∈ locales`；`rtl ⊆ locales` |
 
 **merge / pullpin / sort 无规则卡——"未覆盖即结构 stub"（2026-09-29 回炉声明）**：
 `templates.md §7` 标三模板规则卡 planned 属实。校验器对这三者的现状语义 = schema 结构 +
-少量轻量不变式，**不承载玩法语义**：merge 仅三条 `I-merge-sprites`（`spawnColors ≤
-len(spriteKeys)`）/ `I-merge-spawn`（`spawnColors ≥ 2`）/ `I-merge-goal`（`goalScore ≥ 1`）；
-其 params 默认值（`spriteKeys=[]` / `spawnColors=4` / `goalScore=300`）与 pullpin/sort 的
-params 字段清单为**盲重建值，无 eval 覆盖**，规则卡落稿时必须回炉本页复验。
+少量轻量不变式，**不承载玩法语义**：merge 仅三条 `I-merge-sprites`（`maxTier > len(spriteKeys)`）/
+`I-merge-spawn`（须 `1 ≤ spawnTierMax < maxTier`）/ `I-merge-goal`（`goalTier ≤ maxTier`）；
+其 params 默认值 = `MERGE_DEFAULTS = {cols:5, rows:5, maxTier:5, spawnTierMax:2, goalTier:4,
+spriteKeys:["tier-1","tier-2","tier-3","tier-4","tier-5"]}`（`invariants.py` 实现，JS 镜像同名
+`MERGE_DEFAULTS` 同值导出；pullpin/sort 默认值同见 `PULLPIN_DEFAULTS`/`SORT_DEFAULTS`）。
+三模板规则卡落稿时必须回炉本页复验。
 
 ### 2.3 确定性随机源（跨语言一致的关键，冻结）
 
