@@ -329,8 +329,10 @@ class GatewayService:
             return finish(status, data, upstream_name=upstream.name,
                           response_preview="", flags=[f"upstream_status_{status}"])
 
-        # 6) 还原：占位符 → 原值（正文 + 工具参数；预览保留占位符版本）
-        response_preview = self._first_choice_content(data)
+        # 6) 还原：占位符 → 原值（正文 + 工具参数；预览=占位符版本经检测+脱敏，
+        #    见 _safe_response_preview——模型自由文本不得以原值/拦截词明文落审计）
+        response_preview = self._safe_response_preview(
+            self._first_choice_content(data), session_id)
         self._restore_choices(data, prep.mapper)
 
         # 7) 输出侧复检钩子（§6 M5 moderate(response)；P0 空后端恒 safe 零影响）：
@@ -448,13 +450,15 @@ class GatewayService:
                 finally:
                     await stream.aclose()
             finally:
-                # 流式审计：response_preview 取还原前占位符版本；硬闸失败=不落库
+                # 流式审计：response_preview=占位符版本经检测+脱敏（同非流式口径，
+                # 见 _safe_response_preview）；硬闸失败=不落库
                 try:
                     self._audit(
                         request_id=request_id, session_id=session_id, dept=dept,
                         decision=decision, findings=prep.findings,
                         prompt_preview=prep.prompt_preview,
-                        response_preview="".join(preview_parts),
+                        response_preview=self._safe_response_preview(
+                            "".join(preview_parts), session_id),
                         upstream_name=upstream.name,
                         latency_ms=int((time.perf_counter() - started) * 1000),
                         flags=(["upstream_stream_interrupted"] if interrupted else []),
@@ -672,6 +676,32 @@ class GatewayService:
                         text = text.replace(f.raw, marker)
             parts.append(text)
         return "\n".join(parts)
+
+    def _safe_response_preview(self, text: str, session_id: str) -> str:
+        """审计 response_preview（§5.4「已还原后仅含占位符版本」的执行面）。
+
+        上游答案的占位符版本原样保留（回显占位符仍是占位符），再走与 prompt
+        预览同源的处理：①规则层检测 + 会话稳定占位符——真实大模型的自由文本
+        自发写出的结构化 PII（如示例手机号 138…、编造身份证）不得以明文进审计
+        库（bytes 级零明文红线对真实模型面同样成立，T8.3 收官批实锤：U8 腿
+        模型答案写出示例值 → 全库扫描命中 → RawPiiLeakError）；②密级词/注入
+        词（BLOCK_FLAG 表面形式）以 CLASSIFIED/INJECTION_REDACTED 占位——拦截
+        语义的表面形式与 prompt 预览同口径不进审计明文面。人名等 NER 层实体
+        规则层不可见，属 open-vocabulary 残余，由 U8 的命中宿主裁定兜底
+        （e2e_smoke._u8_adjudicated_db_scan）。
+        """
+        if not text:
+            return ""
+        findings = detect_full(text)
+        spans = [(f.start, f.end, f.type, f.normalized) for f in findings
+                 if f.action_hint == "MASK" and not f.whitelisted]
+        masked, _entries = self.registry.get(session_id).mask(text, spans)
+        for f in findings:
+            if f.action_hint == "BLOCK_FLAG" and f.raw:
+                marker = (INJECTION_REDACTED if f.type is EntityClass.INJECTION
+                          else CLASSIFIED_REDACTED)
+                masked = masked.replace(f.raw, marker)
+        return masked
 
     @staticmethod
     def _first_choice_content(data: dict[str, Any]) -> str:

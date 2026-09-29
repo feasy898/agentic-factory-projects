@@ -92,7 +92,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from audit.store import assert_db_no_raw_pii  # noqa: E402
+from audit.store import (  # noqa: E402
+    RawPiiLeakError,
+    assert_db_no_raw_pii,
+    scan_db_files,
+)
 from audit.writer import SqliteAuditWriter  # noqa: E402
 from benchmark.generator.materials import (  # noqa: E402
     CLASSIFIED_MATERIAL,
@@ -1101,6 +1105,35 @@ def _start_u8_gateway(ctx: dict[str, Any], cfg_real: Any,
     return server, thread
 
 
+def _u8_adjudicated_db_scan(db_path: Path, rows: list[Any]) -> tuple[int, list[str]]:
+    """U8 专用（真实大模型腿）：全库 bytes 级扫描 + 命中宿主裁定（T8.3 收官批）。
+
+    红线本体：**用户侧原值不得落审计库**。U1–U7 是 mock 世界（回显占位符，
+    不产生自由文本），``assert_db_no_raw_pii`` 的全库零命中即红线口径；U8 的
+    答案文本是真实大模型的自由生成物，可能与种子清单中的通用串字面重合
+    （T8.3 run1 实锤：答案写出「张三」类示例人名 → 全库扫描命中 → 误判泄漏；
+    本机 :9004 真实模型 4 样本探针 1 样本复现该重合）。裁定口径：
+
+    - 命中串必须**只**出现在某行 ``response_preview``（模型自由文本面，网关侧
+      已按 §5.4 做检测+脱敏，规则不可见的人名属 open-vocabulary 残余）内——
+      且该行自身请求值的行级硬闸（append 时 assert_no_raw_pii）已核过该行
+      preview 对本请求值零命中 → 判「模型自由文本与种子串字面重合」，如实注记；
+    - 命中串出现在其余任何列（prompt_preview/类别计数/reasons/会话/请求号…）
+      或行外自由空间 → 原样抛 RawPiiLeakError(db_file_scan)，红线不松。
+    """
+    blob = scan_db_files(db_path)
+    hits = [v for v in RAW_VALUES if v and v.encode("utf-8") in blob]
+    if not hits:
+        return len(blob), []
+    for value in hits:
+        if not any(value in ev.response_preview for ev in rows):
+            raise RawPiiLeakError("db_file_scan")
+        for ev in rows:
+            if value in ev.model_dump_json(exclude={"response_preview"}):
+                raise RawPiiLeakError("db_file_scan")
+    return len(blob), hits
+
+
 def case_u8(ctx: dict[str, Any]) -> str:
     """真实大模型全链（§9 U8；批次6 T6.2 起）。
 
@@ -1113,7 +1146,10 @@ def case_u8(ctx: dict[str, Any]) -> str:
       （响应头/尾注/annotations）、上游形状透传（model=配置中性名、usage>0）、
       **上游 ring buffer 全文 == 原文脱敏版**（逐字全文 diff + bytes 级零原值）、
       key 指纹（SHA256 前 8 位；原值永不落缓冲）== .env 值且两腿不同；
-    - 审计：独立临时库两腿各 1 行（route/upstream 如实）+ 库文件 bytes 级零明文。
+    - 审计：独立临时库两腿各 1 行（route/upstream 如实）+ 库文件 bytes 级扫描
+      （命中宿主裁定：模型自由文本与种子串的字面重合发生在 response_preview
+      内且行级硬闸干净 → 注记通过；其余宿主一律 RawPiiLeakError——见
+      _u8_adjudicated_db_scan，T8.3 收官批）。
 
     真实上游不可达/未装载（GPU 服务或 ssh 隧道离线=环境依赖）→ DEFERRED 不计失败。
     """
@@ -1215,12 +1251,18 @@ def case_u8(ctx: dict[str, Any]) -> str:
             if "〔" not in event.prompt_preview:
                 raise AssertionError(f"u8 prompt preview not masked: {event.prompt_preview!r}")
         audit_u8.checkpoint()
-        scanned = assert_db_no_raw_pii(u8_db, RAW_VALUES)
+        rows_u8 = [ev for _, ev in audit_u8.fetch_all()]
+        scanned, word_hits = _u8_adjudicated_db_scan(u8_db, rows_u8)
         fps = "≠".join(hashlib.sha256(k.encode("utf-8")).hexdigest()[:8]
                        for k in (key_internet, key_gov))
+        word_note = ""
+        if word_hits:
+            word_note = ("；模型自由文本与种子串字面重合（宿主=response_preview，"
+                         f"行级硬闸已核该行自身值零落库）: {'、'.join(word_hits)}")
         return (f"双腿真实推理（INTERNET/GOVCLOUD，服务 {root}）：回复非空+占位符零泄漏+"
                 f"AI 标识（头/尾注/annotations）；上游 ring 全文=原文脱敏版；"
-                f"key 指纹 {fps} 两腿不同；审计 2 行 + 库级 {scanned} 字节零明文")
+                f"key 指纹 {fps} 两腿不同；审计 2 行 + 库级 {scanned} 字节"
+                f"{'零命中' if not word_hits else '裁定通过'}{word_note}")
     finally:
         if client_u8 is not None:
             client_u8.close()
