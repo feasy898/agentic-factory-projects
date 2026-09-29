@@ -1,0 +1,6 @@
+{
+  // solution 型根配置：本批（M1.1）无 TS 源，references 留空。
+  // 后续模块批次（M2 桥起）把各包 tsconfig（extends ../tsconfig.base.json）登记进 references。
+  "files": [],
+  "references": []
+}

@@ -1,0 +1,116 @@
+{
+  "specVersion": "1.0.0",
+  "meta": {
+    "projectId": "golden-merge",
+    "title": "Merge Lab (Playable Demo)",
+    "seed": 20261001
+  },
+  "game": {
+    "template": "merge",
+    "params": {
+      "cols": 5,
+      "rows": 5,
+      "maxTier": 5,
+      "spawnTierMax": 2,
+      "goalTier": 4,
+      "spriteKeys": ["tier-1", "tier-2", "tier-3", "tier-4", "tier-5"]
+    },
+    "difficulty": { "targetLevel": 0.4 },
+    "attract": { "nearWin": true, "failBait": false, "firstClickSucceed": true },
+    "durationBudgetSec": { "target": 20, "max": 30 }
+  },
+  "flow": {
+    "tutorial": { "enabled": true, "gesture": "drag", "maxSec": 3 },
+    "endScreen": {
+      "showScore": true,
+      "ctaKey": "cta",
+      "landingUrl": "https://example.com/playable-lp"
+    }
+  },
+  "assets": {
+    "background": "assets/theme-a/bg-portrait.png",
+    "sprites": {
+      "tier-1": "assets/theme-a/tier-1.png",
+      "tier-2": "assets/theme-a/tier-2.png",
+      "tier-3": "assets/theme-a/tier-3.png",
+      "tier-4": "assets/theme-a/tier-4.png",
+      "tier-5": "assets/theme-a/tier-5.png"
+    },
+    "audio": {
+      "tap": "assets/theme-a/sfx-tap.ogg",
+      "win": "assets/theme-a/sfx-win.ogg"
+    },
+    "fontSubset": "build/theme-a/font-subset.woff2"
+  },
+  "i18n": {
+    "defaultLocale": "en",
+    "locales": ["en", "ja", "ko", "pt-BR", "de", "ar", "zh"],
+    "strings": {
+      "en": {
+        "cta": "Play Now",
+        "tutorial": "Drag a creature onto its twin to merge!",
+        "win": "You Win!",
+        "lose": "Try Again!",
+        "score": "Score"
+      },
+      "ja": {
+        "cta": "今すぐ遊ぶ",
+        "tutorial": "同じ生き物を重ねて合成しよう！",
+        "win": "クリア！",
+        "lose": "もう一度！",
+        "score": "スコア"
+      },
+      "ko": {
+        "cta": "지금 플레이",
+        "tutorial": "같은 생물을 끌어다 합치세요!",
+        "win": "성공!",
+        "lose": "다시 도전!",
+        "score": "점수"
+      },
+      "pt-BR": {
+        "cta": "Jogue Agora",
+        "tutorial": "Arraste uma criatura até sua gêmea para fundir!",
+        "win": "Você Venceu!",
+        "lose": "Tente de Novo!",
+        "score": "Pontos"
+      },
+      "de": {
+        "cta": "Jetzt Spielen",
+        "tutorial": "Ziehe ein Wesen auf sein Zwilling, um es zu verschmelzen!",
+        "win": "Gewonnen!",
+        "lose": "Nochmal versuchen!",
+        "score": "Punkte"
+      },
+      "ar": {
+        "cta": "العب الآن",
+        "tutorial": "اسحب المخلوق إلى توأمه لدمجه!",
+        "win": "لقد فزت!",
+        "lose": "حاول مجدداً!",
+        "score": "النقاط"
+      },
+      "zh": {
+        "cta": "立即游玩",
+        "tutorial": "拖动同类合成，升级到目标生物！",
+        "win": "你赢了！",
+        "lose": "再试一次！",
+        "score": "得分"
+      }
+    },
+    "rtl": ["ar"]
+  },
+  "channels": {
+    "targets": ["applovin", "unity", "google", "meta", "tiktok", "mintegral"],
+    "orientation": "portrait",
+    "overrides": {
+      "applovin": { "maxBytes": 5242880, "ctaStyle": "banner" },
+      "meta": { "maxBytes": 3145728, "ctaStyle": "endcard" }
+    }
+  },
+  "variants": [
+    { "id": "v1", "seed": 1, "palette": "A" }
+  ],
+  "qc": {
+    "maxLoadSec": 2.0,
+    "autoplayTimeoutSec": 45
+  }
+}

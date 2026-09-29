@@ -1,0 +1,7 @@
+{
+  "name": "@pf/llmgw",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "模型适配（Node fetch 单库，env 契约逐条对齐；selftest 6 项 mock 语义移植；SSRF 防线逐条移植；director/repair-loop deferred）。批次 1 模块任务落地（届时补 src 与 exports）。"
+}

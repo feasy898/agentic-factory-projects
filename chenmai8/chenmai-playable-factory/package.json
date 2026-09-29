@@ -1,0 +1,26 @@
+{
+  "name": "pf-factory",
+  "version": "0.1.0",
+  "private": true,
+  "description": "试玩广告生产线 · 模式 M 全新实现（TS/Node 22 单栈）。数据资产字节复用清单见 REUSED-ASSETS.md；模块规格地图见 docs/specs/README.md。",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "workspaces": [
+    "packages/*",
+    "packages/templates/*"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "build": "node scripts/build.mjs",
+    "verify:assets": "node scripts/verify-reused-assets.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "ajv": "8.20.0",
+    "c8": "12.0.0",
+    "esbuild": "0.28.2",
+    "typescript": "7.0.2"
+  }
+}

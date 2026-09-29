@@ -1,0 +1,7 @@
+{
+  "name": "@pf/spec",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "M1 单源校验器：playable-spec.schema.json（draft 2020-12，字节复用，sha 见 REUSED-ASSETS.md）+ ajv + invariants(TS 单份) + 模板 check(spec) 进程内注册制(P1)。M1.1 仅落 schema 资产与 ajv 实测骨架；校验器本体为 M1 模块任务（届时补 index.mjs 与 exports）。"
+}

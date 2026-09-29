@@ -1,0 +1,7 @@
+{
+  "name": "@pf/engine-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "M2 运行时桥（同构重实现，契约逐条对齐；26 用例冻结 eval 字节复用 + coverage≥80% + tsc strict，D3）。批次 1 模块任务落地（届时补 src 与 exports）。"
+}

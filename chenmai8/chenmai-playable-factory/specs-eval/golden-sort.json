@@ -1,0 +1,112 @@
+{
+  "specVersion": "1.0.0",
+  "meta": {
+    "projectId": "golden-sort",
+    "title": "Sort It! (Playable Demo)",
+    "seed": 20260930
+  },
+  "game": {
+    "template": "sort",
+    "params": {
+      "rods": 5,
+      "layersPerRod": 4,
+      "colors": 4,
+      "screwMode": false,
+      "moveLimit": 30
+    },
+    "difficulty": { "targetLevel": 0.4 },
+    "attract": { "nearWin": true, "failBait": false, "firstClickSucceed": true },
+    "durationBudgetSec": { "target": 20, "max": 30 }
+  },
+  "flow": {
+    "tutorial": { "enabled": true, "gesture": "tap", "maxSec": 3 },
+    "endScreen": {
+      "showScore": true,
+      "ctaKey": "cta",
+      "landingUrl": "https://example.com/playable-lp"
+    }
+  },
+  "assets": {
+    "background": "assets/theme-a/bg-portrait.png",
+    "sprites": {
+      "rod": "assets/theme-a/rod.png",
+      "piece": "assets/theme-a/piece.png"
+    },
+    "audio": {
+      "tap": "assets/theme-a/sfx-tap.ogg",
+      "win": "assets/theme-a/sfx-win.ogg"
+    },
+    "fontSubset": "build/theme-a/font-subset.woff2"
+  },
+  "i18n": {
+    "defaultLocale": "en",
+    "locales": ["en", "ja", "ko", "pt-BR", "de", "ar", "zh"],
+    "strings": {
+      "en": {
+        "cta": "Play Now",
+        "tutorial": "Tap a stack, then tap where it pours!",
+        "win": "Sorted!",
+        "lose": "Try Again!",
+        "score": "Score"
+      },
+      "ja": {
+        "cta": "今すぐ遊ぶ",
+        "tutorial": "タップして選び、移す先をタップ！",
+        "win": "ソート完了！",
+        "lose": "もう一度！",
+        "score": "スコア"
+      },
+      "ko": {
+        "cta": "지금 플레이",
+        "tutorial": "더미를 눌러 고르고, 옮길 곳을 눌러요!",
+        "win": "정렬 성공!",
+        "lose": "다시 도전!",
+        "score": "점수"
+      },
+      "pt-BR": {
+        "cta": "Jogue Agora",
+        "tutorial": "Toque numa pilha e toque no destino!",
+        "win": "Organizado!",
+        "lose": "Tente de Novo!",
+        "score": "Pontos"
+      },
+      "de": {
+        "cta": "Jetzt Spielen",
+        "tutorial": "Stapel antippen, dann das Ziel antippen!",
+        "win": "Sortiert!",
+        "lose": "Nochmal versuchen!",
+        "score": "Punkte"
+      },
+      "ar": {
+        "cta": "العب الآن",
+        "tutorial": "انقر على عمود ثم انقر على مكان الصب!",
+        "win": "تم الترتيب!",
+        "lose": "حاول مجدداً!",
+        "score": "النقاط"
+      },
+      "zh": {
+        "cta": "立即游玩",
+        "tutorial": "点选一根柱子，再点目标柱倒过去！",
+        "win": "分类完成！",
+        "lose": "再试一次！",
+        "score": "得分"
+      }
+    },
+    "rtl": ["ar"]
+  },
+  "channels": {
+    "targets": ["applovin", "unity", "google", "meta", "tiktok", "mintegral"],
+    "orientation": "portrait",
+    "overrides": {
+      "applovin": { "maxBytes": 5242880, "ctaStyle": "banner" },
+      "meta": { "maxBytes": 3145728, "ctaStyle": "endcard" }
+    }
+  },
+  "variants": [
+    { "id": "v1", "seed": 1, "palette": "A" }
+  ],
+  "qc": {
+    "maxLoadSec": 2.0,
+    "autoplayTimeoutSec": 45
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "specVersion": "1.0.0",
+  "meta": {
+    "projectId": "bad-duration-budget",
+    "title": "BAD: 时长预算超 30 秒上限",
+    "seed": 20260930
+  },
+  "game": {
+    "template": "match3",
+    "params": {
+      "colors": 5,
+      "spriteKeys": ["piece-0", "piece-1", "piece-2", "piece-3", "piece-4"]
+    },
+    "durationBudgetSec": { "target": 20, "max": 35 }
+  },
+  "flow": {
+    "tutorial": { "enabled": true, "gesture": "drag", "maxSec": 3 },
+    "endScreen": {
+      "showScore": true,
+      "ctaKey": "cta",
+      "landingUrl": "https://example.com/playable-lp"
+    }
+  },
+  "assets": {
+    "background": "assets/theme-a/bg-portrait.png",
+    "sprites": { "piece-0": "assets/theme-a/piece-0.png" },
+    "audio": { "tap": null, "win": null }
+  },
+  "i18n": {
+    "defaultLocale": "en",
+    "locales": ["en"],
+    "strings": {
+      "en": { "cta": "Play Now", "tutorial": "Drag to match!", "win": "You Win!", "lose": "Try Again!", "score": "Score" }
+    },
+    "rtl": []
+  },
+  "channels": {
+    "targets": ["applovin"],
+    "orientation": "portrait"
+  },
+  "qc": { "maxLoadSec": 2.0, "autoplayTimeoutSec": 45 }
+}

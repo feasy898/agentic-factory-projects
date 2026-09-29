@@ -1,0 +1,6 @@
+node_modules/
+artifacts/
+tmp/
+.mimosa/
+*.log
+.DS_Store

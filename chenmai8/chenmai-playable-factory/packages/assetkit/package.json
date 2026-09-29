@@ -1,0 +1,7 @@
+{
+  "name": "@pf/assetkit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "M5 素材管线（sharp + ffmpeg spawn + subset-font(harfbuzzjs)；selftest 8 断言语义移植：降幅≥30% 门、WAV→AAC、字体子集≤40KB、图集不重叠、optmap 一一对应）。批次 3 落地（届时补 src 与 exports）。"
+}

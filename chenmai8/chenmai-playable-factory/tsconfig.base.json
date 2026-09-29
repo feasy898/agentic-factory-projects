@@ -1,0 +1,28 @@
+{
+  // factory 基线编译选项（模式 M 决策 §1/§R8）。
+  // 供各包 tsconfig extends；typecheck 门（D3 等）由对应模块批次接线。
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM"],
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // 坑 5（REGENERATE §8，R8 照抄）：Node 22 类型剥离只支持可擦除语法——
+    // 禁构造器参数属性（ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX），一律显式 this.x = x；
+    // import 带 .ts 扩展 + allowImportingTsExtensions。
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+
+    // esbuild 负责产物构建；tsc 只做类型检查。
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  }
+}
