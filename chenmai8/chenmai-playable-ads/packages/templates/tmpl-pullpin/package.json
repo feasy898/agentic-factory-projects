@@ -2,5 +2,10 @@
   "name": "@pf/tmpl-pullpin",
   "version": "0.1.0",
   "private": true,
-  "description": "拔针救援玩法模板（M3 占位）"
+  "type": "module",
+  "description": "拔针救援玩法模板（M3）：PlayableSpec 驱动渲染，按序拔针引流救援、错序失败重试、nearWin 吸引点与 QC 钩子",
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit"
+  }
 }
