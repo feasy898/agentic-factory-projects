@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import threading
 from collections import deque
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from pathlib import Path
 from typing import Protocol
 
@@ -168,6 +168,19 @@ class InMemoryAuditStore:
             cleared = len(self._events)
             self._events.clear()
             return cleared
+
+    def remove_where(self, predicate: Callable[[AuditEvent], bool]) -> int:
+        """按条件删除事件（T5.3 演示态清理：只删 session 前缀标记的合成事件）。
+
+        重建 deque（同一 maxlen 容量上限），非 SQLite 形态的演示态清理面；
+        返回删除条数。
+        """
+        with self._lock:
+            kept = deque((e for e in self._events if not predicate(e)),
+                         maxlen=self._events.maxlen)
+            removed = len(self._events) - len(kept)
+            self._events = kept
+            return removed
 
     def __len__(self) -> int:
         with self._lock:

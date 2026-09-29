@@ -32,10 +32,18 @@
     .pager a.off { color: #9ca3af; pointer-events: none; }
     .pager a.cur { background: #2563eb; color: #fff; border-color: #2563eb; }
     .empty { margin-top: 1rem; border: 1px dashed #d1d5db; border-radius: 8px; padding: 1rem; color: #6b7280; }
+    .demo-panel { margin-top: 1.2rem; border: 1px solid #93c5fd; border-radius: 8px; padding: .7rem 1rem; background: #eff6ff; }
+    .demo-panel h2 { margin-top: 0; }
+    .demo-toolbar { display: flex; gap: .8rem; align-items: center; flex-wrap: wrap; margin: .4rem 0; }
+    .demo-toolbar button { border: 1px solid #2563eb; background: #2563eb; color: #fff; border-radius: 6px; padding: .3rem .9rem; cursor: pointer; }
+    .demo-toolbar button.ghost { background: #fff; color: #b91c1c; border-color: #b91c1c; }
+    #demo-state { font-weight: 600; }
+    #demo-state.on { color: #047857; }
+    code, .rid { font-family: Consolas, monospace; font-size: .78rem; color: #6b7280; }
   </style>
 </head>
 <body>
-  <h1>{{ page_title }}<span class="muted">（指标卡 · 路由/部门/类别 SVG 柱状图 · 审计明细分页）</span></h1>
+  <h1>{{ page_title }}<span class="muted">（指标卡 · 路由/部门/类别 SVG 柱状图 · 审计明细分页 · 演示态一键切换）</span></h1>
   <p class="muted">数据服务端直读审计存储（只存脱敏内容，§5.4 零明文硬闸）；统计日界为 UTC。
      产生新事件后点 <a href="/webui/dashboard?page={{ page }}&amp;page_size={{ page_size }}">刷新</a>；
      对话入口见 <a href="/webui/chat">对话双屏</a>。</p>
@@ -100,5 +108,74 @@
   {% else %}
   <div class="empty">暂无审计事件——到 <a href="/webui/chat">对话双屏</a> 发起对话，或运行演示控制页的场景材料后再回来看板。</div>
   {% endif %}
+
+  <div class="demo-panel" id="demo-panel">
+    <h2>演示态一键切换（T5.3）</h2>
+    <p class="muted">一键注入/清除 <b>三部门合成演示数据</b>（seed 固定、全合成、无真实个人信息）：
+      等价 CLI <code>python -m ops.seed_demo</code>；注入走网关同一条 detect→mask→route→审计
+      代码路径（预览只含占位符），落库过零明文硬闸，写后全库 bytes 级零明文复扫。
+      「清除演示数据」只删 <code>sess_demo_</code> 前缀的合成事件，真实流量事件不受影响。
+      切换后点本页顶部「刷新」即可看新指标（演示态与真实流量同库同规格，可同屏对照）。</p>
+    <div class="demo-toolbar">
+      <label>部门 Key <select id="demo-dept-key">
+        {% for d in demo_depts %}<option value="{{ d.key }}">{{ d.name }}</option>{% endfor %}
+      </select></label>
+      <button id="demo-seed-btn">一键加载演示数据</button>
+      <button id="demo-clear-btn" class="ghost">清除演示数据</button>
+      <span id="demo-state" class="muted">检测中…</span>
+    </div>
+    <p class="muted" id="demo-detail"></p>
+  </div>
+
+  <script>
+  (function () {
+    "use strict";
+    const $ = id => document.getElementById(id);
+    const BASE = "/admin/api/demo/";
+    function authHeaders() {
+      return { "Authorization": "Bearer " + $("demo-dept-key").value };
+    }
+    function setText(id, text, on) {
+      const el = $(id);
+      el.textContent = text;
+      el.classList.toggle("on", !!on);
+    }
+    async function refreshState() {
+      let s;
+      try {
+        const resp = await fetch(BASE + "state", { headers: authHeaders() });
+        if (resp.status === 401) { setText("demo-state", "401 无效部门 Key", false); return; }
+        s = await resp.json();
+      } catch (e) {
+        setText("demo-state", "状态获取失败（" + e + "）", false);
+        return;
+      }
+      setText("demo-state", s.demo_seeded
+        ? "演示态（合成事件 " + s.demo + " / 总 " + s.total + "）"
+        : "实时态（无演示数据）", s.demo_seeded);
+      $("demo-detail").textContent = "每部门演示事件：" +
+        s.by_dept.map(d => d.dept + "×" + d.demo).join(" / ") +
+        "；演示态路由 I/G/B = " + s.routes.map(r => r.demo).join("/") +
+        "；类别 Top：" + (s.categories.slice(0, 5).map(c => c.category + "·" + c.count).join("、") || "—");
+    }
+    async function callDemo(action, okText) {
+      const resp = await fetch(BASE + action, { method: "POST", headers: authHeaders() });
+      const data = await resp.json().catch(() => ({}));
+      if (resp.status === 401) { setText("demo-state", "401 无效部门 Key", false); return; }
+      if (!resp.ok) { setText("demo-state", action + " 失败：" + (data.message || resp.status), false); return; }
+      await refreshState();
+      setText("demo-detail", okText + "（" + JSON.stringify(
+        action === "seed"
+          ? { inserted: data.inserted, routes: data.routes, scan_bytes: data.db_scan_bytes }
+          : { removed: data.removed }) + "）→ 点顶部「刷新」看新指标", true);
+    }
+    $("demo-seed-btn").addEventListener("click", () =>
+      callDemo("seed", "已注入三部门演示数据").catch(e => setText("demo-state", "" + e, false)));
+    $("demo-clear-btn").addEventListener("click", () =>
+      callDemo("clear", "已清除演示数据").catch(e => setText("demo-state", "" + e, false)));
+    $("demo-dept-key").addEventListener("change", refreshState);
+    refreshState();
+  })();
+  </script>
 </body>
 </html>

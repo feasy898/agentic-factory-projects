@@ -20,6 +20,12 @@
 - GET /webui/demo/materials/{filename}/text  场景材料纯文本（一键载入聊天页用；
                      服务端经 filechannel 解析抽取，与下载物同字节同源）。
 
+看板「演示态」一键切换（T5.3，本模块 mount 末尾挂载 webui/demo_api.py）：
+- POST /admin/api/demo/seed   一键注入三部门合成演示数据（幂等；ops/seed_demo 同源核心）
+- POST /admin/api/demo/clear  一键清除演示数据（只删 sess_demo_ 前缀合成事件）
+- GET  /admin/api/demo/state  演示态摘要（总量/演示态/按部门/按路由/类别分布）
+（部门 Key 鉴权，口径对齐 T5.1 管理面；看板页面板经这三个端点切换演示态。）
+
 不做登录（演示模式，M9 spec）；样式朴素但结构清晰。材料为合成演示数据
 （seeded 冻结值），不含任何真实个人信息。
 """
@@ -74,8 +80,8 @@ PAGES: tuple[dict[str, str], ...] = (
      "status": "已上线（T4.3；一键载入 T5.2）"},
     {"path": "/webui/chat", "title": "对话双屏", "desc": "脱敏对话 + 上游实际收到内容对照（route 徽标/拦截卡/流式）",
      "status": "已上线（T5.2）"},
-    {"path": "/webui/dashboard", "title": "审计看板", "desc": "指标卡 + SVG 柱状图（路由/部门/类别）+ 审计明细分页",
-     "status": "已上线（T5.2）"},
+    {"path": "/webui/dashboard", "title": "审计看板", "desc": "指标卡 + SVG 柱状图（路由/部门/类别）+ 审计明细分页 + 演示态一键切换",
+     "status": "已上线（T5.2；演示态切换 T5.3）"},
 )
 
 #: 演示场景清单（§10 五场景；编号按任务单 T4.3——场景4=防注入、场景5=扫描件体检，
@@ -215,6 +221,8 @@ def mount(app: FastAPI) -> None:
             "total": page_view["total"],
             "total_pages": page_view["total_pages"],
             "page_sizes": PAGE_SIZES,
+            # T5.3 看板演示态一键切换：面板经 /admin/api/demo/* 注入/清除三部门合成数据
+            "demo_depts": DEMO_DEPTS,
         })
 
     @app.get("/webui/demo/materials/{filename}")
@@ -247,3 +255,9 @@ def mount(app: FastAPI) -> None:
             content=json.dumps({"filename": filename, "text": text}, ensure_ascii=False),
             media_type="application/json; charset=utf-8",
         )
+
+    # 看板演示态管理 API（T5.3：/admin/api/demo/seed|clear|state，部门 Key 鉴权，
+    # 口径对齐 T5.1 管理面；注入/清除全合成演示数据，ops/seed_demo.py 同源核心）
+    from webui.demo_api import mount as mount_demo_api  # noqa: PLC0415 — 延迟导入避免环
+
+    mount_demo_api(app)

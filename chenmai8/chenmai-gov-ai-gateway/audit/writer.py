@@ -206,6 +206,25 @@ class SqliteAuditWriter:
         with self._sql_lock:
             return str(self._conn.execute("PRAGMA journal_mode").fetchone()[0])
 
+    def remove_session_prefix(self, prefix: str, *, timeout_s: float = 5.0) -> int:
+        """删除 session_id 以 ``prefix`` 开头的事件（T5.3 看板演示态清理）。
+
+        先 :meth:`flush` 排干队列（防清理后异步写把旧事件补回）；DELETE 走
+        **参数绑定**（``substr(session_id,1,?)=?``，无拼接/f-string 组 SQL）。
+        只删命中前缀的合成演示事件，真实流量事件（session 无此前缀）天然不受
+        影响。返回删除行数。
+        """
+        if not prefix:
+            raise ValueError("session prefix must be non-empty")
+        if not self.flush(timeout_s=timeout_s):
+            raise RuntimeError("audit write queue did not drain; refusing to remove events")
+        with self._sql_lock:
+            cur = self._conn.execute(
+                "DELETE FROM audit_events WHERE substr(session_id, 1, ?) = ?",
+                (len(prefix), prefix))
+            self._conn.commit()
+            return int(cur.rowcount or 0)
+
     def checkpoint(self) -> None:
         """WAL → 主文件合流（TRUNCATE；bytes 级扫描前调用确保口径完整）。"""
         with self._sql_lock:
