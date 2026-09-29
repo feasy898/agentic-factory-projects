@@ -1,0 +1,9 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"],
+    // playwright 类型经显式 import 解析（root node_modules）
+    "typeRoots": ["../node_modules/@types"]
+  },
+  "include": ["src/**/*.ts"]
+}
