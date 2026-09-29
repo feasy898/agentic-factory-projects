@@ -6,7 +6,7 @@
 > `node scripts/verify-reused-assets.mjs`（npm test 内含）逐项重算校验，漂移即失败。
 > **改动下列任何文件 = 违约**（数据契约零变更，决策 §2.2）。
 
-## A. 已复用（M1.1 起，累计 32 项，与 oracle 逐项 sha256 一致）
+## A. 已复用（M1.1 起，累计 39 项，与 oracle 逐项 sha256 一致）
 
 | # | factory 路径 | oracle 来源 | bytes | sha256 |
 |---|---|---|---|---|
@@ -115,7 +115,9 @@ Git 的 GNU tar 1.35，**不能读 zip**，故按绝对路径定位 bsdtar——
     { "path": "docs/specs/templates.md", "source": "repo/docs/assets/specs/templates.md", "bytes": 11087, "sha256": "c6239e824c56919c5427166d9437af3f7057af9515447792f4fa375ab019dd8c" },
     { "path": "docs/specs/match3-rules-card.md", "source": "repo/docs/assets/specs/match3-rules-card.md", "bytes": 19509, "sha256": "25861fb75ef4c0c8e6fb6404ed21e94da698203eb25d4b5d21a5e99117dce675" },
     { "path": "packages/templates/tmpl-match3/tests/logic-test.ts", "source": "repo/packages/templates/tmpl-match3/tests/logic-test.ts", "bytes": 3545, "sha256": "bb6da679e50ea1d38bece7e73727b4e83db95ac100b9e2341857fe10633083c1" },
-    { "path": "packages/templates/tmpl-merge/tests/logic-test.ts", "source": "repo/packages/templates/tmpl-merge/tests/logic-test.ts", "bytes": 5255, "sha256": "28d87ad6288959f95127b56b87f89d7ab61d8571d0f53287a807fbb8d307d3d6" }
+    { "path": "packages/templates/tmpl-merge/tests/logic-test.ts", "source": "repo/packages/templates/tmpl-merge/tests/logic-test.ts", "bytes": 5255, "sha256": "28d87ad6288959f95127b56b87f89d7ab61d8571d0f53287a807fbb8d307d3d6" },
+    { "path": "docs/specs/qacore.md", "source": "repo/docs/assets/specs/qacore.md", "bytes": 20230, "sha256": "924515fa1635fb35efeb09f6c338ae7a82d0323bb6efddb8d52b456e7fca5765" },
+    { "path": "qacore/tests/fixtures/mini.html", "source": "repo/python/qacore/tests/fixtures/mini.html", "bytes": 2220, "sha256": "72060c3062846f8fcb2cf621482ff99e0e3f5079bcb912a7dba2b5bd718bd0da" }
   ]
 }
 ```
@@ -127,6 +129,20 @@ Git 的 GNU tar 1.35，**不能读 zip**，故按绝对路径定位 bsdtar——
 | 桥冻结测试（26 用例：events/channels/mute + index.js + run.mjs + testsupport/fixture.mjs） | `repo/packages/engine-bridge/test/`、`testsupport/` | `packages/engine-bridge/test/` | **M2 已落**（A 节 #26–#31 字节登记；26/26 exit 0 + coverage 97.6% + tsc strict 实测过） |
 | packager 冻结自验收（46 断言：run.mjs + fixture/gen-pngs.mjs + fixture/match3-dist/） | `repo/packages/packager/test/` | `packages/packager/test/` | **M4 已落**（run.mjs 含 P5 单点移植，见 A 节注；fixture/gen-pngs 已字节登记） |
 | spec 冻结 ajv-check | `repo/packages/spec/test/ajv-check.mjs` | `packages/spec/test/` | **M1 已落**（A 节末条 #33 字节登记，cmp 与 oracle 字节全等；经 `src/validate.mjs` 壳原样跑通 AJV-CHECK: PASS exit 0，2026-09-30） |
-| qacore mini.html 夹具 | `repo/python/qacore/tests/fixtures/mini.html` | `qacore/tests/fixtures/` | M8 |
+| qacore mini.html 夹具 | `repo/python/qacore/tests/fixtures/mini.html` | `qacore/tests/fixtures/` | **M2.2 已落**（A 节 #39 字节登记，sha256 一致） |
+| M8 资产 spec 文档（qacore.md） | `repo/docs/assets/specs/qacore.md` | `docs/specs/qacore.md` | **M2.2 已落**（A 节 #38 字节登记，sha256 一致；与 #25/#32/#34/#35 同一处置方式） |
+
+（M2.2 复验留档，2026-09-30）：本判官（`node qacore/cli.mjs`，playwright 1.63.0 钉版，
+chromium-1243/153.0.8010.12 与 oracle Python 侧同 build——R2 核实）对四模板 golden 产物
++ demo-zh 与 oracle 判官逐 CHK 状态对照 4/5 全等，唯一差异为 match3 那轮的 CHK09
+墙钟负载抖动（该轮 **oracle** 自身 fail 而本判官 pass——证明墙钟抖动双侧对称）。
+R1 图像方差：灰度 L24 整数式 + Pillow 同核双三次（缩小时支撑窗按 1/scale 展宽）对齐后，
+五模板截图像素方差相对差 ≤0.04%（2026-09-30 语料实测），空白/非空白状态全等；
+容差声明：CHK05 判定只消费"方差 ≥ 30"状态，不消费原始值（qacore spec §3）。
+**复验发现的真实缺陷回修（M2.1 模板）**：vendor 引擎 WebAudio 管理器在启动期创建
+AudioContext，无头浏览器授予 autoplay 时创建即 running——形成"首交互前 running
+AudioContext"的真实 CHK04 违规（oracle 判官以低触发率侥幸未暴露，实测本判官 ~40%）。
+四模板按引擎原生 `audio: { noAudio: true }` 关闭引擎 WebAudio（玩法音效一律经 PF.audio
+的 HTMLAudio，静音策略不变；CHK04 媒体探针不受扰）；回修后 pullpin ×5 连跑全绿。
 
 （M1.1 验收口径：A 节 16 项与 oracle 逐项 sha256 一致——已实测全 MATCH；B 节按所属模块批次拷贝并登记。）
