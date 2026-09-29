@@ -107,7 +107,19 @@
   0→129 同步；已登记 run_contract 与根 conftest MODULES；全套 430 测试 +
   validate_knowledge --min-items-per-kp 3（321/321 dual-agent-verified）+ run_contract
   全量 + --impl-dir 平铺目录 --suite full 注入自检全绿）
-- [ ] **静态卷 PDF 输出**：Paper -> 打印友好排版 JSON（题号/选项/留白/页眉），为机构分发与离线渠道落格式
+- [x] **静态卷 PDF 输出**：Paper -> 打印友好排版 JSON（题号/选项/留白/页眉），为机构分发与离线渠道落格式
+  （完成于本轮，待主会话提交：src/xuexing/paper_layout.py（确定性内核：render_paper_layout
+  排版 JSON——页眉三段连接（注记·卷名·卷号）/全卷顺序题号/选项标签解析/题型留白规则表
+  （choice 括号/fill 下划线/solve 六行）/每页题数分页 + 节标题块恒紧邻其首题不占位、
+  parse_option、section_ordinal 中文序号闭式；完整性门：未知题/bank 重复 id/选项 <2 或
+  标签判重/未知题型/空卷一律 LayoutError 不出残卷；学生卷不含 answer/solution）+
+  specs/drafts/paper_layout.spec.md + tests/contract/test_paper_layout_contract.py
+  （32 项，paper/bank 鸭子类型自封闭夹具，闭式现算核实）+ tests/data/test_paper_layout_data.py
+  （6 项，grade7 真实库端到端：37KP×2 题 seed=11 → 74 题/5 页/题型 23/46/5，节标题块
+  "一、绝对值"…"三十七、消元法解二元一次方程组"）；已登记 run_contract 与根 conftest
+  MODULES；全套 468 测试 + validate_knowledge --min-items-per-kp 3（321/321
+  dual-agent-verified 保留）+ run_contract 参考实现 / --impl-dir 平铺目录注入
+  （单模块与 --suite full）全绿）
 - [ ] **xAPI 学习事件导出**：Response/ReviewEntry/PlanStep -> xAPI statement JSON，附学习记录标准符合性测试
 - [ ] **OMR 答题卡对接规范**：answer-sheet.json（题号-选项映射）+ OMRChecker 输出适配层
 - [ ] **机构多租户**：server 加 org 维度数据隔离（org_id 贯穿 store/attempt/api）

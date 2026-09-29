@@ -31,6 +31,7 @@ MODULE_TEST_FILES = {
     "misconception_coverage": ["test_misconception_coverage_contract.py"],
     "itembank_v2": ["test_itembank_v2_contract.py"],
     "dual_verify": ["test_dual_verify_contract.py"],
+    "paper_layout": ["test_paper_layout_contract.py"],
     # server 是薄胶水层（PM-STATE：不重生成），登记仅为让 run_contract 能按模块
     # 选择性运行其契约测试；--impl-dir 注入需目录内有 server.py（绝对导入约定，
     # 参考实现 src/xuexing/server.py 满足，regen/round* 冻结八模块目录不含）。
