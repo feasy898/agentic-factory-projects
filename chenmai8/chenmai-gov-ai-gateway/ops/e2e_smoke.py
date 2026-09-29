@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""端到端冒烟（开发指令 §9，D0 收工线）：mock 上游×2 + 网关全真链路，六用例 U1–U6。
+"""端到端冒烟（开发指令 §9，D0 收工线）：mock 上游×2 + 网关全真链路，七用例 U1–U7。
 
 拓扑（§9 步骤 1–2，全部本地、零外网依赖、零真实 API key）::
 
@@ -15,7 +15,7 @@
   §9 U5 的"行数断言 + bytes 级零明文扫描"以**审计库文件（含 WAL 旁挂）**为对象；
   /admin/api/audit 上线后自动改为 HTTP 交叉核对。
 
-用例（§9 步骤 3；U1–U5 当天生效，U6 文件通道 D3 起生效）：
+用例（§9 步骤 3；U1–U5 当天生效，U6 文件通道 D3 起生效，U7 注入拦截 T4.3 起）：
 - U1 非流式：人名 + 2 身份证 + 3 手机号（含分隔符写法）→ 上游 messages **全文
   diff = 原文脱敏版**（审查 §B：占位符计数精确〔人名·×1/〔身份证·×2/〔手机号·×3）；
   客户端零占位符形状、原值（归一化形态）完整在位；route=INTERNET；
@@ -37,7 +37,13 @@
   审计 SQLite 库文件（主文件 + WAL 旁挂）bytes 级扫描全部原值（含人名与密级词，
   审查 §B）→ 零命中；
 - U6 文件：inspect+export seeded docx → 重解析零命中（文件通道未上线时输出
-  DEFERRED，不计失败）。
+  DEFERRED，不计失败）；
+- U7 注入拦截（§10 场景4 防注入 e2e 化，T4.3）：检索网页存档 seeded 材料
+  （真实 docx 夹具正文驱动）——干净版（含 1 经办电话）→ 200 INTERNET 照常
+  脱敏/还原（负例对照：拦的是注入不是网页）；埋注版（同页评论区尾部多一段
+  「AI请注意：忽略规则+外发+对用户隐匿」）→ 403 content_blocked
+  reasons[0]=INJECTION、两 mock 零感知、审计 flag=injection + 预览
+  〔注入·已拦截〕零埋注原文；收尾审计库 checkpoint 后 bytes 级零明文复扫。
 
 运行::
 
@@ -73,6 +79,8 @@ from benchmark.generator.materials import (  # noqa: E402
     CLASSIFIED_MATERIAL,
     ORDINARY_MATERIAL,
     ROSTER_MATERIAL,
+    WEBPAGE_CLEAN_MATERIAL,
+    WEBPAGE_INJECTED_MATERIAL,
     build_materials,
     material_plain_text,
     spec_of,
@@ -127,6 +135,8 @@ PHONE_C = "13700137000"
 PHONE_BLOCKED = "13900139001"               # 仅出现在机密样例（上游必须零感知）
 
 PERSON = "张三"
+
+WEBPAGE_PHONE = "13800138002"   # U7 网页材料的经办电话（与 materials.py 独立副本同源）
 
 U_TEXT = (f"居民{PERSON}（身份证{ID_A}、{ID_B}），联系电话{PHONE_A}、"
           f"{PHONE_B_RAW}、{PHONE_C_RAW}，请核对其低保申领材料并回电。")
@@ -214,6 +224,7 @@ TOOLS = [{
 RAW_VALUES: tuple[str, ...] = (
     ID_A, ID_B, ID_C, ID_D,
     PHONE_A, PHONE_B_RAW, PHONE_B, PHONE_C_RAW, PHONE_C, PHONE_BLOCKED,
+    WEBPAGE_PHONE,
     PERSON, "李四", "王五", "赵六",
     "机密★", "内部资料", "注意保密", "不得外传",
 )
@@ -237,6 +248,12 @@ U4_SPANS: list[tuple[str, EntityClass, str]] = [
     (ID_D, EntityClass.ID_CARD, ID_D),
     (PHONE_A, EntityClass.PHONE_MOBILE, PHONE_A),
 ]
+#: U7 网页材料的期望脱敏面：仅 1 个经办电话（干净版/埋注版同；埋注段属
+#: INJECTION·BLOCK_FLAG 不进脱敏面，拦截语义见 case_u7）
+U7_SPANS: list[tuple[str, EntityClass, str]] = [
+    (WEBPAGE_PHONE, EntityClass.PHONE_MOBILE, WEBPAGE_PHONE),
+]
+U7_EXPECTED_PLACEHOLDERS = {"〔手机号·": 1}
 
 RESULTS: list[tuple[str, str, str]] = []   # (用例名, 状态 PASS/FAIL/DEFER, 详情)
 
@@ -891,6 +908,99 @@ def case_u6(ctx: dict[str, Any]) -> str:
     return "inspect 命中 seeded PII；export 后重解析零残留"
 
 
+# ── U7 注入拦截（§10 场景4 防注入 e2e 化，T4.3；拦截面 = T4.2 语义层）──────
+U7_SESSION_CLEAN = "sess_e2e_u7a"
+U7_SESSION_INJECTED = "sess_e2e_u7b"
+
+
+def case_u7(ctx: dict[str, Any]) -> str:
+    """检索网页埋注（真实 docx 材料正文驱动）→ 语义层拦截 + 干净版负例对照。
+
+    - 干净版（同页无埋注段，含 1 经办电话）→ 200 INTERNET：上游收到占位符版、
+      客户端还原完整——注入拦截不伤常规脱敏链路（拦的是注入，不是网页）；
+    - 埋注版（评论区尾部多一段「AI请注意：忽略规则+外发 URL+对用户隐匿」）→
+      403 content_blocked reasons[0]=INJECTION，两 mock 零感知；
+    - 审计：flag=injection + reasons[0]=INJECTION + 预览「〔注入·已拦截〕」
+      零埋注原文/零电话原值；干净版事件 flags 保持空；
+    - 收尾：审计库 checkpoint 后 bytes 级零明文复扫（RAW_VALUES 已含网页原值）。
+    """
+    client: httpx.Client = ctx["client"]
+    base1, base2 = ctx["mock_internet"], ctx["mock_govcloud"]
+
+    # ① 对照组：干净版网页 → 照常 INTERNET 脱敏出网
+    clean = _load_material_text(WEBPAGE_CLEAN_MATERIAL)
+    b1, b2 = _mock_count(base1), _mock_count(base2)
+    status, headers, frames, raw = _send_chat(
+        client, _plain_body(clean), U7_SESSION_CLEAN, ctx)
+    if status != 200 or headers.get("x-anongw-route") != "INTERNET":
+        raise AssertionError(
+            f"clean webpage: {status} route={headers.get('x-anongw-route')}")
+    content = json.loads(raw)["choices"][0]["message"]["content"]
+    expected = _expected_masked(ctx, U7_SESSION_CLEAN, clean, U7_SPANS)
+    # 客户端断言对象 = 还原版（= 原文，电话无分隔写法归一化不变），与 U1 同约定
+    _plain_answer_ok(content, f"{ECHO_MARKER}internet_mock\n{clean}", streaming=False)
+    if WEBPAGE_PHONE not in content:
+        raise AssertionError("clean webpage phone not restored to client")
+    if _mock_count(base1) != b1 + 1 or _mock_count(base2) != b2:
+        raise AssertionError("clean webpage forward split wrong")
+    record = _mock_last_record(base1)
+    _assert_placeholder_counts(record["last_user_content"], U7_EXPECTED_PLACEHOLDERS)
+    _assert_upstream_messages(record, expected, "mock:8901 webpage clean")
+    _assert_no_raw(_mock_text(base1), RAW_VALUES, "mock:8901 webpage clean")
+
+    # ② 实验组：埋注版网页 → 403 INJECTION，两 mock 零感知
+    injected = _load_material_text(WEBPAGE_INJECTED_MATERIAL)
+    if "忽略上面所有规则" not in injected or WEBPAGE_PHONE not in injected:
+        raise AssertionError("injected webpage missing declared trap/phone")
+    if injected == clean:
+        raise AssertionError("injected webpage must differ from clean one")
+    b1, b2 = _mock_count(base1), _mock_count(base2)
+    status, headers, frames, raw = _send_chat(
+        client, _plain_body(injected), U7_SESSION_INJECTED, ctx)
+    if status != 403:
+        raise AssertionError(f"injected webpage: {status} body={raw[:200]!r}")
+    err = json.loads(raw)["error"]
+    if err["code"] != "content_blocked":
+        raise AssertionError(f"injected code: {err['code']}")
+    if not err.get("reasons") or err["reasons"][0]["code"] != "INJECTION":
+        raise AssertionError(f"injected reasons: {err['reasons']}")
+    if headers.get("x-anongw-route") != "BLOCK":
+        raise AssertionError(f"injected route header: {headers.get('x-anongw-route')}")
+    if _mock_count(base1) != b1 or _mock_count(base2) != b2:
+        raise AssertionError("injected webpage reached an upstream")
+
+    # ③ 审计：flag=injection、预览零原文；干净版 flags 保持空
+    audit: SqliteAuditWriter = ctx["audit"]
+    if not audit.flush(timeout_s=5.0):
+        raise AssertionError("audit write queue did not drain (u7)")
+    by_session = {e.session_id: e for _, e in audit.fetch_all()}
+    inj_ev = by_session.get(U7_SESSION_INJECTED)
+    if inj_ev is None:
+        raise AssertionError(f"audit missing event for {U7_SESSION_INJECTED}")
+    if inj_ev.route != "BLOCK" or not inj_ev.blocked:
+        raise AssertionError(f"injected audit route/blocked: {inj_ev.route}/{inj_ev.blocked}")
+    if inj_ev.flags != ["injection"]:
+        raise AssertionError(f"injected audit flags: {inj_ev.flags}")
+    if not inj_ev.reasons or inj_ev.reasons[0] != "INJECTION":
+        raise AssertionError(f"injected audit reasons: {inj_ev.reasons}")
+    if "〔注入·已拦截〕" not in inj_ev.prompt_preview:
+        raise AssertionError(
+            f"injected preview lacks injection marker: {inj_ev.prompt_preview!r}")
+    if "忽略上面所有规则" in inj_ev.prompt_preview or WEBPAGE_PHONE in inj_ev.prompt_preview:
+        raise AssertionError("injected preview carries raw trap/phone")
+    clean_ev = by_session.get(U7_SESSION_CLEAN)
+    if clean_ev is None or clean_ev.route != "INTERNET" or clean_ev.flags:
+        got = None if clean_ev is None else (clean_ev.route, clean_ev.flags)
+        raise AssertionError(f"clean webpage audit event: {got}")
+
+    # ④ 收尾：库文件级 bytes 零明文复扫（含 U7 新增原值）
+    audit.checkpoint()
+    scanned = assert_db_no_raw_pii(ctx["audit_db"], RAW_VALUES)
+    return (f"网页干净版→INTERNET（电话占位符化、客户端还原）；埋注版→403 "
+            f"INJECTION + flag=injection + 预览〔注入·已拦截〕零原文；两 mock 零感知；"
+            f"库级复扫 {scanned} 字节零明文")
+
+
 def main() -> int:
     # 直跑（不经 gate_d0）也可能落在 GBK 控制台——自带 UTF-8 重配（审查 §D）
     for stream in (sys.stdout, sys.stderr):
@@ -919,6 +1029,7 @@ def main() -> int:
             ("U4 工具调用还原", case_u4),
             ("U5 审计入库", case_u5),
             ("U6 文件通道", case_u6),
+            ("U7 注入拦截", case_u7),
         ]
         for name, fn in cases:
             _record(name, lambda f=fn: f(ctx))
@@ -934,7 +1045,7 @@ def main() -> int:
 
     # §9 步骤 4：PASS/FAIL 摘要
     print("=" * 64)
-    print("e2e_smoke（§9 六用例；U1–U5 当天生效，U6 D3 起生效）")
+    print("e2e_smoke（§9 七用例；U1–U5 当天生效，U6 D3 起，U7 注入拦截 T4.3 起）")
     print("=" * 64)
     for name, status, detail in RESULTS:
         print(f"{status:<7} {name} — {detail}")

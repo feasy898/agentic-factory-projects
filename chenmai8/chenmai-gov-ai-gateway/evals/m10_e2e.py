@@ -1,4 +1,4 @@
-"""M10 端到端验收入口（D0 收工线）：驱动 ops/e2e_smoke.py 全链路六用例。
+"""M10 端到端验收入口（D0 收工线）：驱动 ops/e2e_smoke.py 全链路七用例 U1–U7。
 
 运行::
 
@@ -9,7 +9,9 @@ exit 0 = 通过（= ops/e2e_smoke.py 的 ACTIVE 用例全 PASS、零 FAIL）。
 断言面（开发指令 §2 D0 行 + §9）：拉起 mock 上游 ×2（:8901/:8902 子进程）与网关
 （:9000），断言——上游收到全占位符（bytes 级零原值）、客户端拿到还原答案、
 密级样例被 403 拦截、审计入库且零明文。用例明细与拓扑见 ops/e2e_smoke.py 模块文档
-（U1–U5 当天生效；U6 文件通道 D3 起生效，未上线时 DEFERRED 不计失败）。
+（U1–U5 当天生效；U6 文件通道 D3 起生效；U7 注入拦截 T4.3 起生效——检索网页
+埋注材料 403 INJECTION + 审计 flag=injection + 干净版负例对照；
+未上线用例 DEFERRED 不计失败）。
 """
 from __future__ import annotations
 
@@ -24,7 +26,8 @@ from ops.e2e_smoke import main as smoke_main  # noqa: E402
 
 
 def main() -> int:
-    print("== evals.m10_e2e → ops/e2e_smoke（§9 六用例，U1–U5 当天生效）==", flush=True)
+    print("== evals.m10_e2e → ops/e2e_smoke（§9 七用例：U1–U6 + U7 注入拦截）==",
+          flush=True)
     return smoke_main()
 
 
