@@ -60,7 +60,8 @@ def file_sha256_prefix(path: Path, n: int = 16) -> str:
 
 
 def _candidate_roots() -> list[Path]:
-    """可能的 _vendor 根：包所在目录向上、当前工作目录向上（各至多 4 级）。"""
+    """可能的 _vendor 根：包所在目录向上、当前工作目录向上（各至多 4 级），
+    加上工作区外的集中参考目录（安全门禁要求克隆移出工作区后的官方新址）。"""
     roots: list[Path] = []
     here = Path(__file__).resolve()
     for base in [here.parents[1], Path.cwd().resolve()]:  # 包根(chengshao/) 与 cwd
@@ -70,6 +71,16 @@ def _candidate_roots() -> list[Path]:
             if cur.parent == cur:
                 break
             cur = cur.parent
+    # 工作区外集中参考目录（存在才加入）
+    for external in (Path("D:/upstream-refs/robot-vendor"),
+                     Path("D:/upstream-refs/robot-vendor/_vendor")):
+        if external.is_dir():
+            roots.append(external)
+    # 环境变量显式覆盖（最高优先，放最前）
+    import os
+    env_root = os.environ.get("CS_VENDOR_ROOT")
+    if env_root:
+        roots.insert(0, Path(env_root))
     # 去重保序
     seen: set[Path] = set()
     uniq: list[Path] = []
