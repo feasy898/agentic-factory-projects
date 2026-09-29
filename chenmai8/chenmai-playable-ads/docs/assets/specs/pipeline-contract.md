@@ -87,7 +87,13 @@
 ### 3.3 质检报告（qacore 输出，冻结）
 
 - 默认写到产物旁：`<产物名>.report.json`；截屏 `<产物名>.png`；横屏趟 `<产物名>-landscape.png`。
-- `--out` 可指定报告路径（截屏随其目录）。
+- **stem 命名裁决（2026-09-29 回炉定死，消除本页 §3.2/3.4 与 §4 示例的表面矛盾）**：
+  `<产物名>` = **产物文件名去扩展名的 stem**。例如 dist 形态产物 `index.html` →
+  `index.report.json` + `index.png` + `index-landscape.png`（make 渠道目录即此形态）；
+  预览产物 `match3.html` → `match3.report.json`。§4 示例中的 `x.report.png` 泛指
+  "产物 stem + `.report.png`"，不是字面文件名。
+- `--out` 可指定报告路径（截屏随其目录且跟随**报告路径的 stem**：`<out>.png` /
+  `<out>-landscape.png`；缺省时报告 stem = 产物 stem，三者同 stem）。
 
 ## 4. 报告 JSON 字段（qacore report，现状全字段，冻结）
 
@@ -103,7 +109,9 @@
     "endWin": true       // pf:end detail.win
   },
   "checks": [ { "id": "CHK01", "name": "包体大小 ≤ 渠道上限", "status": "pass|fail|skip", "detail": "人读说明" } ],
-  "screenshot": "x.report.png",              // 相对报告目录
+  "screenshot": "x.report.png",              // 相对报告目录；文件名 = 报告路径 stem + ".png"
+                                             // （§3.3 stem 命名裁决：缺省时 stem = 产物 stem，
+                                             //  "x" 泛指该 stem 而非字面文件名）
   "requests": [ { "url", "method", "resource_type", "status", "blocked", "failed" } ],
   "facts": {
     "artifact_bytes": 1239038,
