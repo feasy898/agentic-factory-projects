@@ -20,10 +20,11 @@ npm ci          # devDependencies 钉版：ajv 8.20.0 / c8 12.0.0 / esbuild 0.28
 # Python 侧：venv + 钉版依赖 + 可编辑安装（勿用 .pth hack）
 python -m venv python/.venv
 python/.venv/Scripts/python.exe -m pip install -r python/requirements.txt
-#   钉版：playwright 1.63.0 / fastapi 0.141.1 / uvicorn 0.54.0 / httpx 0.28.1 / pydantic 2.13.5 /
-#         jsonschema 4.26.0 / pillow 12.3.0 / fonttools 4.66.0 / qrcode 8.2（清单末尾另有一个规划遗留的
-#         LLM SDK 条目，llmgw 实际零依赖它——收紧时清理）
-python/.venv/Scripts/python.exe -m pip install -e python/     # pyproject packages = ["pfcore","qacore"]
+#   钉版：playwright 1.63.0 / fastapi 0.141.1 / uvicorn 0.54.0 / httpx 0.28.1 /
+#         python-multipart 0.0.32（webui multipart 必需）/ pydantic 2.13.5 / jsonschema 4.26.0 /
+#         pillow 12.3.0 / fonttools 4.66.0 / brotli 1.2.0（fonttools woff2 必需）/ qrcode 8.2
+#   （llmgw 网关仅用标准库，零 LLM SDK——曾误钉的 openai 条目已删，2026-09-28 git grep 核实）
+python/.venv/Scripts/python.exe -m pip install -e python/     # pyproject packages = ["pfcore","qacore","assetkit"]
 python/.venv/Scripts/python.exe -m playwright install chromium # qacore 必需
 ```
 
@@ -34,7 +35,8 @@ python/.venv/Scripts/python.exe -m playwright install chromium # qacore 必需
 
 ```
 1 M1-spec → 2 M2-engine-bridge → 3 规则库(JSON) → 4 M4-packager → 5 M3-tmpl-match3
-→ 6 llmgw(可与 3-5 并行) → 7 M8-qacore → 8 验收门 → 9 编排器(下一个缺口，planned)
+→ 6 llmgw(可与 3-5 并行) → 7 M8-qacore → 8 验收门 → 9 编排器(pfcore make/serve + webui 已实现；
+  build/pack/rules-check 占位)（另 M5-assetkit 已实现并被 make 默认接线，三新模板 merge/pullpin/sort 同 §5 步骤）
 ```
 
 每步的"验收命令 → 通过线"：
@@ -43,8 +45,8 @@ python/.venv/Scripts/python.exe -m playwright install chromium # qacore 必需
 |---|---|---|---|---|
 | 1 | M1 | `python/.venv/Scripts/python.exe -m pfcore validate specs-eval/golden-match3.json`；`... validate "specs-eval/bad/*.json"`；`node packages/spec/test/ajv-check.mjs` | golden exit 0；bad 6 个全 exit 1 含 `$.` 路径；ajv PASS | [spec-contract](specs/spec-contract.md) |
 | 2 | M2 | `node packages/engine-bridge/test/run.mjs`；`npm run coverage -w @pf/engine-bridge`；`npm run typecheck -w @pf/engine-bridge` | 26 用例过；行覆盖 ≥80%；tsc 干净 | [engine-bridge](specs/engine-bridge.md) |
-| 3 | 规则库 | `node packages/packager/bin.mjs channels` | 结构校验过，列出 preview/applovin/meta/mintegral | [channel-adapters](specs/channel-adapters.md) |
-| 4 | M4 | `node packages/packager/test/run.mjs` | 全断言过（含 zipfile 交叉验证、可复现、负向 3 条） | [packager](specs/packager.md) |
+| 3 | 规则库 | `node packages/packager/bin.mjs channels` | 结构校验过，列出六投放渠道 applovin/meta/mintegral/google/unity/tiktok + preview | [channel-adapters](specs/channel-adapters.md) |
+| 4 | M4 | `node packages/packager/test/run.mjs` | 全断言过（46 条，venv 缺席 45+1 SKIP；含 zipfile 交叉验证、可复现、负向全拒） | [packager](specs/packager.md) |
 | 5 | M3 | `node packages/templates/tmpl-match3/build.mjs --spec specs-eval/golden-match3.json --out artifacts/preview/match3.html`；`npm run typecheck -w @pf/tmpl-match3` | 产物 ~1.24MB 零外链；tsc 干净 | [templates](specs/templates.md) + [规则卡](specs/match3-rules-card.md) |
 | 6 | llmgw | `python/.venv/Scripts/python.exe -m llmgw.selftest`（cwd=python/ 亦可） | SELFTEST PASS，6/6 | [llmgw](specs/llmgw.md) |
 | 7 | M8 | `python/.venv/Scripts/python.exe -m qacore run artifacts/preview/match3.html --channel preview --autoplay` | exit 0；pf:end ≤45000ms（实测 ≈26.6s） | [qacore](specs/qacore.md) |
@@ -54,15 +56,20 @@ python/.venv/Scripts/python.exe -m playwright install chromium # qacore 必需
 
 ```bash
 python scripts/gate_phase1.py    # 公开环境主验收：GATE PHASE1: PASS（4/4），实测 ≈46s
-python scripts/gate_phase0.py    # 本机门禁：GATE PHASE0: PASS（5/5），实测 ≈6s
+python scripts/gate_phase0.py    # 本机门禁：GATE PHASE0: PASS（6/6），实测约 25s
+python scripts/gate_phase2.py    # 全量总验收门：GATE PHASE2: PASS（5/5），2026-09-29 实测 656.1s（含 48 包全量矩阵 422.8s）
 ```
 
 - **gate_phase1 门项**：M1 三连（golden/bad/ajv）+ M2 测试 + M4 三渠道断言（大小/结构/零外链/注入/禁用，
   `pack-manifest.json` 不计包内）+ M3 构建后 autoplay 全过且 pf:end ≤45s。产物写 `tmp/gate-phase1/`
   （先清后跑）。
-- **gate_phase0 门项**：pfcore/packager CLI 骨架、llmgw 自测+零厂商端点扫描、qacore 夹具 mini.html，
-  以及**门项 3 = 本机对照 spike 六渠道产物**（依赖 `_vendor/NOTES.md` 与 `_vendor/spike/dist/*`，
-  仅本机存在、`.gitignore` 覆盖）。**公开克隆环境门项 3 必 FAIL——公开环境以 gate_phase1 为准**（如实记录）。
+- **gate_phase0 门项**：pfcore/packager CLI 骨架、llmgw 自测+零厂商端点扫描、qacore 夹具 mini.html
+  + 三变异样本恰好命中，以及**门项 3 = 本机对照 spike 六渠道产物**（依赖 `_vendor/NOTES.md` 与
+  `_vendor/spike/dist/*`，仅本机存在、`.gitignore` 覆盖）。**公开克隆环境门项 3 标 SKIP-ENV
+  （不算 FAIL 也不算 PASS）——公开环境以 gate_phase1 为准**（如实记录）。
+- **gate_phase2 门项（T2.5 总验收门）**：gate_phase0/1/mainpath 三门真实子进程回归 exit 0 +
+  e2e_matrix 全量 `--budget-sec 1200`（四模板 golden×{en,zh}×六渠道 = 48 包，读 summary.json
+  对账 totals={pass:48,fail:0,skip:0}/mode=full）+ 中性名扫描。
 - 一次性全链（更细粒度）：按 §2 表逐行跑。
 
 ## 4. 替换/重生成模块时的回归清单
@@ -72,7 +79,7 @@ python scripts/gate_phase0.py    # 本机门禁：GATE PHASE0: PASS（5/5），�
 | M1 schema/不变式 | 门项 1 全部 + 双侧一致性（Python/JS 同判） | bad 样本是否仍各自击中原检查项；CONTRACTS 痛点候选是否被影响 |
 | M2 桥 | 26 用例 + coverage + 门项 4（CHK04 静音链路真机语义） | 事件 detail 表无删改；退出路由单次锁语义 |
 | M3 三消 | 门项 4 + 规则卡 §13 缺口清单复核 | nearWin 仍单次触发；pf:end 时长无明显回退；包体 ≤5MB |
-| M4 打包器 | 自验收 22+ 断言 + 门项 3 | 重复构建字节一致仍成立（zip 时间戳）；零外链正则未被放松 |
+| M4 打包器 | 自验收 46 断言 + 门项 3 | 重复构建字节一致仍成立（zip 时间戳）；零外链正则未被放松 |
 | 规则库 | M4 自验收 + 门项 3 + qacore CHK01 | 新数值与 channel-adapters 表一致 |
 | llmgw | selftest + gate_phase0 门项 4 扫描 | env 默认值表未漂移 |
 | M8 质检 | gate_phase0 门项 5 + gate_phase1 门项 4 | 魔法数字表未漂移（改任一数字须回填 qacore spec §3） |
