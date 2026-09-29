@@ -169,4 +169,7 @@
   与根 conftest MODULES；全套 558 测试 + validate_knowledge --min-items-per-kp 3
   （321/321 dual-agent-verified 保留）+ run_contract 参考实现 / --impl-dir
   src/xuexing 平铺目录注入（multitenant 单模块与 multitenant,server --suite full）全绿）
-- [ ] **契约冻结第二波**：把 kt/blueprint/grading/recommend 等新规格草稿走冻结工作流（对抗评审+两轮重生成达标）
+- [x] **契约冻结第二波**：把 kt/blueprint/grading/recommend 等新规格草稿走冻结工作流（对抗评审+两轮重生成达标）
+  （✅ 完成于 2026-09-29 夜，v0.2.0：8/8 规格经对抗评审冻结（43 处问题修订，specs/frozen/ 共 16 份），
+  每模块连续 3 轮独立重生成 100% 通过契约测试（相似度 0.05–0.55 无抄袭，world.run 门控），
+  终版实例一次性通过契约+集成+数据联合门后替换 src/xuexing/，558 测试全绿，tag v0.2.0）
