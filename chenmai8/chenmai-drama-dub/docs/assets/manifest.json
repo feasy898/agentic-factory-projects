@@ -1,0 +1,317 @@
+{
+  "$comment": "资产包总表（机器可读版；人读版与字段说明见 manifest.md）。模块按逻辑模块组织：契约与共享原语（C1-C8+C2pre / IO 原子写 / JOB-LAYOUT）+ 本机 CPU 链（M1/M2/M3/M5/M8/M9/M11）+ GPU 双机模块（M4/M6/M7 客户端+服务、TUNNEL、MODELS-REGISTRY）+ 四道批次验收门（B0/B1/B2/B3）。status 取值：frozen=已实现且 eval 全绿（记录在案）；frozen-mock=模块冻结但主后端 GPU 服务未部署冒烟；planned=未开工；deferred=明确延后。所有 eval 命令在仓库根执行；通过线是冻结契约的一部分（改行为先改 eval）。命名纪律：本文件只用中性内部名（上游真名对照仅在 docs/*_deps.md 依赖安装记录与内部台账，不入本表）。",
+  "assetPack": {
+    "name": "一剧N国 · 短剧出海本地化引擎 · spec+eval 资产包",
+    "version": "1.0.0",
+    "updated": "2026-09-29",
+    "contractVersion": "contracts.py T1 冻结（2026-09-28）+ B1 冻结规则 7-10 + T14 规则 11（C5.atempo 增补）",
+    "documents": {
+      "manifest": "docs/assets/manifest.md",
+      "contracts": "docs/assets/CONTRACTS.md",
+      "regenerate": "docs/assets/REGENERATE.md",
+      "specsDir": "docs/assets/specs/"
+    }
+  },
+  "modules": [
+    {
+      "id": "C1-C8+C2pre",
+      "name": "冻结契约（唯一权威 schema + 冻结原语）",
+      "status": "frozen",
+      "lang": "Python pydantic v2",
+      "responsibility": "C1 镜头表 / C2 单句事实表（核心）/ C2-pre 说话人段级 / C3 角色卡 / C4 译文候选 / C5 合成计划 / C6 口型分流 / C7 AI 标识 / C8 市场合规报告，外加时间零点、utt_id 稳定公式、原子 upsert 等冻结原语；extra=forbid 兜底拒收未登记字段。",
+      "physicalLocations": [
+        "pipeline/contracts.py（唯一权威；模块头冻结规则 1-11）",
+        "pipeline/cli.py（validate 子命令，CONTRACT_KINDS 登记表）",
+        "tests/test_contracts.py + tests/test_b1_contract.py（契约回归）"
+      ],
+      "contract": {
+        "frozenRules": "①秒 float 3 位；②utt_id 全局唯一 / shot_id 集内唯一；③C2.text 以 OCR↔ASR 校对为准；④nonverbal 句 keep_original 不合成；⑤C6 分流=正脸+近景+非重叠（lip_eligible）；⑥C7 依据 GB 45438-2025；⑦时间零点=上传音频内相对时间+offset 客户端注入；⑧切句优先级=OCR 区间>VAD segments>[0,时长]，禁止整段 text 当单句；⑨utt_id=<ep>-u<起始毫秒 8 位零填充>，写盘一律按 id 替换整文件重写；⑩diar.jsonl 段级契约 speaker 由 M5 回填；⑪C5.atempo 增补（只增不改名）"
+      },
+      "dependsOn": [],
+      "eval": {
+        "commands": [
+          "python -m pipeline.cli validate utterances <jobs>/<ep>/04_dial/utterances.jsonl",
+          ".venv/Scripts/python.exe -m pytest tests/test_contracts.py tests/test_b1_contract.py"
+        ],
+        "passLine": "validate exit 0；契约回归 38 passed（T13 门记录 2026-09-29）；skipped 即 FAIL（B0 纪律）"
+      },
+      "regenOrder": 0,
+      "specDoc": "docs/assets/specs/contract-io.md"
+    },
+    {
+      "id": "M1-ingest",
+      "name": "摄取与预处理",
+      "status": "frozen",
+      "lang": "Python + ffmpeg/ffprobe 子进程",
+      "responsibility": "任意输入 → 1080x1920/25fps H.264（等比缩放黑边 pad/方像素/yuv420p/+faststart）+ 48k 立体声（loudnorm 动态单通基础归一）+ 派生 16k 单声道 + 01_media/probe.json；纯音频补黑底视频、无音轨如实记录。",
+      "physicalLocations": ["pipeline/m1_ingest.py", "01_media/（槽位见 pipeline/scaffold.py EXPECTED_FILES）"],
+      "contract": {
+        "targets": "configs/pipeline.yaml media 段（1080x1920/25fps/asr_sr 16000/mix_sr 48000）；loudness_lufs -16；TP=-1.5dBTP/LRA=11（m1_ingest 常量，M9 复用）",
+        "outputs": "00_raw/input.mp4、01_media/video_1080x1920_25fps.mp4、audio_48k.wav、audio_16k.wav（由 48k 派生，保证两路同源同增益）、probe.json"
+      },
+      "dependsOn": [],
+      "eval": {
+        "commands": [".venv/Scripts/python.exe -m pytest tests/test_m1.py"],
+        "passLine": "7 passed；ffprobe 断言分辨率/fps/采样率；时长差 ≤0.2s"
+      },
+      "regenOrder": 1,
+      "specDoc": "docs/assets/specs/m1-ingest.md"
+    },
+    {
+      "id": "M2-ocr",
+      "name": "硬字幕 OCR + OCR↔ASR 校对",
+      "status": "frozen",
+      "lang": "Python + cap-ocr 引擎（pipeline/ocr_wrap.py 唯一许可入口）",
+      "responsibility": "字幕带（=erase_band，与 M11 同源）0.2s 采样 OCR（0.5 降采样）→ 帧级 ocr_raw.jsonl → 合并去重 ocr_merged.jsonl（字幕行：起止/文本/置信/bbox）→ 与 ASR 行按重叠 ≥60% 贪心 1:1 配对投票（OCR 置信 ≥0.9 以 OCR 为准）→ C2 upsert 出口；ASR 缺席退化为纯 OCR。",
+      "physicalLocations": [
+        "pipeline/m2_ocr.py（冻结常量 0.2s/0.9/60%/0.30 置信门/0.5 降采样）",
+        "pipeline/ocr_wrap.py（先 torch 后 paddle + enable_mkldnn=False 两条硬约束的可执行落点）",
+        "tests/test_ocr_wrap.py（守护测试）"
+      ],
+      "contract": {
+        "vote": "vote_text：OCR 置信 ≥0.9 且非空 → OCR；否则 ASR；ASR 空兜底回 OCR；agree=归一化文本一致（ASR 缺席=False）",
+        "merge": "命中句按 B1 规则 8① 以 OCR 区间重切句窗、字级时间戳夹取进新窗、utt_id 保持 M4 稳定公式（替换键）；未命中行生成纯 OCR 新句 utt_id=make_utt_id(ep, 行起点)",
+        "hardConstraints": "同进程 torch 必须先于 paddle 系导入（libiomp5md.dll 冲突，WinError 127）；OCR 构造必须 enable_mkldnn=False（PIR/oneDNN 执行器不支持），外部覆盖一律忽略"
+      },
+      "dependsOn": ["M1-ingest", "M4-asr-align(可选)"],
+      "eval": {
+        "commands": ["bash scripts/eval_m2.sh"],
+        "passLine": "12 passed；冻结线：语料级 CER ≤5%、字幕起止时间误差 ≤0.3s 且 ≥90% 命中（T13 记录 12 passed 365s）"
+      },
+      "regenOrder": 2,
+      "specDoc": "docs/assets/specs/m2-ocr.md"
+    },
+    {
+      "id": "M3-separate",
+      "name": "人声/背景分离",
+      "status": "frozen",
+      "lang": "Python + audiosplit 组件（CPU 默认/cuda 可选；分发依赖见 requirements.txt）",
+      "responsibility": "01_media/audio_48k.wav（缺失回退 16k）→ karaoke 系 mel-band roformer 分离 → 04_dial/vocals.wav（16k 单声道 pcm_s16le，M4 唯一识别输入）+ 01_media/bgm.wav + 04_dial/separate.json 报告；CPU 强制 120s 分块 + threads=16。",
+      "physicalLocations": ["pipeline/m3_separate.py", "configs/models.yaml audiosplit/audiosplit-cuda 条目"],
+      "contract": {
+        "slots": "B1 冻结：人声产出到 04_dial/vocals.wav（不落 01_media）；M4 只读人声不读 01_media/audio_16k.wav（混音含 BGM 会污染识别/对齐/情绪）",
+        "rmsCriteria": "有声区间人声 RMS ≥ 总轨 RMS−6dB；纯背景区间 ≤−15dBFS（真值经 --truth 注入，缺省跳过并记 null）"
+      },
+      "dependsOn": ["M1-ingest"],
+      "eval": {
+        "commands": [".venv/Scripts/python.exe -m pytest tests/test_m3.py"],
+        "passLine": "9 passed；输出时长=输入（±0.2s）、RMS 判据、60s 素材 CPU ≤10 分钟（T13 记录 891s 真模型推理）"
+      },
+      "regenOrder": 3,
+      "specDoc": "docs/assets/specs/m3-separate.md"
+    },
+    {
+      "id": "M4-asr-align",
+      "name": "识别 + 字级对齐 + 情绪/事件（客户端 + GPU 服务 :9001）",
+      "status": "frozen",
+      "lang": "httpx 客户端（pipeline/m4_asr.py + gpu_client.py）+ FastAPI 服务（gpu-services/asr_align/service.py，独立 venv-asr transformers 5.13）",
+      "responsibility": "16k 人声 wav multipart 上传 → 一次调用返回转写 + 字级时间戳（支持校对文本重对齐）+ 7 类情绪/声音事件 + 能量 VAD 预分段；客户端按冻结规则 7 平移到全片绝对时间、按规则 8 切句、utt_id 稳定公式、upsert 落 04_dial 五件产物。",
+      "physicalLocations": [
+        "gpu-services/asr_align/service.py（:9001，只监听 127.0.0.1）",
+        "pipeline/gpu_client.py（统一客户端：env M4_ASR_URL，默认 127.0.0.1:9001）",
+        "pipeline/m4_asr.py（build_utterances 切句/字归段/夹取 + 五件产物落盘）",
+        "gpu/setup_asr_venv.sh + gpu-services/asr_align/run_gpu.sh（部署）"
+      ],
+      "contract": {
+        "timeZero": "响应 words[*].s/e 与 segments[*].start/end 均为上传音频内相对时间（0=上传起点）；绝对=相对+offset（contracts.to_absolute_seconds），服务端不平移",
+        "arFallback": "对齐器不含阿语 → 服务端自动字符比例线性内插（align-proportional，MVP 口径）",
+        "outputs": "utterances.jsonl（C2，upsert）+ diar.jsonl（C2-pre，合并排序原子重写）+ asr/forced/emo.jsonl（非契约原始行，按 utt_id upsert）"
+      },
+      "dependsOn": ["M3-separate", "TUNNEL"],
+      "eval": {
+        "commands": ["bash ops/tunnel_gpu.sh start && bash scripts/eval_m4.sh"],
+        "passLine": "tests/test_m4.py 全绿（含 :9001 /health 三模型 loaded 冒烟）；gate_b1 ⑤ PASS 记录在案；服务不可达 --skip-gpu 豁免需逐条归因"
+      },
+      "regenOrder": 4,
+      "specDoc": "docs/assets/specs/m4-asr-align.md"
+    },
+    {
+      "id": "M5-diar",
+      "name": "镜头切分 + 说话人聚类 + 正脸近景判定",
+      "status": "frozen",
+      "lang": "Python（全本机 CPU：_scdet_net 自实现镜头网络 / _voxdia_net 纯 torch 声纹复刻 / _facemesh_face 人脸网格）",
+      "responsibility": "shot-cut → C1 shots.json（faces=镜内最大并发脸数）+ frontal_closeups.json；voxdia 192 维嵌入谱聚类回填 diar.jsonl speaker（说话人数=kNN 稀疏图特征值间隙，上限=登记角色数+1）；facemesh 正脸（±25°）近景（框高 ≥1/4 画幅）→ C2 回填 speaker/char_id/overlap/face；actspk MVP=轨迹嘴动打分；voice add/list/bind 子命令。",
+      "physicalLocations": [
+        "pipeline/m5_diar.py + pipeline/_scdet_net.py + pipeline/_voxdia_net.py + pipeline/_facemesh_face.py",
+        "configs/voices.yaml（项目级音色映射模板）"
+      ],
+      "contract": {
+        "noReSplit": "B1 规则 10：窗口切分归 M4/VAD，M5 不重切只补 speaker；无 diar.jsonl 时能量 VAD 兜底",
+        "lipParams": "正脸阈值取 configs/pipeline.yaml lip 段（frontal_yaw_deg 25 / min_face_height_ratio 0.25）"
+      },
+      "dependsOn": ["M1-ingest", "M2-ocr(字幕窗真值)", "M4-asr-align(可选预分段)"],
+      "eval": {
+        "commands": [".venv/Scripts/python.exe -m pytest tests/test_m5.py"],
+        "passLine": "13 passed；冻结线：diar 一致率 ≥0.85、切分召回 ≥0.8（±0.4s）、正脸近景逐镜一致 ≥80%（T13 记录 73s）"
+      },
+      "regenOrder": 5,
+      "specDoc": "docs/assets/specs/m5-diar.md"
+    },
+    {
+      "id": "M6-translate",
+      "name": "整集上下文翻译 + 时长预算",
+      "status": "frozen-mock",
+      "lang": "Python（pipeline/mt_backends.py 三后端抽象 + pipeline/m6_translate.py 编排）",
+      "responsibility": "通读 C2 → 角色卡增量合并进 C3（只新增不覆盖）+ 06_mt/context.json 工作纸 → 逐句 3-5 候选（上下文=角色卡+术语+前 2 已定稿译文+后 2 源文+预算窗）→ 规则音节计数估长（syl2dur.json 拟合表缺省用占位速率）→ in-budget-first 排序 → C4 出口（(utt_id,tgt) 复合键 upsert）。",
+      "physicalLocations": [
+        "pipeline/mt_backends.py（Local=GPU :9004 / Api=OpenAI 兼容 env 三件 / Mock=离线词典）",
+        "pipeline/m6_translate.py", "gpu-services/mt/（:9004 服务骨架，部署归 T12 批）"
+      ],
+      "contract": {
+        "budget": "orig=C2 end-start；lo/hi=pipeline.yaml budget.lo_ratio/hi_ratio（0.9/1.1）",
+        "backendInterface": "同一 MTBackend.translate；api 后端 env MT_API_BASE/MT_API_KEY/MT_API_MODEL 缺一即报错，key 不落盘"
+      },
+      "dependsOn": ["M2-ocr", "M4-asr-align"],
+      "eval": {
+        "commands": ["bash scripts/eval_m6.sh"],
+        "passLine": "10 passed（全离线 mock：角色卡注入/预算窗/候选 1-5 条/in-budget-first/超预算 100% 判出/术语命中 100%/复合键 upsert/api env 缺失报错/local payload 桩服务契约）"
+      },
+      "regenOrder": 6,
+      "specDoc": "docs/assets/specs/m6-translate.md"
+    },
+    {
+      "id": "M7-tts",
+      "name": "情绪迁移合成（客户端 + GPU 服务 :9002）",
+      "status": "frozen",
+      "lang": "httpx 客户端（pipeline/tts_client.py）+ FastAPI 服务（gpu-services/tts/service.py，主 venv）",
+      "responsibility": "双参考合成：voice_ref=角色干净人声（C3）+ emo_ref=原片该句人声（可不同说话人=情绪迁移核心用法）→ 引擎链路由（models.yaml routing.tts 冻结镜像，auto 按链依序尝试）→ wav_b64 + 实测时长 duration_s；客户端落盘复测与对账 ±0.05s；链节点失败/权重未部署记 attempts 如实 skip。",
+      "physicalLocations": [
+        "gpu-services/tts/service.py（:9002，dub-tts fp32 常驻 cuda:0；备选引擎懒加载）",
+        "pipeline/tts_client.py（C 出口=synth_response_to_wav 纯函数 + 对账）",
+        "gpu/setup_tts_service.sh + gpu-services/tts/run_gpu.sh（部署）",
+        "docs/tts_service_deps.md（引擎真名对照 + T12 冒烟实测）"
+      ],
+      "contract": {
+        "dualRef": "voice_ref 必填（服务端逐参考解码校验：0.3-30s 窗/静音拒收/25MB 上限）；emo_ref 可选；emo_alpha∈[0,1]、duration_factor∈[0.5,2.0] 双端强校验；服务端 SYNTH 日志行回双参考实测秒数与 emo_ref_used",
+        "exit": "C 出口 = wav + duration_s（float 3 位，服务端实测）——M8 的 meas_dur 来源；dry_run 只做路由解析不占 GPU"
+      },
+      "dependsOn": ["M8-align(C5 计划)", "TUNNEL"],
+      "eval": {
+        "commands": ["TUNNEL_LOCAL_PORT=9002 TUNNEL_REMOTE_PORT=9002 bash ops/tunnel_gpu.sh start && bash scripts/eval_m7.sh"],
+        "passLine": "11 passed（4 离线 + 7 在线；T13 记录 35s 零 skip）；可达但 dub-tts 未装载属真实故障不提供跳过"
+      },
+      "regenOrder": 10,
+      "specDoc": "docs/assets/specs/m7-tts.md"
+    },
+    {
+      "id": "M8-align",
+      "name": "时长对齐",
+      "status": "frozen",
+      "lang": "Python 纯编排（零外部依赖，全离线）",
+      "responsibility": "C4 候选 → ①syl2dur 占位（base=candidates[*].est_dur）②真二分 duration_factor∈[0.5,2.0]（10 轮）③换下一候选 ④atempo∈[0.9,1.1] 收口（变速不变调）⑤仍不可解记 unresolved（best-effort 落盘、对齐率如实计未命中）；nonverbal 与缺译文句 keep_original。",
+      "physicalLocations": ["pipeline/m8_align.py", "configs/pipeline.yaml m8 段", "configs/models.yaml align-m8 条目"],
+      "contract": {
+        "outputs": "C5 07_synth/synth_plan.<lang>.jsonl（每语种一份是硬要求——C5 无语种字段）+ 无后缀 synth_plan.jsonl 当前语种副本 + align_report.<lang>.json 工作纸",
+        "passLine": "对齐率（±10% 命中）≥0.70（pipeline.yaml m8.min_align_rate_mvp，未训时长可控翻译前基线）"
+      },
+      "dependsOn": ["M4-asr-align", "M6-translate"],
+      "eval": {
+        "commands": ["bash scripts/eval_m8.sh"],
+        "passLine": "10 passed；七类路径（in-budget/df-bisect/switch-df/atempo-final/keep-original/no-translation/unresolved）全触发 + CLI exit 0 + C5 契约校验 + 多语种分文件与幂等"
+      },
+      "regenOrder": 8,
+      "specDoc": "docs/assets/specs/m8-align.md"
+    },
+    {
+      "id": "M9-mix",
+      "name": "混音 + 成片合成",
+      "status": "frozen",
+      "lang": "Python + numpy/soundfile + ffmpeg",
+      "responsibility": "C5 合成 wav 按 C2 句窗摆回原时间轴（keep_original 复刻原人声）→ 确定性 ducking（窗 −6dB/句心再 −3dB，attack 0.05s/release 0.30s/句心斜坡 20ms）→ EBU R128 −16 LUFS 两趟 loudnorm → 48k 立体声 mix.wav → 12_out 成片（M11 产物 -c:v copy 优先；AI 隐式标识元数据位 ffprobe 回读校验）。",
+      "physicalLocations": ["pipeline/m9_mix.py", "configs/pipeline.yaml m9 段", "configs/models.yaml mix-m9 条目", "docs/m9_mix_notes.md（定案口径与 mp4 元数据坑）"],
+      "contract": {
+        "boundary": "只写 08_mix 与 12_out；不写任何冻结契约；显式 drawtext/C2PA/音频水印归 M12（M9 只写 C7 隐式元数据位）",
+        "outputs": "08_mix/{dubbed,mix}.<lang>.wav（+无后缀副本）+ mix_report.<lang>.json + 12_out/<ep>.<lang>.mp4"
+      },
+      "dependsOn": ["M1-ingest", "M3-separate", "M8-align", "M11-subs"],
+      "eval": {
+        "commands": ["bash scripts/eval_m9.sh"],
+        "passLine": "17 passed；时长差 ≤0.2s / 响度 ±1LU（交付文件复测）/ 人声-bg 峰值比 ≥8dB / ducking 电平实测 / 标识位回读一致（自验收墙钟 ~76-95s）"
+      },
+      "regenOrder": 9,
+      "specDoc": "docs/assets/specs/m9-mix.md"
+    },
+    {
+      "id": "M11-subs",
+      "name": "字幕擦除 + 目标语渲染",
+      "status": "frozen",
+      "lang": "Python + cv2 + ffmpeg/libass（fribidi+harfbuzz）",
+      "responsibility": "M2 字幕行 bbox 外扩 expand_px → 裁剪进 erase_band → label_zone（AI 标识区）排除 → 分时间窗逐条擦除（delogo 默认无损基带 / inpaint=cv2 TELEA / vsr=重型路线接口预留选中即报错）→ C2×C4 装配目标语 ASS（en/es 左下、ar 右下 RTL，文本逻辑序直书不预反转）→ ffmpeg -vf ass= 压制 12_out 成片。",
+      "physicalLocations": ["pipeline/m11_subs.py", "configs/pipeline.yaml erase/erase_band/subs/label_zone 段", "configs/models.yaml cap-clean 条目"],
+      "contract": {
+        "labelZone": "擦除掩码必须排除 label_zone（configs/pipeline.yaml：top-center/top 60px/高 120px）；delogo 产物用无损 x264（crf=0）保证擦除带外像素零改动（label_zone 哈希可判定）",
+        "rtl": "阿语 RTL/连接渲染责任归 libass+fribidi+harfbuzz；本模块不做预反转/预整形"
+      },
+      "dependsOn": ["M1-ingest", "M2-ocr", "M6-translate"],
+      "eval": {
+        "commands": ["bash scripts/eval_m11.sh"],
+        "passLine": "24 用例（擦除后重跑 M2 OCR 中文命中=0 × 3 段素材 / label_zone 裁剪区像素哈希一致 / ar bidi 方向 + shaping 连接断言 / CLI 真实子进程；自验收 778s exit 0）"
+      },
+      "regenOrder": 7,
+      "specDoc": "docs/assets/specs/m11-subs.md"
+    },
+    {
+      "id": "TUNNEL",
+      "name": "GPU 隧道与保活",
+      "status": "frozen",
+      "lang": "bash + ssh -L + curl",
+      "responsibility": "本机 127.0.0.1:900x → GPU 机 127.0.0.1:900x 的 ssh 隧道（GPU 服务只监听其回环；tailnet 数据面本机→GPU 方向实测不通，走公网 Host 条目）；幂等 start/stop/restart/status + keepalive 保活循环（5s 探测断则重拉）。",
+      "physicalLocations": ["ops/tunnel_gpu.sh"],
+      "contract": {
+        "env": "TUNNEL_GPU_HOST / TUNNEL_LOCAL_PORT / TUNNEL_REMOTE_PORT；非 9001 端口的日志与 keepalive 锁自动加端口后缀（9001 历史文件名逐字不变）",
+        "keepalive": "单实例锁 ~/.tunnel_keepalive.lock（v2，防多实例竞争 bind 失败）；拉起失败不并发叠加交由下一轮"
+      },
+      "dependsOn": [],
+      "eval": {
+        "commands": ["bash ops/tunnel_gpu.sh status"],
+        "passLine": "exit 0 且 /health 可达；公网链路周期性 reset 的 ~10s 愈合窗由 keepalive 收敛为秒级自愈"
+      },
+      "regenOrder": 0,
+      "specDoc": "docs/assets/specs/gpu-tunnel.md"
+    },
+    {
+      "id": "MODELS-REGISTRY",
+      "name": "组件注册表与 Volta 降级链",
+      "status": "frozen",
+      "lang": "YAML（configs/models.yaml）",
+      "responsibility": "每组件：task/langs/device/precision/attn/weights/version 固化位/fallback 降级链/volta_status + runtime_notes 实测回填；顶部服务→venv→torch→transformers 部署矩阵；routing 四表（tts/mt/align/separation/lip）。",
+      "physicalLocations": ["configs/models.yaml", "configs/pipeline.yaml（管线常量）", "configs/voices.yaml（角色音色模板）"],
+      "contract": {
+        "routing": "tts: en=[dub-tts,dub-tts-base,alt-tts-a,alt-tts-b]/es/ar；mt: [mt-core,mt-api]；align: ar→align-proportional；separation: cpu/cuda；lip: frontal_closeup→lip-fast、top10pct→lip-pro",
+        "volta": "2x V100S-32GB（sm_70）：有 fp16 无 bf16；注意力固定 sdpa；不依赖重型服务化运行时；服务侧与 :9001 同卡显存预算见部署矩阵注释"
+      },
+      "dependsOn": [],
+      "eval": {
+        "commands": ["python scripts/gate_b0.py"],
+        "passLine": "门项 ②：每条目含 fallback；四个已冒烟组件（dub-tts/alt-tts-b/lip-fast/asr-core）volta_status 严格 ok"
+      },
+      "regenOrder": 0,
+      "specDoc": "docs/assets/specs/models-registry.md"
+    },
+    {
+      "id": "GATE-B0/B1/B2/B3",
+      "name": "批次验收门（四道门）",
+      "status": "frozen",
+      "lang": "Python（系统解释器任意 cwd，内部定位仓库根用 .venv）",
+      "responsibility": "B0=环境与契约（套件零跳过/models.yaml 断言/冒烟报告可核/中性名扫描）；B1=M1-M4；B2=M5/M6/M7（超时预算单项 1800s 整门 3600s；SKIP-GPU 逐条归因豁免）；B3=M8/M9/M11+gate_b2 整门回归（同预算）。",
+      "physicalLocations": ["scripts/gate_b0.py", "scripts/gate_b1.py", "scripts/gate_b2.py", "scripts/gate_b3.py（B3 批次所有）"],
+      "dependsOn": ["M1-ingest", "M2-ocr", "M3-separate", "M4-asr-align", "M5-diar", "M6-translate", "M7-tts"],
+      "eval": {
+        "commands": ["python scripts/gate_b0.py", "python scripts/gate_b1.py [--skip-gpu]", "python scripts/gate_b2.py [--skip-gpu]", "python scripts/gate_b3.py [--skip-gpu]"],
+        "passLine": "逐项 [PASS]/[FAIL]，任何 FAIL exit 1；skipped 即 FAIL（唯一豁免=显式 --skip-gpu 且服务确认不可达的'服务不可达'类跳过，逐条归因）。整门记录：B1 6/6（92 passed）；B2 6/6 867s（126 passed）；B3 6/6 3469s（177 passed，M11 24/M8 10/M9 17）"
+      },
+      "regenOrder": 11,
+      "specDoc": "docs/assets/REGENERATE.md §5"
+    }
+  ],
+  "planned": [
+    {"id": "M10-lip", "plan": "开发指令 §4 M10", "blocker": "GPU #1 显存预算表（lip-pro ~18GB 与 alt-tts-b 互斥）+ D1 冒烟回填"},
+    {"id": "M12-label", "plan": "开发指令 §4 M12", "blocker": "M9 已写隐式元数据位；显式标识/C2PA/音频水印待实现"},
+    {"id": "M13-review", "plan": "开发指令 §4 M13", "blocker": "依赖 M8/M9 单句回路"},
+    {"id": "M14-queue", "plan": "开发指令 §4 M14", "blocker": "cli run 现为占位（exit 2，占位语义即当前契约）"},
+    {"id": "M15-metrics", "plan": "开发指令 §4 M15", "blocker": "依赖全链"},
+    {"id": "isomt-lora", "plan": "training-plan.md（训练一律延后）", "blocker": "500 句评测集冻结 + models/syl2dur.json 拟合表"}
+  ],
+  "regenOrderTopo": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  "regenOrderNote": "0=契约/原语/JOB-LAYOUT/TUNNEL/MODELS-REGISTRY（声明与前置）；1-10=模块拓扑；11=门禁。GPU 服务部署（setup_gpu.sh→setup_asr_venv.sh→run_gpu.sh）先于顺序位 4/10 的在线 eval。"
+}
