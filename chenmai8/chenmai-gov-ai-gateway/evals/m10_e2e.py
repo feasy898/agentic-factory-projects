@@ -1,4 +1,4 @@
-"""M10 端到端验收入口（D0 收工线）：驱动 ops/e2e_smoke.py 全链路七用例 U1–U7，
+"""M10 端到端验收入口（D0 收工线）：驱动 ops/e2e_smoke.py 全链路八用例 U1–U8，
 并在 e2e 全绿后做 T5.3 收尾——三部门演示数据注入 + 库内三部门数据可查断言。
 
 运行::
@@ -13,13 +13,16 @@ exit 0 = 通过（= ops/e2e_smoke.py 的 ACTIVE 用例全 PASS、零 FAIL，且�
 密级样例被 403 拦截、审计入库且零明文。用例明细与拓扑见 ops/e2e_smoke.py 模块文档
 （U1–U5 当天生效；U6 文件通道 D3 起生效；U7 注入拦截 T4.3 起生效——检索网页
 埋注材料 403 INJECTION + 审计 flag=injection + 干净版负例对照；
-未上线用例 DEFERRED 不计失败）。
+U8 真实大模型全链 T6.2 起生效——config/app.yaml 真实上游 profiles 双腿
+（INTERNET/GOVCLOUD）经 GPU 本地大模型服务真实推理，回复非空+还原+AI 标识+
+上游 ring buffer 全文=脱敏版，上游离线（GPU 服务/隧道=环境依赖）时如实
+DEFERRED 不计失败；其余未上线用例 DEFERRED 不计失败）。
 
-T5.3 收尾（``_seed_demo_step``，跑后追加，不动 e2e 七用例本身）：
+T5.3 收尾（``_seed_demo_step``，跑后追加，不动 e2e 用例本身）：
 
 1. e2e 退出后网关/审计写队列已随 lifespan 收尾，审计库文件即 §9 U5 口径的
    ``config/app.yaml audit_db``（data/audit.db；e2e 每轮开跑前重建，行内存的
-   是本次七用例事件）；
+   是本次 mock 链七用例 U1–U7 事件；U8 真实链路走独立临时审计库不入此库）；
 2. 经 :func:`ops.seed_demo.seed_demo` 以**固定 base-ts** 注入三部门演示数据
    （18 事件 = 3 部门 × 6 请求，覆盖三路由），写路径即真实审计写队列
    （零明文硬闸），写后全库 bytes 级零明文复扫；
@@ -120,7 +123,7 @@ def _seed_demo_step() -> int:
         return _fail(f"demo_state 摘要不符: demo={state['demo']} seeded={state['demo_seeded']}")
     print(f"[seed_demo] 库内三部门数据可查: {len(demo_events)} 条演示事件，部门 "
           + " / ".join(f"{d['dept']}×{d['demo']}" for d in state["by_dept"])
-          + f"；总事件 {state['total']}（含 e2e 七用例）", flush=True)
+          + f"；总事件 {state['total']}（含 e2e mock 链用例）", flush=True)
 
     # ── ③ 看板演示态服务面冒烟（进程内 ASGI；临时库，不碰真实审计库）──────
     tmp_dir = REPO_ROOT / "tmp"
@@ -144,7 +147,7 @@ def _seed_demo_step() -> int:
     print("[seed_demo] 演示态一键切换冒烟: 看板页 200+面板探针；seed 无 Key 401 / "
           "带 Key 三部门注入；state 摘要一致；clear 只清演示事件", flush=True)
 
-    print(f"m10_e2e(+T5.3 演示数据): e2e 七用例全 PASS + seed_demo {inserted} 事件"
+    print(f"m10_e2e(+T5.3 演示数据): e2e 八用例全 PASS + seed_demo {inserted} 事件"
           f"三部门可查（{'/'.join(depts)}）", flush=True)
     return 0
 
@@ -212,7 +215,7 @@ def _probe_demo_api(app: Any) -> str:
 
 
 def main() -> int:
-    print("== evals.m10_e2e → ops/e2e_smoke（§9 七用例：U1–U6 + U7 注入拦截）==",
+    print("== evals.m10_e2e → ops/e2e_smoke（§9 八用例：U1–U7 + U8 真实大模型全链）==",
           flush=True)
     rc = smoke_main()
     if rc != 0:

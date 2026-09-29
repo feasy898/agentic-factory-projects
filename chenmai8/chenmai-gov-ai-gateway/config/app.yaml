@@ -8,6 +8,15 @@ session_ttl_h: 24
 upstreams:
   - {name: internet_mock, base_url: "http://127.0.0.1:8901/v1", api_key_env: MOCK_KEY, models: [mock-chat], route: INTERNET}
   - {name: govcloud_local, base_url: "http://127.0.0.1:8902/v1", api_key_env: MOCK_KEY, models: [gov-chat], route: GOVCLOUD}
+  # ── 批次6（T6.2）：本地真实大模型上游 profiles ────────────────────────
+  # GPU 机本地大模型服务（:9004，本机经 ops/tunnel_gpu.sh 隧道以 127.0.0.1:9004
+  # 访问；部署/保活见 gpu/）。internet 与 govcloud 指向同一服务实例，以不同
+  # api_key_env（不同 Authorization 头）模拟「互联网模型 / 政务云模型服务」两个
+  # 真实上游；模型名 = 服务侧对外中性名。真实模型仓库名/来源不入仓库（审查 §E）。
+  # 默认路由绑定不变（网关取每 route 首个上游 = 两个 mock）；真实链路验收
+  # （e2e U8）按名选取本组 profiles。两把 key 只存 .env（不入任何配置文件）。
+  - {name: internet_real, base_url: "http://127.0.0.1:9004/v1", api_key_env: REAL_LLM_KEY, models: [local-chat-8b], route: INTERNET}
+  - {name: govcloud_real, base_url: "http://127.0.0.1:9004/v1", api_key_env: GOVCLOUD_LLM_KEY, models: [local-chat-8b], route: GOVCLOUD}
   # 真实互联网上游（D 期接入）：base_url / api_key_env / models 由部署方按合同
   # 环境填写；真实上游产品名不预置在示例里（公开仓库卫生，审查 §E）。
 ai_label: "本内容由AI生成"

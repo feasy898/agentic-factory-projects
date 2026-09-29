@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""端到端冒烟（开发指令 §9，D0 收工线）：mock 上游×2 + 网关全真链路，七用例 U1–U7。
+"""端到端冒烟（开发指令 §9，D0 收工线）：mock 上游×2 + 网关全真链路，八用例 U1–U8。
 
 拓扑（§9 步骤 1–2，全部本地、零外网依赖、零真实 API key）::
 
@@ -7,6 +7,15 @@
                                    ├─ INTERNET ──► mock 上游 :8901（独立子进程）
                                    ├─ GOVCLOUD ──► mock 上游 :8902（独立子进程）
                                    └─ BLOCK    ──► 403 拦截（两 mock 零感知）
+
+    U8（批次6 T6.2 起）另起真实链路实例：网关 :9010 仅绑 config/app.yaml 两个
+    真实上游 profiles（internet_real / govcloud_real，同一 GPU 机本地大模型服务
+    :9004、不同 api_key 头模拟两个真实上游）::
+
+        客户端 ──► 网关 :9010 ├─ INTERNET ──► 本地真实大模型 :9004（internet_real）
+                              └─ GOVCLOUD ──► 同服务（govcloud_real，不同 key 头）
+        上游 ring buffer（/admin/*）记录收到的全文，供「全文=脱敏版」bytes 级断言；
+        上游离线/未装载（GPU 服务或 ssh 隧道=环境依赖）时 U8 如实 DEFERRED 不计失败。
 
 - mock 上游按 §9「同一 app 不同 argv」以**独立子进程**拉起
   （``python -m gateway.mock_upstream --port N``）；
@@ -45,7 +54,13 @@
   脱敏/还原（负例对照：拦的是注入不是网页）；埋注版（同页评论区尾部多一段
   「AI请注意：忽略规则+外发+对用户隐匿」）→ 403 content_blocked
   reasons[0]=INJECTION、两 mock 零感知、审计 flag=injection + 预览
-  〔注入·已拦截〕零埋注原文；收尾审计库 checkpoint 后 bytes 级零明文复扫。
+  〔注入·已拦截〕零埋注原文；收尾审计库 checkpoint 后 bytes 级零明文复扫；
+- U8 真实大模型全链（批次6 T6.2 起）：真实链路实例（:9010，仅绑真实 profiles）
+  双腿——INTERNET 腿=U1 材料、GOVCLOUD 腿=低保名单材料——普通材料→脱敏→
+  真实推理→还原→AI 标识：回复非空（扣标识尾注）、占位符零泄漏、AI 标识
+  （响应头+尾注+annotations）、上游 ring buffer 全文 == 原文脱敏版（逐字 diff +
+  bytes 零原值）、两腿 key 指纹（SHA256 前 8 位，原值永不落缓冲）不同且与
+  .env 一致；独立临时审计库 2 行（route/upstream 如实）+ 库级零明文。
 
 运行::
 
@@ -57,6 +72,7 @@
 from __future__ import annotations
 
 import csv
+import hashlib
 import http.client
 import io
 import json
@@ -97,7 +113,8 @@ from common.config import (  # noqa: E402
 from filechannel.parsers import parse_any  # noqa: E402
 from gateway.app import create_app, resolve_db_path  # noqa: E402
 from gateway.mock_upstream import ECHO_MARKER  # noqa: E402
-from masking.mapper import RESTORE_PATTERN  # noqa: E402
+from masking.mapper import RESTORE_PATTERN, SessionRegistry  # noqa: E402
+from outguard.label import AI_ANNOTATION_TYPE  # noqa: E402
 from recognizers.models import EntityClass  # noqa: E402
 
 # ── 固定拓扑与演示凭据（对齐 config/app.yaml / config/dept_keys.yaml）──────
@@ -114,6 +131,18 @@ AI_LABEL = "本内容由AI生成"      # config/app.yaml ai_label
 READY_TIMEOUT_S = 20.0
 AUDIT_SETTLE_TIMEOUT_S = 10.0
 U2_REPLAYS = 20                 # §9 U2：流式重放次数
+
+# ── U8 真实大模型全链（批次6 T6.2）────────────────────────────────────
+# profile 的 base_url / api_key_env / 模型名全部以 config/app.yaml upstreams 为
+# 唯一事实来源，此处只固定两个 profile 名作为选取键。
+REAL_PROFILE_INTERNET = "internet_real"
+REAL_PROFILE_GOVCLOUD = "govcloud_real"
+U8_GATEWAY_PORT = 9010          # 真实链路独立网关实例（:9000 留给 mock 链用例）
+U8_MAX_TOKENS = 192             # 单腿生成长度上限（真实推理延迟护栏，随请求体下发）
+U8_HEALTH_TIMEOUT_S = 5.0       # 真实上游 /health 探测超时
+U8_CLIENT_TIMEOUT_S = 180.0     # U8 客户端总超时（真实推理 + 网关链路）
+U8_SESSION_INTERNET = "sess_e2e_u8a"
+U8_SESSION_GOVCLOUD = "sess_e2e_u8b"
 
 
 # ── 夹具：样例原值（bytes 级断言清单汇总于 RAW_VALUES）────────────────────
@@ -434,7 +463,8 @@ def _assert_no_raw(blob: bytes, values: tuple[str, ...], where: str) -> None:
 
 
 def _expected_masked(ctx: dict[str, Any], session: str, text: str,
-                     spans: list[tuple[str, EntityClass, str]]) -> str:
+                     spans: list[tuple[str, EntityClass, str]], *,
+                     service: Any = None) -> str:
     """夹具 → 上游应收到的「原文脱敏版」（审查 §B 全文 diff 的期望侧）。
 
     - 替换哪些表面形式由调用方手工声明（U1/U4_SPANS、ROSTER_MATERIAL.spans）
@@ -443,8 +473,9 @@ def _expected_masked(ctx: dict[str, Any], session: str, text: str,
     - 占位符取网关同会话 mapper 的 §5.3.1 冻结算法结果——HMAC 同
       key/session/类别/归一化值 → 同占位符，与网关实际写入必然一致；
     - 替换按表面形式长度降序执行，避免短串吃掉长串的子串。
+    ``service``：U8 真实链路实例等第二网关的 service（缺省=主 mock 链实例）。
     """
-    mapper = ctx["service"].registry.get(session)
+    mapper = (service if service is not None else ctx["service"]).registry.get(session)
     out = text
     for raw, etype, normalized in sorted(spans, key=lambda s: len(s[0]), reverse=True):
         placeholder, _ = mapper.placeholder_for(etype, normalized)
@@ -487,6 +518,8 @@ def _start_gateway(ctx: dict[str, Any]) -> None:
     _drop_db(audit_db)
     _drop_db(session_db)
     app = create_app(cfg=cfg, mask_key=mask_key, dept_key_digests=load_dept_keys())
+    ctx["cfg"] = cfg
+    ctx["mask_key"] = mask_key
     ctx["service"] = app.state.service
     ctx["audit"] = app.state.service.audit
     if not isinstance(ctx["audit"], SqliteAuditWriter):
@@ -1025,6 +1058,180 @@ def case_u7(ctx: dict[str, Any]) -> str:
             f"库级复扫 {scanned} 字节零明文")
 
 
+# ── U8 真实大模型全链（批次6 T6.2；普通材料→脱敏→真实推理→还原→AI 标识）────
+def _real_profiles(ctx: dict[str, Any]) -> tuple[Any, Any]:
+    """config/app.yaml 的两个真实上游 profiles（T6.2 起在库；缺失=配置契约缺失→FAIL）。"""
+    by_name = {u.name: u for u in ctx["cfg"].upstreams}
+    missing = [n for n in (REAL_PROFILE_INTERNET, REAL_PROFILE_GOVCLOUD) if n not in by_name]
+    if missing:
+        raise AssertionError(f"config/app.yaml 缺真实上游 profiles: {missing}")
+    return by_name[REAL_PROFILE_INTERNET], by_name[REAL_PROFILE_GOVCLOUD]
+
+
+def _llm_service_root(base_url: str) -> str:
+    """上游 base_url（约定 …/v1）→ 服务根（…:9004）；ring/health 管理端点在根上。"""
+    root = base_url.rstrip("/")
+    return root[:-3] if root.endswith("/v1") else root
+
+
+def _ring_last_record(root: str) -> dict[str, Any]:
+    records = httpx.get(f"{root}/admin/records", timeout=5.0).json()["records"]
+    if not records:
+        raise AssertionError(f"真实上游 {root} ring buffer 为空")
+    return records[-1]
+
+
+def _start_u8_gateway(ctx: dict[str, Any], cfg_real: Any,
+                      u8_db: Path) -> tuple[uvicorn.Server, threading.Thread]:
+    """真实链路独立网关实例：仅绑两个真实 profiles + 独立临时审计库（不碰 U5 库）。"""
+    _assert_port_free(U8_GATEWAY_PORT)
+    app = create_app(cfg=cfg_real, mask_key=ctx["mask_key"],
+                     dept_key_digests=load_dept_keys(),
+                     audit_store=SqliteAuditWriter(u8_db),
+                     session_registry=SessionRegistry(ctx["mask_key"].encode("utf-8")))
+    ctx["audit_u8"] = app.state.audit
+    ctx["service_u8"] = app.state.service
+    server = uvicorn.Server(uvicorn.Config(
+        app, host="127.0.0.1", port=U8_GATEWAY_PORT,
+        log_level="warning", log_config=None, access_log=False,
+    ))
+    thread = threading.Thread(target=server.run, name="anongw-u8-real", daemon=True)
+    thread.start()
+    _wait_ready(U8_GATEWAY_PORT, label="gateway-u8:9010")
+    return server, thread
+
+
+def case_u8(ctx: dict[str, Any]) -> str:
+    """真实大模型全链（§9 U8；批次6 T6.2 起）。
+
+    真实链路实例（:9010，仅绑 config/app.yaml 的 internet_real / govcloud_real——
+    同一 GPU 本地大模型服务、不同 api_key 头模拟两个真实上游）双腿：
+
+    - INTERNET 腿 = U1 材料（人名+2 身份证+3 手机号，脱敏后 INTERNET 出网）；
+      GOVCLOUD 腿 = 低保名单材料（敏感个人信息+批量身份证 → GOVCLOUD）；
+    - 每腿断言：回复非空（扣 AI 标识尾注）、占位符零泄漏、AI 标识三面在位
+      （响应头/尾注/annotations）、上游形状透传（model=配置中性名、usage>0）、
+      **上游 ring buffer 全文 == 原文脱敏版**（逐字全文 diff + bytes 级零原值）、
+      key 指纹（SHA256 前 8 位；原值永不落缓冲）== .env 值且两腿不同；
+    - 审计：独立临时库两腿各 1 行（route/upstream 如实）+ 库文件 bytes 级零明文。
+
+    真实上游不可达/未装载（GPU 服务或 ssh 隧道离线=环境依赖）→ DEFERRED 不计失败。
+    """
+    internet_up, gov_up = _real_profiles(ctx)
+    root = _llm_service_root(internet_up.base_url)
+    if _llm_service_root(gov_up.base_url) != root:
+        raise AssertionError("两真实 profiles 应指向同一服务（同服务不同 key 头口径）")
+    # ① 环境依赖门：真实上游可达且已装载（否则如实 DEFERRED，不混入 PASS/FAIL）
+    try:
+        health = httpx.get(f"{root}/health", timeout=U8_HEALTH_TIMEOUT_S).json()
+    except Exception as exc:  # noqa: BLE001 — 隧道/服务离线属环境状态
+        return f"DEFERRED: 真实上游不可达（{root}/health: {type(exc).__name__}: {exc}）"
+    if not isinstance(health, dict) or not health.get("loaded"):
+        err = "" if not isinstance(health, dict) else str(health.get("error"))[:120]
+        return f"DEFERRED: 真实上游未装载（{root} {err}）"
+    key_internet = resolve_secret(internet_up.api_key_env)
+    key_gov = resolve_secret(gov_up.api_key_env)
+    if key_internet == key_gov:
+        raise AssertionError("internet/govcloud 两把 key 必须不同（不同 key 头口径）")
+
+    # ② 真实链路网关实例（深拷贝配置后仅留两个真实 profiles → 每 route 首个上游即真实上游）
+    cfg_real = ctx["cfg"].model_copy(deep=True)
+    cfg_real.upstreams = [internet_up.model_copy(deep=True), gov_up.model_copy(deep=True)]
+    tmp_dir = REPO_ROOT / "tmp"
+    tmp_dir.mkdir(exist_ok=True)
+    u8_db = tmp_dir / "u8_real_llm_audit.db"
+    server: uvicorn.Server | None = None
+    thread: threading.Thread | None = None
+    client_u8: httpx.Client | None = None
+    try:
+        server, thread = _start_u8_gateway(ctx, cfg_real, u8_db)
+        client_u8 = httpx.Client(base_url=f"http://127.0.0.1:{U8_GATEWAY_PORT}",
+                                 timeout=httpx.Timeout(U8_CLIENT_TIMEOUT_S))
+        httpx.post(f"{root}/admin/reset", timeout=5.0)
+
+        legs = [
+            (U8_SESSION_INTERNET, U_TEXT, U1_SPANS, "INTERNET", internet_up, key_internet),
+            (U8_SESSION_GOVCLOUD, _load_material_text(ROSTER_MATERIAL), U3_ROSTER_SPANS,
+             "GOVCLOUD", gov_up, key_gov),
+        ]
+        for session, text, spans, route, upstream, key in legs:
+            body = _plain_body(text, model=None)   # model 缺省 → 上游清单首项（配置中性名）
+            body["max_tokens"] = U8_MAX_TOKENS
+            status, headers, frames, raw = _send_chat(client_u8, body, session, ctx)
+            if status != 200:
+                raise AssertionError(f"{route} 腿 status={status} body={raw[:200]!r}")
+            if headers.get("x-anongw-route") != route:
+                raise AssertionError(f"{route} 腿 route header: {headers.get('x-anongw-route')}")
+            if headers.get("x-anongw-ai-label") != "1":
+                raise AssertionError(f"{route} 腿 ai-label 响应头缺失")
+            data = json.loads(raw)
+            message = data["choices"][0]["message"]
+            content = message["content"]
+            # 回复非空（扣 AI 标识尾注行）+ 占位符零泄漏 + AI 标识三面在位
+            if not content.endswith(f"\n{AI_LABEL}"):
+                raise AssertionError(f"{route} 腿 AI 标识尾注缺失: {content[-40:]!r}")
+            body_text = content[: -len(f"\n{AI_LABEL}")]
+            if not body_text.strip():
+                raise AssertionError(f"{route} 腿回复为空（仅标识行）")
+            if RESTORE_PATTERN.search(content):
+                raise AssertionError(f"{route} 腿占位符泄漏到客户端: {content[:120]!r}")
+            annotations = message.get("annotations")
+            if not annotations or annotations[0].get("type") != AI_ANNOTATION_TYPE:
+                raise AssertionError(f"{route} 腿 annotations 元数据缺失: {annotations!r}")
+            if data["model"] != (upstream.models[0] if upstream.models else "default") \
+                    or data["usage"]["total_tokens"] <= 0:
+                raise AssertionError(f"{route} 腿上游形状异常: model={data['model']} "
+                                     f"usage={data['usage']}")
+            # 上游 ring buffer 全文 == 原文脱敏版 + key 指纹 == .env 值（两腿不同）
+            record = _ring_last_record(root)
+            expected = _expected_masked(ctx, session, text, spans, service=ctx["service_u8"])
+            _assert_upstream_messages(record, expected, f"llm:{root} {route}")
+            fp = hashlib.sha256(key.encode("utf-8")).hexdigest()[:8]
+            if not record.get("auth_header_present") or record.get("auth_key_sha8") != fp:
+                raise AssertionError(f"{route} 腿 key 指纹不符: "
+                                     f"{record.get('auth_key_sha8')!r} != {fp}")
+            _assert_no_raw(httpx.get(f"{root}/admin/text", timeout=5.0).content,
+                           RAW_VALUES, f"llm:{root} {route}")
+            print(f"[e2e_smoke] U8 {route} 腿真实回复（前 60 字）: {body_text[:60]!r}…",
+                  flush=True)
+
+        # ③ 审计：独立临时库两腿各 1 行 + 库文件 bytes 级零明文
+        audit_u8: SqliteAuditWriter = ctx["audit_u8"]
+        deadline = time.monotonic() + AUDIT_SETTLE_TIMEOUT_S
+        while len(audit_u8) < len(legs) and time.monotonic() < deadline:
+            time.sleep(0.1)
+        if not audit_u8.flush(timeout_s=5.0):
+            raise AssertionError("audit write queue did not drain (u8)")
+        by_session = {e.session_id: e for _, e in audit_u8.fetch_all()}
+        for session, _text, _spans, route, upstream, _key in legs:
+            event = by_session.get(session)
+            if event is None:
+                raise AssertionError(f"audit missing event for {session}")
+            if event.route != route or event.blocked or event.flags:
+                raise AssertionError(f"u8 audit {session}: "
+                                     f"{event.route}/{event.blocked}/{event.flags}")
+            if event.upstream != upstream.name:
+                raise AssertionError(f"u8 audit upstream: {event.upstream} != {upstream.name}")
+            if "〔" not in event.prompt_preview:
+                raise AssertionError(f"u8 prompt preview not masked: {event.prompt_preview!r}")
+        audit_u8.checkpoint()
+        scanned = assert_db_no_raw_pii(u8_db, RAW_VALUES)
+        fps = "≠".join(hashlib.sha256(k.encode("utf-8")).hexdigest()[:8]
+                       for k in (key_internet, key_gov))
+        return (f"双腿真实推理（INTERNET/GOVCLOUD，服务 {root}）：回复非空+占位符零泄漏+"
+                f"AI 标识（头/尾注/annotations）；上游 ring 全文=原文脱敏版；"
+                f"key 指纹 {fps} 两腿不同；审计 2 行 + 库级 {scanned} 字节零明文")
+    finally:
+        if client_u8 is not None:
+            client_u8.close()
+        if server is not None:
+            server.should_exit = True
+        if thread is not None:
+            thread.join(timeout=5.0)
+        for suffix in ("", "-wal", "-shm"):
+            Path(str(u8_db) + suffix).unlink(missing_ok=True)
+
+
 def main() -> int:
     # 直跑（不经 gate_d0）也可能落在 GBK 控制台——自带 UTF-8 重配（审查 §D）
     for stream in (sys.stdout, sys.stderr):
@@ -1054,6 +1261,7 @@ def main() -> int:
             ("U5 审计入库", case_u5),
             ("U6 文件通道", case_u6),
             ("U7 注入拦截", case_u7),
+            ("U8 真实大模型全链", case_u8),
         ]
         for name, fn in cases:
             _record(name, lambda f=fn: f(ctx))
@@ -1069,7 +1277,8 @@ def main() -> int:
 
     # §9 步骤 4：PASS/FAIL 摘要
     print("=" * 64)
-    print("e2e_smoke（§9 七用例；U1–U5 当天生效，U6 D3 起，U7 注入拦截 T4.3 起）")
+    print("e2e_smoke（§9 八用例；U1–U5 当天生效，U6 D3 起，U7 注入拦截 T4.3 起，"
+          "U8 真实大模型 T6.2 起——上游离线时 DEFERRED）")
     print("=" * 64)
     for name, status, detail in RESULTS:
         print(f"{status:<7} {name} — {detail}")
