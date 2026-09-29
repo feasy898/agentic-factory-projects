@@ -48,6 +48,7 @@ import re
 import sys
 import threading
 import time
+import urllib.request
 import uuid
 from collections import deque
 from contextlib import asynccontextmanager
@@ -70,6 +71,20 @@ THINKING = os.environ.get("LLM_THINKING", "0") == "1"  # 默认关思考段（�
 DEFAULT_TEMP = float(os.environ.get("LLM_TEMP_DEFAULT", "0.7"))
 DEFAULT_TOP_P = float(os.environ.get("LLM_TOP_P_DEFAULT", "0.8"))
 STREAM_TIMEOUT_S = float(os.environ.get("LLM_STREAM_TIMEOUT_S", "600"))
+
+# —— 透传模式（T8.3 收官批环境回退）：LLM_FORWARD_URL 非空时不装载本地模型，
+# 把 /v1/chat/completions 转发给一个 OpenAI 兼容的**既有推理服务**（共享机上
+# 属于他人的服务：只读借用、不 kill 不改对方任何东西），本服务继续承担
+# ring buffer / auth 指纹 / health / 模型名归一（对外恒为 SERVE_MODEL，调用方
+# 契约不变）。用途与恢复条件见 ops/gate_final.py 与收口报告：GPU1 被他人
+# 27B llama-server 占用、本地 16G fp16 无卡可起时，借道其 OpenAI 兼容口；
+# GPU1 空闲 ≥17GB 时应停透传、恢复本地模型模式。
+FORWARD_URL = os.environ.get("LLM_FORWARD_URL", "").rstrip("/")
+FORWARD_MODEL = os.environ.get("LLM_FORWARD_MODEL", "")  # 后端真实模型名（空=透传原样）
+FORWARD_TIMEOUT_S = float(os.environ.get("LLM_FORWARD_TIMEOUT_S", "300"))
+FORWARD_EXTRA: dict[str, Any] = json.loads(os.environ.get("LLM_FORWARD_EXTRA_JSON", "{}") or "{}")
+_HEALTH_CACHE_TTL_S = 3.0
+_health_cache: dict[str, Any] = {"ts": 0.0, "ok": False}
 
 _THINK_OPEN, _THINK_CLOSE = "<think>", "</think>"
 
@@ -150,6 +165,11 @@ def _auth_fingerprint(request: Any) -> tuple[bool, str]:
 
 def _load_model() -> None:
     """装载权重（fp16 + sdpa；Volta 有 fp16 无 bf16）。失败如实暴露在 /health，不静默。"""
+    if FORWARD_URL:
+        # 透传模式：不装载本地权重（无卡环境回退）；loaded 由 /health 按后端可达性动态报告
+        status["forward"] = FORWARD_URL
+        status["forward_model"] = FORWARD_MODEL
+        return
     if not os.path.isdir(MODEL_DIR):
         status["error"] = f"权重目录不存在: {MODEL_DIR}（先跑 gpu/setup_llm_service.sh）"
         return
@@ -217,8 +237,31 @@ def _vram_info() -> dict[str, Any]:
         return {}
 
 
+def _forward_backend_ok() -> bool:
+    """透传后端可达性探测（3s 缓存）；/health 的 loaded 与请求前置都以此为准。"""
+    now = time.monotonic()
+    if now - float(_health_cache.get("ts") or 0) < _HEALTH_CACHE_TTL_S:
+        return bool(_health_cache["ok"])
+    ok = False
+    try:
+        req = urllib.request.Request(f"{FORWARD_URL}/models", method="GET")
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            ok = resp.status == 200
+    except Exception:  # noqa: BLE001 —— 任何探测失败都如实报 not loaded
+        ok = False
+    _health_cache.update({"ts": now, "ok": ok})
+    return ok
+
+
 @app.get("/health")
 def health() -> dict[str, Any]:
+    if FORWARD_URL:
+        return {
+            **status,
+            "loaded": _forward_backend_ok(),
+            "cuda_available": False,
+            "vram": {},
+        }
     import torch
 
     return {
@@ -382,11 +425,106 @@ def _clean_text(text: str) -> str:
     return text.strip()
 
 
+def _forward_payload(payload: dict[str, Any]) -> dict[str, Any]:
+    """后端请求体：模型名归一 + 透传模式下注入的额外字段（如关思考段开关）。"""
+    body = dict(payload)
+    if FORWARD_MODEL:
+        body["model"] = FORWARD_MODEL
+    body.update(FORWARD_EXTRA)
+    return body
+
+
+def _forward_ring(payload: dict[str, Any], request: Request, want_stream: bool) -> None:
+    """透传模式同样落 ring/auth 指纹（e2e「上游收到过什么」断言面口径不变）。"""
+    messages, _opts = _extract_request(payload)
+    auth_present, auth_sha8 = _auth_fingerprint(request)
+    peer = ""
+    try:
+        peer = f"{request.client.host}:{request.client.port}" if request.client else ""
+    except Exception:  # noqa: BLE001 —— 指纹面取不到不挡主链路
+        peer = ""
+    _RING.add({
+        "ts": datetime.now(UTC).isoformat(timespec="milliseconds").replace("+00:00", "Z"),
+        "model": SERVE_MODEL,
+        "stream": want_stream,
+        "max_tokens": int(payload.get("max_tokens") or 512),
+        "auth_header_present": auth_present,
+        "auth_key_sha8": auth_sha8,
+        "messages": messages,
+        "peer": peer,
+    })
+
+
+def _forward_non_stream(payload: dict[str, Any]) -> Any:
+    """非流式：urllib 转发（GPU 机 venv 无 httpx，只用标准库）+ 模型名归一。"""
+    from fastapi import HTTPException
+    from fastapi.responses import JSONResponse
+
+    req = urllib.request.Request(
+        f"{FORWARD_URL}/chat/completions",
+        data=json.dumps(_forward_payload(payload), ensure_ascii=False).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    t0 = time.perf_counter()
+    try:
+        with urllib.request.urlopen(req, timeout=FORWARD_TIMEOUT_S) as resp:
+            body = json.loads(resp.read().decode("utf-8"))
+            http_status = resp.status
+    except urllib.error.HTTPError as exc:  # 后端 4xx/5xx 透传状态与错误体
+        detail = exc.read().decode("utf-8", errors="replace")[:400]
+        raise HTTPException(status_code=exc.code, detail=detail) from exc
+    except Exception as exc:  # noqa: BLE001 —— 连接失败按 503 语义（e2e 据此 DEFER）
+        raise HTTPException(status_code=503, detail=f"forward backend: {exc}") from exc
+    if isinstance(body, dict):
+        body["model"] = SERVE_MODEL          # 对外模型名恒为中性名（调用方契约）
+        body.setdefault("timing_ms", int((time.perf_counter() - t0) * 1000))
+    return JSONResponse(status_code=http_status, content=body)
+
+
+def _forward_stream(payload: dict[str, Any]) -> Any:
+    """流式：逐 SSE 行转发（data:{json} 重写 model 字段；注释行/[DONE] 原样）。"""
+    from fastapi.responses import StreamingResponse
+
+    def _gen() -> Any:
+        req = urllib.request.Request(
+            f"{FORWARD_URL}/chat/completions",
+            data=json.dumps(_forward_payload(payload), ensure_ascii=False).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=FORWARD_TIMEOUT_S) as resp:
+            for raw in resp:
+                line = raw.decode("utf-8", errors="replace").rstrip("\r\n")
+                if line.startswith("data:") and not line.startswith("data: [DONE]"):
+                    try:
+                        chunk = json.loads(line[len("data:"):].strip())
+                        if isinstance(chunk, dict):
+                            chunk["model"] = SERVE_MODEL
+                        line = f"data: {json.dumps(chunk, ensure_ascii=False)}"
+                    except ValueError:
+                        pass  # 非 JSON 载荷按协议原样透传（与网关 sse 口径一致）
+                yield f"{line}\n\n"
+
+    return StreamingResponse(
+        _gen(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
+
+
 @app.post("/v1/chat/completions")
 def chat_completions(payload: dict[str, Any], request: Request) -> Any:
     """OpenAI 兼容入口：按 payload.stream 分流（流式返回 StreamingResponse）。"""
     from fastapi import HTTPException
     from fastapi.responses import JSONResponse, StreamingResponse
+
+    if FORWARD_URL:
+        if not _forward_backend_ok():
+            raise HTTPException(status_code=503, detail="forward backend unreachable")
+        want_stream_fwd = bool(payload.get("stream"))
+        _forward_ring(payload, request, want_stream_fwd)
+        return _forward_stream(payload) if want_stream_fwd else _forward_non_stream(payload)
 
     if not status["loaded"]:
         raise HTTPException(status_code=503, detail=f"模型未装载: {status['error']}")
