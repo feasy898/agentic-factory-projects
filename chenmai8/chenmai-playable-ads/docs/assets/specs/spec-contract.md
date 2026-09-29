@@ -27,21 +27,46 @@ json-path 字段路径并带稳定错误码。
 - `i18n.strings.<locale>` required 五键 `cta/tutorial/win/lose/score`（痛点 §痛点 2：键集锁死）；
   `channels.targets` 枚举 6 渠道（封闭，痛点 §痛点 1）；`qc.maxLoadSec` 0.5–10 默认 2.0；
   `qc.autoplayTimeoutSec` 5–120 默认 45。
+- **schema 文本未显式展开、由 eval 样本形状闭合的细节（2026-09-29 回炉列出，冻结）**：
+  `meta.title` 可选；`flow.endScreen` 必填、`flow.tutorial` 可选；`assets.*` 路径值类型
+  `["string","null"]`（bad01/02 的 `audio.win: null` 实证）；`qc` 两字段可选带默认；
+  `variants[]` 元素形状 `{id, seed, palette}`（golden 实证）；`channels.orientation` 为普通
+  string（未声明封闭枚举）；`i18n.strings.<locale>` 五键 required 但**允许额外键**；
+  `assets.sprites`/`assets.audio`/`channels.overrides` 是键为用户定义的开放映射
+  （`additionalProperties` 不设 false）；全链其余对象 `additionalProperties: false`。
 
 ### 2.2 五条不变式（I1–I5，语义冻结）
 
 | ID | 内容 | 精确判定 |
 |---|---|---|
 | I1 | pullpin 逐关可解 | 针角色由 seed 经 `pullpin_level_roles` 生成（每关恰 1 救援针 + 1 机关针，其余中性）：`rescuee = below(pins)`；hazard 重抽至多 16 次（`PULLPIN_REROLL_MAX`）非 rescuee 的值，全撞则 `(rescuee+1) % pins`。`orderSolution` 逐关模拟：先拔到 hazard → 败；拔到 rescuee → 成；未拔到 → 败 |
-| I2 | sort 栈可逆 | 已解盘面 = 前 `min(colors,rods)` 柱各一色满柱 + 空柱；`sort_scramble` 恰走 `rods*layersPerRod` 步，候选步仅限"逆步合法"（搬回后目标柱顶同色或空、且不超容量），`mv = cands[below(len(cands))]`；validator 逐步重放：每步须 ∈ `sort_legal_moves` 且逆步合法，终局与生成器一致 |
+| I2 | sort 栈可逆 | 已解盘面 = 前 `min(colors,rods)` 柱各一色满柱 + 空柱；`sort_scramble` 恰走 `rods*layersPerRod` 步，候选步仅限"逆步合法"（搬回后目标柱顶同色或空、且不超容量），`mv = cands[below(len(cands))]`；validator 逐步重放：每步须 ∈ `sort_legal_moves` 且逆步合法，终局与生成器一致。"**终局与生成器一致**"的具体形态（2026-09-29 回炉钉死）：solution 重放完毕后，终盘必须**逐柱相等**于 `sort_solved_board`（前 `min(colors,rods)` 柱各一色满柱 + 空柱），不等 → `I2-sort-reversible`（"solution replay does not reach the generator's solved board"）。重放前的次级域检查：`colors ≥ 2`、`colors < rods`（无空柱则扰动/还原无从谈起）、`rods ≥ 3`、`layersPerRod ≥ 2`、solution 非空——任一不满足即短路返回对应 I2 码 |
 | I3 | match3 存在可行步 | `match3_board(seed,rows,cols,colors)`（行优先逐格 `below(colors)`）生成盘面，`match3_find_move`（扫相邻交换，方向 (0,1)/(1,0)）无解即违规；另 colors ≤ len(spriteKeys) |
 | I4 | 时长预算 | `durationBudgetSec.max <= 30`（双保险，schema 亦限）；`target <= max` |
 | I5 | i18n 覆盖 | locales 每语言 strings 存在且五键非空白；`defaultLocale ∈ locales`；`rtl ⊆ locales` |
+
+**merge / pullpin / sort 无规则卡——"未覆盖即结构 stub"（2026-09-29 回炉声明）**：
+`templates.md §7` 标三模板规则卡 planned 属实。校验器对这三者的现状语义 = schema 结构 +
+少量轻量不变式，**不承载玩法语义**：merge 仅三条 `I-merge-sprites`（`spawnColors ≤
+len(spriteKeys)`）/ `I-merge-spawn`（`spawnColors ≥ 2`）/ `I-merge-goal`（`goalScore ≥ 1`）；
+其 params 默认值（`spriteKeys=[]` / `spawnColors=4` / `goalScore=300`）与 pullpin/sort 的
+params 字段清单为**盲重建值，无 eval 覆盖**，规则卡落稿时必须回炉本页复验。
 
 ### 2.3 确定性随机源（跨语言一致的关键，冻结）
 
 - 32 位 LCG：`state = (1664525 * state + 1013904223) mod 2^32`，取值 `next() % n`；
   JS 侧 `Math.imul + >>>0` 复刻同余结果。
+- **三个自由度（2026-09-29 回炉冻结——此前只有 bad02 单样本隐式锁定）**：
+  1. **先推进后取值**：首抽 = `(1664525*seed + 1013904223) mod 2^32`（状态先更新再输出）。
+     算例（已过真实 gate）：bad02 `seed=424242` 首两抽 `%3` = `[2, 0]` → L0 `rescuee=2`、
+     `hazard=0`，其 `orderSolution[0]=[0,1,2]` 首拔即机关针（I1 命中）。
+  2. **单流跨关卡**：`pullpin_level_roles(seed, levels, pins)` 用**一个**从 `meta.seed` 新建的
+     LCG 连抽全部关卡（rescuee 与 hazard 抽取共享同一流，无逐关重播种）。
+  3. **各生成器独立建流**：`match3_board` / `sort_scramble` / `pullpin_level_roles` 各自从
+     `meta.seed` 新建 LCG，互不共享状态。`variants[].seed` **不参与**校验器生成器（无消费方，
+     CONTRACTS §痛点 3）。
+     算例（已过真实 gate）：golden `seed=20260930` 的 6×6×5 LCG 盘面存在可行步
+     `(0,2)↔(1,2)`（`match3_find_move` 返回 `(0, 2, 1, 2)`）。
 - **注意**：本生成器（LCG）服务于校验器；三消模板运行时用的是另一套 mulberry32 + 盐流（规则卡 §7）。
   两套规则已经分叉——见 §5 单一真源声明。
 
@@ -61,6 +86,13 @@ json-path 字段路径并带稳定错误码。
 - **Python 权威**：`pfcore.validation.validate_spec_file/dict`（jsonschema Draft 2020-12 + invariants + pydantic）。
   schema 定位：env `PF_SPEC_SCHEMA` 优先，否则 `validation.py` 的 `parents[2]` 仓库根约定
   （**模块位置不可挪**）。CLI：`python -m pfcore validate <spec...>`（glob 内建展开；全部文件过才 exit 0）。
+  **stdout 格式（2026-09-29 回炉冻结）**：逐文件一行裁定——通过 `OK <file>`、失败
+  `INVALID <file>` + 其下逐条缩进两格 `<path>: <message> [<code>]`；glob 无匹配计
+  `INVALID <pattern>: 模式无匹配文件：<pattern> [io-not-found]`；末行汇总
+  `validate: <passed>/<total> 通过`。门禁只断言**退出码**与输出含 `$.` 路径（正则
+  `\$\.[A-Za-z_][\w.\[\]]*`），不解析 stdout 机器格式——pfcore 试点曾按每文件一行 JSON
+  （`{"file","ok","issues":[…]}` + 末行 `{"summary":…}`）实现，同样过门；仓库人类可读格式为准，
+  两者皆合法的边界以门禁断言为准。
 - **JS 镜像**：`packages/spec`（`validate.mjs` ajv + `invariants.mjs` 逐行镜像）。
   公开面：`schema / schemaErrors / validateSpec / checkInvariants` + 生成器与常量（`Lcg, match3Board,
   match3FindMove, pullpinLevelRoles, pullpinSimulate, sortSolvedBoard, sortLegalMoves, sortApplyMove,
@@ -77,6 +109,13 @@ json-path 字段路径并带稳定错误码。
 - 评测样本集（`specs-eval/`）：golden-match3（6 语言含 ar、nearWin=true、全字段）；bad 6 件各自击中：
   `01` 缺顶层 flow（required 补路径）、`02` pullpin 第 1 关先拔机关针（I1）、`03` max=35（I4）、
   `04` locales 声明 ja 缺词条（I5）、`05` landingUrl 无 scheme（schema-pattern）、`06` 未知模板（schema-enum）。
+- **bad03 的"双层都收"登记（2026-09-29 回炉成文，消除 §2.2 I4 与 schema 的张力）**：
+  schema 限 `durationBudgetSec.maximum = 30`，I4 又判 `max <= 30`——两层同守一个域且**同路径**
+  `$.game.durationBudgetSec.max`。按 §2.4 校验次序 schema 先行，bad03（max=35）实际先命中
+  `schema-maximum`；`I4-duration-max` 是第二层兜底（schema 层被绕过/放宽时仍拦截）。
+  实测输出：`$.game.durationBudgetSec.max: 35 is greater than the maximum of 30 [schema-maximum]`。
+  两种实现（报 schema-maximum 或报 I4-duration-max）都满足门禁断言（exit 1 + `$.` 路径）；
+  改动任何一层前先跑 bad03 回归。
 
 ## 4. eval：精确命令与通过线
 
@@ -87,6 +126,10 @@ node packages/spec/test/ajv-check.mjs                                           
 ```
 
 - 门禁固化：`scripts/gate_phase1.py` 门项 1（逐文件裁定 bad、断言字段路径正则 `\$\.[A-Za-z_][\w.\[\]]*`）。
+- **归属标注（2026-09-29 回炉）**：上块第三条 `node packages/spec/test/ajv-check.mjs` 属
+  **JS 镜像（`packages/spec`）** 的验收命令，不是 Python 侧 `pfcore validate` 的一部分——
+  pfcore 试点（只重生成 Python 校验器）不含它；它在完整仓库的 M1 门禁（gate_phase1 门项 1
+  的 ajv 子断言）内执行。单独重生成 Python 侧时无需也不应临时补建 JS 镜像。
 - **禁止事项**：不许为了过 gate 改 bad 样本的期望（bad 样本是规格的一部分）；不许只在单侧修算法。
 
 ## 5. 可解性单一真源声明（本页最重要的架构裁决候选）
