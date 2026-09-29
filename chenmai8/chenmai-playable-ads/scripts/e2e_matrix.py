@@ -4,13 +4,25 @@
 
 对应规划 §8 与 docs/assets/specs/orchestrator.md §3/§5（实现后该节已回填实测）：
 
-    用法：python scripts/e2e_matrix.py [--quick]
+    用法：python scripts/e2e_matrix.py [--quick] [--budget-sec N]
     流程：对每个 golden spec × locale × channel：模板构建 → 渠道打包 →
           qacore run --autoplay 逐包质检
     断言：全部包质检 0 fail；总耗时打印；产物大小表输出 summary.json
     --quick：仅 golden-match3 × en × 规则库冻结投放渠道（T2.4 起六渠道，随规则库
              扩缩自动跟随），每日冒烟门，硬预算 ≤90 秒（--budget-sec 可调；超预算即
              exit 1）
+    全量（T2.5 起）：specs-eval 全部 golden-*.json × {en,zh} × 冻结投放渠道。
+             四模板齐后 = 4 模板 × 2 语言 × 6 渠道 = 48 包，0 FAIL 为最终验收线
+             （任务口径硬预算 ≤1200s，由 gate_phase2 以 --budget-sec 1200 把关；
+             裸跑不设限只打印）。zh 为中文演示语；ar 等其余 spec 声明语言仍可
+             经 --locales 显式回归（RTL 用例保留此入口）。
+    抖动单重试（仅全量）：首检 FAIL 的格用同一 qacore（同一冻结检查链）至多
+             重跑一次，以重跑结果为最终判定——只吸收瞬态负载抖动（本机实测
+             2026-09-29：与外部任务并行时 CHK09 本地加载偶发冲破 golden 冻结的
+             qc.maxLoadSec=2.0s，而同格 pf.readyMs 恒 <1.5s，属噪声非产物问题）；
+             两跑皆 FAIL 的持续回归仍判 FAIL，质检是唯一裁判不变。
+             重跑计入总墙钟；summary 逐格记 retried/firstAttemptFails 如实留痕。
+             --quick 不启用（其 90s 预算本身不容重跑，冒烟语义保持简单）。
 
 与编排器（pfcore/make.py）同一条真实链路：模板构建器（tmpl-*/build.mjs）→
 渠道打包器（packages/packager/bin.mjs）→ qacore（质检是唯一裁判）。pack 子命令
@@ -59,9 +71,13 @@ SPECS_DIR = REPO_ROOT / "specs-eval"
 PREVIEW_CHANNEL = "preview"  # 规则库中的本地渠道，不进投放矩阵
 
 # spec.game.template → 模板构建脚本（与 pfcore/make.py 同表；无构建器的模板
-# 其格记 skip 并如实给原因，绝不算通过）。
+# 其格记 skip 并如实给原因，绝不算通过）。T2.5 起四模板齐，全量矩阵不再有
+# 「模板无构建器」的 skip 格。
 TEMPLATE_BUILDERS: dict[str, Path] = {
     "match3": REPO_ROOT / "packages" / "templates" / "tmpl-match3" / "build.mjs",
+    "merge": REPO_ROOT / "packages" / "templates" / "tmpl-merge" / "build.mjs",
+    "pullpin": REPO_ROOT / "packages" / "templates" / "tmpl-pullpin" / "build.mjs",
+    "sort": REPO_ROOT / "packages" / "templates" / "tmpl-sort" / "build.mjs",
 }
 
 # Windows 控制台默认非 UTF-8 代码页，固定本进程输出编码（同 pfcore 入口做法）。
@@ -324,18 +340,40 @@ def qa_one(cell: dict, packed: dict, builds: dict, out_root: Path) -> dict:
     return rec
 
 
-def phase_qa(cells: list[dict], packed: dict, builds: dict, out_root: Path, jobs: int) -> list[dict]:
-    """逐包质检；jobs>1 时并行（各 qacore 独立端口/报告，互不干扰）。"""
+def phase_qa(cells: list[dict], packed: dict, builds: dict, out_root: Path, jobs: int,
+             allow_retry: bool) -> list[dict]:
+    """逐包质检；jobs>1 时并行（各 qacore 独立端口/报告，互不干扰）。
+
+    allow_retry（抖动单重试，仅全量启用）：首检 FAIL 的格用同一 qacore（同一冻结
+    检查链）至多重跑一次，以重跑结果为最终判定；两跑皆 FAIL 仍判 FAIL。重跑计入
+    阶段墙钟，逐格以 retried/firstAttemptFails 留痕。
+    """
     work = [c for c in cells if not c.get("skip")]
     jobs = max(1, min(jobs, len(work))) if work else 1
     t0 = time.perf_counter()
-    if jobs == 1:
-        results = [qa_one(c, packed, builds, out_root) for c in work]
-    else:
+
+    def run_batch(batch: list[dict]) -> list[dict]:
+        if jobs == 1 or len(batch) == 1:
+            return [qa_one(c, packed, builds, out_root) for c in batch]
         with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
-            futures = [pool.submit(qa_one, c, packed, builds, out_root) for c in work]
-            results = [f.result() for f in futures]
-    _log(f"质检完成：{len(results)} 包并行度 {jobs}，阶段墙钟 {time.perf_counter() - t0:.1f}s")
+            futures = [pool.submit(qa_one, c, packed, builds, out_root) for c in batch]
+            return [f.result() for f in futures]
+
+    results = run_batch(work)
+    if allow_retry:
+        failed_idx = [i for i, r in enumerate(results) if r["status"] == "fail"]
+        if failed_idx:
+            names = "、".join(f"{results[i]['spec']}×{results[i]['locale']}×"
+                              f"{results[i]['channel']}" for i in failed_idx)
+            _log(f"首检 {len(failed_idx)} 格 FAIL，抖动单重试：重跑同一 qacore → {names}")
+            retry_recs = run_batch([work[i] for i in failed_idx])
+            for i, r2 in zip(failed_idx, retry_recs):
+                r2["retried"] = True
+                r2["firstAttemptFails"] = results[i]["fails"]
+                results[i] = r2
+    n_retried = sum(1 for r in results if r.get("retried"))
+    _log(f"质检完成：{len(results)} 包并行度 {jobs}（含单重试 {n_retried} 格），"
+         f"阶段墙钟 {time.perf_counter() - t0:.1f}s")
     return results
 
 
@@ -353,6 +391,7 @@ def write_summary(out_root: Path, mode: str, results: list[dict], skips: list[di
             "pass": sum(1 for r in results if r["status"] == "pass"),
             "fail": sum(1 for r in results if r["status"] == "fail"),
             "skip": len(skips),
+            "retried": sum(1 for r in results if r.get("retried")),
         },
         "cells": results + skips,
     }
@@ -366,8 +405,9 @@ def print_table(results: list[dict], skips: list[dict]) -> None:
     print(f"{'spec':<22}{'locale':<7}{'channel':<11}{'bytes':>10}{'上限':>10}  {'结果':<6}{'质检墙钟':>8}")
     for r in sorted(results, key=lambda x: (x["spec"], x["locale"], x["channel"])):
         limit = f"{r['maxBytes']:,}" if isinstance(r.get("maxBytes"), int) else "-"
+        verdict = r["status"] + ("*" if r.get("retried") else "")  # * = 单重试后过
         print(f"{r['spec']:<22}{r['locale']:<7}{r['channel']:<11}"
-              f"{r['bytes']:>10,}{limit:>10}  {r['status']:<6}{r['wallSec']:>7.1f}s")
+              f"{r['bytes']:>10,}{limit:>10}  {verdict:<6}{r['wallSec']:>7.1f}s")
     for s in skips:
         print(f"{s['spec']:<22}{s['locale']:<7}{s['channel']:<11}{'-':>10}{'-':>10}"
               f"  SKIP   （{s['skip']}）")
@@ -385,7 +425,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--quick", action="store_true",
                         help="快速门：仅 golden-match3 × en × 冻结投放渠道（T2.4 起六渠道），预算 90s")
     parser.add_argument("--locales", default=None,
-                        help="逗号分隔语言（缺省：quick=en，全量=en,ar，规划 §8）")
+                        help="逗号分隔语言（缺省：quick=en，全量=en,zh（T2.5）；"
+                             "ar 等其余 spec 声明语言仍可显式给，如 --locales en,ar）")
     parser.add_argument("--channels", default=None,
                         help="逗号分隔渠道（缺省：规则库全部投放渠道，preview 除外）")
     parser.add_argument("--out", default="artifacts/matrix",
@@ -401,7 +442,7 @@ def run_matrix(args: argparse.Namespace) -> int:
     t0 = time.perf_counter()
     quick = bool(args.quick)
     locales = ([x.strip() for x in (args.locales or "").split(",") if x.strip()]
-               or (["en"] if quick else ["en", "ar"]))
+               or (["en"] if quick else ["en", "zh"]))
     rules = load_rules()
     channels = ([x.strip() for x in (args.channels or "").split(",") if x.strip()]
                 or discover_channels(rules))
@@ -432,7 +473,7 @@ def run_matrix(args: argparse.Namespace) -> int:
 
     builds = phase_build(cells, out_root)
     packed = phase_pack(cells, builds, out_root)
-    results = phase_qa(cells, packed, builds, out_root, jobs)
+    results = phase_qa(cells, packed, builds, out_root, jobs, allow_retry=not quick)
     skips = [c for c in cells if c.get("skip")]
 
     wall = time.perf_counter() - t0
@@ -441,9 +482,11 @@ def run_matrix(args: argparse.Namespace) -> int:
                                  results, skips, wall, budget or None)
 
     n_fail = sum(1 for r in results if r["status"] == "fail")
+    n_retried = sum(1 for r in results if r.get("retried"))
     over = bool(budget) and wall > budget
     _log(f"总墙钟 {wall:.1f}s（预算 {'≤%.0fs' % budget if budget else '不限'}），"
-         f"包 {len(results)}：pass {len(results) - n_fail} / fail {n_fail}，skip {len(skips)}")
+         f"包 {len(results)}：pass {len(results) - n_fail} / fail {n_fail}，skip {len(skips)}"
+         + (f"（其中 {n_retried} 格为单重试后过，见表内 * 号与 summary retried 字段）" if n_retried else ""))
     _log(f"summary.json：{summary_path.relative_to(REPO_ROOT)}")
 
     if n_fail:
