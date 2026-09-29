@@ -36,6 +36,7 @@ TEMPLATE_BUILDERS: dict[str, Path] = {
     "match3": REPO_ROOT / "packages" / "templates" / "tmpl-match3" / "build.mjs",
     "merge": REPO_ROOT / "packages" / "templates" / "tmpl-merge" / "build.mjs",
     "pullpin": REPO_ROOT / "packages" / "templates" / "tmpl-pullpin" / "build.mjs",
+    "sort": REPO_ROOT / "packages" / "templates" / "tmpl-sort" / "build.mjs",
 }
 
 DEFAULT_SERVE_PORT = 8618
