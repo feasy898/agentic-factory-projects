@@ -381,3 +381,17 @@ components:
     version: "2026-09-29 (T15)"  # 上游：无外部模型/权重；ffmpeg loudnorm/libass 为系统级依赖
     fallback: []
     volta_status: na
+
+  metrics-m15:
+    task: quality-metrics      # 指标体系（T21/M15）：六项 → 12_out/metrics.json（数值如实、
+                               # 基线 v0）—— 声纹嵌入余弦（复用 voxdia 组件）/情绪标签一致率
+                               # （:9001 回判）/配音回听 WER（:9001 转写 vs C4 chosen）/
+                               # 时长对齐率（C5 实测时长落 C4 预算窗）/口型评分（口型区帧差
+                               # 活性 vs 人声能量 Pearson，基线 v0）/每分钟成本（墙钟+调用记账）
+    langs: [en, es, ar]
+    device: cpu                # 编排在本机；:9001 调用经隧道（gpu_client）
+    precision: null
+    weights: null
+    version: "2026-09-29 (T21)"  # 上游：无新增外部依赖（嵌入复用 voxdia 权重）
+    fallback: []
+    volta_status: na
