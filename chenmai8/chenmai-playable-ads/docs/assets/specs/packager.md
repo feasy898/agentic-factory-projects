@@ -199,11 +199,13 @@ meta 产物混 MRAID → 拒、未知渠道（`not-a-channel`）→ 拒——goo
 - **esbuild**：`packages/packager` 无自己的 node_modules，`src/html.mjs` 的 `import "esbuild"` 沿目录向上解析
   → 必须先在 `<root>` 执行 `npm ci`（或最小化 `npm i -g`/等价方式让 Node 能解析 `esbuild`）。缺它 = 所有
   build 立即失败。
-- **第 22 断言（python zipfile 交叉验证）的 venv 依赖与 SKIP 语义**：该断言查
+- **python zipfile 交叉验证断言的 venv 依赖与 SKIP 语义**：该断言查
   `<root>/python/.venv/Scripts/python.exe`——
   - venv **存在**：执行内联脚本（testzip CRC + 条目名 + Template.html 引用 build.js），失败 → FAIL exit 1；
   - venv **不存在**：打印 `[SKIP ] mintegral: python zipfile 交叉验证（未找到 venv python）`，**不注册断言**
-    （既不计 pass 也不计 fail），整体仍可 exit 0——即无 venv 时 21 条断言 + 1 SKIP，有 venv 时 22 条。
+    （既不计 pass 也不计 fail），整体仍可 exit 0。断言总数随渠道扩容增长（T2.4 六渠道 +
+    google 3b 正向断言组后）：无 venv 时 **45 条断言 + 1 SKIP**，有 venv 时 **46 条**
+    （2026-09-29 实跑 `node packages/packager/test/run.mjs` = 46 条 [PASS] exit 0）。
     SKIP 是显式声明，不是放行 bug。
 - 工作流/CI 门跑此测试前先核对上述形状（瞬时失败先查路径假设与 node_modules，再查实现）。
 

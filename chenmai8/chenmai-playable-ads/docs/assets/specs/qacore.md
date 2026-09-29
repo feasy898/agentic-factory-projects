@@ -160,7 +160,9 @@ python/.venv/Scripts/python.exe -m pfcore make --spec specs-eval/demo-zh.json
 
 **样本来源与构造算法（2026-09-29 回炉成文）**：冻结测试目录只有 `python/qacore/tests/fixtures/mini.html`
 一个夹具——**没有预置 mutant 文件**；变异样本 = gate 脚本**现场对夹具做最小变异**生成（写
-`tmp/` 目录，夹具本身永不被改；门禁对夹具跑 sha256 前后自检）。已实装三个 mutant 的构造算法
+`tmp/` 目录，夹具本身只读、永不被改；门禁**无**夹具哈希自检——试点门禁曾对夹具做 sha256
+前后比对，仓库 `scripts/gate_phase0.py` 无此检查，防护实际靠"变异一律写 tmp/、报告存在=本次
+真事实、先清旧产物再跑"）。已实装三个 mutant 的构造算法
 （固化于 `scripts/gate_phase0.py` 门项 6，冻结）：
 
 | 样本 | 构造算法（对 mini.html 的最小变异） | 必须命中 |
