@@ -5,6 +5,7 @@ playwright==1.63.0
 fastapi==0.141.1
 uvicorn==0.54.0
 httpx==0.28.1
+python-multipart==0.0.32
 pydantic==2.13.5
 jsonschema==4.26.0
 pillow==12.3.0

@@ -22,6 +22,13 @@
   断言预览 / 三渠道 / 报告 / 二维码 / 兜底目录全部落盘并打印墙钟计时（2026-09-29 留档 28.9s，
   预算 180s、反馈理想值 90s）
 - 局域网伺服：`python -m pfcore serve` 伺服既有产物目录，现场重建汇总页与二维码（演示日兜底）
+- Web 操作台（webui，M10）：`python -m webui.app --port 8788` 起本地界面（FastAPI + 单页、
+  零外链、无登录仅局域网）——选模板 / 传 PNG 素材（按槽位键替换）/ 填文案（每语言内置可改缺省）
+  → 组装 PlayableSpec（match3 seed 可解性与 pullpin orderSolution 复用 pfcore 校验器权威实现，
+  组装后仍过 schema+不变式双校验）→ 后台跑 `pfcore make` 全流水线 → 状态轮询 →
+  二维码（指向本机 LAN 地址）+ 质检报告 + 渠道包下载（/artifacts/webui/<任务> 挂载伺服）；
+  也可直接上传 spec JSON。自验收 `python -m webui.selftest`：httpx 端到端（上传 demo spec →
+  轮询 done → 产物链接逐个 200、质检 0 fail），2026-09-29 实测 68s exit 0
 - 运行时桥（engine-bridge）：六渠道退出路由与静音策略有单元测试覆盖，零运行时第三方依赖
 - LLM 网关（llmgw）：超时 / 重试 / 降级 / 图片 / JSON 模式 + 离线 mock 自测通过（暂无生产调用方）
 
@@ -34,7 +41,8 @@
   各渠道报告如实记 skip
 - AI 生成：director（截图 / 录屏 → spec 草稿）仅有包占位、修复循环未开工——
   模型接口已留，不演示生成
-- 素材流水线（assetkit，仅包占位）、webui 操作界面、截图 / 录屏生成试玩、Cocos 工程接入：未实现
+- 素材流水线（assetkit，仅包占位）、截图 / 录屏生成试玩、Cocos 工程接入：未实现；
+  webui 的 sort 模板入口随模板构建器注册后开放（当前可选三消 / 合成 / 拔针）
 
 **仓库结构（建设中）**
 
