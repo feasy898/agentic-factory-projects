@@ -1,0 +1,23 @@
+# M4 经典分割配置（plan/开发指令.md §4 M4 · ClassicSeg 参数集中于此）。
+# 适用场景：浅色亚克力盘面 + 深色咖啡豆（前景=暗、背景=亮）。
+# 坐标约定：输入为标定 warp 后的托盘正射网格图（configs/tray.yaml：
+# grid_px 覆盖 tray_mm，mm/px = tray_mm/grid_px），全部几何参数以 mm 给出，
+# 运行期按 mm/px 换算，改网格分辨率无需改本文件。
+
+channel: gray          # 前景通道：gray（灰度）| lab_b（LAB 的 b 通道，蓝黄轴）
+blur_sigma_px: 1.0     # 阈值前高斯模糊 σ（px）；抑噪，勿大于豆半径像素的 1/3
+open_ksize: 3          # 开运算核（px，奇数）：去独立噪点
+close_ksize: 5         # 闭运算核（px，奇数）：填豆内针孔/亮斑，防豆被误分裂
+bg_delta_gray: 25.0    # 背景锚定余量：阈值=min(Otsu, 背景估计−此值)；防亮于盘面的
+                       # 印刷物（码静区/反光）把 Otsu 抬到背景之上（首轮 eval 实测坑）
+max_component_frac: 0.5  # 单连通域面积占全图比上限：超过视为阈值病理跳过（防巨域分水岭）
+min_area_mm2: 6.0      # 连通域最小面积（mm²）：低于视为噪声丢弃（豆面积 ~20-50）
+peak_min_mm: 1.0       # 距离变换种子最小深度（mm）：浅于此的峰不成种子
+peak_min_dist_mm: 1.8  # 相邻种子最小间距（mm）：Merge 近邻峰，防同粒多峰误切
+seed_dominance: 0.7    # 种子支配度：深度 < 0.7×邻域(max) 的浅峰（粘连颈部鞍点）删除；邻豆等深互不抑制
+seed_dominance_radius_mm: 5.0  # 支配度考察半径（mm）：≈最大豆半径，覆盖「豆心→颈部」距离
+mask_markers: true     # 抑制四角定位码区域（码是盘面印刷物，暗色会被 Otsu 误收）
+marker_margin_mm: 2.0  # 码区外扩余量（mm）：覆盖印刷/摆放置位公差
+conf_single: 0.9       # 未切分（单峰）连通域的输出置信度（启发式）
+conf_split: 0.72       # 分水岭切分粒的输出置信度（切分面是几何猜测，压低）
+side: top              # 协议不带面别；默认面（M13 装配器会按所处理面规范化）
