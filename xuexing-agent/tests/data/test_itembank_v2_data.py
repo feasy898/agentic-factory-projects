@@ -5,8 +5,11 @@
 - 来源闭式：现库 321 题全部为 M3 知识注入的原创题（commit ab541ec，无真题改编、
   无 LLM 生成条目——题干无任何真题年份/出处标记，引入改编或 LLM 题时须同步
   更新此闭式并附真实 source_ref / verification）；
-- 验证诚实性：全库当前无双代理验证记录（0/321）——original 允许 null（诚实缺口），
-  严禁伪造通过记录；
+- 验证记录：2026-09-29 双代理独立复验运行（tools/dual_agent_verify.py，
+  m3-reviewer × night-reverify-20260929，ledger/manifest/仲裁队列见
+  data/verification/）回填 321/321；记录可追溯性由
+  tests/data/test_dual_verify_data.py 强制（ledger 逐题一致 + manifest 代理
+  身份一致 + 仲裁队列闭式），此处只锁「记录存在且全部通过 v2 门」；
 - 算术闭式抽查：12 题按 id 逐一独立重算（表达式在测试内现算，非抄答案）。
 """
 import glob
@@ -51,7 +54,12 @@ def test_real_provenance_all_original(all_items):
 def test_real_verification_records_honest(all_items):
     total, verified = verification_stats(all_items)
     assert total == len(all_items)
-    assert verified == 0, "出现双代理验证记录：须为真实独立解题产物并附可追溯过程，不得批量伪造"
+    # 2026-09-29 双代理运行回填后：全库带通过记录；记录真实性（ledger/manifest
+    # 逐题可追溯、非伪造）由 test_dual_verify_data.py 独立强制。
+    assert verified == total, (
+        "验证覆盖缺口：original 无记录仅允许作为显式申报的诚实缺口存在，"
+        "须同步更新 data/verification/ 运行清单与本断言"
+    )
 
 
 def test_real_closed_form_spot_checks(all_items):

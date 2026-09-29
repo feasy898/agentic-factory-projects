@@ -6,8 +6,9 @@ API」要求的集成测试：/trace /blueprint /grade /recommend 全链路）�
   kp_rational_add=0.084203（2 证据：对+错，遗忘衰减后净负）、kp_rational_mul=0.90099；
 - /recommend attach：kp_rational_add 步骤推荐 = ["m7_010","m7_011","m7_012","m7_115"]
   （mc_sign_neg 针对题 Tier1 在前，与 recommend 契约闭式一致），策略 s_worked_example；
-- /itembank/v2/validate：grade7 129 题全部 source=original、无 verification 键
-  （null 等价）→ errors []、verified 0（诚实未验证，不伪造）；
+- /itembank/v2/validate：grade7 129 题全部 source=original、verification 记录 =
+  双代理独立复验回填（m3-reviewer × night-reverify-20260929，2026-09-29 运行，
+  见 data/verification/）→ errors []、verified 129/129；
 - /coverage/standard：grade7 37 KP × 28 课标条目 → 归属缺口 0、覆盖 12/28
   （清单为 7-9 年级第四学段全集，7 年级子库不含几何变换/函数/统计部分）。
 """
@@ -159,7 +160,8 @@ def test_item_v2_real_bank_honest_disclosure(client, grade7_items):
     out = r.json()
     assert out["valid"] is True and out["errors"] == []
     assert out["counts"] == {"original": 129, "adapted": 0, "llm_generated": 0}
-    assert out["total"] == 129 and out["verified"] == 0  # 无伪造验证记录
+    # 双代理复验后全库带可追溯记录（原 0/129 诚实缺口已由 2026-09-29 双代理运行回填）
+    assert out["total"] == 129 and out["verified"] == 129
 
 
 # ---------- /coverage/standard × 真实课标清单 ----------

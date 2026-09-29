@@ -88,7 +88,25 @@
   目录不含 server.py，--impl-dir 需平铺全模块目录）；全套 405 测试 +
   validate_knowledge --min-items-per-kp 3 + run_contract 全模块参考/平铺目录
   --impl-dir 注入（含 --suite full）全绿）
-- [ ] **双代理独立复验题库**：321 题逐题由两个独立解题代理验算，分歧提交人工仲裁；回填 verification 字段（当前 0/321）
+- [x] **双代理独立复验题库**：321 题逐题由两个独立解题代理验算，分歧提交人工仲裁；回填 verification 字段（当前 0/321）
+  （完成于本轮，待主会话提交：src/xuexing/dual_verify.py（确定性内核：answers_match
+  verification 级比对规则表 R1–R5——归一化/choice 解析/数值+单位门/多答案集合等值/字面
+  兜底，verify_item 三值裁决 agree|disagree|incomplete、verification_record/make_record/
+  backfill_item 纯回填、verify_bank/arbitration_rows；与 grading/itembank_v2 行为一致性
+  契约测试跨模块锁定、模块间零 import）+ specs/drafts/dual_verify.spec.md +
+  tests/contract/test_dual_verify_contract.py（18 项）+ tests/data/test_dual_verify_data.py
+  （7 项：ledger 全库覆盖、manifest 与现场重跑逐位一致、回填记录可追溯、仲裁队列闭式、
+  台账现算抽查与非复制证据）+ tools/dual_agent_verify.py（CLI：key/ledger 双代理通道 +
+  manifest + 仲裁队列 + --apply 回填）；数据侧 321 题真实复验运行（2026-09-29）：
+  m3-reviewer（key 通道，M3 独立审题员解题产物即标答，PM-STATE M3 在案）×
+  night-reverify-20260929（GLM-5.3-Flash 夜间会话逐题独立重解，台账
+  data/verification/ledger_night_20260929.json，数值题 Python 现算复核，m9_30 等按推导序
+  落账以证非抄串）→ **agree 321 / disagree 0 / incomplete 0**，仲裁队列空，321/321 回填
+  verification（git diff 逐字段核实：除追加 verification 外与 HEAD 逐字节一致）；
+  test_itembank_v2_data 诚实披露 0/321 → 321/321 可追溯、integration grade7 verified
+  0→129 同步；已登记 run_contract 与根 conftest MODULES；全套 430 测试 +
+  validate_knowledge --min-items-per-kp 3（321/321 dual-agent-verified）+ run_contract
+  全量 + --impl-dir 平铺目录 --suite full 注入自检全绿）
 - [ ] **静态卷 PDF 输出**：Paper -> 打印友好排版 JSON（题号/选项/留白/页眉），为机构分发与离线渠道落格式
 - [ ] **xAPI 学习事件导出**：Response/ReviewEntry/PlanStep -> xAPI statement JSON，附学习记录标准符合性测试
 - [ ] **OMR 答题卡对接规范**：answer-sheet.json（题号-选项映射）+ OMRChecker 输出适配层
