@@ -12,7 +12,7 @@
     },
     "expected_outcomes_match": true,
     "meal_sim_s": 727.0,
-    "wall_s": 110.8,
+    "wall_s": 113.0,
     "ticks": 36350,
     "median_bite_sim_s": 19.74,
     "max_bite_sim_s": 39.32,
@@ -363,9 +363,9 @@
       }
     ],
     "dashboard": {
-      "base_url": "http://127.0.0.1:11372",
+      "base_url": "http://127.0.0.1:11502",
       "http_status_current": 200,
-      "session_id": "sess-1790627378489307400-66d51d67",
+      "session_id": "sess-1790635975818181400-1e0ca7f7",
       "bite_count_http": 30,
       "bite_count_summary": 30,
       "outcomes_http": {
@@ -507,8 +507,8 @@
         2
       ],
       "aruco_calls": 29,
-      "render_ms": 53.4,
-      "detect_ms": 100.2
+      "render_ms": 53.8,
+      "detect_ms": 99.7
     },
     "spoon_classifier": {
       "food_frames": 30,
@@ -527,7 +527,7 @@
         0.0283,
         0.3471
       ],
-      "wall_ms_first": 1244.9
+      "wall_ms_first": 1434.2
     },
     "injections": {
       "3": {

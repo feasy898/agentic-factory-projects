@@ -52,11 +52,20 @@ def build_plan(entry_name: str, direction: str, cfg: dict[str, Any],
     bucket = cfg["cos"]["bucket"]
     volume_mb = int(e.get("volume_mb", 2048))
     conf_opt = f"--config-file {coscmd_conf}" if coscmd_conf else ""
+    conf_argv = ["--config-file", coscmd_conf] if coscmd_conf else []
     if direction == "up":
         cmds = [
             f"7z -t7z -v{volume_mb}m a {entry_name}.7z.7z {local}",
             f"coscmd {conf_opt} -b {bucket} upload -r {entry_name}.7z_*.7z {remote}/",
             f"coscmd {conf_opt} -b {bucket} ls {remote}/  # 核对分卷数量",
+        ]
+        # 执行面走结构化 argv（--execute 专用）：无 shell、无字符串拼解析，
+        # 展示串里的行内注释不进入实际命令行
+        argvs = [
+            ["7z", "-t7z", f"-v{volume_mb}m", "a", f"{entry_name}.7z.7z", str(local)],
+            ["coscmd", *conf_argv, "-b", bucket, "upload", "-r",
+             f"{entry_name}.7z_*.7z", f"{remote}/"],
+            ["coscmd", *conf_argv, "-b", bucket, "ls", f"{remote}/"],
         ]
     else:
         cmds = [
@@ -64,6 +73,12 @@ def build_plan(entry_name: str, direction: str, cfg: dict[str, Any],
             f"7z x {entry_name}_vols/{entry_name}.7z.001 -o{local}",
             # 分卷完整性：核对 7z 自身 CRC（7z t），不另造校验
             f"7z t {entry_name}_vols/{entry_name}.7z.001",
+        ]
+        argvs = [
+            ["coscmd", *conf_argv, "-b", bucket, "download", "-r", f"{remote}/",
+             f"{entry_name}_vols/"],
+            ["7z", "x", f"{entry_name}_vols/{entry_name}.7z.001", f"-o{local}"],
+            ["7z", "t", f"{entry_name}_vols/{entry_name}.7z.001"],
         ]
     size_est_gb = None
     if local.is_dir():
@@ -83,6 +98,7 @@ def build_plan(entry_name: str, direction: str, cfg: dict[str, Any],
         "transfer_minutes_est": est_minutes,
         "coscmd_conf": coscmd_conf or "(缺省 ~/.cosconf)",
         "commands": cmds,
+        "command_argv": argvs,
         "executed": False,
     }
 
@@ -120,11 +136,26 @@ def main(argv: list[str] | None = None) -> int:
             fail("coscmd 不在 PATH——安装/配置见 COS 使用指南（本机不装则只生成计划）")
         import subprocess
 
-        for cmd in plan["commands"]:
-            if cmd.startswith("7z") and shutil.which("7z") is None:
-                fail("7z 不在 PATH——无法分卷/解卷")
+        # 加固后的执行面：结构化 argv（build_plan 产出 command_argv，与展示串
+        # 一一对应），程序名白名单 + shutil.which 解析出绝对路径作 argv[0]，
+        # 全程无 shell、无字符串拼解析——展示串中的行内注释不进入实际命令行。
+        allowed = {"coscmd", "7z"}
+        argv_list = plan.get("command_argv") or []
+        if len(argv_list) != len(plan["commands"]):
+            fail("计划缺少结构化命令（command_argv）——请重新生成计划后再 --execute")
+        resolved: dict[str, str] = {}
+        for prog in sorted(allowed):
+            path = shutil.which(prog)
+            if path is not None:
+                resolved[prog] = path
+        if "coscmd" not in resolved:
+            fail("coscmd 不在 PATH——安装/配置见 COS 使用指南（本机不装则只生成计划）")
+        for cmd, argv in zip(plan["commands"], argv_list):
+            prog = str(argv[0]).lower() if argv else ""
+            if prog not in allowed or prog not in resolved:
+                fail(f"命令程序不在白名单（{'/'.join(sorted(allowed))}）：{argv[:1]}")
             print(f"$ {cmd}")
-            r = subprocess.run(cmd, shell=True)
+            r = subprocess.run([resolved[prog], *argv[1:]], shell=False)
             if r.returncode != 0:
                 fail(f"命令失败（exit={r.returncode}）：{cmd}")
         plan["executed"] = True

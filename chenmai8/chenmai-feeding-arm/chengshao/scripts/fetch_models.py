@@ -16,6 +16,26 @@ PKG_PARENT = Path(__file__).resolve().parents[1]
 TARGET = PKG_PARENT / "models" / "face_landmarker.task"
 URL = "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/latest/face_landmarker.task"
 
+# 下载主机白名单（加固：--url 仅允许 https + 下列主机的模型权重镜像源）。
+# 注意：仅列中性域名——个别上游原始域名含中性名扫描禁用词，按仓库命名纪律
+# 不入库；其境内镜像（hf-mirror.com）与官方桶（缺省 URL）已覆盖实际下载场景。
+ALLOWED_HOSTS = {
+    "storage.googleapis.com",   # 官方模型桶（缺省 URL）
+    "hf-mirror.com",            # 境内镜像
+    "modelscope.cn",            # 境内镜像（ModelScope）
+    "www.modelscope.cn",
+}
+
+
+def check_url(url: str) -> None:
+    """SSRF 防护：仅允许 https + 白名单主机，违规抛 ValueError。"""
+    from urllib.parse import urlparse
+
+    u = urlparse(url)
+    if u.scheme != "https" or u.hostname not in ALLOWED_HOSTS:
+        raise ValueError(
+            f"下载地址不合规（需 https 且主机在白名单 {sorted(ALLOWED_HOSTS)}）：{url}")
+
 
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(description="下载人脸关键点模型")
@@ -26,6 +46,11 @@ def main(argv=None) -> int:
     if TARGET.is_file() and not args.force:
         print(f"已存在：{TARGET}（--force 重下）")
         return 0
+    try:
+        check_url(args.url)
+    except ValueError as exc:
+        print(f"拒绝下载：{exc}", file=sys.stderr)
+        return 2
     TARGET.parent.mkdir(parents=True, exist_ok=True)
     print(f"下载 {args.url} -> {TARGET}")
     import urllib.request

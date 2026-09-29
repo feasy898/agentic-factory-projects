@@ -11,6 +11,30 @@ seeds/      5 张公版真人种子（入库，最大边 900px）
 bundled/    种子的确定性变体帧（cs_mouth.bootstrap 自动生成，入库）
 labels.json 全部标注帧清单（bundled 自动生成；clips 由导入脚本合并）
 clips/      主人后补的手机视频/静帧导入产物（导入脚本写入）
+face_demo_carousel.mp4  bundled/*.jpg 合成的内置演示视频（240 帧 @10fps，
+            每帧驻留 0.6s；demo_mouth.py 无摄像头时的缺省输入源，见 §再生成）
+```
+
+## 内置演示视频再生成（face_demo_carousel.mp4）
+
+派生资产：源头是 `bundled/*.jpg`。重采样本后可再生成（依赖 opencv）：
+
+```bash
+python - <<'PY'
+import cv2, glob
+from pathlib import Path
+files = sorted(glob.glob("assets/face_samples/bundled/*.jpg"))
+out = Path("assets/face_samples/face_demo_carousel.mp4")
+w, h, fps, hold = 720, 900, 10, 6
+vw = cv2.VideoWriter(str(out), cv2.VideoWriter.fourcc(*"mp4v"), fps, (w, h))
+for f in files:
+    img = cv2.imread(f)
+    if img.shape[:2] != (h, w):
+        img = cv2.resize(img, (w, h))
+    for _ in range(hold):
+        vw.write(img)
+vw.release()
+PY
 ```
 
 ## 种子来源（NASA Image and Video Library，2026-09-28 获取）

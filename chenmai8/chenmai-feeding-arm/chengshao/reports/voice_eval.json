@@ -1,6 +1,6 @@
 {
   "module": "cs_voice",
-  "date": "2026-09-28",
+  "date": "2026-09-29",
   "cmd": "python -m cs_voice.eval --input chengshao/assets/voice_samples --report chengshao/reports/voice_eval.json",
   "metrics": {
     "n_total": 20,
@@ -29,15 +29,15 @@
       }
     },
     "latency": {
-      "mean_s": 0.363,
-      "p50_s": 0.361,
-      "p95_s": 0.411,
-      "max_s": 0.411,
-      "cold_first_s": 0.396
+      "mean_s": 0.454,
+      "p50_s": 0.458,
+      "p95_s": 0.525,
+      "max_s": 0.525,
+      "cold_first_s": 0.599
     },
     "asr": {
       "backend": "funasr",
-      "model_load_s": 47.9
+      "model_load_s": 172.1
     },
     "tts": {
       "available": true,
@@ -66,7 +66,7 @@
       "predicted": "next",
       "dish_predicted": null,
       "confidence": 0.95,
-      "latency_s": 0.336,
+      "latency_s": 0.488,
       "ok": true
     },
     {
@@ -77,7 +77,7 @@
       "predicted": "next",
       "dish_predicted": null,
       "confidence": 0.95,
-      "latency_s": 0.393,
+      "latency_s": 0.447,
       "ok": true
     },
     {
@@ -88,7 +88,7 @@
       "predicted": "next",
       "dish_predicted": null,
       "confidence": 0.95,
-      "latency_s": 0.353,
+      "latency_s": 0.367,
       "ok": true
     },
     {
@@ -99,7 +99,7 @@
       "predicted": "next",
       "dish_predicted": null,
       "confidence": 0.95,
-      "latency_s": 0.362,
+      "latency_s": 0.411,
       "ok": true
     },
     {
@@ -110,7 +110,7 @@
       "predicted": "pause",
       "dish_predicted": null,
       "confidence": 0.95,
-      "latency_s": 0.372,
+      "latency_s": 0.394,
       "ok": true
     },
     {
@@ -121,7 +121,7 @@
       "predicted": "pause",
       "dish_predicted": null,
       "confidence": 0.95,
-      "latency_s": 0.361,
+      "latency_s": 0.412,
       "ok": true
     },
     {
@@ -132,7 +132,7 @@
       "predicted": "pause",
       "dish_predicted": null,
       "confidence": 0.95,
-      "latency_s": 0.411,
+      "latency_s": 0.444,
       "ok": true
     },
     {
@@ -143,7 +143,7 @@
       "predicted": "pause",
       "dish_predicted": null,
       "confidence": 0.95,
-      "latency_s": 0.383,
+      "latency_s": 0.488,
       "ok": true
     },
     {
@@ -154,7 +154,7 @@
       "predicted": "done",
       "dish_predicted": null,
       "confidence": 0.95,
-      "latency_s": 0.348,
+      "latency_s": 0.471,
       "ok": true
     },
     {
@@ -165,7 +165,7 @@
       "predicted": "done",
       "dish_predicted": null,
       "confidence": 0.95,
-      "latency_s": 0.35,
+      "latency_s": 0.525,
       "ok": true
     },
     {
@@ -176,7 +176,7 @@
       "predicted": "done",
       "dish_predicted": null,
       "confidence": 0.95,
-      "latency_s": 0.367,
+      "latency_s": 0.5,
       "ok": true
     },
     {
@@ -187,7 +187,7 @@
       "predicted": "done",
       "dish_predicted": null,
       "confidence": 0.95,
-      "latency_s": 0.347,
+      "latency_s": 0.44,
       "ok": true
     },
     {
@@ -198,7 +198,7 @@
       "predicted": "select",
       "dish_predicted": "芋泥",
       "confidence": 0.9,
-      "latency_s": 0.4,
+      "latency_s": 0.451,
       "ok": true
     },
     {
@@ -209,7 +209,7 @@
       "predicted": "select",
       "dish_predicted": "南瓜粥",
       "confidence": 0.9,
-      "latency_s": 0.32,
+      "latency_s": 0.458,
       "ok": true
     },
     {
@@ -220,7 +220,7 @@
       "predicted": "select",
       "dish_predicted": "椰子冻",
       "confidence": 0.9,
-      "latency_s": 0.339,
+      "latency_s": 0.461,
       "ok": true
     },
     {
@@ -231,7 +231,7 @@
       "predicted": "select",
       "dish_predicted": "南瓜粥",
       "confidence": 0.9,
-      "latency_s": 0.399,
+      "latency_s": 0.465,
       "ok": true
     },
     {
@@ -242,7 +242,7 @@
       "predicted": "unknown",
       "dish_predicted": null,
       "confidence": 0.3,
-      "latency_s": 0.357,
+      "latency_s": 0.504,
       "ok": true
     },
     {
@@ -253,7 +253,7 @@
       "predicted": "unknown",
       "dish_predicted": null,
       "confidence": 0.3,
-      "latency_s": 0.372,
+      "latency_s": 0.491,
       "ok": true
     },
     {
@@ -264,7 +264,7 @@
       "predicted": "unknown",
       "dish_predicted": null,
       "confidence": 0.3,
-      "latency_s": 0.336,
+      "latency_s": 0.436,
       "ok": true
     },
     {
@@ -275,7 +275,7 @@
       "predicted": "unknown",
       "dish_predicted": null,
       "confidence": 0.3,
-      "latency_s": 0.35,
+      "latency_s": 0.428,
       "ok": true
     }
   ]

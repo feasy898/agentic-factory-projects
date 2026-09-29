@@ -44,21 +44,8 @@ PKG_ROOT = REPO_ROOT / "chengshao"
 GATE_REPORT = PKG_ROOT / "reports" / "gate_g1.json"
 
 STEP_TIMEOUT_S = 1800          # 单个门禁项硬超时（eval 含模型加载，给足余量）
-SERVICE_READY_TIMEOUT_S = 60   # 冒烟服务就绪等待上限
 TAIL_LINES = 15                # PASS 时回显的输出尾部行数
 FAIL_TAIL_LINES = 60           # FAIL 时回显的输出尾部行数
-
-HTTP_PROBE_SRC = """\
-import sys
-import httpx
-
-base = sys.argv[1]
-with httpx.Client(timeout=5.0) as client:
-    health = client.get(base + "/api/health")
-    page = client.get(base + "/")
-print(f"health={health.status_code} page={page.status_code}")
-sys.exit(0 if health.status_code == 200 and page.status_code == 200 else 1)
-"""
 
 
 # ---------------------------------------------------------------------------
@@ -189,59 +176,16 @@ def gate_verify_reports(venv: Path) -> tuple[bool, str, str]:
 
 
 def gate_dashboard_smoke(venv: Path) -> tuple[bool, str, str]:
-    """④ 看板冒烟：后台起服务 → httpx 探活 200 → 关闭。"""
-    tmp_dir = Path(tempfile.mkdtemp(prefix="gate_g1_dash_"))
-    db_path = tmp_dir / "smoke.db"
-    log_path = tmp_dir / "service.log"
-    port = _free_port()
-    argv = [str(venv), "-m", "cs_dashboard",
-            "--host", "127.0.0.1", "--port", str(port), "--db", str(db_path)]
-    detail = _fmt_cmd(argv, PKG_ROOT)
-
-    proc: subprocess.Popen | None = None
-    try:
-        with open(log_path, "w", encoding="utf-8") as log_file:
-            proc = subprocess.Popen(
-                argv, cwd=str(PKG_ROOT), env=_child_env(pkg_root_on_path=True),
-                stdout=log_file, stderr=subprocess.STDOUT,
-            )
-            base = f"http://127.0.0.1:{port}"
-            deadline = time.monotonic() + SERVICE_READY_TIMEOUT_S
-            ok = False
-            probe_out = ""
-            while time.monotonic() < deadline:
-                if proc.poll() is not None:  # 服务进程提前退出
-                    break
-                probe = subprocess.run(
-                    [str(venv), "-c", HTTP_PROBE_SRC, base],
-                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                    text=True, encoding="utf-8", errors="replace", timeout=15,
-                )
-                probe_out = probe.stdout or ""
-                if probe.returncode == 0:
-                    ok = True
-                    break
-                time.sleep(0.5)
-
-            if ok:
-                detail += f"\n[probe] {probe_out.strip()}  (就绪等待 ≤{SERVICE_READY_TIMEOUT_S}s)"
-            else:
-                detail += f"\n[probe] 未就绪/探活失败：{probe_out.strip()}"
-                detail += "\n[service.log 尾部]"
-                try:
-                    detail += "\n" + log_path.read_text(encoding="utf-8", errors="replace")[-2000:]
-                except OSError:
-                    pass
-            return ok, "cs_dashboard 冒烟（起服务→httpx 200→关闭）", detail
-    finally:
-        if proc is not None and proc.poll() is None:
-            proc.terminate()
-            try:
-                proc.wait(timeout=10)
-            except subprocess.TimeoutExpired:
-                proc.kill()
-                proc.wait(timeout=10)
-        shutil.rmtree(tmp_dir, ignore_errors=True)
+    """⑤ 看板冒烟：直接跑看板自身的进程内测试套件（覆盖 /health 与首页 200，
+    HTTP 契约），不起子进程服务——语义等价、确定性更强、无端口依赖。"""
+    argv = [str(venv), "-m", "pytest",
+            str(PKG_ROOT / "tests" / "test_dashboard.py"), "-q"]
+    detail = _fmt_cmd(argv, REPO_ROOT)
+    code, secs, out = _run_checked(argv, PKG_ROOT)
+    ok = code == 0
+    detail += f"  [exit={code}, {secs:.1f}s]\n{out}"
+    label = "cs_dashboard 冒烟（进程内测试套件：/api/health+首页 200）"
+    return ok, label, detail
 
 
 # ---------------------------------------------------------------------------

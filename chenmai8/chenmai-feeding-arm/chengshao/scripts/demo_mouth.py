@@ -8,9 +8,11 @@
 - 深度相机是机构版高配选项（接口不变、无感切换，本演示不依赖）。
 
 输入源（--source）：
-  auto    摄像头优先，打不开自动回退内置样本（缺省）；
+  auto    摄像头优先，打不开自动回退内置视频（缺省）；
   camera  cv2.VideoCapture(--device)；
-  bundled 资产库真人样本轮播（assets/face_samples/bundled，无摄像头演示）；
+  video   内置视频源循环播放（assets/face_samples/face_demo_carousel.mp4，
+          由 bundled/*.jpg 合成——无摄像头演示的缺省回退）；
+  bundled 资产库真人样本轮播（assets/face_samples/bundled，视频缺失时的再回退）；
   cartoon 程序合成卡通脸（张嘴动画；纯离线、零样本依赖）。
 
 用法（cwd 任意）::
@@ -40,7 +42,12 @@ if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
 from chengshao.cs_mouth.estimator import MouthEstimator  # noqa: E402
-from chengshao.cs_mouth.imgio import imread_u, imwrite_u  # noqa: E402
+from chengshao.cs_mouth.imgio import (  # noqa: E402
+    imread_u,
+    imwrite_u,
+    open_video_u,
+    release_video_u,
+)
 from chengshao.cs_mouth.prior import MouthPrior  # noqa: E402
 from chengshao.cs_mouth.synth import draw_cartoon_face  # noqa: E402
 from chengshao.cs_orchestra.core import NOMINAL_T_FLANGE_CAM  # noqa: E402
@@ -51,6 +58,7 @@ from chengshao.cs_schema.constants import (  # noqa: E402
 )
 
 BUNDLED_DIR = PKG_ROOT / "assets" / "face_samples" / "bundled"
+BUNDLED_VIDEO = PKG_ROOT / "assets" / "face_samples" / "face_demo_carousel.mp4"
 
 
 # ---- 输入源 ------------------------------------------------------------------------
@@ -72,6 +80,35 @@ class CameraSource:
 
     def close(self) -> None:
         self.cap.release()
+
+
+class VideoFileSource:
+    """内置视频源循环播放（无摄像头时的缺省回退；中文路径安全 open）。
+
+    由 assets/face_samples/bundled/*.jpg 合成（每帧驻留 0.6s @10fps）；
+    播完自动从头循环，读帧失败重开一次后仍失败才抛错（由调用方再回退）。
+    """
+
+    name = "video"
+
+    def __init__(self, path: Path = BUNDLED_VIDEO) -> None:
+        self.path = Path(path)
+        self.cap = open_video_u(self.path)
+        if self.cap is None:
+            raise RuntimeError(f"内置视频打不开：{self.path}")
+
+    def read(self):
+        ok, frame = self.cap.read()
+        if not ok:  # 播完 -> 循环
+            release_video_u(self.cap)
+            self.cap = open_video_u(self.path)
+            if self.cap is None:
+                return None
+            ok, frame = self.cap.read()
+        return frame if ok else None
+
+    def close(self) -> None:
+        release_video_u(self.cap)
 
 
 class BundledSource:
@@ -113,11 +150,13 @@ class CartoonSource:
 def open_source(kind: str, device: int) -> object:
     if kind == "camera":
         return CameraSource(device)
+    if kind == "video":
+        return VideoFileSource()
     if kind == "bundled":
         return BundledSource()
     if kind == "cartoon":
         return CartoonSource()
-    # auto：摄像头优先，回退内置样本，再回退卡通
+    # auto：摄像头优先，回退内置视频，再回退样本轮播，最后卡通
     try:
         src = CameraSource(device)
         print("输入源：摄像头")
@@ -125,8 +164,14 @@ def open_source(kind: str, device: int) -> object:
     except RuntimeError:
         pass
     try:
+        src = VideoFileSource()
+        print(f"输入源：内置视频循环（{src.path.name}；未检出可用摄像头）")
+        return src
+    except RuntimeError:
+        pass
+    try:
         src = BundledSource()
-        print(f"输入源：内置样本轮播（{len(src.files)} 帧；未检出可用摄像头）")
+        print(f"输入源：内置样本轮播（{len(src.files)} 帧；内置视频缺失）")
         return src
     except RuntimeError:
         print("输入源：程序合成卡通脸（样本资产缺失）")
@@ -278,8 +323,8 @@ def _parse_args(argv=None):
     ap = argparse.ArgumentParser(
         prog="python scripts/demo_mouth.py",
         description="口部实时演示：478 关键点+jaw 实时条+转头报警（§8.2）")
-    ap.add_argument("--source", choices=["auto", "camera", "bundled", "cartoon"],
-                    default="auto", help="输入源（auto=摄像头优先，回退内置样本）")
+    ap.add_argument("--source", choices=["auto", "camera", "video", "bundled", "cartoon"],
+                    default="auto", help="输入源（auto=摄像头优先，回退内置视频）")
     ap.add_argument("--device", type=int, default=0, help="摄像头序号")
     ap.add_argument("--wrist", action="store_true",
                     help="腕部双职模式：IPD 瞳距估距 + 名义 FK 位姿（契约 v1.1）")

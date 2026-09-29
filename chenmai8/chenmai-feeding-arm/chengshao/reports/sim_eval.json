@@ -1,6 +1,6 @@
 {
   "module": "cs_sim",
-  "date": "2026-09-28",
+  "date": "2026-09-29",
   "cmd": "python -m cs_sim.eval --model auto --report reports/sim_eval.json",
   "metrics": {
     "model": {
@@ -69,7 +69,7 @@
       "ori_err_mean_rad": 0.00012710907580001446,
       "restarts_used_max": 27,
       "restarts_used_mean": 1.3015075376884422,
-      "duration_s": 5.62
+      "duration_s": 11.78
     },
     "ik_mouth_front": {
       "region": "delivery stop-point neighbourhood (mouth-front workspace)",
@@ -89,7 +89,7 @@
       "manip_sigma_median": 0.09254705315103653,
       "pos_err_max_m": 0.0004583908347691753,
       "ori_err_max_rad": 0.0013843842035867304,
-      "duration_s": 2.59
+      "duration_s": 4.91
     },
     "cross_tier_fk": {
       "skipped": false,
@@ -106,7 +106,7 @@
         "max_pos_err_m": 3.6894727791956735e-06,
         "max_ori_err_rad": 1.6197829531822862e-05
       },
-      "duration_s": 3.42
+      "duration_s": 7.24
     },
     "reachability": {
       "grid": {
@@ -129,7 +129,7 @@
       "reachable_fraction": 0.5853174603174603,
       "n_unreachable": 3971,
       "png": "reports\\reach_map.png",
-      "duration_s": 558.34
+      "duration_s": 705.44
     },
     "safety_envelope": {
       "violating_total": 500,
@@ -172,7 +172,7 @@
       "benign_accepted": 100,
       "benign_acceptance_rate": 1.0,
       "config_source": "chengshao/config/workspace.json (defaults)",
-      "duration_s": 1.04
+      "duration_s": 1.26
     },
     "adversarial": {
       "total": 124,
@@ -226,7 +226,7 @@
         "link_capsule_sweep": "link_sweep",
         "tcp_arc_zone_intrusion": "zone(face)"
       },
-      "duration_s": 8.84
+      "duration_s": 9.13
     },
     "delivery": {
       "stop_point_m": [
@@ -271,7 +271,7 @@
           "tcp_end_err_m": 0.0
         }
       },
-      "duration_s": 0.07
+      "duration_s": 0.1
     }
   },
   "thresholds": {
@@ -320,5 +320,5 @@
     "cross_tier_urdf_mujoco": true
   },
   "pass": true,
-  "wall_time_s": 580.99
+  "wall_time_s": 742.28
 }

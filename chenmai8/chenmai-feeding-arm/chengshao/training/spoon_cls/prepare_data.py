@@ -42,6 +42,7 @@ if __package__ in (None, ""):
 
 from chengshao.training.common import (  # noqa: E402
     ConfigError,
+    REPO_ROOT,
     dump_json,
     fail,
     load_json,
@@ -146,9 +147,14 @@ def cv2_laplacian_var(gray) -> float:
 
 def write_outputs(out_dir: Path, items: list[dict], splits: dict[str, list[str]],
                   params: dict[str, Any]) -> None:
+    out_dir = Path(out_dir).resolve()
+    if not out_dir.is_relative_to(REPO_ROOT):  # 纵深防御：--out 已走 safe_rel_output，
+        raise ConfigError(                     # 落盘前再断言解析路径不逃逸仓库根
+            f"输出目录解析后逃逸仓库根，拒绝写入：{out_dir}")
     out_dir.mkdir(parents=True, exist_ok=True)
     split_of = {e: s for s, eps in splits.items() for e in eps}
-    with open(out_dir / "index.csv", "w", newline="", encoding="utf-8") as fh:
+    index_csv = out_dir / "index.csv"  # 已过 is_relative_to 守卫
+    with index_csv.open("w", newline="", encoding="utf-8") as fh:
         w = csv.writer(fh)
         w.writerow(["split", "episode_id", "frame", "label"])
         for it in items:
