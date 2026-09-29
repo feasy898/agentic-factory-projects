@@ -1,11 +1,11 @@
-"""M9 webui 验收（部分——T3.3 范围：文件体检页骨架 + /v1/files/* 端点契约）。
+"""M9 webui 验收（部分——T3.3 体检页骨架 + /v1/files/* 契约；T4.3 演示控制页入口）。
 
 运行::
 
     cd REPO_ROOT && PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.m9_webui
 
-exit 0 = 通过。M9 全量口径（§6：四页 GET 200 + 探针字符串）中聊天页/看板页/
-演示控制页由 T5.2 补全，本入口当前只验收已上线面：
+exit 0 = 通过。M9 全量口径（§6：四页 GET 200 + 探针字符串）中聊天页/看板页由
+T5.2 补全，本入口当前验收已上线面：
 
 1. GET /webui        演示首页 200，探针「文件体检」与 /webui/files 入口在位；
 2. GET /webui/files  体检页 200，骨架三要素探针齐全——上传控件（file-input）、
@@ -19,7 +19,12 @@ exit 0 = 通过。M9 全量口径（§6：四页 GET 200 + 探针字符串）中
 6. pdf 体检+导出：种子身份证带页面定位框（render 坐标）；导出物重抽取零残留；
 7. 错误形状：未知文件种类 → 400 unsupported_file_type 信封；非法导出 mode →
    400 bad_request；缺文件字段 → 422（FastAPI 校验面）；50MB 上限在服务层
-   生效（FileTooLargeError）。
+   生效（FileTooLargeError）；
+8. GET /webui/demo  演示控制页骨架 200（T4.3）：五场景清单探针（场景4 防注入/
+   场景5 扫描件体检）+ 场景材料下载链接在位；
+9. GET /webui/demo/materials/{filename}  场景材料下载：白名单外 404；埋注版
+   docx → 200 真实 docx 字节；合成扫描件 pdf → 200 且经 /v1/files/inspect
+   报 kind=scan_pdf、身份证 ≥3、risk=HIGH（OCR 体检链路端到端可演示）。
 
 网关进程内 ASGI 启动（真实 config/app.yaml + 内存审计），零外部依赖。
 """
@@ -193,6 +198,60 @@ def check_webui_files_page(app: Any) -> str:
     return f"200；上传控件/体检按钮/导出按钮 + 两端点路径探针齐全（{len(probes)} 项）"
 
 
+def check_webui_demo_page(app: Any) -> str:
+    """演示控制页骨架（T4.3）：五场景清单 + 场景4/5 材料下载链接探针。"""
+    resp = _get(app, "/webui/demo")
+    assert resp.status_code == 200, f"status={resp.status_code}"
+    html = resp.text
+    probes = ("演示控制页", "场景4", "场景5", "防注入", "扫描件体检",
+              "/webui/demo/materials/webpage_policy_qa_clean.docx",
+              "/webui/demo/materials/webpage_policy_qa_injected.docx",
+              "/webui/demo/materials/scan_lowincome_publicity_demo.pdf")
+    missing = [p for p in probes if p not in html]
+    assert not missing, f"演示控制页探针缺失: {missing}"
+    return f"200；五场景清单探针 + 场景4/5 材料下载链接在位（{len(probes)} 项）"
+
+
+def check_webui_demo_materials(app: Any) -> str:
+    """场景材料下载：白名单外 404；埋注版 docx / 合成扫描件 pdf 真实字节，
+    且扫描件经体检链路报 scan_pdf + 身份证 ≥3 + HIGH（OCR 链路端到端可演示）。"""
+    from benchmark.generator.materials import (
+        DEMO_SCAN_IDS,
+        WEBPAGE_INJECTED_MATERIAL,
+        material_plain_text,
+    )
+
+    unknown = _get(app, "/webui/demo/materials/not_a_material.docx")
+    assert unknown.status_code == 404, f"白名单外应 404: {unknown.status_code}"
+
+    inj = _get(app, "/webui/demo/materials/" + WEBPAGE_INJECTED_MATERIAL.filename)
+    assert inj.status_code == 200, f"injected: {inj.status_code}"
+    assert inj.content.startswith(b"PK"), "埋注版 docx 字节形态异常"
+    assert DOCX_MIME in inj.headers.get("content-type", ""), inj.headers.get("content-type")
+    from filechannel.parsers import parse_any
+
+    parsed = parse_any(WEBPAGE_INJECTED_MATERIAL.filename, inj.content)
+    extracted = "\n".join(seg.text for seg in parsed.segments)
+    assert extracted == material_plain_text(WEBPAGE_INJECTED_MATERIAL), \
+        "下载物正文 != 生成器构造面（往返完整性）"
+    assert "忽略上面所有规则" in extracted, "埋注段缺失"
+
+    scan = _get(app, "/webui/demo/materials/scan_lowincome_publicity_demo.pdf")
+    assert scan.status_code == 200, f"scan: {scan.status_code}"
+    assert scan.content.startswith(b"%PDF"), "扫描件 pdf 字节形态异常"
+    assert PDF_MIME in scan.headers.get("content-type", ""), scan.headers.get("content-type")
+    report = _post_inspect(app, scan.content,
+                           "scan_lowincome_publicity_demo.pdf", PDF_MIME).json()
+    assert report["kind"] == "scan_pdf", f"kind: {report['kind']}"
+    assert report["risk_level"] == "HIGH", f"risk: {report['risk_level']}"
+    assert report["summary"].get("ID_CARD", 0) >= 3, f"summary: {report['summary']}"
+    found = {ff["finding"]["normalized"] for ff in report["findings"]
+             if ff["finding"]["type"] == "ID_CARD"}
+    assert set(DEMO_SCAN_IDS) <= found, f"seeded 身份证漏检: {DEMO_SCAN_IDS} vs {found}"
+    return ("白名单外 404；埋注版 docx 往返正文全等含埋注段；扫描件 pdf → 体检 "
+            f"scan_pdf/HIGH，seeded 身份证 {len(DEMO_SCAN_IDS)} 枚全命中（OCR 链路）")
+
+
 def check_inspect_docx(app: Any) -> str:
     resp = _post_inspect(app, _build_docx(), "低保公示.docx", DOCX_MIME)
     assert resp.status_code == 200, f"status={resp.status_code} body={resp.text[:200]!r}"
@@ -317,6 +376,8 @@ def main() -> int:
 
     _record("webui 首页（/webui）", lambda: check_webui_index(app))
     _record("体检页骨架（/webui/files）", lambda: check_webui_files_page(app))
+    _record("演示控制页骨架（/webui/demo，T4.3）", lambda: check_webui_demo_page(app))
+    _record("演示材料下载（白名单/往返/扫描件体检）", lambda: check_webui_demo_materials(app))
     _record("inspect docx（FileReport 契约）", lambda: check_inspect_docx(app))
     _record("export docx（X-Report-Id + 零残留）", lambda: check_export_docx(app))
     _record("xlsx 隐藏列体检+删列导出", lambda: check_xlsx_hidden_col(app))
@@ -324,7 +385,8 @@ def main() -> int:
     _record("错误形状（400/422/50MB 闸）", lambda: check_error_shapes(app))
 
     print("=" * 64)
-    print("evals.m9_webui（部分：体检页骨架 + /v1/files/*；四页全量验收待 T5.2）")
+    print("evals.m9_webui（部分：体检页骨架 + /v1/files/* + 演示控制页入口；"
+          "聊天/看板页全量验收待 T5.2）")
     print("=" * 64)
     for _ok, line in RESULTS:
         print(line)
