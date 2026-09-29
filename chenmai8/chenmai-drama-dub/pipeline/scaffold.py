@@ -38,6 +38,7 @@ EXPECTED_FILES: dict[str, tuple[str, ...]] = {
     # 01_media 保存混音口径产物：audio_16k.wav/audio_48k.wav 为 M1 重采样混音（含 BGM/音效），
     # bgm.wav 为 M3 分离出的背景音。人声不落本层 —— B1 冻结：M3 人声产出到 04_dial/vocals.wav。
     "01_media": ("video_1080x1920_25fps.mp4", "audio_16k.wav", "audio_48k.wav", "bgm.wav",
+                 "video_1080x1920_25fps_clean.mp4",  # T8/M11：擦除基带（delogo/inpaint 产物）
                  "probe.json"),  # probe.json 为 M1 产出口径（规划 §4 M1）
     "02_shots": ("shots.json",),  # C1
     "03_ocr": ("ocr_raw.jsonl", "ocr_merged.jsonl"),
