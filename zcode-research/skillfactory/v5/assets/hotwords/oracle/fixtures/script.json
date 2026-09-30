@@ -1,0 +1,15 @@
+{
+  "description": "单位热词表管理器演示操作序列：由 run_all.py 逐步以真实 CLI 子进程执行，--store 由 run_all 注入（指向从 base.json 复制的工作库，跨步延续）",
+  "steps": [
+    {"id": "list_initial", "args": ["list"], "expect": "ok", "desc": "初始演示库按类别分组列出"},
+    {"id": "add_ok", "args": ["add", "灵犀大模型", "--category", "产品", "--note", "公司旗舰大模型"], "expect": "ok", "desc": "追加新词条"},
+    {"id": "add_duplicate", "args": ["add", "悟空客服", "--category", "产品", "--note", "与既有词重复应报错"], "expect": "fail", "desc": "重复词条报错（退出码 2，库不变）"},
+    {"id": "add_with_weight", "args": ["add", "通义听悟", "--category", "产品", "--note", "转写工具", "--weight", "30"], "expect": "ok", "desc": "带自定义权重追加"},
+    {"id": "remove_ok", "args": ["remove", "闪修服务"], "expect": "ok", "desc": "按词删除既有词条"},
+    {"id": "remove_missing", "args": ["remove", "不存在的词"], "expect": "fail", "desc": "删除不存在的词报错（退出码 2）"},
+    {"id": "list_final", "args": ["list"], "expect": "ok", "desc": "增删后的库按类别分组列出"},
+    {"id": "export_funasr", "args": ["export", "--format", "funasr", "--out", "hotwords_funasr.txt"], "expect": "ok", "desc": "导出 FunASR 热词文件（词 权重）"},
+    {"id": "export_plain", "args": ["export", "--format", "plain", "--out", "hotwords_plain.txt"], "expect": "ok", "desc": "导出纯文本热词文件（每行一词）"},
+    {"id": "export_stdout", "args": ["export", "--format", "funasr"], "expect": "ok", "desc": "省略 --out 时导出到标准输出"}
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "tool": "validate.py",
+  "asset": "skillfactory/v5/assets/deploy-pack/oracle",
+  "pack": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle/out/pack-canonical",
+  "services_expected": [
+    "asr",
+    "minutes",
+    "todo"
+  ],
+  "services_found": [
+    "asr",
+    "minutes",
+    "todo"
+  ],
+  "generated_at": "2026-10-01T03:31:31+08:00",
+  "checks": [
+    {
+      "name": "C1 compose_safe_load",
+      "status": "PASS",
+      "detail": "safe_load 通过; services=['asr', 'minutes', 'todo']"
+    },
+    {
+      "name": "C2 services_exact",
+      "status": "PASS",
+      "detail": "期望=['asr', 'minutes', 'todo'] 实际=['asr', 'minutes', 'todo'] 缺=[] 多=[]"
+    },
+    {
+      "name": "C3 env_consistent",
+      "status": "PASS",
+      "detail": "compose引用 12 个/.env 定义 12 个; compose引用而.env缺=[]; .env多出=[]; 缺省值漂移=[]"
+    },
+    {
+      "name": "C4 no_hardcoded_secrets",
+      "status": "PASS",
+      "detail": "逐行扫描 docker-compose.yml/.env.example/DEPLOY.md; 命中 0 处"
+    },
+    {
+      "name": "C5 wiring_asr_minutes",
+      "status": "PASS",
+      "detail": "asr.ASR_OUTPUT_DIR == minutes.MINUTES_INPUT_DIR == './data/asr-out'"
+    },
+    {
+      "name": "C6 deploy_md_three_cmds",
+      "status": "PASS",
+      "detail": "三命令要素齐备（复制env/compose up/compose ps/healthz）"
+    },
+    {
+      "name": "C7 deterministic_regenerate",
+      "status": "PASS",
+      "detail": "以服务集 ['asr', 'minutes', 'todo'] 重跑 gen_deploy.py，三份产物逐字节一致"
+    }
+  ],
+  "summary": {
+    "pass": 7,
+    "fail": 0,
+    "skip": 0
+  },
+  "verdict": "ALL GREEN"
+}

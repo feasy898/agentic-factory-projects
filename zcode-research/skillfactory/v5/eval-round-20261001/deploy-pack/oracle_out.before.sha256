@@ -1,0 +1,13 @@
+b50b13d5b2ca5e2c437eea79db9a45914e54d6e1c722c3c1d58e5c8d6e3ce0bf  ./fixtures-run.json
+b0d07aadcd045e681f9d194ea80d8eacd081edf619dd7fe44f98a148d3e6eed6  ./pack-canonical-validate.json
+fb2726ef544d7e538720076fac4a04e11c27a12d201b0de89bde2de0245d00ec  ./pack-canonical/.env.example
+3230c70585309e0ef8cac6bbd443d0f144b670f0e4dc66df5c2f3af6223f6db6  ./pack-canonical/DEPLOY.md
+32b53036e2efb462adc649e187e02f42352d2bcbc0b8bffadef6e9dd31e746bc  ./pack-canonical/docker-compose.yml
+d3e54a389493d973cf71b398b26627ba2db4d2fc849fbad9916940ac4835b290  ./pack-subset-validate.json
+05a774ce777597ff29798ebc148f92e50a602386c2d600e242ef972c41b860e3  ./pack-subset/.env.example
+3c0a2cf404795a27e45bf9160bb17e5a53596abee3ad6bfb9b6d7f394bb8ea05  ./pack-subset/DEPLOY.md
+c155497c776e71273260144fe3f4ac671644b492dffdd633734f7f595c7ec326  ./pack-subset/docker-compose.yml
+2c8c7110464282c8d776d6aaf219cf4c5d92334c9dca24a1312ef1ef5152ed4b  ./red/red-bad-yaml-report.json
+20395ef9ad761edc49434224bf3e17bb67f7ec972369e5f174709ccce2111bd1  ./red/red-env-drift-report.json
+1d7b4829c1942732b52da3301134ad269878ea9c26083b1ab1b526e932f07ee4  ./red/red-hardcoded-secret-report.json
+c94e6d988f9a1f0a033d1f960d0054d30d58d34a422bd3d49e2c251e57e1c5fb  ./red/red-missing-service-report.json

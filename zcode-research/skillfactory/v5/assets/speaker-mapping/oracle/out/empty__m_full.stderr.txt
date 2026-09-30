@@ -1,0 +1,4 @@
+[map_speakers.py] WARNING: 映射键 "SPEAKER_00" 在转写稿中未出现
+[map_speakers.py] WARNING: 映射键 "SPEAKER_01" 在转写稿中未出现
+[map_speakers.py] WARNING: 映射键 "SPEAKER_02" 在转写稿中未出现
+[map_speakers.py] INFO: 写出 out\empty__m_full.txt（共 7 行，替换标签 0 处，未映射标签 0 种）

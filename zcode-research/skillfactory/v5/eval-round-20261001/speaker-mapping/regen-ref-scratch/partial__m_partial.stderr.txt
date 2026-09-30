@@ -1,0 +1,3 @@
+[map_speakers.py] WARNING: 未映射说话人标签 "SPEAKER_03"，出现 3 次，已原样保留
+[map_speakers.py] WARNING: 未映射说话人标签 "SPEAKER_02"，出现 2 次，已原样保留
+[map_speakers.py] INFO: 写出 /opt/gpumachine/projects/zcode-research/skillfactory/v5/eval-round-20261001/speaker-mapping/regen-ref-scratch/partial__m_partial.txt（共 10 行，替换标签 5 处，未映射标签 2 种）

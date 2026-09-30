@@ -1,0 +1,40 @@
+1c1
+< 979a0d14cfca39f92944d6ee4ca5d55cc7066064d3a3202aa23550a59e6a247e  ./01_list_initial/cmd.txt
+---
+> de99a307f493b6f7dcf0a35b7ab90c824f867a95c093c17fc39c283520c8f5fb  ./01_list_initial/cmd.txt
+6c6
+< 41f61341e911043b3681f8bf311a42895ba7797ccaad08132f99dee108608763  ./02_add_ok/cmd.txt
+---
+> 465c2ec96fe338df8bc69045357683fc49225750d69b3f28f542f222e86a5cd9  ./02_add_ok/cmd.txt
+11c11
+< dc69602ea506772a6dd99bc64b4fdb2452a2d146a05bed5432b5d6eb98430ee5  ./03_add_duplicate/cmd.txt
+---
+> 7b66d833129c1d63b37c54815240cd6c42a15a5967edb4e1f800c296d886305b  ./03_add_duplicate/cmd.txt
+16c16
+< 456696258827d457609ae29eae627ea021d7854ed8b7c7fc110348e4dddf9612  ./04_add_with_weight/cmd.txt
+---
+> f49bc782c40a6614dbdc9e6bd28015a9a2586e955096af0318644100a4b4d647  ./04_add_with_weight/cmd.txt
+21c21
+< 8a86d45c8413ff55d5b899e192d68dcc6ba3fe6f2ab0ed372ce398e65b0c89b9  ./05_remove_ok/cmd.txt
+---
+> c24cde1146ab15c08ea38c8925e9abf26ea766dac0eb6e14ad9eefc2ef6baa3f  ./05_remove_ok/cmd.txt
+26c26
+< 7a55c4f31f67065da9f04c3201e3b55f0270e822bf82bea256fff937eb1b30ec  ./06_remove_missing/cmd.txt
+---
+> 659bf3787904443edd628bb3eeee9cd788010a776bed900d6b4cd4ce30082571  ./06_remove_missing/cmd.txt
+31c31
+< 979a0d14cfca39f92944d6ee4ca5d55cc7066064d3a3202aa23550a59e6a247e  ./07_list_final/cmd.txt
+---
+> de99a307f493b6f7dcf0a35b7ab90c824f867a95c093c17fc39c283520c8f5fb  ./07_list_final/cmd.txt
+36c36
+< 11afb343c250be245eaec1a4a4a4671c1910e2695b61ae54c1048d4374732d69  ./08_export_funasr/cmd.txt
+---
+> 3f14615ef91e1f984335cea46c7dab84c4526512d4d485688fb2d196de87f25d  ./08_export_funasr/cmd.txt
+42c42
+< 678519527dce9d21221969cd83d3c72af76ac9a1b54538d190d49fe0dc84e26d  ./09_export_plain/cmd.txt
+---
+> 1f05e5a397926cfdac6dcd65b433131f7a92e2e3ebe0ffece7c93f2ef132aa49  ./09_export_plain/cmd.txt
+48c48
+< 5fe4f35c7fd0d6d7c138d089d6aefe92f690e5035fd8219632da9819c067fecc  ./10_export_stdout/cmd.txt
+---
+> a50530f3b6876f228448a4691620609f2f423db05da4ca99c56c6cae5b26f399  ./10_export_stdout/cmd.txt

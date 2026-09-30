@@ -1,0 +1,23 @@
+{
+  "transcript": "fixtures/normal.txt",
+  "total_utterances": 10,
+  "speakers": [
+    {
+      "label": "SPEAKER_00",
+      "utterances": 4
+    },
+    {
+      "label": "SPEAKER_01",
+      "utterances": 3
+    },
+    {
+      "label": "SPEAKER_02",
+      "utterances": 3
+    }
+  ],
+  "draft_mapping": {
+    "SPEAKER_00": "",
+    "SPEAKER_01": "",
+    "SPEAKER_02": ""
+  }
+}

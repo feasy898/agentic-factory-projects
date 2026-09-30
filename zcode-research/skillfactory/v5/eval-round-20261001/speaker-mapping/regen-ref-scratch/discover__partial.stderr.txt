@@ -1,0 +1,1 @@
+[map_speakers.py] INFO: 发现 4 个说话人标签 / 10 条发言，草稿映射已写出 /opt/gpumachine/projects/zcode-research/skillfactory/v5/eval-round-20261001/speaker-mapping/regen-ref-scratch/discover__partial.json

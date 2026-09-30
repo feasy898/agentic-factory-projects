@@ -1,0 +1,4 @@
+2c2
+<   "transcript": "fixtures/normal.txt",
+---
+>   "transcript": "fixtures\\normal.txt",

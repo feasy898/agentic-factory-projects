@@ -1,0 +1,68 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v5/assets/deploy-pack/eval",
+  "candidate": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle/fixtures/red-env-drift",
+  "reference": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle/out",
+  "candidate_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle/fixtures/red-env-drift",
+  "candidate_resolved_via": "direct",
+  "reference_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle/out/pack-canonical",
+  "reference_resolved_via": "pack-canonical",
+  "oracle_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle",
+  "oracle_resolved_via": "reference-ancestor(/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle)",
+  "self_eval": false,
+  "ok": false,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 2,
+      "failed": 2
+    },
+    "text_agreement_rate": 0.9964
+  },
+  "checks": [
+    {
+      "name": "compose_yaml_three_services",
+      "passed": true,
+      "detail": "safe_load 通过; 服务集恰为 ['asr', 'minutes', 'todo']（三服务齐全且无多余）"
+    },
+    {
+      "name": "env_compose_vars_consistent",
+      "passed": false,
+      "detail": "compose引用 12 个/.env 定义 11 个; compose引用而.env缺=['TODO_PORT']; .env多出=[]"
+    },
+    {
+      "name": "validate_all_green",
+      "passed": false,
+      "oracle_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle",
+      "oracle_resolved_via": "reference-ancestor(/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle)",
+      "detail": "oracle validate.py exit=1（须 0）; FAIL 项=['C3 env_consistent']"
+    },
+    {
+      "name": "reference_text_agreement_90pct",
+      "passed": true,
+      "detail": "与参照 pack 三文件文本一致率 99.64%（276/277 行位匹配，阈值 90%；行级 difflib、CRLF 归一、BOM 容忍）",
+      "text_agreement_rate": 0.9964,
+      "threshold": 0.9,
+      "per_file": [
+        {
+          "file": "docker-compose.yml",
+          "ref_lines": 57,
+          "cand_lines": 57,
+          "matched": 57
+        },
+        {
+          "file": ".env.example",
+          "ref_lines": 35,
+          "cand_lines": 34,
+          "matched": 34
+        },
+        {
+          "file": "DEPLOY.md",
+          "ref_lines": 47,
+          "cand_lines": 47,
+          "matched": 47
+        }
+      ]
+    }
+  ]
+}

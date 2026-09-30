@@ -1,0 +1,1 @@
+/usr/bin/python3.12 /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/package/hotwords.py --store /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/package/out/_work/store.json add 悟空客服 --category 产品 --note 与既有词重复应报错

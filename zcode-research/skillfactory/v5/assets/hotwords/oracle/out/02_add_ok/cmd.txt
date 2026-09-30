@@ -1,0 +1,1 @@
+/usr/bin/python3.12 /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/oracle/hotwords.py --store /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/oracle/out/_work/store.json add 灵犀大模型 --category 产品 --note 公司旗舰大模型

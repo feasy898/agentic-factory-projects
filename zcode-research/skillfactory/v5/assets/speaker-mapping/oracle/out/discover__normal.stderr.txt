@@ -1,0 +1,1 @@
+[map_speakers.py] INFO: 发现 3 个说话人标签 / 10 条发言，草稿映射已写出 out\discover__normal.json

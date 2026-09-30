@@ -1,0 +1,54 @@
+{
+  "tool": "validate.py",
+  "asset": "skillfactory/v5/assets/deploy-pack/package",
+  "pack": "D:\\workspace\\zcode研究\\.probe-tmp\\fixtures\\red-bad-yaml",
+  "expected_services": [
+    "asr",
+    "minutes",
+    "todo"
+  ],
+  "verdict": "FAILED",
+  "summary": {
+    "pass": 1,
+    "fail": 1,
+    "skip": 5
+  },
+  "checks": [
+    {
+      "name": "compose_safe_load",
+      "status": "FAIL",
+      "detail": "yaml.safe_load 异常: ParserError: while parsing a flow sequence"
+    },
+    {
+      "name": "services_exact",
+      "status": "SKIP",
+      "detail": "依赖 C1：compose 未成功解析，无法提取服务集"
+    },
+    {
+      "name": "env_consistent",
+      "status": "SKIP",
+      "detail": "依赖 C1：compose 未成功解析，无法提取 ${} 引用集"
+    },
+    {
+      "name": "no_hardcoded_secrets",
+      "status": "SKIP",
+      "detail": "依赖 C1：compose 未成功解析，无法扫描取值"
+    },
+    {
+      "name": "wiring_asr_minutes",
+      "status": "SKIP",
+      "wiring": "asr.ASR_OUTPUT_DIR == minutes.MINUTES_INPUT_DIR",
+      "detail": "服务集不含 asr+minutes（pack=[], expected=['asr', 'minutes', 'todo']），接线检查不适用"
+    },
+    {
+      "name": "deploy_md_three_cmds",
+      "status": "PASS",
+      "detail": "三命令要素齐全 + 含 curl /healthz 健康检查要素"
+    },
+    {
+      "name": "deterministic_regenerate",
+      "status": "SKIP",
+      "detail": "C1-C4 未全 PASS，按契约跳过重生成比对"
+    }
+  ]
+}

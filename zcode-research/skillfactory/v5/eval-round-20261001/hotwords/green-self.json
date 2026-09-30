@@ -1,0 +1,81 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v5/assets/hotwords/eval",
+  "candidate": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/oracle/out",
+  "reference": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/oracle/out",
+  "candidate_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/oracle/out",
+  "candidate_resolved_via": "direct",
+  "reference_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/oracle/out",
+  "reference_resolved_via": "direct",
+  "self_eval": true,
+  "ok": true,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0
+    },
+    "steps": {
+      "total": 10,
+      "ok": 10
+    },
+    "files": {
+      "files_universe": 54,
+      "files_matched": 54,
+      "files_mismatched": 0,
+      "files_missing": 0,
+      "files_extra": 0
+    },
+    "consistency_rate": 1.0
+  },
+  "checks": [
+    {
+      "name": "script_sequence_consistent",
+      "passed": true,
+      "detail": "10 步序列（list_initial、add_ok、add_duplicate、add_with_weight、remove_ok、remove_missing、list_final、export_funasr、export_plain、export_stdout）目录/快照文件/expect/exit_code/manifest 登记全部一致",
+      "candidate_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/oracle/out",
+      "candidate_resolved_via": "direct",
+      "steps_total": 10,
+      "steps_ok": 10
+    },
+    {
+      "name": "duplicate_add_rejected",
+      "passed": true,
+      "detail": "03_add_duplicate: exit=2、stderr 中文报错、stdout 空、store.json 与 02_add_ok 逐字节一致（库不变）；06_remove_missing: exit=2、stderr 中文报错、stdout 空、store.json 与 05_remove_ok 逐字节一致（库不变）",
+      "fail_steps": [
+        {
+          "step": "03_add_duplicate",
+          "ok": true,
+          "exit_code": 2
+        },
+        {
+          "step": "06_remove_missing",
+          "ok": true,
+          "exit_code": 2
+        }
+      ]
+    },
+    {
+      "name": "funasr_export_format",
+      "passed": true,
+      "detail": "funasr 产物 7 行均为「词 空格 权重」且与库快照逐行一致；缺省权重行「灵犀大模型 20」在列；plain 产物每行一词；省略 --out 时 stdout 与 funasr 产物逐字节一致",
+      "funasr_lines_ok": true
+    },
+    {
+      "name": "consistency_with_reference_100",
+      "passed": true,
+      "detail": "与参照产物 54 个文件逐文件一致（cmd.txt 归一化后比对），一致率 100%",
+      "reference_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/oracle/out",
+      "reference_resolved_via": "direct",
+      "files_universe": 54,
+      "files_matched": 54,
+      "files_mismatched": 0,
+      "files_missing": 0,
+      "files_extra": 0,
+      "consistency_rate": 1.0,
+      "mismatched_files": [],
+      "missing_files": [],
+      "extra_files": []
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v5/assets/hotwords/eval",
+  "candidate": "C:/Users/ADMINI~1/AppData/Local/Temp/1/hw-cases/red-dupexit/out",
+  "reference": "skillfactory/v5/assets/hotwords/oracle/out",
+  "candidate_resolved": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\1\\hw-cases\\red-dupexit\\out",
+  "candidate_resolved_via": "direct",
+  "reference_resolved": "D:\\workspace\\zcode研究\\skillfactory\\v5\\assets\\hotwords\\oracle\\out",
+  "reference_resolved_via": "direct",
+  "self_eval": false,
+  "ok": false,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 1,
+      "failed": 3
+    },
+    "steps": {
+      "total": 10,
+      "ok": 9
+    },
+    "files": {
+      "files_universe": 54,
+      "files_matched": 53,
+      "files_mismatched": 1,
+      "files_missing": 0,
+      "files_extra": 0
+    },
+    "consistency_rate": 0.9815
+  },
+  "checks": [
+    {
+      "name": "script_sequence_consistent",
+      "passed": false,
+      "detail": "03_add_duplicate: expect=fail 但 exit=0（契约要求 2）；03_add_duplicate: manifest.exit_code=2 与 exit_code.txt（0）不符",
+      "candidate_resolved": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\1\\hw-cases\\red-dupexit\\out",
+      "candidate_resolved_via": "direct",
+      "steps_total": 10,
+      "steps_ok": 9
+    },
+    {
+      "name": "duplicate_add_rejected",
+      "passed": false,
+      "detail": "03_add_duplicate: 退出码 0 != 2（业务失败契约）",
+      "fail_steps": [
+        {
+          "step": "03_add_duplicate",
+          "ok": false,
+          "exit_code": 0
+        },
+        {
+          "step": "06_remove_missing",
+          "ok": true,
+          "exit_code": 2
+        }
+      ]
+    },
+    {
+      "name": "funasr_export_format",
+      "passed": true,
+      "detail": "funasr 产物 7 行均为「词 空格 权重」且与库快照逐行一致；缺省权重行「灵犀大模型 20」在列；plain 产物每行一词；省略 --out 时 stdout 与 funasr 产物逐字节一致",
+      "funasr_lines_ok": true
+    },
+    {
+      "name": "consistency_with_reference_100",
+      "passed": false,
+      "detail": "一致率 98.1%（53/54 逐文件一致，阈值 100%）；不一致: 03_add_duplicate/exit_code.txt；缺失: 无；多出: 无",
+      "reference_resolved": "D:\\workspace\\zcode研究\\skillfactory\\v5\\assets\\hotwords\\oracle\\out",
+      "reference_resolved_via": "direct",
+      "files_universe": 54,
+      "files_matched": 53,
+      "files_mismatched": 1,
+      "files_missing": 0,
+      "files_extra": 0,
+      "consistency_rate": 0.9815,
+      "mismatched_files": [
+        "03_add_duplicate/exit_code.txt"
+      ],
+      "missing_files": [],
+      "extra_files": []
+    }
+  ]
+}

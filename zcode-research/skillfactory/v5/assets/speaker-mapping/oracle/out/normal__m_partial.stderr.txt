@@ -1,0 +1,2 @@
+[map_speakers.py] WARNING: 未映射说话人标签 "SPEAKER_02"，出现 3 次，已原样保留
+[map_speakers.py] INFO: 写出 out\normal__m_partial.txt（共 10 行，替换标签 7 处，未映射标签 1 种）
