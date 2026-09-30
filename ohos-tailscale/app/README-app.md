@@ -111,3 +111,15 @@ UI 停止: vpnExtension.stopVpnExtensionAbility(want) ──▶ onDestroy → co
   - API 参考：`zh-cn/application-dev/reference/apis-network-kit/js-apis-net-vpnExtension.md`（start/stop/createVpnConnection/create/protect/destroy、VpnConfig 字段）
   - 基类：`zh-cn/application-dev/reference/apis-network-kit/js-apis-VpnExtensionAbility.md`（onCreate/onDestroy）
 - 仓库内：`docs/architecture.md`（D1–D4、注入接口）、`docs/arkts-constraints.md`（ArkTS 禁则与 U 未验证项）。
+
+## 8. 2026-10-01 夜班补记（worker-A：壳工程纯 TS 推进面）
+
+1. **Linux 编译链调研结论**：GPU 机不可编译本壳（商业 SDK 登录墙 + hvigor 无公开分发 + 华为制件仓不可达），完整证据与官方 commandline-tools 路径见 `docs/build-feasibility-linux.md`；§4 的三个集成方案在拿到 DevEco/commandline-tools 环境后按原文验证即可。
+2. **`app/tools/validate-shell.mjs`（新增，`npm run validate:shell`）**：壳静态资源离线机检（V1 配置解析/V2 模块清单/V3 权限/V4 页面路由/V5+V5b 资源引用/V6 包名/V7 ability 名/V8 占位图标尺寸），当前 **54 项全过**（exit 0）。本壳全部 .json5/.json 首次经过解析器验证。
+3. **`app/bridge/`（新增，`npm run test:bridge` / `npm run typecheck:bridge`）**：壳 ↔ 协议包 mock 集成层（Node 侧，确定性测试 7 用例全绿）：
+   - `MockHttpTransport`：common 冻结接口 HttpTransport 的脚本化 mock（真机实现按 §4 替换）；
+   - `MockControlPlane`：ts2021 假控制面（noise 包 NoiseIkResponder 承载，IK 握手/注册解码/netmap 下发）；
+   - `ShellControlSession`：壳会话门面（装配 fail-fast、login/pollMap/statusSnapshot/close）；
+   - `shell-status.ts`：UI 三态与 Index.ets `ConnState` 常量逐值镜像（测试锁定）；
+   - **authKey 纪律**：只做形状校验、永不进请求体/URL/日志（测试对全部请求留痕做字节级断言）、close 清内存；真实注册上行承载属 AU 上游核对项（docs/architecture.md §10）。
+4. 已知边界如实：bridge 不覆盖数据面（UDP/DERP/protect(fd)，待二期接口定稿）；根 tsconfig 仍 exclude app/（六包 typecheck 面不变），bridge 用独立 `app/bridge/tsconfig.json`（同 strict 基线）。
