@@ -215,7 +215,7 @@ def test_prompt_exact_bytes_over_mm_client_mock_wire():
     reply = json.dumps({"choices": [{"message": {"content": transcript}}]},
                        ensure_ascii=False).encode("utf-8")
     mt = MockTransport(replies={"chat": (200, reply)})
-    client = MMClient(mt, env={"XX_LLM_API_KEY": "sk-SENTINEL-1"},
+    client = MMClient(mt, env={"XX_LLM_API_KEY": "sentinel-token-1"},
                       resolve=lambda host: ["93.184.216.34"])
     grader = _recording_grader()
     result = ingest_photo(IMAGE, _paper(), BANK, client, grader)
