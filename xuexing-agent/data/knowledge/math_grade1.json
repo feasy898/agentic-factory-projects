@@ -1,0 +1,178 @@
+{
+  "subject": "math",
+  "grade_band": [
+    1
+  ],
+  "standard": "义务教育数学课程标准（2022年版）第一学段（1~2年级）·一年级",
+  "knowledge_points": [
+    {
+      "id": "kp_p1_num20",
+      "name": "20以内数的认识",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "认识20以内的数，会数、认、读、写，会比较大小与排列顺序",
+      "standard_ref": "2022课标第一学段：经历简单的数的抽象过程，认识20以内的数，能认、读、写20以内的数，能用符号表示数的大小"
+    },
+    {
+      "id": "kp_p1_addsub10",
+      "name": "10以内的加减法",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "借助分与合理解加减法意义，熟练口算10以内加减法",
+      "standard_ref": "2022课标第一学段：结合具体情境体会加法和减法的意义，能熟练口算10以内的加减法",
+      "prereqs": [
+        "kp_p1_num20"
+      ]
+    },
+    {
+      "id": "kp_p1_carry20",
+      "name": "20以内的进位加法",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "用凑十法口算20以内的进位加法",
+      "standard_ref": "2022课标第一学段：能口算简单的20以内的进位加法，探索凑十等计算方法",
+      "prereqs": [
+        "kp_p1_addsub10"
+      ]
+    },
+    {
+      "id": "kp_p1_borrow20",
+      "name": "20以内的退位减法",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "用破十法、想加算减等方法口算20以内的退位减法",
+      "standard_ref": "2022课标第一学段：能口算简单的20以内的退位减法，体会加减法之间的关系",
+      "prereqs": [
+        "kp_p1_addsub10",
+        "kp_p1_carry20"
+      ]
+    },
+    {
+      "id": "kp_p1_num100",
+      "name": "100以内数的认识",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "认识100以内的数，理解个位十位的意义，会读写与比大小",
+      "standard_ref": "2022课标第一学段：认识100以内的数，理解数位的意义，能认、读、写100以内的数并比较大小",
+      "prereqs": [
+        "kp_p1_num20"
+      ]
+    },
+    {
+      "id": "kp_p1_addsub100",
+      "name": "100以内的加减法（口算）",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "口算整十数加减整十数、两位数加减一位数和整十数",
+      "standard_ref": "2022课标第一学段：能口算简单的百以内数的加减法（整十数加减整十数、两位数加减一位数和整十数）",
+      "prereqs": [
+        "kp_p1_num100",
+        "kp_p1_carry20",
+        "kp_p1_borrow20"
+      ]
+    },
+    {
+      "id": "kp_p1_money",
+      "name": "认识人民币",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "认识元、角，会简单换算与付钱找钱",
+      "standard_ref": "2022课标第一学段：在现实购物情境中认识人民币，知道元、角是人民币的单位，能进行简单的换算与计算",
+      "prereqs": [
+        "kp_p1_num100"
+      ]
+    },
+    {
+      "id": "kp_p1_clock",
+      "name": "认识钟表",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "认识钟面，会认读整时和半时",
+      "standard_ref": "2022课标第一学段：结合生活经验认识钟面，会认读整时和半时",
+      "prereqs": [
+        "kp_p1_num20"
+      ]
+    },
+    {
+      "id": "kp_p1_3dshapes",
+      "name": "认识立体图形",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "图形与几何",
+      "description": "直观辨认长方体、正方体、圆柱和球",
+      "standard_ref": "2022课标第一学段：能通过观察和操作，直观辨认长方体、正方体、圆柱和球"
+    },
+    {
+      "id": "kp_p1_2dshapes",
+      "name": "认识平面图形",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "图形与几何",
+      "description": "直观辨认长方形、正方形、三角形和圆",
+      "standard_ref": "2022课标第一学段：能直观辨认长方形、正方形、三角形和圆，感知平面图形的特征",
+      "prereqs": [
+        "kp_p1_3dshapes"
+      ]
+    },
+    {
+      "id": "kp_p1_position",
+      "name": "位置与顺序",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "图形与几何",
+      "description": "用上、下、前、后、左、右描述物体的相对位置",
+      "standard_ref": "2022课标第一学段：会用上、下、前、后、左、右描述物体的相对位置"
+    },
+    {
+      "id": "kp_p1_sort",
+      "name": "分类与整理",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "统计与概率",
+      "description": "按不同标准对物品进行分类，会简单整理记录结果",
+      "standard_ref": "2022课标第一学段：能按不同的标准对物体、图形或数据进行分类，经历数据分类的过程"
+    },
+    {
+      "id": "kp_p1_pattern",
+      "name": "找规律",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数量关系",
+      "description": "发现并描述简单图形和数的排列规律",
+      "standard_ref": "2022课标第一学段：在具体情境中探索简单图形和数的排列规律，并能描述和表示规律",
+      "prereqs": [
+        "kp_p1_num20"
+      ]
+    },
+    {
+      "id": "kp_p1_wordprob",
+      "name": "用加减法解决问题",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数量关系",
+      "description": "理解部分与整体的关系，用加减法解决简单实际问题",
+      "standard_ref": "2022课标第一学段：在具体情境中理解加法和减法的数量关系，能用加减法解决简单的实际问题",
+      "prereqs": [
+        "kp_p1_carry20",
+        "kp_p1_borrow20"
+      ]
+    },
+    {
+      "id": "kp_p1_compare",
+      "name": "比多少与排序",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数量关系",
+      "description": "用一一对应等方法比较多少、长短、高矮并做简单排序",
+      "standard_ref": "2022课标第一学段：经历比较的过程，会用一一对应等方法比较多少、长短和高矮，并做简单的排序"
+    }
+  ]
+}

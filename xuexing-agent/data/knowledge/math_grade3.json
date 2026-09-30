@@ -1,0 +1,154 @@
+{
+ "subject": "math",
+ "grade_band": [
+  3
+ ],
+ "standard": "义务教育数学课程标准（2022年版）第二学段·数与代数/图形与几何/统计与概率/综合与实践",
+ "knowledge_points": [
+  {
+   "id": "kp_p3_time_read",
+   "name": "时分秒与经过时间",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "数与运算",
+   "description": "认识时、分、秒，会看钟面，能计算简单的经过时间",
+   "standard_ref": "2022课标第二学段·数与运算：认识时、分、秒，知道它们之间的关系，能结合生活经验进行简单的时间计算"
+  },
+  {
+   "id": "kp_p3_measure_units",
+   "name": "毫米分米千米与吨",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "数与运算",
+   "description": "认识毫米、分米、千米和吨，会进行相邻单位的简单换算",
+   "standard_ref": "2022课标第二学段·数与运算：认识毫米、千米等常见的量，知道相邻单位间的进率，能进行简单换算，形成量感"
+  },
+  {
+   "id": "kp_p3_addsub_3digit",
+   "name": "万以内加减法",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "数与运算",
+   "description": "能笔算三位数加减三位数，会验算，形成运算能力",
+   "standard_ref": "2022课标第二学段·数与运算：探索三位数加减法的算理与算法，能正确计算并用加减互逆关系验算"
+  },
+  {
+   "id": "kp_p3_multiple_times",
+   "name": "倍的认识",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "数量关系",
+   "description": "理解倍的意义，会解决求几倍、是几倍的实际问题",
+   "standard_ref": "2022课标第二学段·数量关系：在具体情境中理解“倍”的意义，能解决求一个数是另一个数的几倍、一个数的几倍是多少的简单实际问题"
+  },
+  {
+   "id": "kp_p3_mult_1digit",
+   "name": "多位数乘一位数",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "数与运算",
+   "description": "能口算整十整百数乘一位数，掌握两三位数乘一位数笔算",
+   "standard_ref": "2022课标第二学段·数与运算：探索并掌握两、三位数乘一位数的乘法，理解算理，形成运算能力"
+  },
+  {
+   "id": "kp_p3_perimeter",
+   "name": "周长",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "图形与几何",
+   "description": "认识周长，掌握长方形、正方形的周长公式",
+   "standard_ref": "2022课标第二学段·图形与几何：认识周长的意义，探索并掌握长方形和正方形的周长公式",
+   "prereqs": [
+    "kp_p3_mult_1digit"
+   ]
+  },
+  {
+   "id": "kp_p3_fraction_intro",
+   "name": "分数的初步认识",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "数与运算",
+   "description": "认识几分之一和几分之几，会比较大小，会算简单同分母分数加减",
+   "standard_ref": "2022课标第二学段·数与运算：结合具体情境初步认识分数，能借助直观比较简单分数的大小，会进行简单的同分母分数加减运算"
+  },
+  {
+   "id": "kp_p3_div_1digit",
+   "name": "除数是一位数的除法",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "数与运算",
+   "description": "掌握两三位数除以一位数的口算笔算，会用乘法验算",
+   "standard_ref": "2022课标第二学段·数与运算：探索并掌握两、三位数除以一位数的除法，理解算理，会用乘法验算除法",
+   "prereqs": [
+    "kp_p3_mult_1digit",
+    "kp_p3_addsub_3digit"
+   ]
+  },
+  {
+   "id": "kp_p3_mult_2x2digit",
+   "name": "两位数乘两位数",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "数与运算",
+   "description": "能口算两位数乘整十数，掌握两位数乘两位数笔算",
+   "standard_ref": "2022课标第二学段·数与运算：探索并掌握两位数乘两位数的乘法，理解算理，能结合具体情境进行估算",
+   "prereqs": [
+    "kp_p3_mult_1digit"
+   ]
+  },
+  {
+   "id": "kp_p3_area",
+   "name": "面积",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "图形与几何",
+   "description": "认识面积与常用面积单位，掌握长方形正方形面积公式",
+   "standard_ref": "2022课标第二学段·图形与几何：认识面积的意义和常用面积单位，探索并掌握长方形、正方形的面积公式",
+   "prereqs": [
+    "kp_p3_perimeter"
+   ]
+  },
+  {
+   "id": "kp_p3_ymd_date",
+   "name": "年月日与24时计时法",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "数与运算",
+   "description": "认识年月日与平年闰年，会用24时计时法",
+   "standard_ref": "2022课标第二学段·数与运算：认识年、月、日，知道大月、小月、平年、闰年，会用24时计时法表示时刻",
+   "prereqs": [
+    "kp_p3_time_read"
+   ]
+  },
+  {
+   "id": "kp_p3_decimal_intro",
+   "name": "小数的初步认识",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "数与运算",
+   "description": "结合价格情境认识小数，会读写并计算一位小数加减法",
+   "standard_ref": "2022课标第二学段·数与运算：结合具体情境初步认识小数，能认、读、写简单的小数，会计算简单的小数加减法",
+   "prereqs": [
+    "kp_p3_fraction_intro"
+   ]
+  },
+  {
+   "id": "kp_p3_stats_table",
+   "name": "复式统计表",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "统计与概率",
+   "description": "会把单式统计表合并为复式统计表并作简单分析",
+   "standard_ref": "2022课标第二学段·统计与概率：经历数据收集、整理与表达的过程，认识复式统计表，能根据表中的数据进行简单分析"
+  },
+  {
+   "id": "kp_p3_combination",
+   "name": "搭配中的学问",
+   "subject": "math",
+   "grade": 3,
+   "cluster": "综合与实践",
+   "description": "按顺序思考，不重复不遗漏地找出简单搭配方案",
+   "standard_ref": "2022课标第二学段·综合与实践：在解决搭配问题的活动中，学会按一定顺序思考，能有条理地表达解决问题的过程"
+  }
+ ]
+}
