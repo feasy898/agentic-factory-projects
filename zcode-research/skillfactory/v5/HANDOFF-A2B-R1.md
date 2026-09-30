@@ -61,5 +61,5 @@ oracle fixtures 存证：`v5/assets/deploy-pack/oracle/out/fixtures-run.json` = 
 
 - `v5/assets/deploy-pack/package/NUL`：windev 期遗留的 Windows 保留名文件（迁移随附），非本代产物；未删（破坏性动作不做），建议 owner 裁定后清理。
 - deploy-pack 候选 `DEPLOY.md` 内「由 oracle/gen_deploy.py 生成」一行系 C7 冻结行为的直接后果（比对基准=oracle 模板活文）；如要改成候选自指路径，须先改 spec 附录 A.3 并升版——本轮未动。
-- git：REPO 原为非 git 目录（CONTEXT.md「git 化待裁」）。按夜班令「git 提交留痕」，本轮以 `git init` + 只 add 本轮触碰路径的最小方式立库留痕；历史代际产物未纳入版本库（避免大迁移未裁先做）。owner 如另有裁定，删 `.git` 即可回退。
+- git：worker-B 本轮已在 REPO git init 并提交（b7f88fe）；worker-A 的改动叠加为提交 2015999（main），只 add 本轮触碰路径（14 文件：HANDOFF/deploy-pack 包+产物/speaker-mapping 三件/worklog）。历史代际产物未纳入版本库（避免大迁移未裁先做）；工作区另有 120 个未跟踪/未提交文件（多为 scratch），不属本轮。owner 如另有裁定，git 回退即可。
 - 评测器/契约三文件（speaker-mapping eval/contract/spec）本轮有版本化修订，judge 可 diff 对照 v1.0（windev `_wa_r1/sm_*.r1orig` 未留，但 db.sqlite 会话与 git 首提交前的文件态可在 windev 原目录只读对照：`D:/workspace/zcode研究/skillfactory/v5/assets/speaker-mapping/`）。
