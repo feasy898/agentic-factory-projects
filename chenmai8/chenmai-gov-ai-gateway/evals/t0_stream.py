@@ -14,8 +14,13 @@ exit 0 = 通过。检查项（对应任务单 T0.5 完成定义：对 mock 上�
 3. 上游收到的仍是**全占位符**（/admin/text bytes 级零原值）；
 4. remap 状态机（单元级）：随机 1–7 字符切块 fuzz —— ``feed()*k + flush()``
    恒等于整段 restore（含占位符相邻/文本无占位符/未知占位符混排三种模板）；
-   显式跨块切分占位符；缓冲有界（≤32）；超 32 字符无闭合 → 普通文本放行；
-   流末 flush 残留候选；
+   显式跨块切分占位符；缓冲有界（≤48=T8.4 容错改形窗）；超窗无闭合 → 普通文本
+   放行；完整括号对但查表未命中 → 原样放行；流末 flush 残留候选；
+   **T8.4 改形形态目录**：模型对占位符 token 的已知改形（反引号包裹/内嵌、
+   空白与换行插入拆开、hex 大小写/全半角转写、易混字符 O→0/l→1、同形括号
+   〔→【[ 与间隔号 ·→・•. 转写、组合改形）整段与流式逐块还原全等——
+   构造样本直测，不依赖模型随机性；负例（非占位符的同形括号文本/markdown
+   链接/未知占位符）原样放行零误替；
 5. SSE 字节层：任意字节切块（含把多字节 UTF-8 切成两半）→ 半行缓冲解析
    逐事件全等；经 compose_chat_stream 全管线输出与整段处理全等；
 6. 密级样例 stream=true → 403 content_blocked（普通 JSON，非 SSE），上游零感知；
@@ -55,7 +60,12 @@ from gateway import sse  # noqa: E402
 from gateway.app import create_app  # noqa: E402
 from gateway.mock_upstream import ECHO_MARKER, MockUpstreamServer  # noqa: E402
 from gateway.pipeline import GatewayService  # noqa: E402
-from masking.mapper import RESTORE_PATTERN, SessionMapper  # noqa: E402
+from masking.mapper import (  # noqa: E402
+    RESTORE_PATTERN,
+    SessionMapper,
+    canonical_placeholder,
+    tolerant_placeholder_hits,
+)
 from masking.remap import MAX_PLACEHOLDER_LEN, StreamRestorer  # noqa: E402
 from recognizers.models import EntityClass  # noqa: E402
 
@@ -470,7 +480,12 @@ def step_remap_fuzz(ctx: dict[str, Any]) -> str:
 
 
 def step_remap_edges(ctx: dict[str, Any]) -> str:
-    """边界：显式跨块切分 / 缓冲有界 / 超 32 字符放行 / flush 残留。"""
+    """边界：显式跨块切分 / 缓冲有界 / 完整括号对查表未命中原样放行 / 超窗放行 / flush 残留。
+
+    T8.4 缓冲上限 32→48（容错改形窗）：完整括号对但不可还原（查表未命中或
+    形状不足）不再按「超 32 放行」判定，而是逐字原样放行（输出与旧实现全等）；
+    超窗仍无闭合才按普通文本放行开括号。
+    """
     mapper = _fuzz_mapper()
     masked, _ = mapper.mask(f"号码{PHONE_B}", [(2, 2 + len(PHONE_B), EntityClass.PHONE_MOBILE, PHONE_B)])
     ph = masked[2:]  # 〔手机号·xxxxxxxx〕
@@ -479,7 +494,7 @@ def step_remap_edges(ctx: dict[str, Any]) -> str:
     out = r.feed("号码" + ph[:5]) + r.feed(ph[5:] + "。") + r.flush()
     if out != f"号码{PHONE_B}。":
         raise AssertionError(f"split-across-chunks: {out!r}")
-    # 2) 缓冲有界：喂入占位符每一块后 pending ≤ 32；凑齐闭合即整匹替换、flush 为空
+    # 2) 缓冲有界：喂入占位符每一块后 pending ≤ 上限；凑齐闭合即整匹替换、flush 为空
     r = StreamRestorer(mapper.lookup)
     got = []
     for piece in _split_chars(ph, random.Random(7)):
@@ -488,18 +503,113 @@ def step_remap_edges(ctx: dict[str, Any]) -> str:
             raise AssertionError(f"buffer exceeded cap: {r.pending_len}")
     if "".join(got) != PHONE_B or r.flush() != "":
         raise AssertionError(f"streamed placeholder not replaced: {''.join(got)!r} flush={r.flush()!r}")
-    # 3) 超 32 字符无闭合 → 普通文本放行（含其中的 〔 与后续真实占位符）
-    long_plain = "〔这段远远超过三十二个字符的方括号文本没有任何占位符形状，所以必须按普通文本原样放行"
-    stream_text = long_plain + "〕" + masked
+    # 3) 完整括号对但查表未命中（未知占位符/非占位符形状）→ 逐字原样放行
+    unknown_pair = "〔未知·deadbeef〕"       # 规范形状、映射表外
+    not_placeholder = "〔这段没有分隔符所以不是占位符〕"  # 完整括号对、无间隔号
+    for plain in (unknown_pair, not_placeholder):
+        stream_text = plain + masked
+        r = StreamRestorer(mapper.lookup)
+        out = "".join(r.feed(p) for p in _split_chars(stream_text, random.Random(5))) + r.flush()
+        if out != plain + f"号码{PHONE_B}":
+            raise AssertionError(f"unrestorable bracket-pair not passthrough: {out!r}")
+    # 4) 超窗（>48 字符）无闭合 → 普通文本放行开括号，其后真实占位符照常还原
+    long_plain = ("〔这段远远超过容错窗口四十八个字符的方括号文本始终没有出现任何闭合括号，"
+                  "所以必须按普通文本把开括号原样放行，其后正文照常处理")
+    if len(long_plain) <= MAX_PLACEHOLDER_LEN:
+        raise AssertionError("fixture broken: long_plain must exceed the window")
+    stream_text = long_plain + masked
     r = StreamRestorer(mapper.lookup)
     out = "".join(r.feed(p) for p in _split_chars(stream_text, random.Random(11))) + r.flush()
-    if out != long_plain + "〕" + f"号码{PHONE_B}":
+    if out != long_plain + f"号码{PHONE_B}":
         raise AssertionError(f"overflow release mismatch: {out!r}")
-    # 4) 流末残留候选按普通文本放行
+    # 5) 流末残留候选按普通文本放行
     r = StreamRestorer(mapper.lookup)
     if (r.feed("结尾悬着一个〔没闭合") + r.flush()) != "结尾悬着一个〔没闭合":
         raise AssertionError("dangling candidate not released on flush")
-    return "split-across-chunks / bounded buffer / >32 overflow release / flush dangling all correct"
+    return ("split-across-chunks / bounded buffer / unrestorable bracket-pair passthrough / "
+            ">window release / flush dangling all correct")
+
+
+# ── T8.4 改形形态目录：模型对占位符 token 的已知改形（构造样本直测）────
+#: 每项 = (形态名, 前缀噪声, 改形核心, 后缀噪声)：改形占位符 = 前缀+核心+后缀；
+#: 期望还原 = 核心还原为原值、括号外的噪声字符（backtick-wrap 的反引号）原样
+#: 保留。样本覆盖 gate_final b6 一轮 U8 GOVCLOUD 腿 FAIL 的假设改形面 + 静态
+#: 审查新列出的可还原面。
+def _mangle_forms(ph: str) -> list[tuple[str, str, str, str]]:
+    head, tail = ph[0], ph[-1]  # 〔 〕
+    sep_at = ph.index("·")
+    label_full, hexpart = ph[1:sep_at], ph[sep_at + 1:-1]
+    fw = str.maketrans("0123456789abcdef", "０１２３４５６７８９ａｂｃｄｅｆ")
+    return [
+        ("verbatim", "", ph, ""),
+        ("backtick-wrap", "`", ph, "`"),
+        ("backtick-inside", "", f"{head}`{label_full}`·`{hexpart}`{tail}", ""),
+        ("space-around-sep", "", ph.replace("·", " · "), ""),
+        ("space-inside-brackets", "", f"{head} {label_full}·{hexpart} {tail}", ""),
+        ("space-in-label", "", f"{head}{label_full[0]} {label_full[1:]}·{hexpart}{tail}", ""),
+        ("newline-after-sep", "", f"{head}{label_full}·\n{hexpart}{tail}", ""),
+        ("newline-before-sep", "", f"{head}{label_full}\n·{hexpart}{tail}", ""),
+        ("newline-mid-hex", "", f"{head}{label_full}·{hexpart[:4]}\n{hexpart[4:]}{tail}", ""),
+        ("uppercase-hex", "", f"{head}{label_full}·{hexpart.upper()}{tail}", ""),
+        ("fullwidth-hex", "", f"{head}{label_full}·{hexpart.translate(fw)}{tail}", ""),
+        ("confusable-o", "", f"{head}{label_full}·{hexpart.replace('0', 'O')}{tail}", ""),
+        ("confusable-l", "", f"{head}{label_full}·{hexpart.replace('1', 'l')}{tail}", ""),
+        ("katakana-sep", "", f"{head}{label_full}・{hexpart}{tail}", ""),
+        ("bullet-sep", "", f"{head}{label_full}•{hexpart}{tail}", ""),
+        ("ascii-dot-sep", "", f"{head}{label_full}.{hexpart}{tail}", ""),
+        ("corner-brackets", "", f"【{label_full}·{hexpart}】", ""),
+        ("ascii-brackets", "", f"[{label_full}·{hexpart}]", ""),
+        ("combo-worst", "", f"〔 {label_full} ・ `{hexpart.upper()}` 〕", ""),
+    ]
+
+
+def step_remap_mangled_forms(ctx: dict[str, Any]) -> str:
+    """T8.4 改形形态目录：整段 restore 与流式逐块还原对每种已知改形全等还原。
+
+    负例面：同形括号的非占位符文本 / markdown 链接 / 查表外占位符 —— 零误替
+    （结构〔标签·hex8-12〕特异 + 映射表命中终审闸）。
+    """
+    mapper = _fuzz_mapper()
+    text = f"联系电话{PHONE_B}，请回电。"
+    masked, _ = mapper.mask(text, [(4, 4 + len(PHONE_B), EntityClass.PHONE_MOBILE, PHONE_B)])
+    ph = next(e.placeholder for e in mapper.entries() if e.type is EntityClass.PHONE_MOBILE)
+    for name, prefix, core, suffix in _mangle_forms(ph):
+        form_text = masked.replace(ph, f"{prefix}{core}{suffix}")
+        expected = f"联系电话{prefix}{PHONE_B}{suffix}，请回电。"
+        # 整段还原
+        whole = mapper.restore(form_text)
+        if whole != expected:
+            raise AssertionError(f"[{name}] whole-restore mismatch: {whole!r}")
+        # 流式：随机 1–5 字符切块（覆盖改形噪声字符被切开）
+        for seed in (1, 2, 3):
+            r = StreamRestorer(mapper.lookup)
+            out = "".join(r.feed(p) for p in _split_chars(form_text, random.Random(seed))) + r.flush()
+            if out != expected:
+                raise AssertionError(f"[{name}] stream-restore(seed={seed}) mismatch: {out!r}")
+        # 检测面：tolerant_placeholder_hits 必须看见该形状（e2e 泄漏断言口径）
+        if not tolerant_placeholder_hits(form_text):
+            raise AssertionError(f"[{name}] tolerant detector missed the shape")
+    # 负例：零误替
+    negatives = [
+        "【注·见附件】",                       # 同形括号、非 hex 摘要
+        "[链接](https://example.com/x)",        # markdown 链接
+        "〔本段·没有占位符〕",                  # 完整括号对、摘要非 hex
+        "〔未知·deadbeef〕",                    # 规范形状、查表外
+        "plain text without any brackets",      # 纯文本
+    ]
+    for neg in negatives:
+        if mapper.restore(neg) != neg:
+            raise AssertionError(f"false positive on ordinary text: {neg!r} -> {mapper.restore(neg)!r}")
+        if neg in ("〔未知·deadbeef〕",):
+            continue  # 规范形状属「可辨认占位符」，检测面按泄漏口径应当报告
+        if tolerant_placeholder_hits(neg):
+            raise AssertionError(f"tolerant detector false positive: {neg!r}")
+    # canonical 单元面：规范化输出恒为规范键形状
+    key = canonical_placeholder(" 手机号 ・ `ABCDEF12` ")
+    if key != "〔手机号·abcdef12〕":
+        raise AssertionError(f"canonical normalization mismatch: {key!r}")
+    return (f"{len(_mangle_forms(ph))} known mangle forms restored byte-exact "
+            f"(whole + 3 random-chunk streams each); {len(negatives)} negatives passthrough")
 
 
 async def _fake_byte_chunks(data: bytes, rnd: random.Random) -> AsyncIterator[bytes]:
@@ -568,6 +678,7 @@ STEPS = (
     ("stream:upstream-unreachable-502", step_stream_upstream_unreachable),
     ("remap:chunked-fuzz-300", step_remap_fuzz),
     ("remap:edge-cases", step_remap_edges),
+    ("remap:mangled-forms", step_remap_mangled_forms),
     ("sse:byte-level-partial-lines", step_sse_byte_layer),
 )
 

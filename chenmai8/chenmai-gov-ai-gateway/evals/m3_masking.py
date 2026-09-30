@@ -9,6 +9,9 @@ exit 0 = 通过。检查项（开发指令 §6 M3 eval 口径，阈值取 evals/
    跨 session 占位符不同（session_id 参与摘要，设计如此）；
 2. 归一化等价：全角/空格/分隔符/前缀变体 → 同 normalized → 同占位符（§5.3.2）；
 3. 流式 fuzz：500 条随机 1–7 字符切块用例，``feed()*k + flush()`` 与整段还原全等；
+3b. 改形还原（T8.4）：模型对占位符 token 的已知改形（反引号/空白/换行/全半角/
+   大小写/易混字符/同形括号·间隔号/组合）整段与流式还原全等；工具参数 JSON 内
+   改形占位符经 restore_arguments 仍可解析且原值在位；非占位符文本零误替；
 4. 工具调用还原（T2.3 补：流式 hold-to-finish）：
    - 含中文参数 JSON 的 delta 序列（arguments 被切成任意碎片、占位符跨 chunk）：
      finish 前零发出、finish 时**单个 delta** 整体还原，JSON 可解析、原值在位、
@@ -212,6 +215,78 @@ def step_stream_fuzz() -> str:
             raise AssertionError(f"seed={seed} buffer exceeded cap: {restorer.pending_len}")
     return (f"{MASK_STREAM_FUZZ_CASES} chunked cases (1–{MASK_CHUNK_MAX_BYTES} chars) == whole-restore; "
             f"{len(_FUZZ_TEMPLATES)} templates incl. boundary/unknown-shape; buffer stayed ≤{MAX_PLACEHOLDER_LEN}")
+
+
+# ── 3b. 改形还原（T8.4；gate_final b6 一轮 U8 GOVCLOUD 腿实锤增补）──────
+def step_mangled_forms() -> str:
+    """模型对占位符 token 的已知改形 → 还原必须命中（构造样本直测，不依赖模型随机性）。
+
+    改形面：反引号包裹/内嵌、空白与换行插入拆开、hex 大小写/全半角、易混字符
+    （O→0、l→1）、同形括号（〔→【[）与间隔号（·→・•.）转写、组合改形——
+    与直连探针实测清单（evals/u8_repro）同源并外延。负例：非占位符的同形
+    括号文本 / markdown 链接零误替。另测工具参数 JSON 内改形占位符。
+    """
+    mapper = SessionMapper("sess_m3_mangled", MASK_KEY.encode())
+    masked, _entries = mapper.mask(
+        f"号码{PHONE_OK}；证件{ID_OK}；姓名{PERSON_OK}；住址{ADDRESS_OK}",
+        [(2, 2 + len(PHONE_OK), EntityClass.PHONE_MOBILE, PHONE_OK),
+         (2 + len(PHONE_OK) + 3, 2 + len(PHONE_OK) + 3 + len(ID_OK), EntityClass.ID_CARD, ID_OK),
+         (2 + len(PHONE_OK) + 3 + len(ID_OK) + 3, 2 + len(PHONE_OK) + 3 + len(ID_OK) + 3 + len(PERSON_OK),
+          EntityClass.PERSON, PERSON_OK),
+         (2 + len(PHONE_OK) + 3 + len(ID_OK) + 3 + len(PERSON_OK) + 3,
+          2 + len(PHONE_OK) + 3 + len(ID_OK) + 3 + len(PERSON_OK) + 3 + len(ADDRESS_OK),
+          EntityClass.ADDRESS, ADDRESS_OK)])
+    filled = f"号码{PHONE_OK}；证件{ID_OK}；姓名{PERSON_OK}；住址{ADDRESS_OK}"
+    if mapper.restore(masked) != filled:
+        raise AssertionError("fixture broken: whole-restore sanity failed")
+    ph = next(e.placeholder for e in _entries if e.type is EntityClass.PHONE_MOBILE)
+    label = ph[1:ph.index("·")]
+    hexpart = ph[ph.index("·") + 1:-1]
+    fw = str.maketrans("0123456789abcdef", "０１２３４５６７８９ａｂｃｄｅｆ")
+    #: (形态名, 改形串, 期望槽位还原结果)：backtick-wrap 的反引号在括号外，
+    #: 属普通文本原样保留（还原槽位 = `原值`）；其余改形噪声全在括号内被剥除。
+    forms = [
+        ("verbatim", ph, PHONE_OK),
+        ("backtick-wrap", f"`{ph}`", f"`{PHONE_OK}`"),
+        ("space-around-sep", f"〔{label} · {hexpart}〕", PHONE_OK),
+        ("newline-split", f"〔{label}·\n{hexpart}〕", PHONE_OK),
+        ("uppercase-hex", f"〔{label}·{hexpart.upper()}〕", PHONE_OK),
+        ("fullwidth-hex", f"〔{label}·{hexpart.translate(fw)}〕", PHONE_OK),
+        ("confusable-o", f"〔{label}·{hexpart.replace('0', 'O')}〕", PHONE_OK),
+        ("katakana-sep", f"〔{label}・{hexpart}〕", PHONE_OK),
+        ("ascii-brackets", f"[{label}·{hexpart}]", PHONE_OK),
+        ("corner-brackets", f"【{label}·{hexpart}】", PHONE_OK),
+        ("combo-worst", f"〔 {label} ・ `{hexpart.upper()}` 〕", PHONE_OK),
+    ]
+    for name, mangled, expected_slot in forms:
+        form_text = masked.replace(ph, mangled)
+        # 期望：全部占位符还原为原值；仅槽位噪声差异（backtick-wrap 的外层反引号保留）
+        expected = filled if expected_slot == PHONE_OK else filled.replace(PHONE_OK, expected_slot, 1)
+        # 整段还原
+        if mapper.restore(form_text) != expected:
+            raise AssertionError(f"[{name}] whole-restore mismatch: {mapper.restore(form_text)!r}")
+        # 流式随机切块还原（覆盖噪声字符被切开）
+        for seed in (1, 2):
+            r = StreamRestorer(mapper.lookup)
+            out = "".join(r.feed(p) for p in _split_chars(form_text, random.Random(seed))) + r.flush()
+            if out != expected:
+                raise AssertionError(f"[{name}] stream-restore(seed={seed}) mismatch: {out!r}")
+    # 负例：非占位符文本零误替
+    for neg in ("【注·见附件】", "[链接](https://example.com)", "〔本段·没有占位符〕",
+                "〔未知·deadbeef〕"):
+        if mapper.restore(neg) != neg:
+            raise AssertionError(f"false positive: {neg!r} -> {mapper.restore(neg)!r}")
+    # 工具参数 JSON 内的改形占位符：restore_arguments 后仍可解析、原值在位
+    args_masked = _masked_tool_args(mapper)
+    ph_person = next(e.placeholder for e in mapper.entries() if e.type is EntityClass.PERSON)
+    args_mangled = args_masked.replace(ph_person, f"〔 {ph_person[1:-1].upper()} 〕")
+    restored = restore_arguments(mapper, args_mangled)
+    if json.loads(restored) != TOOL_ARGS_OBJ:
+        raise AssertionError(f"mangled tool args restore broke JSON: {restored!r}")
+    if PERSON_OK not in restored:
+        raise AssertionError(f"mangled tool args person not restored: {restored!r}")
+    return (f"{len(forms)} known mangle forms restored (whole + 2 chunked streams each); "
+            f"4 negatives passthrough; mangled placeholder in tool-args JSON still restores")
 
 
 # ── 4. 工具调用还原（T2.3：流式 hold-to-finish + 跨 chunk 切分）────────
@@ -537,6 +612,7 @@ STEPS = (
     ("mask:stability-1000", step_stability),
     ("mask:normalization-equivalence", step_normalize_equivalence),
     ("remap:stream-fuzz-500", step_stream_fuzz),
+    ("remap:mangled-forms", step_mangled_forms),
     ("tool:hold-to-finish-core", step_tool_core),
     ("tool:cross-chunk-sweep-fuzz-multi", step_tool_cross_chunk),
     ("tool:overflow-valve-nonstream", step_tool_edges),
