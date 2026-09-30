@@ -50,3 +50,14 @@ export {
 export { WgSendSession, WgRecvSession } from './transport.ts';
 
 export { WgPeerTable, type WgSessionEntry } from './peers.ts';
+
+/** Cookie Reply（type=3）：二期收口（2026-10-01 夜班，上游 wireguard-go master 对齐）。 */
+export {
+  WG_COOKIE_REFRESH_MS,
+  WgCookieReplyConsumer,
+  WgCookieResponder,
+  cookieReplyDecode,
+  cookieReplyEncode,
+  extractMac1Field,
+} from './cookie-reply.ts';
+export type { WgCookieReply } from './cookie-reply.ts';

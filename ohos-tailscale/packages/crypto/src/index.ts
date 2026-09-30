@@ -36,3 +36,11 @@ export {
   salsa20Poly1305Seal,
   salsa20Poly1305Open,
 } from './naclbox.ts';
+
+/** XChaCha20-Poly1305 / HChaCha20（2026-10-01 夜班新增；Cookie Reply 消费方，draft-irtf-cfrg-xchacha-03 向量锚定）。 */
+export {
+  XNONCE_LEN_BYTES,
+  hchacha20,
+  xchacha20poly1305Open,
+  xchacha20poly1305Seal,
+} from './xchacha.ts';
