@@ -1,12 +1,1010 @@
 {
   "subject": "math",
   "grade_band": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
     7,
     8,
     9
   ],
-  "standard": "义务教育数学课程标准（2022年版）第四学段（7-9年级合并视图）",
+  "standard": "义务教育数学课程标准（2022年版）（1-9年级合并视图）",
   "knowledge_points": [
+    {
+      "id": "kp_p1_num20",
+      "name": "20以内数的认识",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "认识20以内的数，会数、认、读、写，会比较大小与排列顺序",
+      "standard_ref": "2022课标第一学段：经历简单的数的抽象过程，认识20以内的数，能认、读、写20以内的数，能用符号表示数的大小"
+    },
+    {
+      "id": "kp_p1_addsub10",
+      "name": "10以内的加减法",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "借助分与合理解加减法意义，熟练口算10以内加减法",
+      "standard_ref": "2022课标第一学段：结合具体情境体会加法和减法的意义，能熟练口算10以内的加减法",
+      "prereqs": [
+        "kp_p1_num20"
+      ]
+    },
+    {
+      "id": "kp_p1_carry20",
+      "name": "20以内的进位加法",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "用凑十法口算20以内的进位加法",
+      "standard_ref": "2022课标第一学段：能口算简单的20以内的进位加法，探索凑十等计算方法",
+      "prereqs": [
+        "kp_p1_addsub10"
+      ]
+    },
+    {
+      "id": "kp_p1_borrow20",
+      "name": "20以内的退位减法",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "用破十法、想加算减等方法口算20以内的退位减法",
+      "standard_ref": "2022课标第一学段：能口算简单的20以内的退位减法，体会加减法之间的关系",
+      "prereqs": [
+        "kp_p1_addsub10",
+        "kp_p1_carry20"
+      ]
+    },
+    {
+      "id": "kp_p1_num100",
+      "name": "100以内数的认识",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "认识100以内的数，理解个位十位的意义，会读写与比大小",
+      "standard_ref": "2022课标第一学段：认识100以内的数，理解数位的意义，能认、读、写100以内的数并比较大小",
+      "prereqs": [
+        "kp_p1_num20"
+      ]
+    },
+    {
+      "id": "kp_p1_addsub100",
+      "name": "100以内的加减法（口算）",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "口算整十数加减整十数、两位数加减一位数和整十数",
+      "standard_ref": "2022课标第一学段：能口算简单的百以内数的加减法（整十数加减整十数、两位数加减一位数和整十数）",
+      "prereqs": [
+        "kp_p1_num100",
+        "kp_p1_carry20",
+        "kp_p1_borrow20"
+      ]
+    },
+    {
+      "id": "kp_p1_money",
+      "name": "认识人民币",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "认识元、角，会简单换算与付钱找钱",
+      "standard_ref": "2022课标第一学段：在现实购物情境中认识人民币，知道元、角是人民币的单位，能进行简单的换算与计算",
+      "prereqs": [
+        "kp_p1_num100"
+      ]
+    },
+    {
+      "id": "kp_p1_clock",
+      "name": "认识钟表",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数与运算",
+      "description": "认识钟面，会认读整时和半时",
+      "standard_ref": "2022课标第一学段：结合生活经验认识钟面，会认读整时和半时",
+      "prereqs": [
+        "kp_p1_num20"
+      ]
+    },
+    {
+      "id": "kp_p1_3dshapes",
+      "name": "认识立体图形",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "图形与几何",
+      "description": "直观辨认长方体、正方体、圆柱和球",
+      "standard_ref": "2022课标第一学段：能通过观察和操作，直观辨认长方体、正方体、圆柱和球"
+    },
+    {
+      "id": "kp_p1_2dshapes",
+      "name": "认识平面图形",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "图形与几何",
+      "description": "直观辨认长方形、正方形、三角形和圆",
+      "standard_ref": "2022课标第一学段：能直观辨认长方形、正方形、三角形和圆，感知平面图形的特征",
+      "prereqs": [
+        "kp_p1_3dshapes"
+      ]
+    },
+    {
+      "id": "kp_p1_position",
+      "name": "位置与顺序",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "图形与几何",
+      "description": "用上、下、前、后、左、右描述物体的相对位置",
+      "standard_ref": "2022课标第一学段：会用上、下、前、后、左、右描述物体的相对位置"
+    },
+    {
+      "id": "kp_p1_sort",
+      "name": "分类与整理",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "统计与概率",
+      "description": "按不同标准对物品进行分类，会简单整理记录结果",
+      "standard_ref": "2022课标第一学段：能按不同的标准对物体、图形或数据进行分类，经历数据分类的过程"
+    },
+    {
+      "id": "kp_p1_pattern",
+      "name": "找规律",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数量关系",
+      "description": "发现并描述简单图形和数的排列规律",
+      "standard_ref": "2022课标第一学段：在具体情境中探索简单图形和数的排列规律，并能描述和表示规律",
+      "prereqs": [
+        "kp_p1_num20"
+      ]
+    },
+    {
+      "id": "kp_p1_wordprob",
+      "name": "用加减法解决问题",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数量关系",
+      "description": "理解部分与整体的关系，用加减法解决简单实际问题",
+      "standard_ref": "2022课标第一学段：在具体情境中理解加法和减法的数量关系，能用加减法解决简单的实际问题",
+      "prereqs": [
+        "kp_p1_carry20",
+        "kp_p1_borrow20"
+      ]
+    },
+    {
+      "id": "kp_p1_compare",
+      "name": "比多少与排序",
+      "subject": "math",
+      "grade": 1,
+      "cluster": "数量关系",
+      "description": "用一一对应等方法比较多少、长短、高矮并做简单排序",
+      "standard_ref": "2022课标第一学段：经历比较的过程，会用一一对应等方法比较多少、长短和高矮，并做简单的排序"
+    },
+    {
+      "id": "kp_p2_addsub_written",
+      "name": "100以内的加减法（笔算）",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "列竖式计算100以内加减法，掌握进位加与退位减",
+      "standard_ref": "2022课标第一学段：能计算100以内数的加减法，探索笔算的算理与算法，能进行简单的整数四则运算",
+      "prereqs": [
+        "kp_p1_addsub100",
+        "kp_p1_borrow20"
+      ]
+    },
+    {
+      "id": "kp_p2_mul_meaning",
+      "name": "乘法的初步认识",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "理解乘法是求几个相同加数和的简便运算，认识算式各部分名称",
+      "standard_ref": "2022课标第一学段：结合具体情境理解乘法是求几个相同加数和的简便运算，认识乘法算式各部分的名称",
+      "prereqs": [
+        "kp_p1_addsub100"
+      ]
+    },
+    {
+      "id": "kp_p2_mul_table",
+      "name": "表内乘法",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "熟记1-9乘法口诀，熟练口算表内乘法",
+      "standard_ref": "2022课标第一学段：熟记乘法口诀，能熟练地口算表内乘法",
+      "prereqs": [
+        "kp_p2_mul_meaning"
+      ]
+    },
+    {
+      "id": "kp_p2_div_meaning",
+      "name": "平均分与除法的初步认识",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "结合平均分操作理解除法意义，认识除法算式各部分名称",
+      "standard_ref": "2022课标第一学段：结合平均分的具体操作理解除法的意义，认识除法算式各部分的名称",
+      "prereqs": [
+        "kp_p1_num100"
+      ]
+    },
+    {
+      "id": "kp_p2_div_quotient",
+      "name": "用乘法口诀求商",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "运用乘法口诀求商，熟练计算表内除法",
+      "standard_ref": "2022课标第一学段：能运用乘法口诀求商，熟练计算表内除法",
+      "prereqs": [
+        "kp_p2_div_meaning",
+        "kp_p2_mul_table"
+      ]
+    },
+    {
+      "id": "kp_p2_num10000",
+      "name": "万以内数的认识",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "认识千与万，掌握数位顺序，会读写、组成与比大小",
+      "standard_ref": "2022课标第一学段：认识万以内的数，理解数位的意义与顺序，能认、读、写万以内的数并比较大小",
+      "prereqs": [
+        "kp_p1_num100"
+      ]
+    },
+    {
+      "id": "kp_p2_time",
+      "name": "认识时间",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "认识时、分，知道1时=60分，会认读几时几分",
+      "standard_ref": "2022课标第一学段：认识时间单位时、分，知道1时=60分，能认读几时几分",
+      "prereqs": [
+        "kp_p1_clock"
+      ]
+    },
+    {
+      "id": "kp_p2_length",
+      "name": "厘米和米",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "图形与几何",
+      "description": "认识厘米和米，会测量线段与物体长度，能估测与选择单位",
+      "standard_ref": "2022课标第一学段：结合实际认识厘米和米，能选用适当的长度单位，能用刻度尺测量线段和物体的长度，能进行估测",
+      "prereqs": [
+        "kp_p1_num100"
+      ]
+    },
+    {
+      "id": "kp_p2_angle",
+      "name": "角的初步认识",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "图形与几何",
+      "description": "认识角的组成，直观辨认直角、锐角和钝角",
+      "standard_ref": "2022课标第一学段：结合生活情境认识角，知道角有一个顶点和两条边，能直观辨认直角、锐角和钝角",
+      "prereqs": [
+        "kp_p1_2dshapes"
+      ]
+    },
+    {
+      "id": "kp_p2_view",
+      "name": "观察物体",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "图形与几何",
+      "description": "辨认从不同角度观察简单物体所看到的形状",
+      "standard_ref": "2022课标第一学段：能根据具体事物、照片或直观图，辨认从不同角度观察简单物体所得到的形状",
+      "prereqs": [
+        "kp_p1_3dshapes"
+      ]
+    },
+    {
+      "id": "kp_p2_motion",
+      "name": "图形的运动初步",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "图形与几何",
+      "description": "感知轴对称、平移、旋转等现象",
+      "standard_ref": "2022课标第一学段：通过观察和操作，感知平移、旋转、轴对称等图形运动的现象",
+      "prereqs": [
+        "kp_p1_2dshapes"
+      ]
+    },
+    {
+      "id": "kp_p2_stats",
+      "name": "数据的收集与整理",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "统计与概率",
+      "description": "经历简单数据收集整理过程，能用简单统计表呈现与分析",
+      "standard_ref": "2022课标第一学段：经历简单的数据收集和整理过程，能用简单统计表整理数据并作简单分析",
+      "prereqs": [
+        "kp_p1_sort"
+      ]
+    },
+    {
+      "id": "kp_p2_mass",
+      "name": "克和千克",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "认识克和千克，知道1千克=1000克，能估计物品轻重",
+      "standard_ref": "2022课标第一学段：结合具体情境认识克和千克，知道1千克=1000克，能估计常见物品的轻重",
+      "prereqs": [
+        "kp_p1_num100"
+      ]
+    },
+    {
+      "id": "kp_p2_reasoning",
+      "name": "简单推理",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数量关系",
+      "description": "在简单情境中尝试分析和推理，有序表达思考过程",
+      "standard_ref": "2022课标第一学段：在解决简单问题的过程中，尝试进行简单的分析和推理，感受推理的作用"
+    },
+    {
+      "id": "kp_p3_time_read",
+      "name": "时分秒与经过时间",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "数与运算",
+      "description": "认识时、分、秒，会看钟面，能计算简单的经过时间",
+      "standard_ref": "2022课标第二学段·数与运算：认识时、分、秒，知道它们之间的关系，能结合生活经验进行简单的时间计算"
+    },
+    {
+      "id": "kp_p3_measure_units",
+      "name": "毫米分米千米与吨",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "数与运算",
+      "description": "认识毫米、分米、千米和吨，会进行相邻单位的简单换算",
+      "standard_ref": "2022课标第二学段·数与运算：认识毫米、千米等常见的量，知道相邻单位间的进率，能进行简单换算，形成量感"
+    },
+    {
+      "id": "kp_p3_addsub_3digit",
+      "name": "万以内加减法",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "数与运算",
+      "description": "能笔算三位数加减三位数，会验算，形成运算能力",
+      "standard_ref": "2022课标第二学段·数与运算：探索三位数加减法的算理与算法，能正确计算并用加减互逆关系验算"
+    },
+    {
+      "id": "kp_p3_multiple_times",
+      "name": "倍的认识",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "数量关系",
+      "description": "理解倍的意义，会解决求几倍、是几倍的实际问题",
+      "standard_ref": "2022课标第二学段·数量关系：在具体情境中理解“倍”的意义，能解决求一个数是另一个数的几倍、一个数的几倍是多少的简单实际问题"
+    },
+    {
+      "id": "kp_p3_mult_1digit",
+      "name": "多位数乘一位数",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "数与运算",
+      "description": "能口算整十整百数乘一位数，掌握两三位数乘一位数笔算",
+      "standard_ref": "2022课标第二学段·数与运算：探索并掌握两、三位数乘一位数的乘法，理解算理，形成运算能力"
+    },
+    {
+      "id": "kp_p3_perimeter",
+      "name": "周长",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "图形与几何",
+      "description": "认识周长，掌握长方形、正方形的周长公式",
+      "standard_ref": "2022课标第二学段·图形与几何：认识周长的意义，探索并掌握长方形和正方形的周长公式",
+      "prereqs": [
+        "kp_p3_mult_1digit"
+      ]
+    },
+    {
+      "id": "kp_p3_fraction_intro",
+      "name": "分数的初步认识",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "数与运算",
+      "description": "认识几分之一和几分之几，会比较大小，会算简单同分母分数加减",
+      "standard_ref": "2022课标第二学段·数与运算：结合具体情境初步认识分数，能借助直观比较简单分数的大小，会进行简单的同分母分数加减运算"
+    },
+    {
+      "id": "kp_p3_div_1digit",
+      "name": "除数是一位数的除法",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "数与运算",
+      "description": "掌握两三位数除以一位数的口算笔算，会用乘法验算",
+      "standard_ref": "2022课标第二学段·数与运算：探索并掌握两、三位数除以一位数的除法，理解算理，会用乘法验算除法",
+      "prereqs": [
+        "kp_p3_mult_1digit",
+        "kp_p3_addsub_3digit"
+      ]
+    },
+    {
+      "id": "kp_p3_mult_2x2digit",
+      "name": "两位数乘两位数",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "数与运算",
+      "description": "能口算两位数乘整十数，掌握两位数乘两位数笔算",
+      "standard_ref": "2022课标第二学段·数与运算：探索并掌握两位数乘两位数的乘法，理解算理，能结合具体情境进行估算",
+      "prereqs": [
+        "kp_p3_mult_1digit"
+      ]
+    },
+    {
+      "id": "kp_p3_area",
+      "name": "面积",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "图形与几何",
+      "description": "认识面积与常用面积单位，掌握长方形正方形面积公式",
+      "standard_ref": "2022课标第二学段·图形与几何：认识面积的意义和常用面积单位，探索并掌握长方形、正方形的面积公式",
+      "prereqs": [
+        "kp_p3_perimeter"
+      ]
+    },
+    {
+      "id": "kp_p3_ymd_date",
+      "name": "年月日与24时计时法",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "数与运算",
+      "description": "认识年月日与平年闰年，会用24时计时法",
+      "standard_ref": "2022课标第二学段·数与运算：认识年、月、日，知道大月、小月、平年、闰年，会用24时计时法表示时刻",
+      "prereqs": [
+        "kp_p3_time_read"
+      ]
+    },
+    {
+      "id": "kp_p3_decimal_intro",
+      "name": "小数的初步认识",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "数与运算",
+      "description": "结合价格情境认识小数，会读写并计算一位小数加减法",
+      "standard_ref": "2022课标第二学段·数与运算：结合具体情境初步认识小数，能认、读、写简单的小数，会计算简单的小数加减法",
+      "prereqs": [
+        "kp_p3_fraction_intro"
+      ]
+    },
+    {
+      "id": "kp_p3_stats_table",
+      "name": "复式统计表",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "统计与概率",
+      "description": "会把单式统计表合并为复式统计表并作简单分析",
+      "standard_ref": "2022课标第二学段·统计与概率：经历数据收集、整理与表达的过程，认识复式统计表，能根据表中的数据进行简单分析"
+    },
+    {
+      "id": "kp_p3_combination",
+      "name": "搭配中的学问",
+      "subject": "math",
+      "grade": 3,
+      "cluster": "综合与实践",
+      "description": "按顺序思考，不重复不遗漏地找出简单搭配方案",
+      "standard_ref": "2022课标第二学段·综合与实践：在解决搭配问题的活动中，学会按一定顺序思考，能有条理地表达解决问题的过程"
+    },
+    {
+      "id": "kp_p4_bignum_read",
+      "name": "大数的认识",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "数与运算",
+      "description": "认识万级亿级的数，能读写含两级的数并比较大数",
+      "standard_ref": "2022课标第二学段·数与运算：在具体情境中认识万以上的数，能正确读、写含两级的数，会用“万”“亿”作单位表示大数"
+    },
+    {
+      "id": "kp_p4_hectare",
+      "name": "公顷和平方千米",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "图形与几何",
+      "description": "认识公顷和平方千米，会简单换算，发展量感",
+      "standard_ref": "2022课标第二学段·图形与几何：认识公顷和平方千米，知道它们与平方米之间的进率，能进行简单的换算",
+      "prereqs": [
+        "kp_p3_area"
+      ]
+    },
+    {
+      "id": "kp_p4_angle_measure",
+      "name": "线与角",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "图形与几何",
+      "description": "认识线段射线直线，会量角画角，知道角的分类",
+      "standard_ref": "2022课标第二学段·图形与几何：认识线段、射线和直线，认识角的度量单位，会用量角器量角、画指定度数的角，知道锐角、钝角、平角、周角"
+    },
+    {
+      "id": "kp_p4_mult_3x2digit",
+      "name": "三位数乘两位数",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "数与运算",
+      "description": "掌握三位数乘两位数笔算，会用估算判断结果合理性",
+      "standard_ref": "2022课标第二学段·数与运算：探索并掌握三位数乘两位数的乘法，能选择合适的估算方法判断结果是否合理",
+      "prereqs": [
+        "kp_p3_mult_2x2digit"
+      ]
+    },
+    {
+      "id": "kp_p4_div_2digit",
+      "name": "除数是两位数的除法",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "数与运算",
+      "description": "掌握试商调商方法，会笔算并验算有余数的除法",
+      "standard_ref": "2022课标第二学段·数与运算：探索并掌握除数是两位数的除法，经历试商、调商的过程，会用乘法验算除法",
+      "prereqs": [
+        "kp_p3_div_1digit",
+        "kp_p4_mult_3x2digit"
+      ]
+    },
+    {
+      "id": "kp_p4_quad_shape",
+      "name": "平行四边形和梯形",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "图形与几何",
+      "description": "认识平行四边形和梯形的特征，会画底边上的高",
+      "standard_ref": "2022课标第二学段·图形与几何：认识平行四边形和梯形，知道它们的基本特征，会画底边上的高",
+      "prereqs": [
+        "kp_p4_angle_measure"
+      ]
+    },
+    {
+      "id": "kp_p4_barchart",
+      "name": "条形统计图",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "统计与概率",
+      "description": "认识条形统计图，知道1格可表示多个单位并会分析",
+      "standard_ref": "2022课标第二学段·统计与概率：认识条形统计图，知道1格可以表示1个或多个单位，能根据数据绘制条形统计图并进行简单分析",
+      "prereqs": [
+        "kp_p3_stats_table"
+      ]
+    },
+    {
+      "id": "kp_p4_arith_order",
+      "name": "四则混合运算",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "数与运算",
+      "description": "掌握含括号的四则混合运算顺序并能正确计算",
+      "standard_ref": "2022课标第二学段·数与运算：掌握四则混合运算的顺序（先乘除后加减，有括号先算括号里的），能正确进行整数四则混合运算",
+      "prereqs": [
+        "kp_p3_addsub_3digit",
+        "kp_p3_div_1digit"
+      ]
+    },
+    {
+      "id": "kp_p4_operation_laws",
+      "name": "运算律与简便运算",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "数与运算",
+      "description": "了解五大运算律，能运用运算律进行简便计算",
+      "standard_ref": "2022课标第二学段·数与运算：探索并了解加法交换律、结合律和乘法交换律、结合律、分配律，能运用运算律进行简便运算",
+      "prereqs": [
+        "kp_p4_arith_order"
+      ]
+    },
+    {
+      "id": "kp_p4_decimal_meaning",
+      "name": "小数的意义和性质",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "数与运算",
+      "description": "理解小数意义与计数单位，掌握小数性质与名数改写",
+      "standard_ref": "2022课标第二学段·数与运算：结合具体情境理解小数的意义，认识小数的计数单位，掌握小数的性质，能进行简单的名数改写",
+      "prereqs": [
+        "kp_p3_decimal_intro"
+      ]
+    },
+    {
+      "id": "kp_p4_decimal_addsub",
+      "name": "小数加减法",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "数与运算",
+      "description": "掌握小数点对齐的小数加减法并能解决简单问题",
+      "standard_ref": "2022课标第二学段·数与运算：掌握小数加减法的计算方法，理解“小数点对齐”的道理，能解决相关的简单实际问题",
+      "prereqs": [
+        "kp_p4_decimal_meaning"
+      ]
+    },
+    {
+      "id": "kp_p4_triangle",
+      "name": "三角形",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "图形与几何",
+      "description": "掌握三边关系与内角和，能按角给三角形分类",
+      "standard_ref": "2022课标第二学段·图形与几何：认识三角形，知道三角形任意两边之和大于第三边、内角和是180°，能按角对三角形分类",
+      "prereqs": [
+        "kp_p4_angle_measure"
+      ]
+    },
+    {
+      "id": "kp_p4_compound_bar",
+      "name": "复式条形统计图",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "统计与概率",
+      "description": "认识复式条形统计图，能比较分析两组数据",
+      "standard_ref": "2022课标第二学段·统计与概率：认识复式条形统计图，能根据图例读取两组数据并进行比较分析",
+      "prereqs": [
+        "kp_p4_barchart"
+      ]
+    },
+    {
+      "id": "kp_p4_jituitonglong",
+      "name": "鸡兔同笼",
+      "subject": "math",
+      "grade": 4,
+      "cluster": "综合与实践",
+      "description": "会用列表法、假设法解决鸡兔同笼问题，体会假设思想",
+      "standard_ref": "2022课标第二学段·综合与实践：在解决鸡兔同笼等问题的活动中，经历列表、尝试与调整的过程，体会假设的思想方法",
+      "prereqs": [
+        "kp_p4_arith_order"
+      ]
+    },
+    {
+      "id": "kp_p5_decimal_meaning",
+      "name": "小数的意义与性质",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "数与运算",
+      "description": "理解小数意义，掌握数位顺序与计数单位0.1、0.01、0.001，明确小数性质，会比较大小、取近似数。",
+      "standard_ref": "2022课标第三学段：理解小数的意义，掌握小数的性质，能比较小数大小，会用四舍五入法求小数的近似数。"
+    },
+    {
+      "id": "kp_p5_decimal_add_sub",
+      "name": "小数加减法",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "数与运算",
+      "description": "掌握小数加减法计算方法，理解小数点对齐即相同数位对齐，能正确计算并解决实际问题。",
+      "standard_ref": "2022课标第三学段：理解小数加减法的算理，掌握计算方法，能正确进行小数加减法运算。",
+      "prereqs": [
+        "kp_p5_decimal_meaning"
+      ]
+    },
+    {
+      "id": "kp_p5_decimal_mul",
+      "name": "小数乘法",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "数与运算",
+      "description": "理解小数乘法算理，掌握小数乘整数、乘小数的计算方法，能正确求积的近似值。",
+      "standard_ref": "2022课标第三学段：理解小数乘法的算理，掌握计算方法，能正确计算小数乘法并求积的近似值。",
+      "prereqs": [
+        "kp_p5_decimal_meaning"
+      ]
+    },
+    {
+      "id": "kp_p5_decimal_div",
+      "name": "小数除法",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "数与运算",
+      "description": "掌握小数除以整数、除数是小数的除法计算方法，理解商的近似值，初步认识循环小数。",
+      "standard_ref": "2022课标第三学段：理解小数除法的算理，掌握计算方法，能求商的近似值，初步认识循环小数。",
+      "prereqs": [
+        "kp_p5_decimal_mul"
+      ]
+    },
+    {
+      "id": "kp_p5_mixed_ops",
+      "name": "小数四则混合运算与运算律",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "数与运算",
+      "description": "掌握小数四则混合运算顺序，理解运算律在小数运算中的推广，能进行简便计算。",
+      "standard_ref": "2022课标第三学段：掌握小数四则混合运算的顺序，理解运算律在小数运算中的应用，能进行简便计算。",
+      "prereqs": [
+        "kp_p5_decimal_add_sub",
+        "kp_p5_decimal_mul",
+        "kp_p5_decimal_div"
+      ]
+    },
+    {
+      "id": "kp_p5_factor_multiple",
+      "name": "因数与倍数",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "数与运算",
+      "description": "理解因数与倍数的意义，掌握2、3、5的倍数特征，认识奇数偶数、质数合数的概念。",
+      "standard_ref": "2022课标第三学段：理解因数与倍数的意义，掌握2、3、5的倍数特征，能区分奇数、偶数、质数、合数。"
+    },
+    {
+      "id": "kp_p5_fraction_meaning",
+      "name": "分数的意义与基本性质",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "数与运算",
+      "description": "理解分数意义与分数单位，掌握分数基本性质，会约分通分，能进行分数与小数互化。",
+      "standard_ref": "2022课标第三学段：理解分数的意义，掌握分数的基本性质，能进行约分、通分，会互化分数与小数。",
+      "prereqs": [
+        "kp_p5_factor_multiple"
+      ]
+    },
+    {
+      "id": "kp_p5_fraction_add_sub",
+      "name": "分数加减法",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "数与运算",
+      "description": "掌握同分母、异分母分数加减法计算方法，理解通分原理，计算结果能约成最简分数。",
+      "standard_ref": "2022课标第三学段：理解分数加减法的算理，掌握计算方法，能正确计算同分母、异分母分数加减法。",
+      "prereqs": [
+        "kp_p5_fraction_meaning"
+      ]
+    },
+    {
+      "id": "kp_p5_polygon_area",
+      "name": "多边形的面积",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "图形与几何",
+      "description": "掌握平行四边形、三角形、梯形面积公式，理解转化推导过程，能计算简单组合图形的面积。",
+      "standard_ref": "2022课标第三学段：探索并掌握平行四边形、三角形、梯形的面积公式，能计算组合图形的面积。"
+    },
+    {
+      "id": "kp_p5_cuboid_volume",
+      "name": "长方体与正方体",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "图形与几何",
+      "description": "掌握长方体、正方体的特征，理解表面积、体积、容积的概念，掌握计算方法与体积单位换算。",
+      "standard_ref": "2022课标第三学段：探索并掌握长方体、正方体的表面积、体积、容积的计算方法，理解体积单位换算。"
+    },
+    {
+      "id": "kp_p5_coord_pairs",
+      "name": "用数对确定位置",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "图形与几何",
+      "description": "理解列与行的表示规则，掌握数对表示位置的方法，能在方格纸上用数对确定位置。",
+      "standard_ref": "2022课标第三学段：理解数对的意义，能用数对表示物体在方格纸上的位置。"
+    },
+    {
+      "id": "kp_p5_graph_motion",
+      "name": "图形的运动",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "图形与几何",
+      "description": "掌握平移、旋转、轴对称的基本特征，能按要求在方格纸上作图，补全简单的轴对称图形。",
+      "standard_ref": "2022课标第三学段：理解平移、旋转、轴对称的特征，能在方格纸上画出平移、旋转后的图形，补全轴对称图形。"
+    },
+    {
+      "id": "kp_p5_line_graph",
+      "name": "折线统计图",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "统计与概率",
+      "description": "了解折线统计图的特点，能读懂折线统计图，分析数据的变化趋势。",
+      "standard_ref": "2022课标第三学段：认识折线统计图，能读懂折线统计图，体会其能反映数据变化趋势的特点。"
+    },
+    {
+      "id": "kp_p5_possibility",
+      "name": "可能性",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "统计与概率",
+      "description": "理解随机现象，能定性比较事件发生可能性的大小，能列举简单随机事件的所有可能结果。",
+      "standard_ref": "2022课标第三学段：感受随机现象，能定性描述事件发生的可能性大小，能列举简单随机现象的所有可能结果。"
+    },
+    {
+      "id": "kp_p5_letter_number",
+      "name": "用字母表示数",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "数量关系",
+      "description": "理解用字母表示数的意义，掌握含字母式子的简写规则，能代入求值，会用字母表示运算律。",
+      "standard_ref": "2022课标第三学段：在具体情境中探索用字母表示数的方法，能用字母表示数、数量关系和一般规律，会代入求值。",
+      "prereqs": [
+        "kp_p5_mixed_ops"
+      ]
+    },
+    {
+      "id": "kp_p5_tree_planting",
+      "name": "植树问题",
+      "subject": "math",
+      "grade": 5,
+      "cluster": "综合与实践",
+      "description": "理解间隔数与棵数的关系，掌握两端都栽、一端栽、两端不栽及封闭图形上的植树规律。",
+      "standard_ref": "2022课标第三学段：经历用间隔数与棵数的关系解决植树等实际问题的探究过程，体会数学模型思想。",
+      "prereqs": [
+        "kp_p5_mixed_ops"
+      ]
+    },
+    {
+      "id": "kp_p6_fraction_mul",
+      "name": "分数乘法",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "数与运算",
+      "description": "掌握分数乘整数的意义与计算方法，理解分数乘分数的算理，能先约分再计算。",
+      "standard_ref": "2022课标第三学段：理解分数乘法的算理，能正确计算分数乘整数和分数乘分数。",
+      "prereqs": [
+        "kp_p5_fraction_add_sub"
+      ]
+    },
+    {
+      "id": "kp_p6_fraction_div",
+      "name": "分数除法",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "数与运算",
+      "description": "理解倒数的意义，知道除以一个不为0的数等于乘这个数的倒数，能正确计算分数除法。",
+      "standard_ref": "2022课标第三学段：理解倒数的意义，掌握分数除法的计算方法，能正确进行分数除法运算。",
+      "prereqs": [
+        "kp_p6_fraction_mul"
+      ]
+    },
+    {
+      "id": "kp_p6_negative_numbers",
+      "name": "负数的初步认识",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "数与运算",
+      "description": "理解用正负数表示相反意义的量，能正确读写正负数，会简单比较正负数的大小。",
+      "standard_ref": "2022课标第三学段：结合生活情境了解负数的意义，会用正负数表示相反意义的量。"
+    },
+    {
+      "id": "kp_p6_percent",
+      "name": "百分数的意义与互化",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "数与运算",
+      "description": "理解百分数的意义，掌握百分数与小数、分数的互化方法，了解常见百分率的含义。",
+      "standard_ref": "2022课标第三学段：结合具体情境理解百分数的意义，能进行百分数与小数、分数的互化。",
+      "prereqs": [
+        "kp_p5_fraction_meaning",
+        "kp_p5_decimal_meaning"
+      ]
+    },
+    {
+      "id": "kp_p6_fraction_problem",
+      "name": "分数乘除法实际问题",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "数量关系",
+      "description": "掌握求一个数的几分之几、已知一个数的几分之几求这个数、比一个数多或少几分之几的数量关系。",
+      "standard_ref": "2022课标第三学段：能运用分数乘、除法的意义解决求一个数的几分之几等简单的实际问题。",
+      "prereqs": [
+        "kp_p6_fraction_mul",
+        "kp_p6_fraction_div"
+      ]
+    },
+    {
+      "id": "kp_p6_ratio",
+      "name": "比的意义与基本性质",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "数量关系",
+      "description": "理解比的意义，会求比值，知道比与分数、除法的关系，能运用比的基本性质化简比。",
+      "standard_ref": "2022课标第三学段：结合具体情境认识比，知道比与分数、除法的关系，会求比值并能化简比。",
+      "prereqs": [
+        "kp_p6_fraction_div"
+      ]
+    },
+    {
+      "id": "kp_p6_ratio_distribution",
+      "name": "按比分配",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "数量关系",
+      "description": "理解按比分配的意义，掌握把总量按一定比分成几部分的解题方法。",
+      "standard_ref": "2022课标第三学段：能解决按比分配的简单实际问题。",
+      "prereqs": [
+        "kp_p6_ratio"
+      ]
+    },
+    {
+      "id": "kp_p6_percent_application",
+      "name": "百分数的应用",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "数量关系",
+      "description": "理解折扣、成数、税率、利率的含义，能运用百分数知识解决相关的简单实际问题。",
+      "standard_ref": "2022课标第三学段：能解决折扣、利率等百分数的简单实际问题。",
+      "prereqs": [
+        "kp_p6_percent"
+      ]
+    },
+    {
+      "id": "kp_p6_proportion",
+      "name": "比例的意义与基本性质",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "数量关系",
+      "description": "理解比例的意义，认识内项、外项，掌握比例的基本性质，能解比例，了解比例尺的含义。",
+      "standard_ref": "2022课标第三学段：了解比例的意义和基本性质，能利用解比例解决简单实际问题。",
+      "prereqs": [
+        "kp_p6_ratio"
+      ]
+    },
+    {
+      "id": "kp_p6_proportional",
+      "name": "正比例关系",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "数量关系",
+      "description": "理解相关联的量，认识比值一定的两个量成正比例关系，能根据正比例关系解决简单问题。",
+      "standard_ref": "2022课标第三学段：结合具体情境认识成正比的量（正比例关系），能根据正比例关系解决简单实际问题。",
+      "prereqs": [
+        "kp_p6_ratio"
+      ]
+    },
+    {
+      "id": "kp_p6_circle",
+      "name": "圆的周长与面积",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "图形与几何",
+      "description": "认识圆心、半径、直径，理解圆周率的意义，掌握圆的周长和面积公式，能计算半圆的周长。",
+      "standard_ref": "2022课标第三学段：认识圆，掌握圆的周长和面积计算公式，体会化曲为直的转化思想。"
+    },
+    {
+      "id": "kp_p6_cylinder_cone",
+      "name": "圆柱与圆锥",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "图形与几何",
+      "description": "认识圆柱和圆锥的特征，掌握圆柱表面积、体积的计算方法，理解等底等高圆锥体积是圆柱的三分之一。",
+      "standard_ref": "2022课标第三学段：认识圆柱和圆锥，掌握圆柱的表面积与体积、圆锥体积的计算公式。",
+      "prereqs": [
+        "kp_p6_circle",
+        "kp_p5_cuboid_volume"
+      ]
+    },
+    {
+      "id": "kp_p6_position_direction",
+      "name": "位置与方向",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "图形与几何",
+      "description": "能根据方向（角度）和距离确定物体的位置，能描述并分析简单的路线。",
+      "standard_ref": "2022课标第三学段：能根据方向和距离确定物体的位置，会描述简单的路线图。",
+      "prereqs": [
+        "kp_p5_coord_pairs"
+      ]
+    },
+    {
+      "id": "kp_p6_pie_chart",
+      "name": "扇形统计图",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "统计与概率",
+      "description": "认识扇形统计图的特点，能读懂扇形统计图，能根据需要选择合适的统计图表示数据。",
+      "standard_ref": "2022课标第三学段：认识扇形统计图，能根据需要选择合适的统计图表示数据。",
+      "prereqs": [
+        "kp_p5_line_graph"
+      ]
+    },
+    {
+      "id": "kp_p6_number_shape",
+      "name": "数与形",
+      "subject": "math",
+      "grade": 6,
+      "cluster": "综合与实践",
+      "description": "经历数形结合找规律的过程，理解正方形数、连续奇数和等规律，能用图形直观帮助理解计算。",
+      "standard_ref": "2022课标第三学段：经历数与形结合探索规律的过程，体会数形结合思想。",
+      "prereqs": [
+        "kp_p5_tree_planting"
+      ]
+    },
     {
       "id": "kp_posneg",
       "name": "正数与负数",
