@@ -41,7 +41,7 @@ cp .env.example .env    # 填 MASK_KEY（随机32字节hex）；MOCK_KEY 演示�
 |---|---|---|---|
 | 0 | INFRA | m0_infra | `M0 INFRA: 20/20`（冷启动 ≈217s） |
 | 2 | RECOG | m2_recognizers | `6/6`（2000 字 mean 2.29ms） |
-| 3 | MASKING | m3_masking | `8/8`（≈4.3s；还原 0.046ms） |
+| 3 | MASKING | m3_masking | `9/9`（≈4.3s；还原 0.046ms；T8.4 增改形还原项） |
 | 4 | ROUTING | m4_routing | `43/43`（38 格+5 横切） |
 | 5 | OUTGUARD | m5_outguard | `13/13`（≈21s） |
 | 6 | FILECHAN | m6_filesvc / m6_ocr | `12/12`（≈106s）/ `6/6`（≈282s，OCR 渲染占大头） |
@@ -100,8 +100,9 @@ python "D:/workspace/澄迈8项目/政务AI脱敏网关/repo/ops/gate_d0.py"   #
    改阈值须同步核对 CONTRACTS 里引用它的通过线文案。
 7. **占位符升位**：`DIGEST_WIDTHS=(8,10,12)` 插入期碰撞检测；测试显式注入词表用
    `set_*_terms`（绕过文件），不要改 config 词表文件来造测试条件。
-8. **流式还原 32 字符缓冲**：`MAX_PLACEHOLDER_LEN=32` 与占位符形状正则（hex 8–12 位）联动，
-   改占位符标签长度上限必须同步（超 32 字符会被当普通文本放行首字符）。
+8. **流式还原 48 字符缓冲**：`MAX_PLACEHOLDER_LEN = PLACEHOLDER_TOLERANT_MAX_LEN = 48`
+   （T8.4 起 32→48，容忍模型对占位符的反引号/空白/换行改形；与占位符形状正则 hex 8–12 位
+   联动，改占位符标签长度上限必须同步——超窗候选按普通文本放行首字符）。
 9. **导出零残留是管线内硬闸**：不是仅验收断言——`ExportBlockedError` 宁可阻止不可漏删；
    收敛上限 `SANITIZE_MAX_PASSES=3`（删除后相邻文本拼接可能产生新命中）。
 10. **`extra="forbid"`**：9 个契约模型全部禁额外字段（m0_infra 有负例）——新字段走

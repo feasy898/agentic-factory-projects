@@ -1,6 +1,6 @@
 # 跨模块冻结契约汇总（CONTRACTS）
 
-> 版本：契约基线 v1.0.0（2026-09-29 对照代码逐行核验）。开发指令 §5 五个冻结 schema +
+> 版本：契约基线 v1.0.1（2026-09-30 对照代码逐行核验；C3 增补 T8.4 容错改形还原面）。开发指令 §5 五个冻结 schema +
 > 派生契约的权威摘要。**铁律 B：D1 评审后冻结——字段只增不改名不删**；全部契约模型
 > `extra="forbid"`（m0_infra 含 9 模型负例）。
 
@@ -66,7 +66,13 @@ SENSITIVE_ATTR/WORK_SECRET→ROUTE_FLAG；其余→MASK。
 ```
 
 - 占位符算法（§5.3.1 一字不差）：HMAC-SHA256(key=MASK_KEY, msg=`session_id\x1f type\x1f
-  normalized`)，截 8 位、同 session+type 碰撞升 10/12 位；`〔中文标签·hex〕`；
+  normalized`)，截 8 位、同 session+type 碰撞升 10/12 位（12 位仍碰撞抛 RuntimeError；
+  同值再到达复用既有升位条目）；`〔中文标签·hex〕`；
+- **容错改形还原（T8.4）**：`SessionMapper.restore` 走 `restore_tolerant`——改形占位符
+  （反引号/空白/换行插入、hex 大小写·全半角、O→0/I·l→1、同形括号〔【〖［[ 与间隔号
+  ·・•‧⋅﹒．. 转写）先经 `canonical_placeholder` 规范化为规范键再查表，命中才替换；
+  `tolerant_placeholder_hits` 为泄漏检测面（比严格正则宽，改形残留也算泄漏）；
+  RESTORE_PATTERN 保留为检测面（fixture/审计预览断言）；
 - 会话存储：内存 LRU（容量 1024）+ SQLite masking_map（主键 (session_id, placeholder)）+ TTL
   默认 24h；**与审计库分文件**（masking_map 必须存归一化原值，审计库有 bytes 级零明文断言）；
 - 详细：[masking-placeholder](specs/masking-placeholder.md)、[masking-normalize](specs/masking-normalize.md)。
