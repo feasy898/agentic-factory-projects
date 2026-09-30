@@ -87,6 +87,29 @@ adjudicate.py:123-131）。
   单面（恰一面 None）与双 None 占位记录必须**恰为 -1**；双面齐全必须 **>=0**（mm 距离），
   传 -1 或任何负值即 ValidationError。两口径之间没有中间地带。
 
+### 3.1 基础设施 pin（2026-09-30 钉死：83 例测试未覆盖、重生成须逐条照抄的实现细节）
+
+1. **`load_taxonomy` 缺省路径 = 包父目录/`configs/taxonomy.yaml`**：
+   `DEFAULT_TAXONOMY_PATH = Path(__file__).resolve().parent.parent / "configs" /
+   "taxonomy.yaml"`（taxonomy.py:28，即 beaneye 包父目录=仓库根）；
+   `load_taxonomy(path=None)` 即用它（taxonomy.py:172-174），文件缺失抛 `TaxonomyError`。
+2. **异常族一律 `ValueError` 子类**：`TaxonomyError(ValueError)`（taxonomy.py:41）、
+   `SeverityError(ValueError)`（adjudicate.py:48）；契约侧 `ValidationError` 是 pydantic 的
+   （本仓 venv pydantic 2.13.5 实测 MRO 含 `ValueError`）——捕获侧可统一
+   `except ValueError` 兜住三类。
+3. **`SeverityOrder.source` 恰三取值**（adjudicate.py:66,85,102-103）：直构缺省串 =
+   **`"explicit"`**；`from_taxonomy` → `"taxonomy:<source_path>"`；`from_standard_yaml` →
+   `"standard:<id>"`，标准 YAML **缺 `standard` 键回退文件名 stem**（`raw.get("standard")
+   or p.stem`）。【重生成差异登记】二轮重生成件直构缺省用了 `"taxonomy:default"`、缺
+   `standard` 键回退空串——与仓内实现不符且不被测试覆盖，重生成/复刻必须以本仓三值为准。
+4. **`worst_detail` 单面分支明细 = 『胜出面 + tie=False』**：仅 bottom 有观测 →
+   `WorstResult(top.defect, "top", rank, winner_side="top", winner_conf=top.defect_conf,
+   tie=False)`；仅 top 有观测 → 对称取 bottom（adjudicate.py:187-199）。
+5. **`adjudicate_pairs` 无论何种序都先 rebase 再构造**：逐对对两面各调
+   `rebase_observation` 后才构造 `PairedBean`（adjudicate.py:256-267）；缺省 taxonomy 序下
+   存储 rank 已与序一致，rebase 恒等（同 rank 原样返回，adjudicate.py:240-246）、
+   不可观测。
+
 ## 4. 计数规则（CQI `most_severe_per_bean`，一粒只计一次）
 
 | 函数 | 口径 |

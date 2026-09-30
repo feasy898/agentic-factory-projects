@@ -3,8 +3,11 @@
 > 本表按**逻辑模块**组织。已落地的代码结构不动，物理位置逐行标注。
 > 每模块一行：模块ID / 名称 / 语言形态 / 职责 / 冻结契约 / 依赖 / eval 命令与通过线 / 重生成顺序位 / 状态。
 > 详细契约汇总见 [CONTRACTS.md](CONTRACTS.md)；整仓再生手册见 [REGENERATE.md](REGENERATE.md)；逐模块 spec 在 [specs/](specs/)。
-> 所有 eval 命令在仓库根执行。**2026-09-29 实测基线**：全套件 434 用例 = 431 绿 + 3 已知失败（M6 密排统计场景，
-> 见下「实测注记」）；本文所有通过线数字均为当日 `.venv` 实跑值。
+> 所有 eval 命令在仓库根执行。**2026-09-30 实测基线（现状）**：全套件 **508 用例全绿**
+> （`pytest tests/ -q` → `508 passed in 298.11s`，exit 0；同日 `python scripts/gate_d2.py`
+> → `GATE D2: PASS (5/5)`）——提交 74f020e 已回退 943d8cc 的 test_pairing RNG 迁移，
+> 落成时点「431 绿 + 3 已知失败（434 用例）」的快照已不复存在，历史留档于「实测注记」；
+> 各模块行内「2026-09-29 实测」数字为当日 `.venv` 实跑值。
 
 ## 状态图例
 
@@ -24,7 +27,7 @@
 | `M1-contract` | 契约（13 模型 + 5 Protocol + taxonomy） | Python（Pydantic v2，`extra="forbid"`）+ YAML | 全链路跨模块数据只走 `beaneye/schemas.py`；`defect` 合法取值由 `configs/taxonomy.yaml` 构造期校验 | schema v1.0（v1.1 只增 `GradingDecision.warnings`）；不变式：每粒只计最严重缺陷 / lab8 单一标度 / 单面 `pairing_cost=-1` | — | `python -m pytest tests/test_schemas.py -q` → **60 passed** | 1 | 冻结 | [CONTRACTS](../CONTRACTS.md) |
 | `M2-acquisition` | 采集（Mock / USB / Synth 三源） | Python + OpenCV（DirectShow） | 统一 `Source` 基类落盘双面图 + manifest + M1 出厂自检；无相机阶段 Mock 全程可演示 | `TrayScan` 往返无损；`scan_<prefix>_%04d` 稳定序；图像 IO 只走字节缓冲封装 | M1 | `python -m pytest tests/test_acquisition.py -q` → **22 passed** | 2 | 冻结（SynthSource 占位，等 M12） | [REGENERATE §2](../REGENERATE.md) |
 | `M3-calibration` | 标定与坐标变换 | Python + OpenCV（ArUco + 单应） | 四角码检测 → 原图 px → 盘面 mm 单应 → 2048² 正射网格；码位几何单一真源是 `configs/tray.yaml` | `CalibResult`（H_top/H_bottom 3×3、px_per_mm>0、marker_ids 恰 [0,1,2,3]）；<4 码抛 `CalibrationError` | M1 | `python -m pytest tests/test_calibration.py -q` → **34 passed**（中心反投影 0.08–0.41mm ≤0.5mm 线） | 3 | 冻结 | [markers-geometry](specs/markers-geometry.md) |
-| `M6-pairing` | 上下配对 | Python + numpy + scipy | 两面观测质心 mm 欧氏距离 + 门限 12mm + 哑节点匈牙利全局最优 + 两遍整体配准残差矫正；单面豆一等保留 | `PairedBean.from_sides` 契约构造；bean_id 按锚定质心 (x,y) 稳定编号 | M1 | `python -m pytest tests/test_pairing.py -q` → **24 passed / 3 failed**（密排统计场景，见实测注记） | 4 | 冻结·已知回归 | [pairing](specs/pairing.md) |
+| `M6-pairing` | 上下配对 | Python + numpy + scipy | 两面观测质心 mm 欧氏距离 + 门限 12mm + 哑节点匈牙利全局最优 + 两遍整体配准残差矫正；单面豆一等保留 | `PairedBean.from_sides` 契约构造；bean_id 按锚定质心 (x,y) 稳定编号 | M1 | `python -m pytest tests/test_pairing.py -q` → **27 passed**（2026-09-30 复跑；09-29 快照 24 passed/3 failed 已由 74f020e 回退消除，见实测注记） | 4 | 冻结 | [pairing](specs/pairing.md) |
 | `M7-severity` | 严重度裁决 | Python（纯 Pydantic + PyYAML） | 每粒两面取最严重缺陷：rank 高者胜、平级取 conf 高记 both、非可计缺陷类不参与比较；与契约校验器逐位一致 | `worst(top,bottom,order)->(final_defect,worst_side)`；severity_order[0] 恒 normal | M1 | `python -m pytest tests/test_severity.py -q` → **83 passed** | 5 | 冻结 | [severity](specs/severity.md) |
 | `M8-metrology` | 计量 | Python（math/statistics，无 numpy 依赖面） | 目数分布（1/64 英寸筛，.5 进位）、ΔE76 色差（两面按严重度 0.7/0.5 加权合并）、面积法估重 | `measure(beans, calib, std_yaml) -> Measurements`；lab8↔CIE 仿射互转唯一实现 | M1, M9(YAML) | `python -m pytest tests/test_metrology.py -q` → **31 passed** | 6 | 冻结 | [metrology](specs/metrology.md) |
 | `M9-standards` | 标准引擎 | Python + PyYAML（带行号 LMap） | 三套标准 YAML 配置驱动定级：换标准 = 换 YAML 不改代码；`verified:false` 收集 warnings 并阻断 passed | `load_standard(id)`/`StandardEngineV1.evaluate`；语义错误 = `路径:行号: 问题` | M1, M7 | `python -m pytest tests/test_standards.py -q` → **57 passed** | 7 | 冻结（阈值为占位基线，全部 `verified:false`） | [standards-yaml](specs/standards-yaml.md) |
@@ -57,7 +60,7 @@
 | ID | 名称 | 形态 | 门项 | 命令 → 通过线 | 2026-09-29 实测 |
 |---|---|---|---|---|---|
 | `GATE-d1` | D1 里程碑闸门 | `scripts/gate_d1.py`（系统 python 任意 cwd，内部定位仓库根 + `.venv` + `PYTHONUTF8=1`） | ① doctor exit0 ② `pytest tests/test_schemas.py` 全绿 ③ **现场重跑** oss_smoke（aruco+qrcode 两硬项 ok） ④ 数据集 README 含"解锁步骤" | `python scripts/gate_d1.py` → `GATE D1: PASS (4/4)`，exit 0 | **FAIL (1/4)**：①（DOCTOR: PASS）②（test_schemas 60 绿）④ PASS；③ 现场重跑 oss_smoke **超时 >600s**（本机当时网络受限，NN 冒烟件拉取超时；非产物回归） |
-| `GATE-d2` | D2 里程碑闸门 | `scripts/gate_d2.py`（同约定） | ① doctor ② `pytest tests/` 全绿 ③ W3/W6/W7/W2 eval 入口逐个 exit0 ④ 中性名扫描零命中（**28 条**模式，产品面零豁免） ⑤ 禁止 IO 扫描零命中（cv2.imread / cv2.imwrite / np.fromfile 三种直传路径调用形态） | `python scripts/gate_d2.py` → `GATE D2: PASS (5/5)` | **FAIL (2/5)**：②③ 因 M6 密排 3 例回归（实测 `3 failed, 431 passed`）；①④⑤ PASS |
+| `GATE-d2` | D2 里程碑闸门 | `scripts/gate_d2.py`（同约定） | ① doctor ② `pytest tests/` 全绿 ③ W3/W6/W7/W2 eval 入口逐个 exit0 ④ 中性名扫描零命中（**28 条**模式，产品面零豁免） ⑤ 禁止 IO 扫描零命中（cv2.imread / cv2.imwrite / np.fromfile 三种直传路径调用形态） | `python scripts/gate_d2.py` → `GATE D2: PASS (5/5)` | 09-29 落成时点 **FAIL (2/5)**：②③ 因当时 M6 密排 3 例回归（`3 failed, 431 passed`）；①④⑤ PASS。**09-30 复跑 PASS (5/5)**：② `508 passed` 全绿、③ 4/4 入口 exit 0（标定 34/配对 27/严重度 83/采集 22）——74f020e 回退 RNG 迁移后 ②③ 随之转绿（见实测注记） |
 | `GATE-d3` | D3 里程碑闸门 | `scripts/gate_d3.py`（同约定） | ① doctor ② `pytest tests/` 全绿 ③ W8/W9/W10/W11 eval 入口逐个 exit0 ④ 中性名扫描零命中（23 条模式） | `python scripts/gate_d3.py` → `GATE D3: PASS (4/4)` | **FAIL (1/4)**：①③④ PASS（③ 4/4 入口全绿）；② FAIL（见实测注记 4——在飞并发写入的瞬时快照） |
 
 > 门禁纪律：跳过不是通过；中性名扫描对 git 跟踪文本文件全量扫描（二进制跳过），豁免名单只收
@@ -78,16 +81,35 @@ M11 溯因(9，只依赖 M1+知识表，可与 6-8 并行)
   M13 已按「缺位即显式降级」语义先行冻结端点。
 - 每步验收命令见 [REGENERATE §2](REGENERATE.md)。
 
-## 实测注记（2026-09-29，资产包落成时点）
+## 实测注记
+
+### 现状（2026-09-30 复跑订正，取代下方落成时点快照作为当前口径）
+
+- **全套件全绿**：`pytest tests/ -q` → `508 passed in 298.11s`（exit 0）；同日
+  `python scripts/gate_d2.py` 复跑 → `GATE D2: PASS (5/5)`（② 508 全绿、③ W3/W6/W7/W2
+  四入口 4/4 exit 0 = 34/27/83/22、④ 中性名零命中 133 文件 × 28 条模式、⑤ 禁止 IO 零命中）。
+- **3 例密排失败已消除**：提交 `74f020e`（09-29 16:31，资产包落成 40 分钟后）回退了
+  `943d8cc` 的 test_pairing RNG 迁移——`tests/test_pairing.py` 恢复标准库 `random`
+  （现为 `import random`，全文件无 numpy `default_rng`），仅还原该 24 行 hunk、
+  **生产代码零改动**；`tests/test_pairing.py` 现为 **27 passed**（密排 pitch8mm 实测
+  precision=0.9316 ≥ 0.90 回归下限）。M6 状态由「冻结·已知回归」改回「冻结」。
+- **历史时间线（留档）**：`943d8cc`（09-28 23:12）stdlib random → numpy `default_rng`
+  （种子未变但随机流变，3 例密排用例确定性跌破下限）→ `f247edd`（09-29 15:51，资产包
+  落成，其时 3 例失败属实，快照见下）→ `74f020e`（09-29 16:31）回退该迁移 → 现全绿
+  （09-30 复跑）。
+
+### 历史快照（2026-09-29 资产包落成时点 f247edd——已被上方「现状」取代，留档不删）
 
 1. **全套件**：`python -m pytest tests/ -q` → `3 failed, 431 passed`（77s）。3 个失败全部是
    `tests/test_pairing.py` 的密排统计场景（`test_statistical_dense_324_beans_pitch8mm`
    precision 0.8818 < 0.90 线、密排旋转透视残差、小偏移第二遍安全）——确定性复现（钉种子）。
+   **（已消除：74f020e 回退后 3 例全过，见「现状」。）**
 2. **回归根源（如实记录，未擅自修数）**：提交 `943d8cc` 把该文件随机源从标准库 random 切到
    numpy `default_rng`（提交注记称"钉种子确定性不变"——**种子值未变，但随机流变了**），
    密排场景实例随之改变，precision 跌破 0.90 回归下限。该构型本就是配对算法 docstring
    如实登记的已知局限（规则点阵 + 偏移接近点阵间距整分数时中位数锁错模，劣化守卫只能
    阻止第二遍变差、不能修正第一遍）。修复归属 M6 属主（改算法或改场景参数），本资产包只记录。
+   **（最终修复形态 = 74f020e 回退 RNG 迁移、恢复 stdlib 序列，非改算法/改场景参数。）**
 3. **工作树在飞件**：`beaneye/segment/`、`beaneye/synth/`、`configs/segment.yaml`、`configs/synth.yaml`、
    `tests/test_segment.py`、`tests/_segment_synth.py` 均未入库（D4 代理在飞，与本文写作并发），
    本资产包不引用其为真源；`M12-synth` 标 regenerating。
@@ -97,10 +119,12 @@ M11 溯因(9，只依赖 M1+知识表，可与 6-8 并行)
    `3 failed, 431 passed`（已入库模块集）与 `3 failed, 454 passed`（含在飞 test_segment 23 例），
    失败集合始终只有注记 1 的 3 例密排配对用例。**结论：② 的 FAIL 由并发写入的瞬态放大，
    稳定态差异 = 注记 1 的 3 例**；复跑门禁应等在飞代理落定后进行。
+   **（后续：3 例已由 74f020e 消除；gate_d2 09-30 复跑 5/5 PASS 见「现状」。）**
 5. 其余各模块 eval 入口当日全绿（数字见上表，逐条实跑）。
 
 ## 本资产包的变更史指针
 
 | commit | 内容 |
 |---|---|
-| （本包落成 commit） | manifest + 7 张 spec + REGENERATE + CONTRACTS 首版（对照 2026-09-29 HEAD 全量核验） |
+| `f247edd`（09-29 15:51） | manifest + 7 张 spec + REGENERATE + CONTRACTS 首版（对照 2026-09-29 HEAD 全量核验；其时 3 例密排失败属实的快照见实测注记·历史快照） |
+| `74f020e`（09-29 16:31） | 回退 `943d8cc` 的 test_pairing RNG 迁移（stdlib random 恢复、生产代码零改动）——3 例密排失败消除，全套件恢复全绿（2026-09-30 复跑 508 passed、gate_d2 5/5 PASS） |
