@@ -244,7 +244,7 @@
     {
       "id": "BENCH",
       "name": "生成器与测评（M8）",
-      "status": "frozen（m8_baselines / m8_quality 规划态，未入六门）",
+      "status": "frozen（m8_quality 已实现：evals/m8_quality.py 实测 M8 QUALITY: 6/6 ratio=1.0000 ≥0.95；m8_baselines 仍规划态，未入六门）",
       "lang": "Python（benchmark/generator；第三方语料库模块名只进 config/synthetic_corpus.yaml）",
       "responsibility": "seed 固定字节级可复现的合成语料/检测评测集/seeded 夹具 + manifest sha256 凭据；evals/thresholds.py 阈值单一来源。",
       "physicalLocations": [
@@ -277,7 +277,7 @@
         "ops/gate_d0.py（G0）",
         "ops/gate_b1.py … ops/gate_b5.py（G-B1…G-B5；b3 起内嵌上一整门回归）",
         "ops/name_lint.py + ops/forbidden_names.txt（每门①：公开仓名称守卫）",
-        "ops/e2e_smoke.py（U1–U7 + bytes 级零明文 + 演示数据）",
+        "ops/e2e_smoke.py（U1–U8 + bytes 级零明文 + 演示数据）",
         "ops/export_public.py（公开导出 + 严格档终检）",
         "ops/seed_demo.py（三部门演示数据注入/一键切换）"
       ],
@@ -289,7 +289,7 @@
       "dependsOn": ["GATEWAY", "RECOG", "MASKING", "ROUTING", "OUTGUARD", "FILECHAN", "SEMANTIC", "AUDIT", "BENCH"],
       "eval": {
         "commands": ["python ops/gate_b5.py"],
-        "passLine": "全项 [PASS] exit 0；gate_b5 实跑 6/6 记录见 git log 827cdbf（2026-09-29）；各 eval 单跑 2026-09-29 本会话实测全绿（m10_e2e：7 PASS / 0 FAIL / 0 DEFERRED，≈337s）"
+        "passLine": "全项 [PASS] exit 0；gate_b5 实跑 6/6 记录见 git log 827cdbf（2026-09-29）；各 eval 单跑 2026-09-29 本会话实测全绿（m10_e2e：8 PASS / 0 FAIL / 0 DEFERRED，gate_final run5 实录 tmp/gate_final_run5.log）"
       },
       "gatePointer": ["自身即门"],
       "regenOrder": 10,
@@ -299,7 +299,9 @@
   "supportingAssets": [
     {"id": "INFRA", "name": "基础设施（M0）", "locations": ["common/config.py", "common/logs.py", "common/timeutil.py", "config/*.yaml|txt", "pyproject.toml", "constraints.txt"], "eval": "evals.m0_infra → M0 INFRA: 20/20", "gatePointer": ["每门 ②"]},
     {"id": "NAMELINT", "name": "公开仓名称守卫", "locations": ["ops/name_lint.py", "ops/forbidden_names.txt"], "eval": "python -m ops.name_lint → 零命中 exit 0", "gatePointer": ["每门 ①"]},
-    {"id": "E2E", "name": "端到端冒烟（M10 主体）", "locations": ["ops/e2e_smoke.py"], "eval": "evals.m10_e2e → e2e_smoke: 7 PASS / 0 FAIL / 0 DEFERRED", "gatePointer": ["每门必回归"]},
+    {"id": "E2E", "name": "端到端冒烟（M10 主体）", "locations": ["ops/e2e_smoke.py"], "eval": "evals.m10_e2e → e2e_smoke: 8 PASS / 0 FAIL / 0 DEFERRED", "gatePointer": ["每门必回归"]},
+    {"id": "ROBUST", "name": "健壮性验收（M11）", "locations": ["evals/m11_robust.py"], "eval": "evals.m11_robust → M11 ROBUST: 7/7（gate_final run5 实测 104.6s）", "gatePointer": ["未入六门；gate_final 第⑧项"]},
+    {"id": "GATE_FINAL", "name": "收官终检门", "locations": ["ops/gate_final.py"], "eval": "python ops/gate_final.py → 九项 [PASS] exit 0（run5 实录 tmp/gate_final_run5.log，≈90min）", "gatePointer": ["自身即门（六门收口后的最终裁定）"]},
     {"id": "LABELS", "name": "标签体系文档自验收", "locations": ["docs/contracts/labels.md", "evals/t0_labels.py"], "eval": "evals.t0_labels → T0 LABELS: 8/8", "gatePointer": ["G-B1:⑥ 首验起"]},
     {"id": "WEBUI", "name": "演示前端五页（M9）", "locations": ["webui/pages.py", "webui/dashboard.py", "webui/demo_api.py", "webui/templates/"], "eval": "evals.m9_webui → 14/14 检查通过", "gatePointer": ["G-B3:④（骨架口径）", "G-B5:④（全量口径）"]}
   ]

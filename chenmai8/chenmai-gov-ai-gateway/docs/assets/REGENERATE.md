@@ -50,7 +50,9 @@ cp .env.example .env    # 填 MASK_KEY（随机32字节hex）；MOCK_KEY 演示�
 | 1 | GATEWAY | t0_gateway / t0_stream | exit 0 / `11/11`（≈57s） |
 | 8 | AUDIT+看板 | m7_audit / m9_webui | `16/16`（≈14s）/ `14/14`（≈49s） |
 | — | 标签文档 | t0_labels | `8/8`（≈379s，全仓 lint 占大头） |
-| 10 | E2E | m10_e2e | `e2e_smoke: 7 PASS / 0 FAIL / 0 DEFERRED`（≈337s） |
+| 10 | E2E | m10_e2e | `e2e_smoke: 8 PASS / 0 FAIL / 0 DEFERRED`（≈337s；八用例 U1–U8，U8 需 :9004 真实上游，不在线时如实 DEFERRED） |
+| — | 健壮性 | m11_robust | `M11 ROBUST: 7/7`（畸形输入/非法 SSE/并发 50 零串扰；gate_final run5 实测 104.6s） |
+| — | 质量评测 | m8_quality | `M8 QUALITY: 6/6`（ratio=1.0000 ≥0.95；需 :9004 真实上游，实录 tmp/m8_quality_full_run.log） |
 
 ## 3. 全仓验收（六道门）与超时预算
 
@@ -58,6 +60,7 @@ cp .env.example .env    # 填 MASK_KEY（随机32字节hex）；MOCK_KEY 演示�
 # 系统 python 从任意 cwd 可跑（门内部自定位仓库与 .venv）：
 python "D:/workspace/澄迈8项目/政务AI脱敏网关/repo/ops/gate_b5.py"   # 最新门：name_lint+m0+m7全量+m9全量+m10_e2e+整门回归b4
 python "D:/workspace/澄迈8项目/政务AI脱敏网关/repo/ops/gate_d0.py"   # 最小门：name_lint+m0+t0_stream+m10_e2e
+python "D:/workspace/澄迈8项目/政务AI脱敏网关/repo/ops/gate_final.py" # 收官终检门：九项（gate_d0/b1..b5 整门回归 + evals.m11_robust + ops/export_public）全过后出门结果汇总与指标终值表；run5 实录 tmp/gate_final_run5.log（≈90min，含真实大模型面需 :9004）
 ```
 
 **超时预算（门脚本常量，冻结）**：

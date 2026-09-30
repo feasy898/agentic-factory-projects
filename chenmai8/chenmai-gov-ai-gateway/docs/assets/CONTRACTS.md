@@ -146,7 +146,7 @@ SENSITIVE_ATTR/WORK_SECRET→ROUTE_FLAG；其余→MASK。
 | # | 痛点 | 影响 | 变更候选 |
 |---|---|---|---|
 | 1 | 出站辅助面 `_iter_string_leaves`（gateway/pipeline.py:144-158）只递归 dict 的 **values**，字符串键不进检测面 | PII/密级词藏在 JSON 键位（如 `{"13800138000": …}`）时漏检漏替换 | 叶遍历增扫键；或入站校验拒绝键位含命中（与 body 校验层合并裁决） |
-| 2 | m8_baselines / m8_quality 为规划态未实现 | PPT 基线对比/质量比值（≥0.95）暂无自动产出 | 按 benchmark-generator spec §4 落地后补六门指针 |
+| 2 | m8_baselines 规划态未实现；m8_quality **已实现**（evals/m8_quality.py，2026-09-30 核对：实测 `M8 QUALITY: 6/6` ratio=1.0000 ≥0.95，tmp/m8_quality_full_run.log） | PPT 基线对比暂无自动产出；质量比值（≥0.95）已可由 evals.m8_quality 产出 | m8_baselines 按 benchmark-generator spec §4 落地后补六门指针；m8_quality 验收命令已入 REGENERATE §2 |
 | 3 | preserve_semantic 字段已入契约但无消费方（语义保留替换为 P1 规划） | 字段形同虚设 | 接线（ID_CARD 保地区码+出生年、日期平移）或标注"预留" |
 | 4 | 人名启发式为静态停用词表 curated | 新词误收需手工追加 | NER 层接入后由 NER 主导，启发式降为兜底 |
 

@@ -44,13 +44,15 @@
 | M7 审计 | AUDIT_E2E_REQUESTS(20)、AUDIT_RAW_PII_HITS_ALLOWED(0)、AUDIT_WRITER_EVENTS(30)、AUDIT_APPEND_BATCH_MS(200)、AUDIT_PAGE_LIMIT_DEFAULT/MAX(100/1000) 等 |
 | M8 | CORPUS_DOCS_MIN(5000)、CORPUS_TEMPLATE_CLASSES_MIN(30)、QUALITY_PAIRS_MIN(50)、QUALITY_RATIO_MIN(0.95)、GENERATOR_*（T1.1 口径：模板类 ≥10、扰动 ≥5 类、澄迈身份证 ≥20、难负例 ≥20 等） |
 
-## 4. 基线与质量评测（规划口径，D6/D7）
+## 4. 基线与质量评测（m8_baselines 规划口径，D6/D7；m8_quality 已实现）
 
 - `evals.m8_baselines`：三基线（纯正则去校验位 / 最小中文模式识别框架 / 上游 LLM 零样本）
   × full_cases.jsonl 对比表落盘 `data/bench/report.json`——PPT 指标的唯一数据源（不许手填）；
 - `evals.m8_quality`：≥50 问答对，脱敏前后双答质量比值 ≥ 0.95。
-- **如实登记**：这两入口为规划态，2026-09-29 本资产包核验时未在六道门任何一项中出现、
-  未见实现入册（六门覆盖清单见 gates spec §2）；启用时按 CONTRACTS 变更流程补指针。
+- **如实登记（2026-09-30 更新）**：`evals.m8_quality` 已实现并实测通过——`M8 QUALITY: 6/6
+  checks passed`、ratio=1.0000 ≥0.95（tmp/m8_quality_full_run.log；需 :9004 真实上游）；
+  `evals.m8_baselines` 仍为规划态、未入六道门（覆盖清单见 gates spec §2）；
+  m8_baselines 落地时按 CONTRACTS 变更流程补指针。
 
 ## 5. eval 指针
 
