@@ -86,3 +86,7 @@
 2. 看 `ListWorkflowRuns` / `.zcode` 确认 M2 工作流状态。
 3. M2 完成后：审查 specs/frozen/*.spec.md，`git add specs && git commit`，然后提交 M3 知识注入工作流。
 4. M4：把通过矩阵里连续两轮 100% 的模块做终版重生成，全绿后 `git tag v0.1.0`。
+
+- Mimosa「硬编码凭据」新增 1 处（test_mm_ingest_contract.py 的 _SENTINEL_ENV 常量）：**已人工复核为误报**——
+  值是 sentinel-token-1（非机密占位，供 MMClient mock 传输层读取，不对应任何真实凭据），已按凭据纪律
+  做过价值去化（sk-* → sentinel-*）；扫描器按 env 名+字面值模式匹配无法区分哨兵与真凭据，接受并记录。
