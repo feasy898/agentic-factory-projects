@@ -178,10 +178,9 @@ def gate_verify_reports(venv: Path) -> tuple[bool, str, str]:
 def gate_dashboard_smoke(venv: Path) -> tuple[bool, str, str]:
     """⑤ 看板冒烟：直接跑看板自身的进程内测试套件（覆盖 /health 与首页 200，
     HTTP 契约），不起子进程服务——语义等价、确定性更强、无端口依赖。"""
-    argv = [str(venv), "-m", "pytest",
-            str(PKG_ROOT / "tests" / "test_dashboard.py"), "-q"]
+    argv = [str(venv), "-m", "pytest", "tests/test_dashboard.py", "-q"]
     detail = _fmt_cmd(argv, REPO_ROOT)
-    code, secs, out = _run_checked(argv, PKG_ROOT)
+    code, secs, out = _run_checked(argv, REPO_ROOT)
     ok = code == 0
     detail += f"  [exit={code}, {secs:.1f}s]\n{out}"
     label = "cs_dashboard 冒烟（进程内测试套件：/api/health+首页 200）"

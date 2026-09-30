@@ -28,9 +28,10 @@
      `load_arm(path)`（跳过 auto 发现）。
   恢复后先跑 `python -m cs_sim.eval`（tier 必须非 chain_builtin）再跑全量。
 - 门禁脚本 `python scripts/gate_g1.py` 在参考件完全缺失时**注定红**——这不是代码回归，
-  是环境前提；恢复前提后应全绿复跑并刷新 `reports/gate_g1.json`。**另一已知红项**：
-  门禁项⑤看板冒烟 `gate_g1.py:182` 指向不存在的 `chengshao/tests/`（实测 exit 4），
-  修复前整链 gate 无法全绿——见 [e2e-and-gates spec §2/§5](specs/e2e-and-gates.md)。
+  是环境前提；恢复前提后应全绿复跑并刷新 `reports/gate_g1.json`。**原另一已知红项已清零
+  （2026-09-30）**：门禁项⑤看板冒烟曾误指不存在的 `chengshao/tests/`（实测 exit 4），
+  `gate_g1.py` 已改为仓库根 `tests/test_dashboard.py` 相对路径（cwd=REPO_ROOT），
+  当日整门复跑 **8/8 PASS**——见 [e2e-and-gates spec §2/§5](specs/e2e-and-gates.md)。
 
 ## 1. 环境准备（实测版本，钉版即契约）
 

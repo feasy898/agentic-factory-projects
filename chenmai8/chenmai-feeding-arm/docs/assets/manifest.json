@@ -255,9 +255,9 @@
           "python scripts/verify_g1_reports.py",
           ".venv/Scripts/python.exe chengshao/scripts/check_naming.py"
         ],
-        "passLine": "e2e exit 0（2026-09-29 实测达标）；naming forbidden=0（2026-09-29 实测）；gate 8 步全 PASS（当日为红：cs_sim 模型件前提破坏，恢复后复跑）"
+        "passLine": "e2e exit 0（2026-09-29 实测达标）；naming forbidden=0（2026-09-29 实测）；gate 8 步全 PASS（2026-09-30 整门复跑全绿，见 chengshao/reports/gate_g1.json）"
       },
-      "verified": "2026-09-29 实测：e2e exit 0（早前全绿运行）；naming exit 0；全量 pytest 36 failed/260 passed（红，根因模型件前提）；schema+dashboard+food 接口+mouth+voice 独立复验全绿",
+      "verified": "2026-09-29 实测：e2e exit 0；naming exit 0；schema+dashboard+food 接口+mouth+voice 独立复验全绿；2026-09-30：全量 pytest 297 passed/1 skipped + 整门 8/8 PASS（模型件前提恢复+门禁项⑤路径修复后）",
       "regenOrder": 9,
       "specDoc": "docs/assets/specs/e2e-and-gates.md"
     },

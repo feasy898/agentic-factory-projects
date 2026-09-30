@@ -41,10 +41,11 @@
 | ③c | cs_voice eval | `-m cs_voice.eval --input assets/voice_samples --report reports/voice_eval.json` |
 | ③d | cs_food 接口测试 | `-m pytest tests/test_food_interface.py -q`（cwd=仓库根） |
 | ④ | 报告独立复核 | `.venv python scripts/verify_g1_reports.py --report-dir chengshao/reports` |
-| ⑤ | 看板冒烟 | `-m pytest chengshao/tests/test_dashboard.py -q`（进程内套件，无子进程服务）。
-  **2026-09-30 抽查发现该内部路径有误**：仓库测试在仓库根 `tests/test_dashboard.py`，
-  `chengshao/tests/` 不存在；实测该命令 exit 4（file not found）——即门禁项⑤当前必红，
-  `scripts/gate_g1.py:182` 的 `PKG_ROOT/"tests"` 待修（本 spec 如实记录，代码未动） |
+| ⑤ | 看板冒烟 | `-m pytest tests/test_dashboard.py -q`（cwd=仓库根；进程内套件，无子进程服务）。
+  **2026-09-30 已修复并整门验证**：原内部路径误指不存在的 `chengshao/tests/`（实测
+  exit 4），`scripts/gate_g1.py` 门禁项⑤已改为仓库根 `tests/test_dashboard.py`
+  相对路径（cwd=REPO_ROOT）；修复后当日整门复跑 8/8 PASS（⑤实测 exit 0/76.2s，
+  见 `reports/gate_g1.json` 与本页 §5） |
 
 证据落 `chengshao/reports/gate_g1.json`（含逐步 detail 与 exit code）。
 
@@ -81,9 +82,11 @@
 （09-29 深夜 commit `cea83b1` 为模型发现回退链增补工作区外集中参考目录
 `D:/upstream-refs/robot-vendor` + `CS_VENDOR_ROOT` 覆盖后，模型件前提恢复——
 详见 [cs_sim](cs_sim.md) §8 坑 1）。09-29 的"36 failed / 260 passed / 2 skipped、
-全量门禁红"为当日参考件移出后、修复落地前的历史记录，已不再成立。**仍未绿的一项**：
-门禁项⑤看板冒烟——`gate_g1.py:182` 指向不存在的 `chengshao/tests/`（§2 表内已记，
-实测 exit 4），待修后 `python scripts/gate_g1.py` 方可整链复验。
+全量门禁红"为当日参考件移出后、修复落地前的历史记录，已不再成立。**原"仍未绿的一项"
+已于 2026-09-30 清零**：门禁项⑤看板冒烟内部路径误指（`chengshao/tests/` 不存在，
+实测 exit 4）当日修复——`gate_g1.py` 门禁项⑤改为仓库根 `tests/test_dashboard.py`
+相对路径（cwd=REPO_ROOT），修复后整门复跑 **8 步全 PASS**（`reports/gate_g1.json`
+2026-09-30，⑤实测 exit 0/76.2s）。至此 `python scripts/gate_g1.py` 整链可全绿复验。
 
 <details><summary>2026-09-29 当日记录（历史存档）</summary>
 

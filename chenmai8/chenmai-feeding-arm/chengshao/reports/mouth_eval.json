@@ -1,6 +1,6 @@
 {
   "module": "cs_mouth",
-  "date": "2026-09-29",
+  "date": "2026-09-30",
   "cmd": "D:\\workspace\\澄迈8项目\\具身助餐机器人\\repo\\.venv\\Scripts\\python.exe -m cs_mouth.eval --input assets/face_samples --report reports/mouth_eval.json (cwd=D:\\workspace\\澄迈8项目\\具身助餐机器人\\repo\\chengshao)",
   "metrics": {
     "detect_rate": 1.0,
@@ -15,8 +15,8 @@
     "turn_trigger_rate": 1.0,
     "turn_frames": 8,
     "frontal_turn_false_flag_rate": 0.0,
-    "latency_ms_p50": 24.700400012079626,
-    "latency_ms_p95": 36.24290000880137,
+    "latency_ms_p50": 21.10790000006091,
+    "latency_ms_p95": 29.001100001551094,
     "latency_frames": 56,
     "frames_label_missing": 0
   },

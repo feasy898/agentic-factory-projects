@@ -36,7 +36,7 @@
 | ID | 名称 | 形态 | 职责 | eval → 通过线 | 顺序位 | 状态 | spec |
 |---|---|---|---|---|---|---|---|
 | `E2E-mock` | 无硬件端到端 | `scripts/e2e_mock_run.py`（垫片→chengshao/scripts/） | 全链同进程 30 口：mock 臂+行为树+脚本用户+真实看板 HTTP+真实口部冒烟，trace 镜像 | `python scripts/e2e_mock_run.py` → exit 0：30 口闭环、结局 28/1/1、中位 ≤20s、estop ≤0.1s、margin ≥5mm、每口 2 次角色切换（2026-09-29 实测全达标） | 9 | frozen | [e2e-and-gates](specs/e2e-and-gates.md) |
-| `EVAL-gate_g1` | 一键门禁 | `scripts/gate_g1.py` | 命名扫描+全量 pytest+4 模块 eval+报告独立复核+看板冒烟 | `python scripts/gate_g1.py` → 8 步全 PASS（2026-09-29 当日为红：模型件环境前提破坏，见 REGENERATE §0；恢复后复跑） | 10 | frozen（脚本）；门禁状态见该 spec §5 | [e2e-and-gates](specs/e2e-and-gates.md) |
+| `EVAL-gate_g1` | 一键门禁 | `scripts/gate_g1.py` | 命名扫描+全量 pytest+4 模块 eval+报告独立复核+看板冒烟 | `python scripts/gate_g1.py` → 8 步全 PASS（**2026-09-30 整门复跑全绿**，`reports/gate_g1.json`；09-29 曾红于模型件前提+门禁项⑤路径误指，均已修复，见 REGENERATE §0） | 10 | frozen（脚本）；门禁状态见该 spec §5 | [e2e-and-gates](specs/e2e-and-gates.md) |
 | `EVAL-verify_reports` | 报告独立复核 | `scripts/verify_g1_reports.py` | 只读报告 JSON 独立重算 metrics vs thresholds，与自报 pass 交叉核对 | `python scripts/verify_g1_reports.py` → exit 0 | 10 | frozen | [e2e-and-gates](specs/e2e-and-gates.md) |
 | `EVAL-check_naming` | 对外命名扫描 | `chengshao/scripts/check_naming.py`（仓库根垫片） | 公开内容零参考件原始名（一级/二级禁用+警告级） | `python chengshao/scripts/check_naming.py` → forbidden=0（2026-09-29 实测 0/23 warnings） | 0 | frozen | [e2e-and-gates](specs/e2e-and-gates.md) |
 
