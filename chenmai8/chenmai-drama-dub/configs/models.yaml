@@ -395,3 +395,17 @@ components:
     version: "2026-09-29 (T21)"  # 上游：无新增外部依赖（嵌入复用 voxdia 权重）
     fallback: []
     volta_status: na
+
+  review-m13:
+    task: review-console       # 审校台（T19/M13）：FastAPI + SQLite + 原生 JS 单页——
+                               # 逐句表格（C4 译文/候选 + 预算/实测）/单句重生成回路
+                               # （改译文→M8 重对齐→:9002 重合成（隧道不可达时 mock
+                               # 占位并注明）→M9 重混→片段预览）/术语表 CRUD（terms_seed
+                               # 注入 M6 上下文）/导出（MP4/SRT/C8 合规报告）
+    langs: [en, es, ar]
+    device: cpu                # 纯编排；:9002 只在 tts=auto 且服务可达时真合成
+    precision: null
+    weights: null
+    version: "2026-09-30 (T19)"  # 上游：无新增外部依赖（fastapi/uvicorn/httpx/sqlite3 随 requirements）
+    fallback: []
+    volta_status: na
