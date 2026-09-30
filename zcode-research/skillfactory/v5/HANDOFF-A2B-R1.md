@@ -47,6 +47,7 @@ oracle fixtures 存证：`v5/assets/deploy-pack/oracle/out/fixtures-run.json` = 
 0. **并行对账（重要）**：worker-B 与本轮 worker-A 并行完成了一轮独立评估（`v5/eval-round-20261001/`：41 门 38 PASS / 3 FAIL + scorecard + results.tsv + keyfiles.sha256；REGISTRY.md 第 153 行起已追加登记节）。对账结论：①B 的三 FAIL 中 `sm05`（speaker-mapping package vs oracle）与我对 speaker-mapping 的诊断一致、已修复；②`dp01b`/`hw07` 两项 B 自判非冻结面/对比口径问题，未推翻；③**B 的 deploy-pack 「12/12 内部就绪」行与原始证据不符**——dp05_green_direct.stdout 的 candidate 字段是 `oracle/out/pack-canonical`（self_eval=true，oracle 自评），package 侧终门在 A 侧修复前实测 exit 1（2/4，rate 0.6），修复后才 4/4。B 登记「不改上方既有行、追加更正」原则照旧，下一轮 B 应追加更正行。
 1. **deploy-pack**：spec 附录 A.3 声明检查 3/4 比对基准=参照 gen_deploy.py 模板活文。候选首轮系按 spec 自由措辞（.env/DEPLOY 文案漂移 → 60%）。本轮把候选三渲染函数对齐参照模板逐字同源（compose 头注释+ASR_INPUT_DIR 进 environment+缺省 `./data/incoming`；.env 逐变量注释；DEPLOY 章节同源，含 `oracle/gen_deploy.py` 生成器路径行——C7 用 oracle 生成器活体重生成逐字节比对，该行属冻结行为），并在 Linux 重生成 pack（LF）。旧版候选留档：windev `D:\workspace\阿里agent能力全调研\_wa_r1\package_gen_deploy.r1orig.py`。改动文件：`v5/assets/deploy-pack/package/gen_deploy.py`（+package/out/* 重生成）。
 2. **speaker-mapping**：唯一红=3 个 discover JSON 的 transcript 路径回显（基线 Windows 壳 `\` vs 被测 POSIX 壳 `/`），纯平台属性非行为差异。B 的 scorecard 注 3 处方=contract §6 基线重建（Linux 重跑 12 命令重建 oracle/out+同步 spec 附录+升版）。**A 侧选了另一条版本化路线**：contract.md v1.0→v1.1 增补条款 A-2 + spec.md §5 检查 4 比对口径增补 + eval/runner.py 对称归一（仅 discover JSON，9 txt 仍逐字节）——不动 oracle/out 的理由：①保住 B 本轮 keyfiles.sha256 证据链有效性（重建基线会中途作废 19 文件哈希对账）；②爆炸半径更小（frozen 参照零改动）；③red 路仍 exit 1、9 txt 仍逐字节、检查名/期望常量/退出码全不变，先例=hotwords contract §A.7。**若 judge 裁定 §6 基线重建更合契约本意，下一轮由 A 执行重建并同步撤/A-2 转休眠**——两条路线都版本化、都可达同一绿态，请裁决。**请 judge 重点复核 A-2 是否越线**。
+   - **〔裁决已下，2026-10-01 第 2 轮〕**：judge 采纳 A-2 归一路线（亲 diff 实锤 discover JSON 唯一差异=transcript 路径分隔符；归一窄域对称、9 txt 仍逐字节、contract/spec/runner 三方同步版本化+§7 变更记录、先例 hotwords A.7、B 的 9/9 txt 对照排除真回归），**不要求改走 §6 基线重建**（重建反会作废 B 的 keyfiles 证据链）。详见 §8。
 3. **hotwords**：零改动（迁移后 03:03 已有 Linux 重生成产物，终门原生绿）。
 
 真实 LLM 调用：**0 次**（全部离线确定性评测，配额 10 次未动）。
@@ -63,3 +64,25 @@ oracle fixtures 存证：`v5/assets/deploy-pack/oracle/out/fixtures-run.json` = 
 - deploy-pack 候选 `DEPLOY.md` 内「由 oracle/gen_deploy.py 生成」一行系 C7 冻结行为的直接后果（比对基准=oracle 模板活文）；如要改成候选自指路径，须先改 spec 附录 A.3 并升版——本轮未动。
 - git：worker-B 本轮已在 REPO git init 并提交（b7f88fe）；worker-A 的改动叠加为提交 2015999（main），只 add 本轮触碰路径（14 文件：HANDOFF/deploy-pack 包+产物/speaker-mapping 三件/worklog）。历史代际产物未纳入版本库（避免大迁移未裁先做）；工作区另有 120 个未跟踪/未提交文件（多为 scratch），不属本轮。owner 如另有裁定，git 回退即可。
 - 评测器/契约三文件（speaker-mapping eval/contract/spec）本轮有版本化修订，judge 可 diff 对照 v1.0（windev `_wa_r1/sm_*.r1orig` 未留，但 db.sqlite 会话与 git 首提交前的文件态可在 windev 原目录只读对照：`D:/workspace/zcode研究/skillfactory/v5/assets/speaker-mapping/`）。
+
+---
+
+## 8. 裁决记录（judge 第 2 轮，2026-10-01）
+
+1. **整体判定**：至少一轮完整「生成-评估-准入」循环客观成立（judge 亲测：三资产终门绿+红路 fail-closed+fixtures 7/7+产物/跑分记录/REGISTRY/git 三提交全在盘）。
+2. **A-2 归一路线：采纳**。平台伪差异经 judge 亲 diff 实锤（speaker-mapping discover JSON 唯一差异=transcript 路径分隔符）；归一窄域对称且 9 txt 仍逐字节；contract v1.1/spec/runner 三方同步版本化+变更记录；先例 hotwords A.7；B 的 9/9 txt 对照排除真回归。**不要求改走 §6 基线重建**（重建会作废 B 的 keyfiles 证据链）。
+3. **worker-A 第 1 轮交付全部达标**：口径成文/候选落盘/迭代留痕（提交 2015999+0f6ed6c）/对 worker-B dp05 的纠察经 judge worktree 实测属实。
+4. **收工唯一剩余项=worker-B 侧证据链收尾**（复跑留档 v5/report/eval-records/ + EVAL-RUN-20261001.md + 刷新 keyfiles.sha256 + REGISTRY 只追加更正行 + git 提交）；预期退出码（judge 实测口径，B 若复跑有出入立即停下上报、由 A 排查且不得改口径）：
+
+   | 检查 | 预期退出码 |
+   |---|---|
+   | speaker-mapping gate（package vs oracle） | 0 |
+   | speaker-mapping self（零参） | 0 |
+   | speaker-mapping red（空目录） | 1 |
+   | deploy-pack gate（package vs oracle） | 0 |
+   | deploy-pack self（oracle/out oracle/out） | 0 |
+   | deploy-pack red（空目录） | 1 |
+   | hotwords gate（package vs oracle） | 0 |
+   | hotwords red（空目录） | 1 |
+
+5. 本文件为第 1 轮口径锚 + 第 2 轮裁决记录合并版；后续轮次只追加（§9 起），不改既有行。
