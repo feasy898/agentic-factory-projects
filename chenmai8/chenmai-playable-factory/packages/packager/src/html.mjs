@@ -165,6 +165,10 @@ export async function processHtml(htmlPath, distRoot, opts = {}) {
   }
 
   if (mode === "extract-script") {
+    // PKG-02（差分终审 2026-09-30）：空 dist 提示性告警与 oracle html.mjs:167 逐字同条件
+    // 同文案；仅入 pack-manifest.json 旁车（build.mjs manifest.warnings），zip 与产品字节
+    // 零影响。oracle :165-166 的 merged/bundleCode 死代码不移植（bundleCode 无使用点）。
+    if (scripts.length === 0) warnings.push("dist 内没有外链 <script>，build.js 为空占位");
     let seen = 0;
     html = html.replace(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi, (tag, attrPart) => {
       const attrs = parseAttrs(`<x ${attrPart}>`);
