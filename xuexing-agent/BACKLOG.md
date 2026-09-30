@@ -180,7 +180,23 @@
 > 凭据纪律：key 只从环境变量 STEPFUN_API_KEY/XX_LLM_API_KEY 读，端点白名单（https+api.stepfun.com+解析IP阻断私网），
 > 冒烟默认关闭（XX_MM_SMOKE=1 才真调）。内容生成（命题/教研）用 step API，代码实现用常规工作流子代理。
 
-- [ ] **mm_client 多模态客户端**：src/xuexing/mm_client.py 封装 chat/vision/tts/asr 四能力（端点白名单+key纪律+LLMError），契约测试全 mock，XX_MM_SMOKE=1 冒烟真调
+- [x] **mm_client 多模态客户端**：src/xuexing/mm_client.py 封装 chat/vision/tts/asr 四能力（端点白名单+key纪律+LLMError），契约测试全 mock，XX_MM_SMOKE=1 冒烟真调
+  （完成于本轮，待主会话提交：src/xuexing/mm_client.py（纯 stdlib、零 xuexing 依赖：
+  端点/模型/voice 常量按 docs/multimodal-api.md 实测矩阵冻结——ASR 不在 step_plan
+  路径下；check_url 六重门（https/host 白名单/userinfo 拒绝/显式端口=443/解析 IP
+  逐个阻断私网环回链路本地保留组播未指定，解析器可注入故契约零 DNS）；key 只按
+  XX_LLM_API_KEY→STEPFUN_API_KEY 顺序读环境变量（strip、全缺 LLMError、任何错误
+  消息不回显 key）；请求构造全纯函数（json.dumps(ensure_ascii=False) 字节冻结、
+  multipart 固定边界常量无隐藏随机、边界碰撞守卫）；四能力 chat/vision/tts/asr
+  经唯一网络口 Transport 协议发出（MockTransport 确定性脚本应答+calls 记录、
+  HttpTransport 仅参考 urllib+前置 DNS 阻断）；tts 200 字节原样返回为唯一宽容点）
+  + specs/drafts/mm_client.spec.md（I1–I13 全可检验）+
+  tests/contract/test_mm_client_contract.py（29 项=28 过+1 冒烟 skip，全 mock
+  零网络零 DNS，闭式字节实测于 CPython 3.12.10；冒烟用例 XX_MM_SMOKE=1 且环境
+  含 key 才真调 chat/vision(1×1 纯红 PNG stdlib 现生成)/tts/asr 回环，本轮环境
+  无 XX_LLM_API_KEY/STEPFUN_API_KEY，冒烟真调未执行、如实留待有 key 会话）；
+  已登记 run_contract 与根 conftest MODULES；全套 586 测试+1 skip +
+  validate_knowledge --min-items-per-kp 3 + run_contract 参考实现（EXIT=0）全绿）
 - [ ] **mm_ingest 拍照录入管线**：image → VLM 结构化转写（题号→学生答案 JSON，schema 冻结）→ 确定性校验（题号∈卷面、答案形态）→ grading.grade_to_response；低置信进人机协同复核队列
 - [ ] **tts_reader 语音读题**：题干+选项 → TTS 音频（低龄/无障碍），缓存键=题目id+voice，接口可注入 MockTTS
 - [ ] **asr_answer 口述作答**：学生语音 → ASR 文本 → grading 数值判分衔接

@@ -35,6 +35,7 @@ MODULE_TEST_FILES = {
     "xapi": ["test_xapi_contract.py"],
     "omr_sheet": ["test_omr_sheet_contract.py"],
     "multitenant": ["test_multitenant_contract.py"],
+    "mm_client": ["test_mm_client_contract.py"],
     # server 是薄胶水层（PM-STATE：不重生成），登记仅为让 run_contract 能按模块
     # 选择性运行其契约测试；--impl-dir 注入需目录内有 server.py（绝对导入约定，
     # 参考实现 src/xuexing/server.py 满足，regen/round* 冻结八模块目录不含）。
