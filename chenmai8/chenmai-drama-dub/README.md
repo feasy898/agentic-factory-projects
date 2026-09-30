@@ -16,16 +16,20 @@
 
 ```
 docs/      架构、数据 schema、模块契约、spec + eval
-pipeline/  管线编排与任务队列（音频/翻译/配音/口型/字幕/合规）
+pipeline/  管线编排与任务队列（音频/翻译/配音/口型/字幕/合规；审校台 review_server.py）
 configs/   管线常量、组件注册表（引擎路由与降级链）、角色音色映射
-isomt-lora/ 时长可控翻译模型（数据合成与训练脚本）
-review/    Web 审校台
+scripts/   逐模块 eval、批次门禁（gate_b0–b4）、e2e 冒烟
 tests/     契约与模块验收测试（pytest）
 ```
 
 **冻结契约（C1–C8）**：`pipeline/contracts.py` 是全项目唯一权威 schema（pydantic，
 2026-09-28 T1 冻结）：镜头表、单句事实表（核心）、角色卡、译文候选、合成计划、
 口型分流、AI 标识、市场合规报告。改动 schema 须走规划裁决，模块不得单方面扩展。
-命令行入口：`python -m pipeline.cli init|validate|run`（jobs 工作区生成 / 契约校验 / 编排占位）。
+命令行入口：`python -m pipeline.cli init|validate|run|enqueue|status|resume`（jobs 工作区生成 /
+契约校验 / 编排执行与断点续跑——run 已是 M14 队列实现）。
 
 > 详细模块规格与验收标准见 `docs/`，逐模块 spec+eval 驱动开发。
+
+**当前状态（2026-09-30）**：B0–B5 批次完成（契约冻结、五道门、e2e 冒烟、审校台、任务队列、指标体系）。
+已知限制见 `docs/assets/feedback.md`：真实 TTS 下台词时长对齐尚未达标（超窗截断，修复前演示请先读其预案节）；
+音频水印/C2PA 与真实短剧全链母盘在途。整体验收与再生成入口见 `docs/assets/REGENERATE.md`。

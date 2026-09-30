@@ -199,7 +199,7 @@ make_utt_id(ep, start_s) -> f"{ep}-u{int(round(start_s*1000)):08d}"
 | 1 | M6 暂定角色卡 vs C3 权威 | M6 只新增未见过的 char_id、绝不覆盖既有卡（C3 权威归人工/M5），但暂定卡无人工确认标记 | 角色卡加 `provisional` 标记位（契约只增不改名） |
 | 2 | M2 一条 OCR 行横跨多条 ASR 句 | 对任何单句重叠率都不足 60% 时三方共存（OCR 新句+原 ASR 句），句级去重归 M5/M14 融合批次（m2_ocr.merge_ocr_asr docstring 已知边界） | 融合批次实现跨行去重规则并回填契约 |
 | 3 | C5 无语种字段 | M8/M9 只能按 `--lang` 分文件 + 无后缀副本指向"最近一次对齐语种" | v2 增补 `tgt` 字段（只增不改名） |
-| 4 | `cli run` 占位 | M14 未实现，exit 2 是当前契约的一部分，不要"顺手实现"而不改规划 | M14 落地后删除占位语义 |
+| 4 | `cli run` 占位 | **已兑现（2026-09-30 勘误）**：T20/M14 按本行候选落地——run=enqueue+resume 已实现（`pipeline/cli.py`），占位语义已删；exit 2 现仅指未知步骤/用法错误（tests/test_skeleton.py 用例守卫） | 候选已兑现，无遗留 |
 | 5 | syl2dur 占位速率 | `m6.DEFAULT_SYL_RATE`（zh 4.2/en 4.0/es 4.4/ar 3.6）只保证量级正确；`models/syl2dur.json` 拟合表缺位 | isomt-lora 批次回填拟合表（接口已留：load_syl_table 覆盖占位） |
 
 ## 4. 版本与变更流程（冻结）

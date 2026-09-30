@@ -305,11 +305,11 @@
     }
   ],
   "planned": [
-    {"id": "M10-lip", "plan": "开发指令 §4 M10", "blocker": "GPU #1 显存预算表（lip-pro ~18GB 与 alt-tts-b 互斥）+ D1 冒烟回填"},
+    {"id": "M10-lip", "plan": "开发指令 §4 M10", "blocker": "勘误 2026-09-30：代码已入库（T16/M10，b8100a7）——本资产包未覆盖，待回炉补 spec 后状态翻转"},
     {"id": "M12-label", "plan": "开发指令 §4 M12", "blocker": "M9 已写隐式元数据位；显式标识/C2PA/音频水印待实现"},
-    {"id": "M13-review", "plan": "开发指令 §4 M13", "blocker": "依赖 M8/M9 单句回路"},
-    {"id": "M14-queue", "plan": "开发指令 §4 M14", "blocker": "cli run 现为占位（exit 2，占位语义即当前契约）"},
-    {"id": "M15-metrics", "plan": "开发指令 §4 M15", "blocker": "依赖全链"},
+    {"id": "M13-review", "plan": "开发指令 §4 M13", "blocker": "勘误 2026-09-30：代码已入库（T19/M13，65a01b4）——待回炉补 spec 后状态翻转"},
+    {"id": "M14-queue", "plan": "开发指令 §4 M14", "blocker": "勘误 2026-09-30：代码已入库（T20/M14，d41a621），原『cli run 占位 exit 2』失实（run=enqueue+resume 已实现）——待回炉补 spec 后状态翻转"},
+    {"id": "M15-metrics", "plan": "开发指令 §4 M15", "blocker": "勘误 2026-09-30：代码已入库（T21/M15，eb47eb7）——待回炉补 spec 后状态翻转"},
     {"id": "isomt-lora", "plan": "training-plan.md（训练一律延后）", "blocker": "500 句评测集冻结 + models/syl2dur.json 拟合表"}
   ],
   "regenOrderTopo": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
