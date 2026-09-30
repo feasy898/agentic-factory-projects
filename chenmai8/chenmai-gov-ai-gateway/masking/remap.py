@@ -3,16 +3,21 @@
 问题：上游把回答切成 SSE 增量块时，占位符 ``〔人名·7f3a2b1c〕`` 可能被切进
 相邻两个 chunk，逐块做整段正则替换必然漏配/错配。
 
-状态机（spec 一字不差）：
-- 一旦扫描到 ``〔`` 即开始**缓冲**（进入候选态），不再放行任何字符；
-- 候选凑成完整形状 ``〔<标签>·<hex8-12>〕``（总长 ≤ :data:`MAX_PLACEHOLDER_LEN`）
-  → 查会话映射表，命中则**替换为原值后发出**，未命中原样发出（未知形状不放行也不吞掉）；
-- 缓冲**超过** 32 字符仍无 ``〕`` → 判定为普通文本：放行候选首字符 ``〔``，
-  其余内容重新扫描（内部若再出现 ``〔`` 自然开启新候选）；
+状态机（spec 一字不差，T8.4 增补容错改形面）：
+- 一旦扫描到开括号变体（〔【〖［[，T8.4：模型会转写同形括号）即开始**缓冲**
+  （进入候选态），不再放行任何字符；
+- 候选凑成完整括号对 → 内文经 :func:`masking.mapper.canonical_placeholder`
+  **规范化**（T8.4 容错改形：剥除反引号/空白/换行、全半角与大小写归一、
+  同形括号·间隔号归一）成规范键 ``〔<标签>·<hex8-12>〕`` → 查会话映射表，
+  命中则**替换为原值后发出**，未命中原样放行（未知形状不放行也不吞掉）；
+- 窗内（:data:`MAX_PLACEHOLDER_LEN`，T8.4 起 32→48 以容纳改形噪声字符）仍无
+  闭合括号 → 判定为普通文本：放行候选首字符（开括号），其余内容重新扫描
+  （内部若再出现开括号自然开启新候选）；
 - 流结束（:meth:`StreamRestorer.flush`）：残留候选按普通文本放行。
 
 因此任意 1..N 字符切块方式下，``feed()*k + flush()`` 的拼接输出
-恒等于整段 :meth:`SessionMapper.restore` 的结果（evals 里 fuzz 断言）。
+恒等于整段 :meth:`SessionMapper.restore` 的结果（evals 里 fuzz 断言；
+T8.4 起两侧共用 canonical_placeholder 同一判定链）。
 
 用法（gateway/sse.py 组合管线）::
 
@@ -25,11 +30,17 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
-from masking.mapper import PLACEHOLDER_OPEN, RESTORE_PATTERN
+from masking.mapper import (
+    _CLOSE_VARIANTS_RE,
+    _OPEN_VARIANTS_RE,
+    PLACEHOLDER_TOLERANT_MAX_LEN,
+    canonical_placeholder,
+)
 
-#: 占位符缓冲上限（字符）：``〔`` + 标签 + ``·`` + hex(8–12) + ``〕`` ≤ 32；
-#: 超过仍无闭合 ``〕`` 即判定普通文本放行（spec：缓冲超 32 字符仍无 〕 判定为普通文本）
-MAX_PLACEHOLDER_LEN = 32
+#: 占位符候选缓冲上限（字符）：与 mapper.PLACEHOLDER_TOLERANT_MAX_LEN 同源——
+#: 规范形状 ≤32，容忍模型改形（反引号/空白/换行噪声）放宽到 48；超过仍无闭合
+#: 括号即判定普通文本放行（spec「缓冲超 32 仍无 〕 放行」的 T8.4 容错增补口径）
+MAX_PLACEHOLDER_LEN = PLACEHOLDER_TOLERANT_MAX_LEN
 
 #: 还原查找函数形状：占位符 → 原值；未知形状返回 None（原样放行）
 LookupFn = Callable[[str], str | None]
@@ -38,7 +49,7 @@ LookupFn = Callable[[str], str | None]
 class StreamRestorer:
     """SSE 文本增量流的占位符还原状态机（单响应实例，不可跨响应复用）。
 
-    状态只有一项：:attr:`_pending` —— 以 ``〔`` 开头、尚未能判定完整/废弃的
+    状态只有一项：:attr:`_pending` —— 以开括号变体开头、尚未能判定完整/废弃的
     候选缓冲（长度恒 ≤ :data:`MAX_PLACEHOLDER_LEN`，有界即安全）。
     """
 
@@ -65,25 +76,35 @@ class StreamRestorer:
         i = 0
         n = len(data)
         while i < n:
-            open_at = data.find(PLACEHOLDER_OPEN, i)
-            if open_at < 0:  # 其后不再有 〔 → 全部普通文本
+            m = _OPEN_VARIANTS_RE.search(data, i)
+            if m is None:  # 其后不再有开括号变体 → 全部普通文本
                 out.append(data[i:])
                 break
+            open_at = m.start()
             if open_at > i:  # 候选前的普通文本直接放行
                 out.append(data[i:open_at])
-            match = RESTORE_PATTERN.match(data, open_at)  # 锚定候选起点整匹
-            if match is not None:
-                replaced = self._lookup(match.group(0))
-                out.append(replaced if replaced is not None else match.group(0))
-                i = match.end()
+            cm = _CLOSE_VARIANTS_RE.search(
+                data, open_at + 1, min(n, open_at + MAX_PLACEHOLDER_LEN - 1))
+            if cm is not None:
+                # 完整括号对：规范化（容错改形）→ 查表，命中才替换
+                key = canonical_placeholder(data[open_at + 1:cm.start()])
+                if key is not None:
+                    replaced = self._lookup(key)
+                    if replaced is not None:
+                        out.append(replaced)
+                        i = cm.end()
+                        continue
+                # 完整括号对但不可还原 → 放行开括号字符本身，其余重扫
+                # （内部若再出现开括号自然开启新候选）
+                out.append(data[open_at])
+                i = open_at + 1
                 continue
-            candidate = data[open_at:]
-            if len(candidate) <= MAX_PLACEHOLDER_LEN:
+            if n - open_at < MAX_PLACEHOLDER_LEN - 1:
                 # 仍可能是被切块的占位符前缀 → 缓冲等待下一增量（有界，不会滞留正文）
-                self._pending = candidate
+                self._pending = data[open_at:]
                 break
-            # 超 32 字符仍非完整形状 → 普通文本：放行 〔 本身，其余重扫
-            out.append(PLACEHOLDER_OPEN)
+            # 超窗仍无闭合 → 普通文本：放行开括号本身，其余重扫
+            out.append(data[open_at])
             i = open_at + 1
         return "".join(out)
 

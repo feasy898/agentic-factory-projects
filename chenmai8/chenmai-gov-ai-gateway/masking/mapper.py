@@ -20,6 +20,7 @@ import hashlib
 import hmac
 import re
 import threading
+import unicodedata
 from collections import OrderedDict
 from collections.abc import Callable, Iterable
 from datetime import UTC, datetime
@@ -44,6 +45,123 @@ RESTORE_PATTERN = re.compile(
 
 #: 还原时单条映射查找键（type 归一为字符串值，与摘要 msg 一致）
 _DIGEST_SEPARATOR = "\x1f"
+
+# ── 容错改形匹配（T8.4；gate_final b6 一轮 U8 GOVCLOUD 腿实锤增补）─────────
+# 真实大模型回复会把占位符 token **改形**（模型输出随机性）：反引号/代码样式
+# 包裹、空白与换行插入拆开、hex 大小写与全半角转写、同形括号（〔→【[）与
+# 间隔号（·→・•.）替换。改形一旦超出 RESTORE_PATTERN 的匹配面（或形状匹配但
+# 查表键不等，如 ``〔人名 ·…〕``），还原即漏配，改形残留直达客户端。
+# 容错还原的判定链：候选括号对 → 剥噪声规范化 → 规范键查会话映射表 →
+# **命中才替换**。结构〔标签·hex8-12〕本身足够特异，加上映射表命中这道
+# 终审闸，普通文本（【注·见附件】、markdown 链接等）不可能被误替。
+
+#: 括号与间隔号的同形变体（模型转写常见面；命中映射表才替换，放宽无害）
+PLACEHOLDER_OPEN_VARIANTS = "〔【〖［["
+PLACEHOLDER_CLOSE_VARIANTS = "〕】〗］]"
+PLACEHOLDER_SEP_VARIANTS = "·・•‧⋅﹒．."
+
+#: 改形候选最大扫描窗（字符）：规范形状 ≤32（标签2-3 + hex8-12），容忍反引号/
+#: 空白/换行改形放宽到 48；流式缓冲上限（remap.MAX_PLACEHOLDER_LEN）与之同源
+PLACEHOLDER_TOLERANT_MAX_LEN = 48
+
+#: hex 部分转写易混字符兜底（仅 digest 应用；规范化后须是 8-12 位 hex 且
+#: 命中映射表才替换——无误替面）。O→0 / I·l→1 是模型转写最常见混淆。
+_DIGEST_CONFUSABLE = str.maketrans({"o": "0", "i": "1", "l": "1"})
+
+_OPEN_VARIANTS_RE = re.compile("[" + re.escape(PLACEHOLDER_OPEN_VARIANTS) + "]")
+_CLOSE_VARIANTS_RE = re.compile("[" + re.escape(PLACEHOLDER_CLOSE_VARIANTS) + "]")
+_SEP_VARIANTS_RE = re.compile("[" + re.escape(PLACEHOLDER_SEP_VARIANTS) + "]")
+_MANGLE_NOISE_RE = re.compile(r"[\s`]+")  # 改形噪声：空白/换行/反引号
+_DIGEST_SHAPE_RE = re.compile(r"[0-9a-f]{8,12}")
+
+
+def canonical_placeholder(inside: str) -> str | None:
+    """候选括号内文本 → 规范占位符键（``〔标签·hex〕``）；不可规范化返回 ``None``。
+
+    规范化三步（顺序固定）：①剥除改形噪声（空白/换行/反引号）；②按间隔号
+    变体切成「标签+摘要」两段（多段/单段=不是占位符）；③摘要经 NFKC 全半角
+    归一 + 小写 + 易混字符兜底后须为 8–12 位 hex。标签须不含任何括号变体。
+    """
+    compact = _MANGLE_NOISE_RE.sub("", inside)
+    if not compact:
+        return None
+    parts = _SEP_VARIANTS_RE.split(compact)
+    if len(parts) != 2:
+        return None
+    label, digest = parts
+    if not label or not digest:
+        return None
+    if _OPEN_VARIANTS_RE.search(label) or _CLOSE_VARIANTS_RE.search(label):
+        return None
+    digest = unicodedata.normalize("NFKC", digest).lower().translate(_DIGEST_CONFUSABLE)
+    if not _DIGEST_SHAPE_RE.fullmatch(digest):
+        return None
+    return f"{PLACEHOLDER_OPEN}{label}{PLACEHOLDER_SEPARATOR}{digest}{PLACEHOLDER_CLOSE}"
+
+
+def restore_tolerant(text: str, lookup: Callable[[str], str | None]) -> str:
+    """整段容错还原扫描：改形占位符 → 规范键查表 → 命中替换为原值。
+
+    与 :class:`masking.remap.StreamRestorer` 的流式状态机共用同一判定链
+    （canonical_placeholder + lookup），fuzz 断言保证整段与流式严格等价。
+    不可还原的候选（查表未命中/形状不足）逐字原样放行——未知形状不放行也
+    不吞掉，与既有契约一致。
+    """
+    out: list[str] = []
+    i, n = 0, len(text)
+    while i < n:
+        m = _OPEN_VARIANTS_RE.search(text, i)
+        if m is None:  # 其后不再有开括号变体 → 全部普通文本
+            out.append(text[i:])
+            break
+        open_at = m.start()
+        if open_at > i:
+            out.append(text[i:open_at])
+        cm = _CLOSE_VARIANTS_RE.search(
+            text, open_at + 1, min(n, open_at + PLACEHOLDER_TOLERANT_MAX_LEN - 1))
+        if cm is not None:
+            key = canonical_placeholder(text[open_at + 1:cm.start()])
+            if key is not None:
+                value = lookup(key)
+                if value is not None:
+                    out.append(value)
+                    i = cm.end()
+                    continue
+            # 完整括号对但不可还原 → 放行开括号字符本身，其余重扫
+            # （内部若再出现开括号自然开启新候选）
+            out.append(text[open_at])
+            i = open_at + 1
+            continue
+        # 窗内无闭合 → 放行开括号，其余重扫（含正文里孤立的开括号变体）
+        out.append(text[open_at])
+        i = open_at + 1
+    return "".join(out)
+
+
+def tolerant_placeholder_hits(text: str) -> list[str]:
+    """检测文本中全部「可规范化为占位符形状」的候选（规范键，不去重）。
+
+    泄漏检测面（比 RESTORE_PATTERN 宽）：还原正则不可见的改形残留（静默泄漏）
+    也能抓到。真实大模型腿的「占位符零泄漏」断言以此为准——改形残留只要形状
+    可辨即算泄漏，无论是否仍在会话映射表内。
+    """
+    out: list[str] = []
+    i, n = 0, len(text)
+    while i < n:
+        m = _OPEN_VARIANTS_RE.search(text, i)
+        if m is None:
+            break
+        open_at = m.start()
+        cm = _CLOSE_VARIANTS_RE.search(
+            text, open_at + 1, min(n, open_at + PLACEHOLDER_TOLERANT_MAX_LEN - 1))
+        if cm is not None:
+            key = canonical_placeholder(text[open_at + 1:cm.start()])
+            if key is not None:
+                out.append(key)
+                i = cm.end()
+                continue
+        i = open_at + 1
+    return out
 
 
 def _utc_now() -> datetime:
@@ -113,13 +231,13 @@ class SessionMapper:
         return masked, entries
 
     def restore(self, text: str) -> str:
-        """占位符 → 原值（normalized）；映射表外的占位符形状原样保留。"""
+        """占位符 → 原值（normalized）；映射表外的占位符形状原样保留。
 
-        def _sub(match: re.Match[str]) -> str:
-            entry = self._by_placeholder.get(match.group(0))
-            return entry.normalized if entry is not None else match.group(0)
-
-        return RESTORE_PATTERN.sub(_sub, text)
+        T8.4 起走 :func:`restore_tolerant` 容错扫描：模型对占位符的改形
+        （反引号/空白/换行/全半角/同形括号·间隔号）先规范化再查表，命中才
+        替换——非流式响应与流式（StreamRestorer）同一判定链。
+        """
+        return restore_tolerant(text, self.lookup)
 
     def lookup(self, placeholder: str) -> str | None:
         """单条占位符 → 原值；映射表外返回 None（流式还原状态机的查找入口）。"""
