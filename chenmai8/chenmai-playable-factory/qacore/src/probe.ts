@@ -1,12 +1,20 @@
 /**
  * 探针契约（qacore spec §4）：页面装载前注入的 PROBE_JS。
- * oracle 仓库 python/qacore/autoplay.py 的 PROBE_JS 字符串**逐字照抄**（探针是
- * 冻结契约——改一个字符都可能让 MUT 判定漂移），仅宿主从 playwright-python
- * add_init_script 换成 playwright-node 同名 API（每页面注入一次，勿重复包装）。
+ * oracle 仓库 python/qacore/autoplay.py 的 PROBE_JS 字符串**逐字照抄**，仅宿主从
+ * playwright-python add_init_script 换成 playwright-node 同名 API（每页面注入一次，
+ * 勿重复包装）。
+ *
+ * 【契约修订 2026-09-30，docs/specs/qacore-amendments.md 已登记】chk04-determinism：
+ * 相对 oracle 3119 字符冻结版新增 audio.everBeforeFirstGesture 粘性旗——upd() 内
+ * ctx.state==='running' 且首 pointer 事件未发生时置真（置真不复位，事件驱动，
+ * 消除"引擎 suspend→resume 亚秒翻转 vs 宿主瞬时采样"的竞态假阴性/假阳性）。
+ * 仅 factory 侧变更，oracle 探针冻结不动；旗只在页面 probe 对象上，宿主侧折叠进
+ * 既有 audioRunningBeforeInteraction 键的值语义（1=曾 running），报告 JSON
+ * 字段签名零增删（P4 distinct signatures=1 保持）。
  */
 export const PROBE_JS = String.raw`(() => {
   const probe = { ready: null, start: null, end: null, endWin: null, first: null, cta: null,
-                  audio: { created: 0, running: 0 },
+                  audio: { created: 0, running: 0, everBeforeFirstGesture: false },
                   media: { unmuted: 0, playing: 0, playsBeforeFirst: 0 },
                   rtc: 0 };
   window.__pfprobe = probe;
@@ -37,7 +45,14 @@ export const PROBE_JS = String.raw`(() => {
       const ctx = new Ctor(...args);
       probe.audio.created += 1;
       const upd = () => {
-        if (ctx.state === 'running') running.add(ctx); else running.delete(ctx);
+        if (ctx.state === 'running') {
+          running.add(ctx);
+          // 首次 pointer 事件前出现 running 即置旗（事件驱动，置真不复位）：
+          // 构造时初次 upd() 覆盖"构造即 running"，statechange 覆盖其后 resume。
+          if (firstGestureAt === null) probe.audio.everBeforeFirstGesture = true;
+        } else {
+          running.delete(ctx);
+        }
         probe.audio.running = running.size;
       };
       try { if (ctx.addEventListener) ctx.addEventListener('statechange', upd); } catch (e) {}

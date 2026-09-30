@@ -76,6 +76,24 @@ export async function audioRunning(page: Page): Promise<number | null> {
   }
 }
 
+/**
+ * 探针旗：首 pointer 事件前是否**曾**出现 running AudioContext（chk04-determinism
+ * 契约修订，docs/specs/qacore-amendments.md）。事件驱动真值：探针在 statechange/
+ * 构造路径内置真不复位，宿主任意时刻读取结果一致，消除瞬时采样竞态（引擎 100ms
+ * suspend→resume 亚秒窗）。探针未装 → null（调用方维持 None→fail 语义）。
+ */
+export async function audioEverBeforeGesture(page: Page): Promise<boolean | null> {
+  try {
+    const v = await ev(page, 
+      "() => { const p = window.__pfprobe; return p && p.audio"
+      + " ? p.audio.everBeforeFirstGesture === true : null; }",
+    ) as unknown;
+    return typeof v === "boolean" ? v : null;
+  } catch {
+    return null;
+  }
+}
+
 export interface MediaSample {
   unmuted: number; playing: number; playsBeforeFirst: number;
 }
@@ -249,7 +267,7 @@ interface ProbeSnapshot {
   ready?: number | null;
   end?: number | null;
   endWin?: boolean | null;
-  audio?: { running?: number | null };
+  audio?: { running?: number | null; everBeforeFirstGesture?: boolean };
 }
 
 async function readProbe(page: Page): Promise<ProbeSnapshot> {
@@ -316,9 +334,18 @@ export async function driveAutoplay(page: Page, timeoutSec: number): Promise<Aut
       } else if (facts.firstMutedBeforeInteraction === null) {
         facts.firstMutedBeforeInteraction = m;
       }
-      const run = Number(probe.audio?.running) || 0;
-      facts.audioRunningBeforeInteraction =
-        Math.max(facts.audioRunningBeforeInteraction ?? 0, Math.trunc(run));
+      // CHK04 判定输入 audioRunningBeforeInteraction（键名不变，值语义改旗驱动，
+      // chk04-determinism 契约修订）：旗真（首 pointer 前曾 running）→ 1 粘住；
+      // 否则维持原瞬时采样 max 粘住语义——旗 false ⇒ 同一 upd() 同步记账下采样
+      // 必为 0，两口径在旗假侧严格一致，旗真侧消除晚读竞态。
+      if (probe.audio?.everBeforeFirstGesture === true) {
+        facts.audioRunningBeforeInteraction =
+          Math.max(facts.audioRunningBeforeInteraction ?? 0, 1);
+      } else {
+        const run = Number(probe.audio?.running) || 0;
+        facts.audioRunningBeforeInteraction =
+          Math.max(facts.audioRunningBeforeInteraction ?? 0, Math.trunc(run));
+      }
       const ms = (await mediaSample(page)) ?? { unmuted: 0, playing: 0, playsBeforeFirst: 0 };
       facts.mediaUnmutedBeforeInteraction = Math.max(
         facts.mediaUnmutedBeforeInteraction ?? 0, Math.trunc(ms.unmuted));

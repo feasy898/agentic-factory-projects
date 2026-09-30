@@ -93,6 +93,22 @@ test("CHK04：静音要求下缺 PF 桥=从严 fail（不再 skip）；探针缺
   assert.deepEqual(idsOf("fail", out), ["CHK04", "CHK07"]);
 });
 
+test("CHK04：旗驱动值 1（首交互前曾 running）恰 fail 且文案含计数值（chk04-determinism 判定向量）", async () => {
+  const { evaluate } = await checksModule();
+  const base = { ...BASE, channel_mute_required: true };
+  // 值语义改在采集层（旗→1 粘住）；判定层零改动：audioRunningBeforeInteraction=1
+  // 走既有 !==0 fail 口径，文案与 oracle checks.py:106 同形（含计数值）。
+  const out = evaluate({
+    ...base, pf_present: true, probe_installed: true,
+    muteLoadTime: { firstMutedBeforeInteraction: true, audioRunningBeforeInteraction: 1,
+      mediaUnmutedBeforeInteraction: 0, mediaPlaysBeforeInteraction: 0 },
+  });
+  assert.deepEqual(idsOf("fail", out), ["CHK04"]);
+  const chk04 = out.find((c) => c.id === "CHK04");
+  assert.ok(chk04.detail.includes("首交互前存在 running AudioContext（1）"),
+    `detail 应含旗驱动计数值文案，实得：${chk04.detail}`);
+});
+
 test("CHK05：无画布 skip；有画布方差双达标 pass、单侧低于阈值恰 fail", async () => {
   const { evaluate } = await checksModule();
   const base = { ...BASE, variance_threshold: 30.0 };

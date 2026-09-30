@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>qacore fixture audio B-like</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #0a2030; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { background: #1f4055; border-radius: 8px; }
+</style>
+</head>
+<body>
+  <canvas id="stage" width="320" height="240"></canvas>
+  <p>audio B-like：noAudio——全页无任何 AudioContext（阴性对照，不得误报）</p>
+  <script>
+    // 画布内容（CHK05 像素方差需要非空白）
+    (function () {
+      const ctx = document.getElementById("stage").getContext("2d");
+      ctx.fillStyle = "#ffd54d";
+      ctx.fillRect(0, 0, 320, 240);
+      ctx.fillStyle = "#e05252";
+      ctx.beginPath(); ctx.arc(160, 120, 60, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#0a2030";
+      ctx.font = "bold 28px sans-serif";
+      ctx.fillText("B-LIKE", 106, 130);
+    })();
+    // QC 桥接桩：恒静音；无 AudioContext → 旗恒 false，CHK04 应确定性 pass
+    (function () {
+      window.PF = {
+        isMuted: function () { return true; },
+        setMuted: function (v) { /* 恒静音夹具 */ },
+      };
+      document.dispatchEvent(new Event("pf:ready"));
+    })();
+  </script>
+</body>
+</html>

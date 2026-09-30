@@ -15,7 +15,8 @@ import { chromium } from "playwright";
 import type { ConsoleMessage, Page, Request, Route } from "playwright";
 
 import { driveAutoplay, hasPf, mediaSample, pfMuted, probeInstalled, PROBE_JS,
-         qcAssets, qcTextStates, qcTexts, rtcCount, audioRunning } from "./autoplay.ts";
+         qcAssets, qcTextStates, qcTexts, rtcCount, audioRunning,
+         audioEverBeforeGesture } from "./autoplay.ts";
 import { evaluate } from "./checks.ts";
 import { ev } from "./ev.ts";
 import { grayscaleVariance } from "./pngvar.ts";
@@ -185,7 +186,13 @@ export async function cmdRun(args: RunOptions): Promise<number> {
       // 本地 WS 同样不 connectToServer：静态产物不应依赖 WebSocket。
     };
 
-    const wire = (page: Page): void => {
+    // 拦截武装必须 await 完成后再 goto（oracle cli.py _wire 同序：sync API 天然
+    // 阻塞至武装结束）。Node 侧若以 void 火忘调用，goto 会与 routeWebSocket 的
+    // 武装（exposeBinding+ws mock initScript 两轮 CDP 往返）竞速：mock 晚于主导航
+    // 注册时页内 __pwWebSocketDispatch 缺失，且 AudioContext 以 running 态创建
+    // （探针读 running=1）→ CHK04 在保留引擎 WebAudio 的产物上系统性误判 fail
+    // （差分 QC-02 根因，2026-09-30 归因：tmp/d2-await.mjs 对比实验）。
+    const wire = async (page: Page): Promise<void> => {
       page.on("response", (response) => {
         const entry = entries.get(response.request());
         if (entry) entry.status = response.status();
@@ -210,9 +217,9 @@ export async function cmdRun(args: RunOptions): Promise<number> {
       });
       page.on("pageerror", (exc) => consoleErrors.push(`pageerror: ${exc}`));
       // 探针注入每页面一次（重复注入会二次包装 AudioContext 导致计数失真）。
-      void page.addInitScript(new Function(PROBE_JS) as () => void);
-      void page.route("**/*", onRoute);
-      void page.routeWebSocket("**/*", onWs);
+      await page.addInitScript(new Function(PROBE_JS) as () => void);
+      await page.route("**/*", onRoute);
+      await page.routeWebSocket("**/*", onWs);
     };
 
     const browser = await chromium.launch({ headless: true });
@@ -232,7 +239,7 @@ export async function cmdRun(args: RunOptions): Promise<number> {
           serviceWorkers: "block",
         });
         const page = await context.newPage();
-        wire(page); // 含 PROBE_JS 注入（仅一次，勿重复包装 AudioContext）
+        await wire(page); // 含 PROBE_JS 注入（仅一次，勿重复包装 AudioContext）；武装完成才许 goto
         const t0 = performance.now();
         await page.goto(url, { waitUntil: "load", timeout: GOTO_TIMEOUT_MS });
         const passLoadMs = (performance.now() - t0);
@@ -271,10 +278,28 @@ export async function cmdRun(args: RunOptions): Promise<number> {
             factsPass.textStatesHook || hookEarly || hookFinal);
           factsPass.asset_audit = await qcAssets(page);
         } else {
-          // 未驱动试玩时，加载后的静音态即"首交互前静音"事实。
+          // 未驱动试玩时，加载后的静音态即"首交互前静音"事实（横屏趟同样走此
+          // 分支；autoplay 趟的 pfMuted 循环采样长窗+最坏值粘住，不经此处）。
+          // PF 桥可能在 load 后亚秒~秒级才装配完成（CLI-B 假阴性根因：即刻读
+          // 到 None）——先有界等待桥就绪（至多 5s），超时兜底照旧直读
+          // （None→fail 语义保持，见 checks CHK04 与 qacore spec §4 判定前提）。
+          // 注意必须传真函数：playwright-node 把字符串页函数按表达式求值，
+          // "() => …" 得到恒真函数对象，等待立即放行（ev.ts 同款坑）。
+          await page.waitForFunction(
+            () => {
+              const w = window as Window & { PF?: { isMuted?: unknown } };
+              return Boolean(w.PF && typeof w.PF.isMuted === "function");
+            },
+            null, { timeout: 5_000 },
+          ).catch(() => {});
           const ms = (await mediaSample(page)) ?? { unmuted: 0, playing: 0, playsBeforeFirst: 0 };
           factsPass.firstMutedBeforeInteraction = await pfMuted(page);
-          factsPass.audioRunningBeforeInteraction = await audioRunning(page);
+          // 值语义旗驱动（chk04-determinism）：首 pointer 事件前曾 running → 1；
+          // 否则照旧瞬时采样（快速质检全程无 pointer 事件，旗假 ⇒ 采样必 0；
+          // 探针未装时旗与采样同为 null，None→fail 语义不变）。键名不变。
+          const everRunning = await audioEverBeforeGesture(page);
+          factsPass.audioRunningBeforeInteraction =
+            everRunning === true ? 1 : await audioRunning(page);
           factsPass.mediaUnmutedBeforeInteraction = Math.trunc(ms.unmuted);
           factsPass.mediaPlaysBeforeInteraction = Math.trunc(ms.playsBeforeFirst);
         }
@@ -323,7 +348,12 @@ export async function cmdRun(args: RunOptions): Promise<number> {
     max_load_sec: args.maxLoadSec,
     autoplay_enabled: autoplayEnabled,
     autoplay_timeout_sec: autoplayTimeout,
-    autoplay: autoplayFacts,
+    // oracle checks.py:82 用 Python `or` 读取：autoplay={}（空 dict，falsy）时回落
+    // muteLoadTime——快速质检的静音事实在 muteLoadTime 上。JS `??` 对 {} 不回落
+    // （移植偏差：曾致快速质检 CHK04 恒读空 → isMuted=None 假阴性 fail）。在此
+    // 对齐 Python 语义：未开 autoplay 时判输入置 null。报告 facts 本就过滤掉
+    // autoplay 键（见下 report 组装），报告 JSON 字段签名零变化。
+    autoplay: autoplayEnabled ? autoplayFacts : null,
     muteLoadTime: muteFacts,
     // CHK10 判定输入：要求的渲染文案 / 替换素材键，以及模板上报的已渲染文案
     // 集合与像素对账结果（仅竖屏趟采集）。text_states 为每条文案是否曾在采样
