@@ -80,8 +80,15 @@ def test_cli_validate_missing_file(tmp_path, capsys):
     assert main(["validate", "shots", str(tmp_path / "nope.json")]) == 1
 
 
-def test_cli_run_stub():
-    assert main(["run", "ep01", "--langs", "en"]) == 2  # M14 前占位
+def test_cli_run_usage_guard(tmp_path):
+    # M14 落地后 run=enqueue+resume（pipeline.queue）；用法守卫：未知步骤
+    # 在入队前拒绝（exit 2），且不落任何作业行/库文件（T1 占位断言随 M14 更新）。
+    db = tmp_path / "jobs.db"
+    rc = main(["run", "ep01", "--langs", "en", "--to", "no-such-step",
+               "--jobs-dir", str(tmp_path), "--db", str(db),
+               "--metrics-db", str(tmp_path / "metrics.db")])
+    assert rc == 2
+    assert not db.exists()  # 校验先行，未写任何行
 
 
 # ---------------------------------------------------------------------------
