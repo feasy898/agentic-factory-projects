@@ -19,9 +19,20 @@
 #      在 jobs 树下连一个样本都没有（回归面出现空洞）即 FAIL。
 # 用法: bash scripts/eval_b5.sh        （退出码即验收结果；任意 cwd 可运行）
 set -uo pipefail
-REPO_ROOT=$(cd "$(dirname "$0")/.." && pwd)
+# pwd -P：物理路径。经 WSL bash 以相对形态 D:/... 调用时（D: 为指向 /mnt/d 的 symlink），
+# 逻辑 pwd 会得到 <cwd>/D:/... 的叠加假路径，python argv 解析即失败。
+REPO_ROOT=$(cd "$(dirname "$0")/.." && pwd -P)
 
 cd "$REPO_ROOT"
+# Windows 路径形态（argv 专用）：PY 恒为 Windows venv python（.venv/Scripts，见下行选择逻辑），
+# heredoc 以 $1 传仓库根给 Windows python 时必须是 D:/ 形态 —— Git Bash 有 MSYS 自动转换兜底，
+# WSL bash（/mnt/d 挂载）没有，直接传 POSIX 形态会导致 import/cwd 解析失败（WinError 267）。
+# shell 侧 cd 仍用 POSIX 形态，故只另存 REPO_WIN 供两处 python argv 使用。
+case "$REPO_ROOT" in
+  /mnt/[a-zA-Z]/*) REPO_WIN="${REPO_ROOT:5:1}:/${REPO_ROOT:7}" ;;
+  /[a-zA-Z]/*)     REPO_WIN="${REPO_ROOT:1:1}:/${REPO_ROOT:3}" ;;
+  *)               REPO_WIN="$REPO_ROOT" ;;
+esac
 if [ -x ".venv/Scripts/python.exe" ]; then PY=.venv/Scripts/python.exe; else PY=.venv/bin/python; fi
 export PYTHONUTF8=1
 
@@ -53,7 +64,7 @@ else
 fi
 
 echo "== ② 中性名扫描（gate_b0 同源 token 表，仅扫本批新增/改动文件）=="
-"$PY" - "$REPO_ROOT" <<'PYEOF'
+"$PY" - "$REPO_WIN" <<'PYEOF'
 import sys
 from pathlib import Path
 
@@ -101,7 +112,7 @@ rc=$?
 if [ "$rc" -ne 0 ]; then rc_all=1; fi
 
 echo "== ③ 契约回归（pipeline.cli validate 既有 jsonl 样本）=="
-"$PY" - "$REPO_ROOT" <<'PYEOF'
+"$PY" - "$REPO_WIN" <<'PYEOF'
 import subprocess
 import sys
 from pathlib import Path
