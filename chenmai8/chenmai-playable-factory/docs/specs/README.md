@@ -14,7 +14,7 @@ oracle `repo/docs/assets/specs/`（12 件）是**唯一规格源**（封存只�
 | M5-assetkit | `assetkit.md` | `packages/assetkit/` | 批次 3 待做 |
 | M8-qacore | `qacore.md` | `qacore/` | **批次 2 完成（M2.2）**（spec 字节落位本目录 #38；Node+playwright 1.63.0 移植：探针/手势表/魔法数字/十项检查/报告逐字段；PROBE_JS 与 oracle 逐字节一致；mini.html 夹具字节复用 #39；MUT-01/02/04 构造算法逐条照搬恰命中；eval：unit 10 + 浏览器 5 + 四模板 5 全 exit 0，`npm run test:qacore`；R1 方差对齐 Pillow ≤0.04%；MUT-03 仍列后续） |
 | MODEL-ADAPTER | `model-adapter.md` / `llmgw.md` | `packages/llmgw/` | 批次 1 待做 |
-| ORCHESTRATOR | `orchestrator.md` | `pf/` | 批次 3 待做 |
+| ORCHESTRATOR | `orchestrator.md` + `pipeline-contract.md` | `pf/` | **批次 2 完成（M2.3，编排 CLI 提前落地；webui/assetkit 仍批次 3）**（spec 字节落位本目录 #40–#41；`node pf/pf.mjs` validate/make/serve 子命令/旗标/退出码/产物树全对齐 oracle pfcore——validate 11 件与 oracle 同判；make 全链：构建→打包→判官 --autoplay→汇总页双名+LAN 二维码+墙钟双口径+demo-prebuilt，质检 fail 即 exit 1 不产出二维码；serve 前台伺服+现场重建汇总页/二维码+端口顺延；8618 顺延/TCP-only 健康检查/伺服复用三重核实（PID 映像名按宿主钉 node*）/二维码 LAN IP 段优先级全保；宿主适配两处已登记：静态伺服 python→node 分离子进程、serve 停机增 stdin-EOF 等价钩子（Windows 无跨进程 SIGINT）；build/pack/rules-check 占位 exit 2 原样保契约。eval：pf/test/pf.test.mjs 13 件 + make-serve.test.mjs 2 件真实执行 exit 0（`npm run test:pf`）+ e2e-matrix.mjs 48 包全矩阵 0 FAIL ≤1200s（gate-m2 门项 3）） |
 | M10-webui | —（oracle 内 webui/） | `webui/` | 批次 3 待做 |
 | CHANNEL-ADAPTERS | `channel-adapters.md` | `channel-rules/`（字节复用已完成）+ 各处实现 | 数据资产已复用；规则库消费端实现随 M4 落地（rules.mjs 配置驱动） |
 | PIPELINE-CONTRACT | `pipeline-contract.md` | 全局契约（报告字段/退出码） | 冻结，全程对齐 |

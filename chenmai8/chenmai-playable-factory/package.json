@@ -12,20 +12,27 @@
     "packages/templates/*"
   ],
   "scripts": {
-    "test": "node --test test/assets.test.mjs test/build-chain.test.mjs test/toolchain.test.mjs packages/spec/test/eval-matrix.test.mjs packages/spec/test/schema.test.mjs packages/spec/test/invariants.test.mjs packages/spec/test/ajv-check.mjs packages/engine-bridge/test/channels.test.mjs packages/engine-bridge/test/events.test.mjs packages/engine-bridge/test/mute.test.mjs packages/packager/test/structure.test.mjs packages/packager/test/run.mjs packages/templates/tmpl-match3/tests/logic-test.ts packages/templates/tmpl-merge/tests/logic-test.ts packages/templates/tmpl-pullpin/tests/logic-test.ts packages/templates/tmpl-sort/tests/logic-test.ts qacore/tests/unit.test.mjs",
+    "test": "node --test test/assets.test.mjs test/build-chain.test.mjs test/toolchain.test.mjs packages/spec/test/eval-matrix.test.mjs packages/spec/test/schema.test.mjs packages/spec/test/invariants.test.mjs packages/spec/test/ajv-check.mjs packages/engine-bridge/test/channels.test.mjs packages/engine-bridge/test/events.test.mjs packages/engine-bridge/test/mute.test.mjs packages/packager/test/structure.test.mjs packages/packager/test/run.mjs packages/templates/tmpl-match3/tests/logic-test.ts packages/templates/tmpl-merge/tests/logic-test.ts packages/templates/tmpl-pullpin/tests/logic-test.ts packages/templates/tmpl-sort/tests/logic-test.ts qacore/tests/unit.test.mjs pf/test/pf.test.mjs",
     "test:qacore": "node --test qacore/tests/qacore.test.mjs qacore/tests/templates.test.mjs",
+    "test:pf": "node --test pf/test/pf.test.mjs pf/test/make-serve.test.mjs",
     "typecheck:qacore": "tsc --noEmit -p qacore",
+    "typecheck:pf": "tsc --noEmit -p pf",
     "build": "node scripts/build.mjs",
     "verify:assets": "node scripts/verify-reused-assets.mjs",
-    "gate:m1": "node scripts/gate-m1.mjs"
+    "gate:m1": "node scripts/gate-m1.mjs",
+    "gate:m2": "node scripts/gate-m2.mjs",
+    "matrix": "node scripts/e2e-matrix.mjs",
+    "matrix:quick": "node scripts/e2e-matrix.mjs --quick"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@types/qrcode": "1.5.6",
     "ajv": "8.20.0",
     "c8": "12.0.0",
     "esbuild": "0.28.2",
     "jsdom": "30.1.1",
     "playwright": "1.63.0",
+    "qrcode": "1.5.4",
     "typescript": "7.0.2"
   }
 }

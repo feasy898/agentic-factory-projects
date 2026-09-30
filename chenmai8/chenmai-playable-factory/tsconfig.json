@@ -9,6 +9,7 @@
     { "path": "packages/templates/tmpl-merge" },
     { "path": "packages/templates/tmpl-pullpin" },
     { "path": "packages/templates/tmpl-sort" },
-    { "path": "qacore" }
+    { "path": "qacore" },
+    { "path": "pf" }
   ]
 }
