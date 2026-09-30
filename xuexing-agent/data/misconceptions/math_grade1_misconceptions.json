@@ -1,0 +1,142 @@
+{
+  "misconceptions": [
+    {
+      "id": "mc_p1_carry_forget_rem",
+      "kp_id": "kp_p1_carry20",
+      "description": "凑十法凑成十以后忘记把剩下的数加上去，直接把10当结果（如8+7写成10）",
+      "signature": [
+        "8+7=10",
+        "9+4=10"
+      ],
+      "hint": "凑出10以后别着急，还有剩下的小数等着你加进去呢，试试把它们也加完？"
+    },
+    {
+      "id": "mc_p1_carry_concat",
+      "kp_id": "kp_p1_carry20",
+      "description": "把两个一位数直接连着写在一起当得数（如8+7写成87）",
+      "signature": [
+        "8+7=87",
+        "9+6=96"
+      ],
+      "hint": "加法是把两部分合起来数一数，不是让数字排排站哦，试试先凑出一个十？"
+    },
+    {
+      "id": "mc_p1_borrow_forget_add",
+      "kp_id": "kp_p1_borrow20",
+      "description": "破十法用10减完以后，忘记把个位剩下的数加回来（如15-9写成1）",
+      "signature": [
+        "15-9=1",
+        "13-8=2"
+      ],
+      "hint": "10减完还剩个位的小尾巴呢，试试把它加回去再写答案？"
+    },
+    {
+      "id": "mc_p1_borrow_reverse",
+      "kp_id": "kp_p1_borrow20",
+      "description": "个位不够减时倒过来用小的减大的（如15-9的个位算成9-5=4，写4）",
+      "signature": [
+        "15-9=4",
+        "14-8=6"
+      ],
+      "hint": "不够减的时候别倒着减，试试先拿出一个10来帮忙减一减。"
+    },
+    {
+      "id": "mc_p1_num100_ones_only",
+      "kp_id": "kp_p1_num100",
+      "description": "比较100以内数的大小时只看个位不看十位（如38○45里因个位8大于5而填＞）",
+      "signature": [
+        "＞"
+      ],
+      "hint": "比大小要先看十位，十位就像大哥哥，十位大的数才大哦。"
+    },
+    {
+      "id": "mc_p1_num100_missing_zero",
+      "kp_id": "kp_p1_num100",
+      "description": "写中间有0的数时漏写0占位（如一百零五写成15）",
+      "signature": [
+        "15"
+      ],
+      "hint": "哪一位上一个数都没有，要请0来占住位置，试试一位一位对着写。"
+    },
+    {
+      "id": "mc_p1_money_change_add",
+      "kp_id": "kp_p1_money",
+      "description": "算找回的钱时用加法（付10元买7元的东西，说找回17元）",
+      "signature": [
+        "17元",
+        "16元"
+      ],
+      "hint": "付出去的钱像坐小车走了，口袋里剩下的应该更少才对，试试用减法算一算？"
+    },
+    {
+      "id": "mc_p1_money_rate",
+      "kp_id": "kp_p1_money",
+      "description": "元角进率记错，说成1元=100角",
+      "signature": [
+        "1元=100角"
+      ],
+      "hint": "10个一角才凑成一元，伸出手指头数一数试试？"
+    },
+    {
+      "id": "mc_p1_clock_half_read6",
+      "kp_id": "kp_p1_clock",
+      "description": "看半时时只盯着分针指6，把整时读成6时（如5时半读成6时）",
+      "signature": [
+        "6时"
+      ],
+      "hint": "分针指6说明是半时啦，几时还要看时针刚走过哪个数哦。"
+    },
+    {
+      "id": "mc_p1_clock_next_hour",
+      "kp_id": "kp_p1_clock",
+      "description": "半时时针靠近下一个数就按下一个数读（如3时半读成4时半）",
+      "signature": [
+        "4时半",
+        "9时半"
+      ],
+      "hint": "时针还没真正走到那个数呢，它刚路过谁，就是几时半哦。"
+    }
+  ],
+  "exemptions": [
+    {
+      "kp_id": "kp_p1_num20",
+      "reason": "数数认读以口头与操作活动为主，笔误多为随机抄错，暂无稳定的典型错误形态；待学情数据积累后补充条目。"
+    },
+    {
+      "kp_id": "kp_p1_addsub10",
+      "reason": "10以内加减口算错误多为个体化的数数口误，signature 稳定性不足，暂以豁免申报。"
+    },
+    {
+      "kp_id": "kp_p1_addsub100",
+      "reason": "口算错误的根因（20以内进退位、数位概念）已由既有条目覆盖，本知识点暂无独立新形态。"
+    },
+    {
+      "kp_id": "kp_p1_3dshapes",
+      "reason": "形状辨认错误主要源于摆放方位的直观判读差异，纸笔 signature 不稳定，暂缺。"
+    },
+    {
+      "kp_id": "kp_p1_2dshapes",
+      "reason": "平面图形误认多为旋转方位引起的直观判断差异，暂无可复用的稳定 signature。"
+    },
+    {
+      "kp_id": "kp_p1_position",
+      "reason": "左右相对性是主要难点，但儿童作答高度依赖图示，纯文字题库暂无法稳定采样错误形态。"
+    },
+    {
+      "kp_id": "kp_p1_sort",
+      "reason": "分类错误体现为标准切换困难，错误答案随材料变化，暂无稳定 signature。"
+    },
+    {
+      "kp_id": "kp_p1_pattern",
+      "reason": "找规律错误多与计数能力相关（根因已由数与运算条目覆盖），暂无独立形态。"
+    },
+    {
+      "kp_id": "kp_p1_wordprob",
+      "reason": "列式错误形态随情境变化大，理解根因已由加减法意义相关条目覆盖，暂缺。"
+    },
+    {
+      "kp_id": "kp_p1_compare",
+      "reason": "比较错误多与计数及一一对应操作相关，纯笔误形态少，暂缺。"
+    }
+  ]
+}
