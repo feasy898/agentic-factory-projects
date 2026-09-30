@@ -61,3 +61,11 @@ export {
   extractMac1Field,
 } from './cookie-reply.ts';
 export type { WgCookieReply } from './cookie-reply.ts';
+
+/** 报文分发（type=1/2/3/4 接线）：2026-10-01 夜班第 2 面（上游 receive.go/cookie.go 语义）。 */
+export { WgPacketDispatcher } from './dispatch.ts';
+export type {
+  WgCookieConsumerRoute,
+  WgCookieResponderRoute,
+  WgDispatchResult,
+} from './dispatch.ts';

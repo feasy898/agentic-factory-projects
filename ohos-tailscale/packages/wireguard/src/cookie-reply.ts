@@ -156,21 +156,25 @@ export class WgCookieResponder {
   /**
    * 生成 Cookie Reply（64B）：
    * cookie = BLAKE2s-128(R_m, srcAddr)；密文 = XChaCha20-Poly1305(
-   * wgCookieKey(发起端静态公钥), rng nonce24, cookie, AAD=fullMsg 的 MAC1 字段)。
+   * wgCookieKey(响应端静态公钥), rng nonce24, cookie, AAD=fullMsg 的 MAC1 字段)。
+   * 键输入语义（2026-10-01 对照 wireguard-go receive.go/cookie.go 修正）：
+   * CookieChecker.Init(device 静态公钥) → mac2.encryptionKey =
+   * BLAKE2s("cookie--" || **响应端**静态公钥)——即被发起端寻址的一方；发起端消费时
+   * generator.Init(remoteStatic) 用同一公钥（= 它的对端），两侧同键。
    * fullMsg 须为带 macs 段的完整握手报文（提取其 MAC1 作 AAD，与上游一致）；
    * srcAddr 为对端源地址字节（1..32B，编组由调用方定——上游为 UDP 源地址原始字节）。
    */
   public createReply(
     fullMsg: Uint8Array,
     receiverIndex: number,
-    initiatorStaticPublic: Uint8Array,
+    responderStaticPublic: Uint8Array,
     srcAddr: Uint8Array,
     nowMs: number,
   ): Uint8Array {
     const secret: Uint8Array = this.ensureSecret(nowMs);
     const cookie: Uint8Array = wgComputeCookie(secret, srcAddr);
     const aad: Uint8Array = extractMac1Field(fullMsg);
-    const key: Uint8Array = wgCookieKey(initiatorStaticPublic);
+    const key: Uint8Array = wgCookieKey(responderStaticPublic);
     const nonce: Uint8Array = new Uint8Array(WG_COOKIE_NONCE_LEN_BYTES);
     this.rng.randomBytes(nonce);
     const sealed: Uint8Array = xchacha20poly1305Seal(key, nonce, cookie, aad);
@@ -215,21 +219,23 @@ export class WgCookieResponder {
 
 /**
  * 发起端 Cookie Reply 消费器（wireguard-go CookieGenerator.ConsumeReply 语义）。
- * 持有本端静态公钥与"最近发送的 MAC1"（AAD）；consume 成功返回 16B cookie
- * （调用方自行写入 WgCookieCache 供 mac2 计算——与一期 cookie.ts 组合）。
+ * 持有对端（响应端）静态公钥与"最近发送的 MAC1"（AAD）；consume 成功返回 16B
+ * cookie（调用方自行写入 WgCookieCache 供 mac2 计算——与一期 cookie.ts 组合）。
+ * 键 = wgCookieKey(对端静态公钥)：上游 generator.Init(remoteStatic)，与响应端
+ * checker.Init(本端静态公钥) 得到同一把键（2026-10-01 语义修正，见类上方注释）。
  */
 export class WgCookieReplyConsumer {
-  private readonly localStaticPublic: Uint8Array;
+  private readonly peerStaticPublic: Uint8Array;
   private lastMac1: Uint8Array | null = null;
 
-  constructor(localStaticPublic: Uint8Array) {
-    if (localStaticPublic.length !== 32) {
+  constructor(peerStaticPublic: Uint8Array) {
+    if (peerStaticPublic.length !== 32) {
       throw new WgProtocolError(
         'RANGE',
-        'consumer: local static public must be 32 bytes, got ' + String(localStaticPublic.length),
+        'consumer: peer static public must be 32 bytes, got ' + String(peerStaticPublic.length),
       ) as Error;
     }
-    this.localStaticPublic = localStaticPublic.slice();
+    this.peerStaticPublic = peerStaticPublic.slice();
   }
 
   /** 记录本端最近发送的 MAC1（16B，独立拷贝存储）——consume 的 AAD 来源。 */
@@ -258,7 +264,7 @@ export class WgCookieReplyConsumer {
     } catch (_e) {
       return null;
     }
-    const key: Uint8Array = wgCookieKey(this.localStaticPublic);
+    const key: Uint8Array = wgCookieKey(this.peerStaticPublic);
     let cookie: Uint8Array;
     try {
       cookie = xchacha20poly1305Open(key, reply.nonce, reply.cookieSealed, this.lastMac1);

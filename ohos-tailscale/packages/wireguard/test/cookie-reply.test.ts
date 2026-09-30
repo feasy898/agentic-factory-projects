@@ -24,8 +24,9 @@ import {
 import { WgProtocolError } from '../src/errors.ts';
 import { x25519PublicKeyFromPrivate } from '@ohos-tailscale/crypto';
 
-const INITIATOR_PRIV: Uint8Array = new Uint8Array(32).fill(0x31);
-const INITIATOR_PUB: Uint8Array = x25519PublicKeyFromPrivate(INITIATOR_PRIV);
+/** 响应端（被寻址方）静态密钥/公钥——Cookie Reply 键语义见 src/cookie-reply.ts 头注。 */
+const RESPONDER_PRIV: Uint8Array = new Uint8Array(32).fill(0x31);
+const RESPONDER_PUB: Uint8Array = x25519PublicKeyFromPrivate(RESPONDER_PRIV);
 const SRC_ADDR: Uint8Array = new Uint8Array([192, 168, 13, 37, 10, 10, 10]);
 /** 确定性 Rng：pool = 0x00..0xff 循环（ArrayRng 语义）。 */
 const RNG_POOL: Uint8Array = ((): Uint8Array => {
@@ -85,11 +86,11 @@ test('Cookie Reply 解码：长度非 64 → BAD_LEN；type≠3 → BAD_TYPE', (
 
 test('端到端：responder.createReply → consumer.consume 得到正确 cookie（τ = Mac(R_m, src)）', () => {
   const responder: WgCookieResponder = new WgCookieResponder(new ArrayRng(RNG_POOL));
-  const consumer: WgCookieReplyConsumer = new WgCookieReplyConsumer(INITIATOR_PUB);
+  const consumer: WgCookieReplyConsumer = new WgCookieReplyConsumer(RESPONDER_PUB);
   const msg = fakeFullMsg(1);
   consumer.noteSentMac1(msg.mac1);
 
-  const replyBuf: Uint8Array = responder.createReply(msg.full, 1377, INITIATOR_PUB, SRC_ADDR, 1000);
+  const replyBuf: Uint8Array = responder.createReply(msg.full, 1377, RESPONDER_PUB, SRC_ADDR, 1000);
   assert.equal(replyBuf.length, 64);
 
   const cookie: Uint8Array | null = consumer.consume(replyBuf);
@@ -108,12 +109,12 @@ test('端到端：AAD 不符（noteSentMac1 记错/未记）→ consume 返回 n
   const responder: WgCookieResponder = new WgCookieResponder(new ArrayRng(RNG_POOL));
   const msg = fakeFullMsg(2);
   const other = fakeFullMsg(3);
-  const replyBuf: Uint8Array = responder.createReply(msg.full, 7, INITIATOR_PUB, SRC_ADDR, 1000);
+  const replyBuf: Uint8Array = responder.createReply(msg.full, 7, RESPONDER_PUB, SRC_ADDR, 1000);
 
-  const consumerNoMac1: WgCookieReplyConsumer = new WgCookieReplyConsumer(INITIATOR_PUB);
+  const consumerNoMac1: WgCookieReplyConsumer = new WgCookieReplyConsumer(RESPONDER_PUB);
   assert.equal(consumerNoMac1.consume(replyBuf), null);
 
-  const consumerWrongMac1: WgCookieReplyConsumer = new WgCookieReplyConsumer(INITIATOR_PUB);
+  const consumerWrongMac1: WgCookieReplyConsumer = new WgCookieReplyConsumer(RESPONDER_PUB);
   consumerWrongMac1.noteSentMac1(other.mac1);
   assert.equal(consumerWrongMac1.consume(replyBuf), null);
 });
@@ -121,7 +122,7 @@ test('端到端：AAD 不符（noteSentMac1 记错/未记）→ consume 返回 n
 test('端到端：消费端密钥不符（不同 localStaticPublic）→ consume 返回 null', () => {
   const responder: WgCookieResponder = new WgCookieResponder(new ArrayRng(RNG_POOL));
   const msg = fakeFullMsg(4);
-  const replyBuf: Uint8Array = responder.createReply(msg.full, 7, INITIATOR_PUB, SRC_ADDR, 1000);
+  const replyBuf: Uint8Array = responder.createReply(msg.full, 7, RESPONDER_PUB, SRC_ADDR, 1000);
   const otherPriv: Uint8Array = new Uint8Array(32).fill(0x99);
   const stranger: WgCookieReplyConsumer = new WgCookieReplyConsumer(x25519PublicKeyFromPrivate(otherPriv));
   stranger.noteSentMac1(msg.mac1);
@@ -130,10 +131,10 @@ test('端到端：消费端密钥不符（不同 localStaticPublic）→ consume
 
 test('mac2 校验组合：consume 得 cookie → 对端按 cookie 发 mac2 → responder.verifyMac2 通过', () => {
   const responder: WgCookieResponder = new WgCookieResponder(new ArrayRng(RNG_POOL));
-  const consumer: WgCookieReplyConsumer = new WgCookieReplyConsumer(INITIATOR_PUB);
+  const consumer: WgCookieReplyConsumer = new WgCookieReplyConsumer(RESPONDER_PUB);
   const msg = fakeFullMsg(5);
   consumer.noteSentMac1(msg.mac1);
-  const replyBuf: Uint8Array = responder.createReply(msg.full, 7, INITIATOR_PUB, SRC_ADDR, 1000);
+  const replyBuf: Uint8Array = responder.createReply(msg.full, 7, RESPONDER_PUB, SRC_ADDR, 1000);
   const cookie: Uint8Array | null = consumer.consume(replyBuf);
   assert.ok(cookie !== null);
 
