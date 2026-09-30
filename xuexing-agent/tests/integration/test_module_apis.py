@@ -1,14 +1,18 @@
 """集成测试：server 新模块 API × 真实 grade7 知识库（BACKLOG「server 暴露新模块
 API」要求的集成测试：/trace /blueprint /grade /recommend 全链路）。
 
-闭式值全部现算核实（2026-09-29，data/ 当前版本）：
+闭式值全部现算核实（2026-09-29，data/ 当前版本；2026-09-30 g7 深挖批扩库
+129 -> 222 题后重算，2026-10-01 GPU 端实跑）：
 - /trace [m7_010 对@0, m7_011 错@3, m7_013 对@10]：3 快照；末快照
   kp_rational_add=0.084203（2 证据：对+错，遗忘衰减后净负）、kp_rational_mul=0.90099；
-- /recommend attach：kp_rational_add 步骤推荐 = ["m7_010","m7_011","m7_012","m7_115"]
-  （mc_sign_neg 针对题 Tier1 在前，与 recommend 契约闭式一致），策略 s_worked_example；
-- /itembank/v2/validate：grade7 129 题全部 source=original、verification 记录 =
-  双代理独立复验回填（m3-reviewer × night-reverify-20260929，2026-09-29 运行，
-  见 data/verification/）→ errors []、verified 129/129；
+- /recommend attach：kp_rational_add 步骤推荐 =
+  ["m7_010","m7_011","m7_012","m7_140","m7_139","m7_115"]
+  （mc_sign_neg 针对题 Tier1 在前，Tier2 一般巩固按 (difficulty,id) 升序，
+  与 recommend 契约闭式一致），策略 s_worked_example；
+- /itembank/v2/validate：grade7 222 题 = 存量 129 题 source=original（verification
+  = 双代理独立复验回填，m3-reviewer × night-reverify-20260929，2026-09-29 运行，
+  见 data/verification/）+ 深挖批 93 题 source=llm_generated（step-3.7-flash 起草
+  × g7-deepen-review-20260930 人工验算复核回填）→ errors []、verified 222/222；
 - /coverage/standard：grade7 37 KP × 28 课标条目 → 归属缺口 0、覆盖 12/28
   （清单为 7-9 年级第四学段全集，7 年级子库不含几何变换/函数/统计部分）。
 """
@@ -136,8 +140,11 @@ def test_recommend_attach_real_pipeline(client):
     assert "kp_rational_add" in steps  # trace 判弱（0.084203 < 0.65）
     step = steps["kp_rational_add"]
     assert step["strategy_id"] == "s_worked_example"
-    # 闭式：mc_sign_neg 针对题（难度 0.2，id 升序）在前，巩固题在后
-    assert step["recommended_item_ids"] == ["m7_010", "m7_011", "m7_012", "m7_115"]
+    # 闭式（2026-09-30 g7 深挖批扩库后重算）：mc_sign_neg 针对题 Tier1
+    # （m7_010/011，难度 0.2）在前，Tier2 一般巩固按 (difficulty,id) 升序
+    # （m7_012@0.3、m7_140@0.45、m7_139@0.5、m7_115@0.6）
+    assert step["recommended_item_ids"] == [
+        "m7_010", "m7_011", "m7_012", "m7_140", "m7_139", "m7_115"]
     # kp_rational_mul 掌握 0.90099 ≥ 0.65：无步骤，只进复习日程
     assert "kp_rational_mul" not in steps
     assert any(r["kp_id"] == "kp_rational_mul" for r in plan["reviews"])
@@ -159,9 +166,11 @@ def test_item_v2_real_bank_honest_disclosure(client, grade7_items):
     assert r.status_code == 200
     out = r.json()
     assert out["valid"] is True and out["errors"] == []
-    assert out["counts"] == {"original": 129, "adapted": 0, "llm_generated": 0}
-    # 双代理复验后全库带可追溯记录（原 0/129 诚实缺口已由 2026-09-29 双代理运行回填）
-    assert out["total"] == 129 and out["verified"] == 129
+    # 诚实披露闭式（2026-09-30 g7 深挖批扩库后重算）：存量 129 题 original
+    # （2026-09-29 双代理运行回填）+ 深挖批 93 题 llm_generated（step-3.7-flash
+    # 起草 × g7-deepen-review-20260930 人工验算复核回填）；无改编题
+    assert out["counts"] == {"original": 129, "adapted": 0, "llm_generated": 93}
+    assert out["total"] == 222 and out["verified"] == 222
 
 
 # ---------- /coverage/standard × 真实课标清单 ----------

@@ -232,8 +232,12 @@ def test_composable_with_route_plan(bank, graph, strategies, misconceptions):
     assert {s.kp_id for s in plan.steps} == weak
     attached = attach_recommendations(plan, bank, misconceptions)
     step = next(s for s in attached.steps if s.kp_id == "kp_rational_add")
-    # 真实闭式：mc_sign_neg 针对题（均难度 0.2，id 升序）在前，一般巩固在后
-    assert step.recommended_item_ids == ["m7_010", "m7_011", "m7_012", "m7_115"]
+    # 真实闭式（2026-09-30 g7 深挖批扩库后重算，2026-10-01 GPU 端实跑）：
+    # mc_sign_neg 针对题 Tier1（m7_010/011，均难度 0.2）在前，
+    # Tier2 一般巩固按 (difficulty,id) 升序：m7_012@0.3、m7_140@0.45、
+    # m7_139@0.5、m7_115@0.6
+    assert step.recommended_item_ids == [
+        "m7_010", "m7_011", "m7_012", "m7_140", "m7_139", "m7_115"]
     # 原 plan 步骤仍为空推荐（attach 是独立纯步骤）
     assert all(s.recommended_item_ids == [] for s in plan.steps)
 

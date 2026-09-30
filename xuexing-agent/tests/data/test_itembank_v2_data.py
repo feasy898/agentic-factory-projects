@@ -2,14 +2,13 @@
 
 口径与 tools/validate_knowledge.py 一致（合并 data/items/*.json 全部题目）：
 - 全库通过 v2 完整性门（source 枚举 / 改编溯源 / LLM 双代理验证记录）；
-- 来源闭式：现库 321 题全部为 M3 知识注入的原创题（commit ab541ec，无真题改编、
-  无 LLM 生成条目——题干无任何真题年份/出处标记，引入改编或 LLM 题时须同步
-  更新此闭式并附真实 source_ref / verification）；
-- 验证记录：2026-09-29 双代理独立复验运行（tools/dual_agent_verify.py，
-  m3-reviewer × night-reverify-20260929，ledger/manifest/仲裁队列见
-  data/verification/）回填 321/321；记录可追溯性由
-  tests/data/test_dual_verify_data.py 强制（ledger 逐题一致 + manifest 代理
-  身份一致 + 仲裁队列闭式），此处只锁「记录存在且全部通过 v2 门」；
+- 来源闭式：初中 321 题为 M3 知识注入的原创题（commit ab541ec，source=original）；
+  2026-09-30 落库的小学中段 94 题（p3_*/p4_*）为 step-3.7-flash 起草、人工逐题
+  验算修正的 LLM 生成题（source=llm_generated，verification 由 2026-09-30 双代理
+  运行回填，可追溯性由 tests/data/test_dual_verify_data.py 强制）；无改编题
+  （引入改编题时须附真实 source_ref 并更新此闭式）；
+- 验证记录：三次双代理运行回填 321+94+96 全库（低段 1-2 年级 96 题见
+  2026-09-30 p12 运行）；此处只锁「记录存在且全部通过 v2 门」；
 - 算术闭式抽查：12 题按 id 逐一独立重算（表达式在测试内现算，非抄答案）。
 """
 import glob
@@ -24,6 +23,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 ITEM_FILES = sorted(glob.glob(os.path.join(ROOT, "data", "items", "*.json")))
 
 MIN_TOTAL_ITEMS = 300  # 规模下限（只防清空/截断，不锁增长）
+EXPECTED_LLM_GENERATED = 94  # 小学 LLM 生成题下限（本批次 3-4 年级 94 题；其他小学批次另计）
 
 
 @pytest.fixture(scope="module")
@@ -42,13 +42,15 @@ def test_real_bank_passes_v2_gate(all_items):
     assert errs == [], f"schema v2 violations: {errs[:10]}"
 
 
-def test_real_provenance_all_original(all_items):
+def test_real_provenance_original_plus_verified_llm(all_items):
     counts = source_counts(all_items)
-    assert counts == {
-        "original": len(all_items),
-        "adapted": 0,
-        "llm_generated": 0,
-    }, "来源闭式变化：改编/LLM 题入库须附真实 source_ref/verification 并更新本断言"
+    assert counts["adapted"] == 0, "改编题入库须附真实 source_ref 并更新本断言"
+    assert counts["llm_generated"] >= EXPECTED_LLM_GENERATED, (
+        "小学 LLM 生成题（须附双代理 verification）出现缺口")
+    # 全部 llm_generated 题必须带通过记录（v2 门已强制，这里显式复核覆盖数）
+    total, verified = verification_stats(all_items)
+    assert total == len(all_items) and verified == total
+    assert counts["original"] == len(all_items) - counts["llm_generated"]
 
 
 def test_real_verification_records_honest(all_items):

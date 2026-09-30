@@ -2,6 +2,10 @@
 
 用法：python tools/validate_knowledge.py [--min-items-per-kp 3] [--min-mc-per-kp 2]
 退出码 0=通过；非 0=有错误（错误清单打印到 stdout）。
+
+图谱口径为 1-9 年级（math_grade1..math_grade9 模式化路径）：初中 7-9 是
+存量主体库，缺文件视为错误；小学 1-6 待学段扩张落库（BACKLOG），缺位只
+记 pending 不报错，落库后自动并入检查。
 """
 import argparse
 import glob
@@ -18,10 +22,11 @@ from xuexing.kpgraph import kpgraph_from_dict  # noqa: E402
 from xuexing.misconception_coverage import audit, parse_bank  # noqa: E402
 
 GRADE_FILES = {
-    7: os.path.join(ROOT, "data", "knowledge", "math_grade7.json"),
-    8: os.path.join(ROOT, "data", "knowledge", "math_grade8.json"),
-    9: os.path.join(ROOT, "data", "knowledge", "math_grade9.json"),
+    grade: os.path.join(ROOT, "data", "knowledge", f"math_grade{grade}.json")
+    for grade in range(1, 10)
 }
+# 存量主体（缺文件=错误）；1-6 年级文件允许缺位（落库前记 pending）。
+CORE_GRADES = frozenset((7, 8, 9))
 
 
 def main() -> int:
@@ -32,12 +37,16 @@ def main() -> int:
     args = ap.parse_args()
     errors: list[str] = []
 
-    # ---------- 1) 知识点图谱：合并三年级文件 ----------
+    # ---------- 1) 知识点图谱：合并各年级文件（1-9；1-6 允许待落库） ----------
     merged_kps: list[dict] = []
     seen_kp: dict[str, str] = {}
+    pending_grades: list[int] = []
     for grade, path in GRADE_FILES.items():
         if not os.path.exists(path):
-            errors.append(f"missing knowledge file: {path}")
+            if grade in CORE_GRADES:
+                errors.append(f"missing knowledge file: {path}")
+            else:
+                pending_grades.append(grade)
             continue
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
@@ -53,8 +62,8 @@ def main() -> int:
                 errors.append(f"{kp['id']}: empty description")
             if not kp.get("cluster"):
                 errors.append(f"{kp['id']}: empty cluster")
-            if not 7 <= int(kp.get("grade", 0)) <= 9:
-                errors.append(f"{kp['id']}: grade out of 7-9")
+            if not 1 <= int(kp.get("grade", 0)) <= 9:
+                errors.append(f"{kp['id']}: grade out of 1-9")
 
     graph = None
     if merged_kps:
@@ -66,7 +75,7 @@ def main() -> int:
             errors.append(f"kpgraph build failed: {e}")
     kp_ids = set(seen_kp)
 
-    # ---------- 2) 题库：三个年级文件 ----------
+    # ---------- 2) 题库：data/items/ 全量年级文件（glob 通配） ----------
     all_items = []
     seen_stem: dict[str, str] = {}
     seen_item: dict[str, str] = {}
@@ -173,11 +182,16 @@ def main() -> int:
             print(f"  ... and {len(errors) - 80} more")
         return 1
     total_items, verified_items = verification_stats(all_items)
+    pending = (
+        f", grades {','.join(map(str, pending_grades))} pending"
+        if pending_grades else ""
+    )
     print(
         f"VALIDATION OK: {len(kp_ids)} kps, {len(all_items)} items, "
         f"{len(mc_ids)} misconceptions (>= {args.min_mc_per_kp} per kp "
         f"or exempt, {len(all_exemptions)} exempt), {len(seen_arch)} archetypes, "
         f"schema v2 source ok, {verified_items}/{total_items} items dual-agent-verified"
+        f"{pending}"
     )
     return 0
 

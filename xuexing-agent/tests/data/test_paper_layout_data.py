@@ -1,8 +1,9 @@
 """数据测试：静态卷排版 × 真实七年级题库（BACKLOG「静态卷 PDF 输出」数据闭环）。
 
 在真实知识库（37 KP × 每点主知识点库存 ≥3 题）上验证排版内核的端到端可打印性，
-闭式值实测于 2026-09-29（seed=11、每 KP 2 题、每页 15 题）：
-- 全图谱蓝图组卷 -> 排版 JSON 的闭式计数（74 题 / 5 页 / 题型分布 23/46/5）；
+闭式值实测于 2026-09-29（seed=11、每 KP 2 题、每页 15 题）；2026-09-30 g7
+深挖批扩库（129 -> 222 题）后同 seed 重算（2026-10-01 GPU 端实跑）：
+- 全图谱蓝图组卷 -> 排版 JSON 的闭式计数（74 题 / 5 页 / 题型分布 22/45/7）；
 - 题号 1..74 与卷面顺序保持；37 个节标题块恒紧跟其首题、中文序号连到「三十七」；
 - choice 题选项全部解析为唯一 A–D 标签；学生卷无 answer/solution 键；
 - 同 seed 重组卷 + 重排版逐位一致（确定性）。
@@ -39,7 +40,7 @@ def test_real_paper_layout_closed_counts(bank, graph):
     kps = [kp.id for kp in graph.kps()]
     assert doc["question_count"] == 2 * len(kps) == 74
     assert doc["page_count"] == -(-74 // QPP) == 5
-    assert doc["by_item_type"] == {"choice": 23, "fill": 46, "solve": 5}
+    assert doc["by_item_type"] == {"choice": 22, "fill": 45, "solve": 7}
     assert doc["paper_id"] == PAPER_ID and doc["title"] == TITLE
 
 
