@@ -38,6 +38,13 @@ OPENAI_BASE_URL=http://100.100.0.6:8080/v1 OPENAI_API_KEY=<经bao注入> \
 容器元数据 1541.8s，实际仅解出 570/46236 帧，h264 NAL 连续报错；ffmpeg 对坏流会静默早停，
 本守卫把"残缺帧序列"显式挡下，不静默当全片结论）。
 
+## 已知安全注记（Mimosa 扫描 2026-10-01）
+
+`vlm_client.py` 的 `OPENAI_BASE_URL`/`HIGRESS_BASE_URL` 来自环境变量，Mimosa 判
+SSRF（high，提示不阻断）：base_url 可指向任意外网/内网地址。当前设计即"运维经 bao
+注入凭证与端点"（端点属部署配置非用户输入），原型阶段维持；转正前应加端点白名单
+（只允许治理面登记的 Higress 地址）。
+
 ## 产物
 
 `results/<ep>/`：`keyframes.json`（时间轴+diff 分值）、`overview*.jpg`（时序总览，VLM 输入）、
