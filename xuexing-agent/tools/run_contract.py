@@ -37,6 +37,7 @@ MODULE_TEST_FILES = {
     "multitenant": ["test_multitenant_contract.py"],
     "mm_client": ["test_mm_client_contract.py"],
     "mm_ingest": ["test_mm_ingest_contract.py"],
+    "tts_reader": ["test_tts_reader_contract.py"],
     # server 是薄胶水层（PM-STATE：不重生成），登记仅为让 run_contract 能按模块
     # 选择性运行其契约测试；--impl-dir 注入需目录内有 server.py（绝对导入约定，
     # 参考实现 src/xuexing/server.py 满足，regen/round* 冻结八模块目录不含）。

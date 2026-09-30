@@ -211,7 +211,23 @@
   MODULES；全套 612 测试 + 1 skip + validate_knowledge --min-items-per-kp 3
   （321/321 dual-agent-verified 保留）+ run_contract 参考实现 / --impl-dir 注入
   （mm_ingest 单模块）全绿）
-- [ ] **tts_reader 语音读题**：题干+选项 → TTS 音频（低龄/无障碍），缓存键=题目id+voice，接口可注入 MockTTS
+- [x] **tts_reader 语音读题**：题干+选项 → TTS 音频（低龄/无障碍），缓存键=题目id+voice，接口可注入 MockTTS
+  （完成于本轮，待主会话提交：src/xuexing/tts_reader.py（确定性内核：build_reading_text
+  朗读文本模板冻结——只含题干+选项、choice 追加「选项L：正文」段（标签与
+  omr_sheet.parse_option/mm_ingest 同闭式）、句末标点不重复拼接规则（。！？.!? 集合），
+  绝不含 solution/answer；synthesize_item 缓存键恰为 (item_id, voice)、命中零次合成
+  且缓存值须非空 bytes、未命中恰好一次 tts.tts(text, voice=…, response_format="mp3")
+  且回填、非法音频/异常不回填不包装；read_paper 卷面题序（omr_sheet/paper_layout/
+  mm_ingest 同编号语义）整卷合成共享缓存、守卫 V1–V7 失败零出网；模块间零 import，
+  DEFAULT_VOICE/AUDIO_FORMAT 与 mm_client.TTS_VOICE/TTS_FORMAT 跨模块锁定，cache 为
+  MutableMapping 鸭子参数；不用 future annotations——字符串化注解会在 XX_IMPL_DIR
+  注入装载时崩 dataclasses KW_ONLY 探测，注入自检抓出后修复）
+  + specs/drafts/tts_reader.spec.md + tests/contract/test_tts_reader_contract.py
+  （26 项=25 过+1 冒烟 skip，全 mock 零网络，闭式现算核实，MMClient+MockTransport
+  端到端线上载荷逐键锁定）；已登记 run_contract 与根 conftest MODULES；
+  全套 637 测试 + 2 skip + validate_knowledge --min-items-per-kp 3（321/321
+  dual-agent-verified 保留）+ run_contract 参考实现 / --impl-dir src/xuexing 注入
+  （tts_reader 单模块）全绿）
 - [ ] **asr_answer 口述作答**：学生语音 → ASR 文本 → grading 数值判分衔接
 - [ ] **mm_grade VLM 辅助判分**：主观解答题的分步给分建议（规则冻结）→ 人机协同复核闭环
 - [ ] **知识注入第三波·初中加深**：题库 321→1000+（每 KP 6-10 题）、误解 202→300+、母题 52→100+，双代理复验回填
