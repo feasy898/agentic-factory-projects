@@ -117,7 +117,11 @@ from common.config import (  # noqa: E402
 from filechannel.parsers import parse_any  # noqa: E402
 from gateway.app import create_app, resolve_db_path  # noqa: E402
 from gateway.mock_upstream import ECHO_MARKER  # noqa: E402
-from masking.mapper import RESTORE_PATTERN, SessionRegistry  # noqa: E402
+from masking.mapper import (  # noqa: E402
+    RESTORE_PATTERN,
+    SessionRegistry,
+    tolerant_placeholder_hits,
+)
 from outguard.label import AI_ANNOTATION_TYPE  # noqa: E402
 from recognizers.models import EntityClass  # noqa: E402
 
@@ -1222,8 +1226,13 @@ def case_u8(ctx: dict[str, Any]) -> str:
             body_text = content[: -len(f"\n{AI_LABEL}")]
             if not body_text.strip():
                 raise AssertionError(f"{route} 腿回复为空（仅标识行）")
-            if RESTORE_PATTERN.search(content):
-                raise AssertionError(f"{route} 腿占位符泄漏到客户端: {content[:120]!r}")
+            # 占位符零泄漏（T8.4 起=改形容忍口径）：还原正则不可见的改形残留
+            # （同形括号/大小写/全半角等静默泄漏面）同被抓获——还原侧已按
+            # canonical_placeholder 容错还原（masking.mapper），客户端仍出现
+            # 可辨认占位符形状即真泄漏
+            leaks = tolerant_placeholder_hits(content)
+            if leaks:
+                raise AssertionError(f"{route} 腿占位符泄漏到客户端: {leaks[:3]} {content[:120]!r}")
             annotations = message.get("annotations")
             if not annotations or annotations[0].get("type") != AI_ANNOTATION_TYPE:
                 raise AssertionError(f"{route} 腿 annotations 元数据缺失: {annotations!r}")
