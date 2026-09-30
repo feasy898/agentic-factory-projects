@@ -1,4 +1,4 @@
-# pf/ — 编排 CLI（M2.3 已落地；webui/assetkit 仍批次 3）
+# pf/ — 编排 CLI（M2.3 已落地；assetkit/webui 已接入，见 packages/assetkit 与 webui/）
 
 `validate` / `make` / `serve`：子命令、旗标、退出码、产物树全对齐 oracle pfcore
 （规格源 = `docs/specs/orchestrator.md` + `docs/specs/pipeline-contract.md`，字节落位 #40–#41）。
@@ -32,9 +32,9 @@ node pf/pf.mjs serve [--root artifacts/demo-prebuilt] [--port 8618] [--host <ip>
    随父退出仍存活；PID 身份核实映像名 python* → node*）。
 2. serve 停机：Windows 无法跨进程投递 SIGINT——管道 stdin EOF 作为等价"被正常停止"
    钩子；真实控制台 Ctrl+C（SIGINT）路径不变。
-3. 素材管线：assetkit 模块批次 3 落地——runner 未就位时 make 跳过优化直通
-   （等价 `--no-assetkit`，原始素材照常内联，日志如实留痕），落地后接线点在
-   `pf/src/make-cmd.ts runAssetkit`。
+3. 素材管线：assetkit 已落地并默认接线（`pf/src/make-cmd.ts runAssetkitStep`：validate 后
+   对 spec 声明素材跑 `packages/assetkit`，产物落 `<out>/assetkit/`，模板构建经
+   `PF_ASSET_OPTMAP` 环境变量接线内联优化产物；`--no-assetkit` 逃生口保留）。
 4. 本机 Node 22.23.2 的 `fs.cpSync(recursive:true)` 原生硬崩（静默 exit 127，任意目录
    可复现）——demo-prebuilt 兜底复制走 hand-rolled `copyDirRecursive`（pf/src/util.ts）。
 

@@ -1,7 +1,15 @@
 {
   "name": "@pf/assetkit",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "M5 素材管线（sharp + ffmpeg spawn + subset-font(harfbuzzjs)；selftest 8 断言语义移植：降幅≥30% 门、WAV→AAC、字体子集≤40KB、图集不重叠、optmap 一一对应）。批次 3 落地（届时补 src 与 exports）。"
+  "description": "M5 素材管线（sharp + ffmpeg spawn + subset-font(harfbuzzjs)；selftest 9 断言语义移植：降幅≥30% 门、WAV→AAC、字体子集≤40KB、图集不重叠在界内、optmap 一一对应）。已落地（进程内 sharp 直跑，oracle python→node 子进程助手为宿主差异登记）；pf make 默认接线（--no-assetkit 逃生口），模板经 PF_ASSET_OPTMAP 消费。",
+  "exports": {
+    ".": "./src/index.ts",
+    "./pipeline": "./src/pipeline.ts"
+  },
+  "scripts": {
+    "selftest": "node selftest.mjs",
+    "typecheck": "tsc -p tsconfig.json"
+  }
 }

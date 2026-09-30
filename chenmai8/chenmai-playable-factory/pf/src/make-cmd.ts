@@ -21,6 +21,8 @@ import { buildSummaryHtml } from "./summary.ts";
 import { printQrAscii, writeQrPng } from "./qr.ts";
 import { DEFAULT_SERVE_PORT, ensureServer } from "./server-util.ts";
 import { loadRules, readSpecJson, requiredSpritesFor, requiredTextsFor } from "./shared.ts";
+import { AssetkitError, OPTMAP_NAME, REPORT_NAME } from "../../packages/assetkit/src/index.ts";
+import { runAssetkit } from "../../packages/assetkit/src/pipeline.ts";
 import {
   MakeError,
   PACKAGER_BIN,
@@ -70,28 +72,47 @@ interface QaInfo {
 
 const ASSETKIT_RUNNER = resolve(REPO_ROOT, "packages", "assetkit", "src", "pipeline.ts");
 
+interface AssetkitInfo {
+  dir: string;
+  optmap: string;
+  report: string;
+  totals: Record<string, unknown>;
+}
+
 /**
- * 素材管线步骤（M5 assetkit；--no-assetkit 跳过）。
- * oracle 语义：spec 无声明素材时零开销空跑；失败按流水线失败处理（质检是裁判）。
- * factory 现状（登记的宿主差异）：assetkit 模块批次 3 落地——其 runner 未就位时
- * 本步为无优化直通（等价 oracle 空跑：模板构建直接内联 spec 声明的原始素材，
- * 契约 §3.1 最小素材路径不依赖 assetkit），日志如实留痕，不算 fail。
+ * 素材管线步骤（M5 assetkit；--no-assetkit 跳过）——oracle pfcore/make.py _run_assetkit
+ * 语义移植：对 spec 声明且真实存在的素材（sprites/background/audio/fontSubset）跑
+ * assetkit（压图/转音频/字体子集/图集），产物落 <out_root>/assetkit/，optmap 路径
+ * 返回给模板构建接线（PF_ASSET_OPTMAP）。spec 无声明素材时零开销空跑（进程内直跑，
+ * 无子进程）。素材管线失败按流水线失败处理（exit 1）：质检是裁判，宁可失败不可带病出包。
  */
-function runAssetkit(
+async function runAssetkitStep(
   specPath: string,
-  spec: Record<string, unknown>,
   outRoot: string,
   noAssetkit: boolean,
-): { dir: string; optmap: string; report: string; totals: Record<string, unknown> } | null {
+): Promise<AssetkitInfo | null> {
   if (noAssetkit) return null;
-  if (!existsSync(ASSETKIT_RUNNER)) {
-    log("素材管线：assetkit 模块未落地（批次 3），跳过优化直通（等价 --no-assetkit；原始素材照常内联）");
-    return null;
+  void ASSETKIT_RUNNER; // runner 已就位（packages/assetkit/src/pipeline.ts），保留路径常量供追溯
+  const akDir = join(outRoot, "assetkit");
+  try {
+    const report = await runAssetkit({ inputs: [], out: akDir, spec: specPath });
+    const totals = report.totals as unknown as Record<string, unknown>;
+    log(`素材管线：${totals.count} 个素材，`
+      + `${Number(totals.originalBytes ?? 0).toLocaleString("en-US")}B → `
+      + `${Number(totals.optimizedBytes ?? 0).toLocaleString("en-US")}B`
+      + `（降 ${totals.reductionPct}%）`);
+    return {
+      dir: akDir,
+      optmap: join(akDir, OPTMAP_NAME),
+      report: join(akDir, REPORT_NAME),
+      totals,
+    };
+  } catch (err) {
+    if (err instanceof AssetkitError) {
+      throw new MakeError(`素材管线（assetkit）失败：${err.message}`, err.exitCode || 1);
+    }
+    throw err;
   }
-  // assetkit 落地后的接线点（批次 3 补）：runAssetkit(spec, out=<outRoot>/assetkit)，
-  // 失败抛 MakeError（exit 1）。此处先行返回 null，批次 3 替换为真实调用。
-  void specPath; void spec; void outRoot;
-  return null;
 }
 
 function nodeVersion(): string {
@@ -175,7 +196,11 @@ async function makeImpl(args: MakeArgs, startedEpoch: number, t0: number): Promi
   const qc = (spec.qc ?? {}) as Record<string, unknown>;
 
   // ---- 0.5) 素材管线（assetkit；--no-assetkit 跳过） --------------------------------
-  const assetkitInfo = runAssetkit(specPath, spec, outRoot, args.noAssetkit);
+  const assetkitInfo = await runAssetkitStep(specPath, outRoot, args.noAssetkit);
+  // 模板构建经 PF_ASSET_OPTMAP 接线内联优化产物（仅消费方模板读它；未命中回退原素材）。
+  const builderEnv = assetkitInfo
+    ? { ...process.env, PF_ASSET_OPTMAP: assetkitInfo.optmap }
+    : undefined;
 
   // ---- 1) 模板构建（真实可玩 HTML）+ 组装打包器输入 dist -----------------------------
   const previews = new Map<string, string>();
@@ -183,7 +208,7 @@ async function makeImpl(args: MakeArgs, startedEpoch: number, t0: number): Promi
     const outHtml = join(previewDir, `${project}-${locale}.html`);
     mkdirSync(dirname(outHtml), { recursive: true });
     run(["node", builder, "--spec", specPath, "--locale", locale, "--out", outHtml],
-      `模板构建（${locale}）`);
+      `模板构建（${locale}）`, { env: builderEnv });
     previews.set(locale, outHtml);
     const locDir = join(distDir, locale);
     mkdirSync(locDir, { recursive: true });
