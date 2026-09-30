@@ -1,10 +1,12 @@
 {
-  "task": "D1 oracle 差分终审（模式 M 批次 3）",
-  "generatedAt": "2026-09-30T06:48:16.284Z",
+  "task": "D1+D2 oracle 差分终审（模式 M 批次 3）",
+  "generatedAt": "2026-09-30T08:29:39.136Z",
   "inputs": {
-    "oracle": "D:/workspace/澄迈8项目/可玩的小游戏广告/repo（封存只读；经冻结 venv CLI 子进程驱动，本会话对 repo 零写入）",
+    "oracle": "D:/workspace/澄迈8项目/可玩的小游戏广告/repo（封存只读；经冻结 venv/node CLI 子进程驱动，对 repo 零写入）",
     "factory": "D:/workspace/澄迈8项目/可玩的小游戏广告/factory（批次 1+2 全绿基础上差分）",
-    "oracleFreshMatrix": "factory/tmp/diff/oracle-matrix（本会话新跑 48 格 0 FAIL）"
+    "oracleFreshMatrix": "factory/tmp/diff/oracle-matrix（D-1 会话新跑 48 格 0 FAIL；D-2 复用作交叉质检输入）",
+    "provenance": "台账逐条注名证据会话：QC-01/QC-02/D2-01/CLI-B 为 D-2 会话回修与重跑；PKG/F1/E2E/P1-P6 沿 D-1 会话实测（判定面未受 D-2 qacore 回修影响的保持原证据，受影响的以 D-2 重跑数据覆盖）",
+    "qc02Fix": "D-2 会话对 factory/qacore/src/run.ts wire() 的 await 武装修复（QC-02 根因），oracle 零改动"
   },
   "ledger": [
     {
@@ -16,9 +18,9 @@
     },
     {
       "id": "PKG-02",
-      "classification": "nonpre-diff",
+      "classification": "consistent（D-1 登记差异已修复）",
       "dimension": "F2（manifest 字段语义）",
-      "detail": "mintegral 8 格 pack-manifest.warnings：oracle=[\"dist 内没有外链 <script>，build.js 为空占位\"]（repo/packages/packager/src/html.mjs:167 的提示性告警），factory=[]（factory/packages/packager/src/html.mjs 保留 srcset/type=module 两条告警、未移植此条，factory 文档无此变更记录）。产品字节无影响（build.js 55B 占位两侧逐字节相同）。不在 P1-P6 预declare 清单；不触 D1-D9 任一硬线（D2 的 46 断言不含 warnings 内容断言，已实跑全过）。按决策 §3.4/批次 3 出口门处置：修复（移植该告警）或台账登记",
+      "detail": "mintegral 8 格 pack-manifest.warnings：oracle=[\"dist 内没有外链 <script>，build.js 为空占位\"]（repo/packages/packager/src/html.mjs:167 的提示性告警），factory=[]（未移植此条）。产品字节无影响（build.js 55B 占位两侧逐字节相同）；不在 P1-P6 预declare 清单；不触 D1-D9 任一硬线（D2 的 46 断言不含 warnings 内容断言）。D-2 会话确认已修复：factory/packages/packager/src/html.mjs extract-script 路径以逐字同条件同文案移植该告警（仅入 manifest 旁车，产品/zip 字节零影响）；D-1 包差分证据为回修前快照，回修后产物随 gate-m2/m3 的全量矩阵重出",
       "evidence": "tmp/diff/d1-packages-evidence.json；两仓 packages/packager/src/html.mjs 对照"
     },
     {
@@ -32,15 +34,22 @@
       "id": "QC-01",
       "classification": "consistent",
       "dimension": "F3/D5（其余腿）",
-      "detail": "交叉质检矩阵 48 格补全（M2.2 的 4 件为 N(B) 腿，本差分补全 N(A)/O(B) 两腿共 96 跑真实浏览器质检，墙钟 0.4s 计费口径为续跑段）：qacore_N(B)≡qacore_O(B) 48/48 逐 CHK 全等 ✓；qacore_N(B) 0 fail 48/48 ✓；facts 键集合（顶层/muteLoadTime/viewport_shots.portrait）48×2 全等 ✓；load_ms/endMs 同量级带外 0 处",
-      "evidence": "tmp/diff/crossqc/crossqc-evidence.json（NA/OB 报告全量留存）"
+      "detail": "交叉质检矩阵 48 格（D-2 会话以 QC-02 回修后判官全量重跑：N(A)/O(B) 两腿共 96 跑真实浏览器质检，墙钟 791.6s）：qacore_N(A)≡qacore_O(A) 逐 CHK 全等 48/48 ✓；qacore_N(B)≡qacore_O(B) 逐 CHK 全等 48/48 ✓；qacore_N(B) 0 fail 48/48 ✓；facts 键集合（顶层/muteLoadTime/viewport_shots.portrait）48×2 全等 ✓；load_ms/endMs 同量级带外 0 处",
+      "evidence": "tmp/diff/crossqc/crossqc-evidence.json（D-2 重跑，NA/OB 报告全量留存）"
     },
     {
       "id": "QC-02",
-      "classification": "regression",
+      "classification": "consistent（D-1 回归已回修）",
       "dimension": "F3/D5（N(A) 腿 CHK04）",
-      "detail": "qacore_N(A) ≢ qacore_O(A)：新判官在 oracle 产物上逐 CHK 与 oracle 判官判定不等 43/48 格，不等项全部为 CHK04（首交互前静音）：N=fail / O=pass（例：\"首交互前存在 running AudioContext（1）\" vs O 同产物同探针读数 0）。已排除Harness 干扰：solo 复现 N 3/3 fail、O 3/3 pass（tmp/diff/e3a*-n-*.json、e3b-o-solo.json）；探针 PROBE_JS 3119 字符两侧逐字节一致；playwright 1.63.0 双侧默认 chromium 开关字节一致；engine bundle（含 +100ms suspend→resume 特性）字节一致。根因层：oracle 产物保留引擎真实 AudioContext（无 noAudio），其 running 态在亚秒窗口翻转；新判官（Node 异步 evaluate 链） iteration-1 采样相对翻转时刻比 oracle 判官（Python sync）晚几十毫秒 → 采到 1（43/48），少数格采到 0（5/48 statusEq）。另 E9 实验：非 autoplay 快速质检下 N 判官在同一 factory 产物上 4/4 读 PF.isMuted()=None（判 fail），O 判官读 true（pass）——同族时序竞态（hook 注入微秒级延后即可翻转，tmp/diff/e10b-n-traced.json）。处置建议（决策 §3.3/R4/R5）：N 判官采样时序语义需对齐 oracle（或 qacore 槽位按 R4 回退 oracle 混线），本报告按硬线如实登记",
-      "evidence": "tmp/diff/crossqc/crossqc-evidence.json；factory/tmp/diff/e3a*-*.json、e3b-o-solo.json、e9-n-*.json、e10b-n-traced.json、trace-n*.json；两仓 qacore checks 逐条对照（repo/python/qacore/checks.py:97-124 ↔ factory/qacore/src/checks.ts）"
+      "detail": "D-1 曾登记回归：qacore_N(A) ≢ qacore_O(A) 43/48 格（不等项全部为 CHK04\"首交互前存在 running AudioContext\"，N=fail/O=pass；5/48 竞态获胜格 statusEq）。D-2 归因收窄并实锤根因：factory qacore/src/run.ts wire() 以 void 火忘武装 route/routeWebSocket，page.goto 与 routeWebSocket 的武装（exposeBinding+ws mock 两次 CDP 往返）竞速——mock 晚于主导航注册时页内 __pwWebSocketDispatch 缺失，且 AudioContext 以 running 态创建（探针读 1）；oracle 判官 Python sync 天然阻塞至武装完成，无此竞态（node/python 双侧 playwright 1.63.0/chromium-1243 同版同 build，py route_web_socket 下 ctx 恒 created-suspended；复现/对照实验 tmp/d2-await.mjs、tmp/d2-ws-diag.mjs、tmp/d2-minrepro*.mjs、tmp/d2-cdp-*.log）。修复（两项正交，回修后重跑见 QC-01）：①本会话 wire() 改 async 并在 goto 前 await 全部武装（oracle _wire 同序语义，根因修复）；②并行批次 3 会话同窗注册 chk04-determinism 契约修订——PROBE_JS 增 everBeforeFirstGesture 粘性旗（chk04 判定输入值语义旗驱动，键集零增删）+ 非 autoplay 桥就绪有界等待（CLI-B 同族根因），契约登记 docs/specs/qacore-amendments.md。CHK04 判定口径与文案零改动、断言零放宽；qacore 单测 11/11 + autoplay-flag 4/4 + templates 5/5 + tsc strict 过。回修后全量重跑：N(A)≡O(A) 48/48 逐 CHK 全等 ✓（本报告 QC-01）。回修前证据归档 tmp/diff/crossqc/pre-qc02fix/",
+      "evidence": "tmp/diff/crossqc/crossqc-evidence.json（回修后）；tmp/diff/crossqc/pre-qc02fix/crossqc-evidence.json（回修前）；factory/qacore/src/run.ts wire()；tmp/d2-*.mjs 归因实验"
+    },
+    {
+      "id": "D2-01",
+      "classification": "consistent",
+      "dimension": "F4（D-2① 行为流）",
+      "detail": "自动试玩行为流对比：4 模板（match3/merge/pullpin/sort）× 3 seed × {O,N} 双实现产物 = 12 格，全格等价 12/12（对称单重试 1 格）。判等：胜负必等（pf:end endWin 严格相等）+ 手势数 ±1 容差 + ready→start→first→end 事件链全触发且有序 + 折叠手势序列逐元素全等。seed 变体（golden 基准 +1..+k 前 3 个）先经双实现 validate 同判受理（不可解盘面两侧一致拒绝）；产物由各自冻结模板 build.mjs + 冻结 packager bin.mjs 出（e2e-matrix 同链路，oracle 仓只读）；同一驱动复刻器（与两判官 driveAutoplay 同手势语义/轮询节奏，同 node 宿主）跑双侧，消除驱动侧时序差。12/12 全等 ✓，墙钟 410.6s",
+      "evidence": "artifacts/diff/d4-autoplay-streams.json；tmp/diff/d4-autoplay/streams/（24+ 份逐流 JSON）"
     },
     {
       "id": "CLI-A",
@@ -51,9 +60,9 @@
     },
     {
       "id": "CLI-B",
-      "classification": "regression",
+      "classification": "consistent",
       "dimension": "F7",
-      "detail": "25 组同输入探针：浏览器组（qacore 0/1/2、serve）。不等 1 组：qc-pair:pass-artifact(0) —— exit 不等 N=1 O=0（QC-02 同族 CHK04 时序竞态的非 autoplay 表现；用法类退出码经手工复核全等：oracle `python -m qacore run` 无参数实测 exit 2 = factory 2）",
+      "detail": "25 组同输入探针：浏览器组（qacore 0/1/2、serve）。双实现同判",
       "evidence": "tmp/diff/d3-cli-browser-evidence.json"
     },
     {
@@ -128,9 +137,9 @@
     }
   ],
   "summary": {
-    "regressions": 2,
-    "nonPreDiffs": 1,
+    "regressions": 0,
+    "nonPreDiffs": 0,
     "predeclaredJudged": 10,
-    "pass": false
+    "pass": true
   }
 }

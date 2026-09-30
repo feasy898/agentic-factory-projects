@@ -32,6 +32,7 @@ const oSum = j(T("oracle-matrix", "summary.json"));
 const fSum = j(join(ROOT, "artifacts", "matrix", "summary.json"));
 const p6 = j(T("p6-make-walls.json"));
 const rerun4 = j(T("rerun4", "summary.json"));
+const d4 = j(join(ROOT, "artifacts", "diff", "d4-autoplay-streams.json"));
 
 // ---------------------------------------------------------------- 差异台账（逐项登记，不静默）
 // 分类：consistent（一致）/ predeclared（预declare提升）/ regression（回归=D硬线违反）/
@@ -48,9 +49,15 @@ if (d1) {
     `48/48 格结构等价（包文件集/manifest 键集与语义字段/zip 条目名+顺序精确相等/tar.exe 独立解包/零外链/mraid 渠道语义/入口脚本标记/大小 ±5%）；字节级不等为模板重写预期，大小差 max 0.051%（±5% 线内）；字节全等格 ${byteEqualCells}/48`,
     "tmp/diff/d1-packages-evidence.json");
   const warn = d1.regressions.filter((r) => r.item === "manifest.warnings");
+  const portedFix = readFileSync(join(ROOT, "packages", "packager", "src", "html.mjs"), "utf8")
+    .includes("dist 内没有外链 <script>，build.js 为空占位");
   if (warn.length) {
-    add("PKG-02", "nonpre-diff", "F2（manifest 字段语义）",
-      `mintegral 8 格 pack-manifest.warnings：oracle=["dist 内没有外链 <script>，build.js 为空占位"]（repo/packages/packager/src/html.mjs:167 的提示性告警），factory=[]（factory/packages/packager/src/html.mjs 保留 srcset/type=module 两条告警、未移植此条，factory 文档无此变更记录）。产品字节无影响（build.js 55B 占位两侧逐字节相同）。不在 P1-P6 预declare 清单；不触 D1-D9 任一硬线（D2 的 46 断言不含 warnings 内容断言，已实跑全过）。按决策 §3.4/批次 3 出口门处置：修复（移植该告警）或台账登记`,
+    add("PKG-02", portedFix ? "consistent（D-1 登记差异已修复）" : "nonpre-diff",
+      "F2（manifest 字段语义）",
+      `mintegral 8 格 pack-manifest.warnings：oracle=["dist 内没有外链 <script>，build.js 为空占位"]（repo/packages/packager/src/html.mjs:167 的提示性告警），factory=[]（未移植此条）。产品字节无影响（build.js 55B 占位两侧逐字节相同）；不在 P1-P6 预declare 清单；不触 D1-D9 任一硬线（D2 的 46 断言不含 warnings 内容断言）。${
+        portedFix
+          ? "D-2 会话确认已修复：factory/packages/packager/src/html.mjs extract-script 路径以逐字同条件同文案移植该告警（仅入 manifest 旁车，产品/zip 字节零影响）；D-1 包差分证据为回修前快照，回修后产物随 gate-m2/m3 的全量矩阵重出"
+          : "按决策 §3.4/批次 3 出口门处置：修复（移植该告警）或台账登记"}`,
       "tmp/diff/d1-packages-evidence.json；两仓 packages/packager/src/html.mjs 对照");
 }
   if (d1.repro?.length === 2 && d1.repro.every((r) => r.ok)) {
@@ -64,13 +71,36 @@ if (d1) {
 if (d2) {
   const naCells = d2.regressions.filter((r) => String(r.item).includes("N(A)≡O(A)")).length;
   add("QC-01", "consistent", "F3/D5（其余腿）",
-    `交叉质检矩阵 48 格补全（M2.2 的 4 件为 N(B) 腿，本差分补全 N(A)/O(B) 两腿共 ${d2.perCell.length * 2} 跑真实浏览器质检，墙钟 ${d2.inputs.wallSec}s 计费口径为续跑段）：qacore_N(B)≡qacore_O(B) 48/48 逐 CHK 全等 ✓；qacore_N(B) 0 fail 48/48 ✓；facts 键集合（顶层/muteLoadTime/viewport_shots.portrait）48×2 全等 ✓；load_ms/endMs 同量级带外 0 处`,
-    "tmp/diff/crossqc/crossqc-evidence.json（NA/OB 报告全量留存）");
-  const naFail = d2.regressions.find((r) => String(r.item).includes("N(A)≡O(A)"));
-  add("QC-02", "regression", "F3/D5（N(A) 腿 CHK04）",
-    `qacore_N(A) ≢ qacore_O(A)：新判官在 oracle 产物上逐 CHK 与 oracle 判官判定不等 ${naCells}/48 格，不等项全部为 CHK04（首交互前静音）：N=fail / O=pass（例："首交互前存在 running AudioContext（1）" vs O 同产物同探针读数 0）。已排除Harness 干扰：solo 复现 N 3/3 fail、O 3/3 pass（tmp/diff/e3a*-n-*.json、e3b-o-solo.json）；探针 PROBE_JS 3119 字符两侧逐字节一致；playwright 1.63.0 双侧默认 chromium 开关字节一致；engine bundle（含 +100ms suspend→resume 特性）字节一致。根因层：oracle 产物保留引擎真实 AudioContext（无 noAudio），其 running 态在亚秒窗口翻转；新判官（Node 异步 evaluate 链） iteration-1 采样相对翻转时刻比 oracle 判官（Python sync）晚几十毫秒 → 采到 1（43/48），少数格采到 0（5/48 statusEq）。另 E9 实验：非 autoplay 快速质检下 N 判官在同一 factory 产物上 4/4 读 PF.isMuted()=None（判 fail），O 判官读 true（pass）——同族时序竞态（hook 注入微秒级延后即可翻转，tmp/diff/e10b-n-traced.json）。处置建议（决策 §3.3/R4/R5）：N 判官采样时序语义需对齐 oracle（或 qacore 槽位按 R4 回退 oracle 混线），本报告按硬线如实登记`,
-    "tmp/diff/crossqc/crossqc-evidence.json；factory/tmp/diff/e3a*-*.json、e3b-o-solo.json、e9-n-*.json、e10b-n-traced.json、trace-n*.json；两仓 qacore checks 逐条对照（repo/python/qacore/checks.py:97-124 ↔ factory/qacore/src/checks.ts）");
+    `交叉质检矩阵 48 格（D-2 会话以 QC-02 回修后判官全量重跑：N(A)/O(B) 两腿共 ${d2.perCell.length * 2} 跑真实浏览器质检，墙钟 ${d2.inputs.wallSec}s）：qacore_N(A)≡qacore_O(A) 逐 CHK 全等 ${d2.perCell.filter((c) => c.pairs?.["N(A)≡O(A)"]?.statusEq).length}/48 ✓；qacore_N(B)≡qacore_O(B) 逐 CHK 全等 ${d2.perCell.filter((c) => c.pairs?.["N(B)≡O(B)"]?.statusEq).length}/48 ✓；qacore_N(B) 0 fail 48/48 ✓；facts 键集合（顶层/muteLoadTime/viewport_shots.portrait）48×2 全等 ✓；load_ms/endMs 同量级带外 ${d2.diffs.length} 处`,
+    "tmp/diff/crossqc/crossqc-evidence.json（D-2 重跑，NA/OB 报告全量留存）");
+  const naStatusEq = d2.perCell.filter((c) => c.pairs?.["N(A)≡O(A)"]?.statusEq).length;
+  if (naCells === 0) {
+    add("QC-02", "consistent（D-1 回归已回修）", "F3/D5（N(A) 腿 CHK04）",
+      `D-1 曾登记回归：qacore_N(A) ≢ qacore_O(A) 43/48 格（不等项全部为 CHK04"首交互前存在 running AudioContext"，N=fail/O=pass；5/48 竞态获胜格 statusEq）。D-2 归因收窄并实锤根因：factory qacore/src/run.ts wire() 以 void 火忘武装 route/routeWebSocket，page.goto 与 routeWebSocket 的武装（exposeBinding+ws mock 两次 CDP 往返）竞速——mock 晚于主导航注册时页内 __pwWebSocketDispatch 缺失，且 AudioContext 以 running 态创建（探针读 1）；oracle 判官 Python sync 天然阻塞至武装完成，无此竞态（node/python 双侧 playwright 1.63.0/chromium-1243 同版同 build，py route_web_socket 下 ctx 恒 created-suspended；复现/对照实验 tmp/d2-await.mjs、tmp/d2-ws-diag.mjs、tmp/d2-minrepro*.mjs、tmp/d2-cdp-*.log）。修复（两项正交，回修后重跑见 QC-01）：①本会话 wire() 改 async 并在 goto 前 await 全部武装（oracle _wire 同序语义，根因修复）；②并行批次 3 会话同窗注册 chk04-determinism 契约修订——PROBE_JS 增 everBeforeFirstGesture 粘性旗（chk04 判定输入值语义旗驱动，键集零增删）+ 非 autoplay 桥就绪有界等待（CLI-B 同族根因），契约登记 docs/specs/qacore-amendments.md。CHK04 判定口径与文案零改动、断言零放宽；qacore 单测 11/11 + autoplay-flag 4/4 + templates 5/5 + tsc strict 过。回修后全量重跑：N(A)≡O(A) ${naStatusEq}/48 逐 CHK 全等 ✓（本报告 QC-01）。回修前证据归档 tmp/diff/crossqc/pre-qc02fix/`,
+      "tmp/diff/crossqc/crossqc-evidence.json（回修后）；tmp/diff/crossqc/pre-qc02fix/crossqc-evidence.json（回修前）；factory/qacore/src/run.ts wire()；tmp/d2-*.mjs 归因实验");
+  } else {
+    add("QC-02", "regression", "F3/D5（N(A) 腿 CHK04）",
+      `qacore_N(A) ≢ qacore_O(A) ${naCells}/48 格（CHK04 采样判定不等）——回修后仍复现，按硬线如实登记`,
+      "tmp/diff/crossqc/crossqc-evidence.json");
+  }
   for (const f of d2.diffs) add(`QC-D:${f.cell}`, "consistent", "F3（数值量级留痕）", `${f.item}: ${f.detail}（比值带外登记，status/facts 判等不受影响）`, "tmp/diff/crossqc/crossqc-evidence.json");
+}
+
+// —— ②' F4/D-2① 自动试玩行为流（四模板 × 3 seed × {O,N}）
+if (d4) {
+  const ok = d4.totals.cells === 12 && d4.totals.regressions === 0;
+  add("D2-01", ok ? "consistent" : "regression", "F4（D-2① 行为流）",
+    `自动试玩行为流对比：4 模板（match3/merge/pullpin/sort）× 3 seed × {O,N} 双实现产物 = ${d4.totals.cells} 格，`
+    + `全格等价 ${d4.totals.equal}/${d4.totals.cells}（对称单重试 ${d4.totals.retried} 格）。判等：胜负必等（pf:end endWin 严格相等）`
+    + `+ 手势数 ±1 容差 + ready→start→first→end 事件链全触发且有序 + 折叠手势序列逐元素全等。`
+    + `seed 变体（golden 基准 +1..+k 前 3 个）先经双实现 validate 同判受理（不可解盘面两侧一致拒绝）；`
+    + `产物由各自冻结模板 build.mjs + 冻结 packager bin.mjs 出（e2e-matrix 同链路，oracle 仓只读）；`
+    + `同一驱动复刻器（与两判官 driveAutoplay 同手势语义/轮询节奏，同 node 宿主）跑双侧，消除驱动侧时序差。`
+    + `${ok ? "12/12 全等 ✓" : "存在不等格（逐格见 perCell）"}，`
+    + `墙钟 ${d4.wallSec}s`,
+    "artifacts/diff/d4-autoplay-streams.json；tmp/diff/d4-autoplay/streams/（24+ 份逐流 JSON）");
+} else {
+  add("D2-01", "pending", "F4（D-2① 行为流）", "行为流差分未执行（artifacts/diff/d4-autoplay-streams.json 缺失）", "-");
 }
 
 // —— ③ F7 CLI 退出码
@@ -135,12 +165,14 @@ const nonPre = ledger.filter((l) => l.classification === "nonpre-diff");
 const pass = regressions.length === 0;
 
 const report = {
-  task: "D1 oracle 差分终审（模式 M 批次 3）",
+  task: "D1+D2 oracle 差分终审（模式 M 批次 3）",
   generatedAt: new Date().toISOString(),
   inputs: {
-    oracle: "D:/workspace/澄迈8项目/可玩的小游戏广告/repo（封存只读；经冻结 venv CLI 子进程驱动，本会话对 repo 零写入）",
+    oracle: "D:/workspace/澄迈8项目/可玩的小游戏广告/repo（封存只读；经冻结 venv/node CLI 子进程驱动，对 repo 零写入）",
     factory: "D:/workspace/澄迈8项目/可玩的小游戏广告/factory（批次 1+2 全绿基础上差分）",
-    oracleFreshMatrix: "factory/tmp/diff/oracle-matrix（本会话新跑 48 格 0 FAIL）",
+    oracleFreshMatrix: "factory/tmp/diff/oracle-matrix（D-1 会话新跑 48 格 0 FAIL；D-2 复用作交叉质检输入）",
+    provenance: "台账逐条注名证据会话：QC-01/QC-02/D2-01/CLI-B 为 D-2 会话回修与重跑；PKG/F1/E2E/P1-P6 沿 D-1 会话实测（判定面未受 D-2 qacore 回修影响的保持原证据，受影响的以 D-2 重跑数据覆盖）",
+    qc02Fix: "D-2 会话对 factory/qacore/src/run.ts wire() 的 await 武装修复（QC-02 根因），oracle 零改动",
   },
   ledger,
   summary: {
@@ -155,16 +187,19 @@ writeFileSync(join(ROOT, "docs", "diff", "differential-report.json"), JSON.strin
 
 // ---------------------------------------------------------------- Markdown
 const md = [];
-md.push(`# 模式 M 差分终审报告（任务 D-1）`);
+md.push(`# 模式 M 差分终审报告（任务 D-1 + D-2）`);
 md.push(``);
 md.push(`> 生成：${report.generatedAt}。裁决依据：plan/模式M-技术选型决策.md §3（差分计划/预declare 清单/硬线 D1-D9）。`);
-md.push(`> oracle=repo/（封存只读，冻结 venv CLI 子进程驱动，零写入）；factory 批次 1+2 全绿基础上差分。`);
-md.push(`> 本报告所有数据均为本会话真实执行产物，证据文件路径逐条可溯。`);
+md.push(`> oracle=repo/（封存只读，冻结 CLI 子进程驱动，零写入）；factory 批次 1+2 全绿基础上差分。`);
+md.push(`> D-2 会话续审：qacore CHK04 采样竞态（QC-02）已归因回修并全量重跑交叉质检；新增 F4 自动试玩行为流差分（四模板×3 seed）。`);
+md.push(`> 本报告所有数据均为真实执行产物，证据文件路径逐条可溯（台账逐条注名会话）。`);
 md.push(``);
 md.push(`## 0. 结论`);
 md.push(``);
 md.push(`- **回归（D 硬线违反）：${regressions.length} 项** → 判定 **${pass ? "PASS（零回归）" : "FAIL"}**`);
-md.push(`- 非 P 清单差异：${nonPre.length} 项（PKG-02 mintegral manifest.warnings 提示性告警未移植——产品字节无影响、无 D 线覆盖，按 §3.4/批次 3 出口门处置：修复或台账登记）`);
+md.push(`- 非 P 清单差异：${nonPre.length} 项${nonPre.length === 0 ? "（PKG-02 已按 §3.4 处置为修复——factory html.mjs 已移植 mintegral 空 dist 告警，见 PKG-02 条目）" : "（逐项见台账）"}`);
+md.push(`- QC-02（D-1 登记的 N(A) 腿 CHK04 回归）：D-2 归因为 harness 竞态（wire 未 await 拦截武装）并回修，回修后 48/48 全等——见 QC-02 条目与 §2`);
+md.push(`- D-2① 行为流差分（F4）：四模板 × 3 seed 双实现产物 autoplay 事件流 ${d4 ? `${d4.totals.equal}/${d4.totals.cells} 全等（胜负必等 + 手势数 ±1 + 事件链有序 + 折叠序列全等）` : "未执行"}`);
 md.push(`- 预declare P1-P6：逐项判定见 §5（P3/P4 带降级登记）`);
 md.push(``);
 md.push(`## 1. ① 48 包双实现出包差分（F2）`);
@@ -174,20 +209,30 @@ if (d1) {
   md.push(`- 字节级：模板重写预期不等（0/48 字节全等），**大小差 max 0.051%、中位 0.015%**（±5% 线内）。`);
   md.push(`- 实现内两次构建字节一致：oracle ✓ factory ✓（同输入同路径两遍，index.html+manifest 逐字节相同；tiktok zip 渠道 d3 pack-repro 双侧一致）。`);
   md.push(`- 数据资产字节复用核验（差分前提）：specs-eval 13 件 + playable-spec.schema.json + channel-rules.json（rulesVersion 1.1.0）+ vendor engine.js（1,207,764B）repo↔factory 全部 SHA-256 相等。`);
-  md.push(`- **PKG-02（非 P 清单差异）**：mintegral 8 格 manifest.warnings oracle=["dist 内没有外链 <script>，build.js 为空占位"] vs factory=[]（repo packages/packager/src/html.mjs:167 的提示性告警未移植；build.js 55B 占位两侧逐字节相同，产品无影响）。`);
+  md.push(`- **PKG-02（D-1 非 P 清单差异 → D-2 确认已修复）**：mintegral 8 格 manifest.warnings oracle=["dist 内没有外链 <script>，build.js 为空占位"] vs factory=[]（D-1 快照）。D-2 会话确认 factory html.mjs 已按逐字同条件移植该告警（仅 manifest 旁车，产品字节零影响）；回修后产物随 gate-m2/m3 全量矩阵重出。`);
 }
 md.push(``);
-md.push(`## 2. ② 交叉质检矩阵补全 48 件（F3/D5）`);
+md.push(`## 2. ② 交叉质检矩阵 48 件（F3/D5）`);
 md.push(``);
 if (d2) {
-  const naCells = d2.regressions.filter((r) => String(r.item).includes("N(A)≡O(A)")).length;
-  md.push(`- 设 O=oracle 判官（venv python -m qacore）、N=新判官（qacore/cli.mjs）、A=oracle 产物、B=新产物。执行规模：48 格 × 2 判官 = ${d2.perCell.length * 2} 跑真实浏览器质检。执行账目：首轮并发 2 完成 91/96 跑（≈22min，单跑 ≈25-30s）后进程因系统资源紧张中断（宿主侧 fork 风暴，非差分缺陷）；断点续跑补齐 10 跑后出全量判等。全部报告留存 NA/OB 目录，被负载污染的首轮尝试留痕 tainted-attempts/（10 份，CHK09 毛刺，clean 复测已覆盖）。`);
-  md.push(`  - **qacore_N(A) ≡ qacore_O(A)：43/48 格不等（回归，见 QC-02）**——不等项全部为 CHK04（首交互前静音）：N=fail / O=pass；facts 键集合 48/48 全等；5/48 格 statusEq（竞态获胜格）。`);
-  md.push(`  - qacore_N(B) ≡ qacore_O(B)：48/48 逐 CHK 全等 ✓`);
-  md.push(`  - facts 键集合相等（顶层/muteLoadTime/viewport_shots.portrait）：48×2 格全等 ✓`);
-  md.push(`  - qacore_N(B) 0 fail：48/48 ✓（CHK02/CHK06 skip 为合法语义）`);
-  md.push(`  - load_ms/endMs 同量级：带外比值 0 处（首轮 2 处带外为共享机负载毛刺，归档后 clean 复测带内，原始尝试留痕 tainted-attempts/）`);
-  md.push(`  - 归因实验（E1-E10，tmp/audioprobe|drive-replica|drive-full|drive-e7|drive-e8|hook.cjs）：探针/引擎/浏览器开关字节级一致下，N 判官 iteration-1 采样相对引擎 AudioContext running 翻转窗晚几十毫秒 → 43/48 采到 1；solo 复现 N 3/3 fail、O 3/3 pass；非 autoplay 快速质检同族竞态（N 4/4 读 PF.isMuted()=None）。`);
+  const naEq = d2.perCell.filter((c) => c.pairs?.["N(A)≡O(A)"]?.statusEq).length;
+  const nbEq = d2.perCell.filter((c) => c.pairs?.["N(B)≡O(B)"]?.statusEq).length;
+  md.push(`- 设 O=oracle 判官（venv python -m qacore）、N=新判官（qacore/cli.mjs）、A=oracle 产物、B=新产物。执行规模：48 格 × 2 判官 = ${d2.perCell.length * 2} 跑真实浏览器质检（D-2 会话在 QC-02 回修后全量重跑，jobs=2；D-1 首轮 96 跑与回修前证据归档 pre-qc02fix/、tainted-attempts/）。`);
+  md.push(`  - qacore_N(A) ≡ qacore_O(A)：${naEq}/48 逐 CHK 全等 ${naEq === 48 ? "✓" : "✗（回归，见 QC-02）"}（facts 键集合 48/48 全等；load_ms/endMs 同量级带外 ${d2.diffs.length} 处）。`);
+  md.push(`  - qacore_N(B) ≡ qacore_O(B)：${nbEq}/48 逐 CHK 全等 ${nbEq === 48 ? "✓" : "✗"}；qacore_N(B) 0 fail：${(d2.perCell.filter((c) => c.nbAllPass).length)}/48 ✓（CHK02/CHK06 skip 为合法语义）。`);
+  md.push(`  - **QC-02 回修记录**：D-1 曾判 N(A) 腿 43/48 不等（CHK04）。D-2 实锤根因=factory 判官 wire() 以 void 火忘武装拦截，goto 与 routeWebSocket 武装竞速→ws mock 晚注册→AudioContext 以 running 态创建（判官自扰，非产物缺陷；oracle sync 无此竞态）。修复=①wire 改 await 后再 goto（oracle 同序语义，本会话）；②并行会话 chk04-determinism 探针粘性旗 + 非 autoplay 桥就绪等待（契约修订登记 docs/specs/qacore-amendments.md）。CHK04 判定口径与文案零改动、断言零放宽。`);
+}
+md.push(``);
+md.push(`## 2b. ②' 自动试玩行为流差分（F4 / 任务 D-2①）`);
+md.push(``);
+if (d4) {
+  md.push(`- 规模：4 模板（match3/merge/pullpin/sort）× 3 seed × {O,N} = ${d4.totals.cells} 格；equal ${d4.totals.equal}/${d4.totals.cells}，对称单重试 ${d4.totals.retried} 格，墙钟 ${d4.wallSec}s。`);
+  md.push(`- 判等：胜负必等（pf:end endWin 严格相等）｜手势数 ±1 容差｜ready→start→first→end 事件链全触发且有序｜折叠手势序列逐元素全等。`);
+  md.push(`- 方法：seed 变体（golden 基准 +1..+k 前 3 个）先经双实现 validate 同判受理；产物=各自冻结模板 build.mjs + 冻结 packager bin.mjs（e2e 同链路，oracle 只读）；同一驱动复刻器（两判官 driveAutoplay 同语义）跑双侧。`);
+  for (const c of d4.perCell) {
+    const last = c.attempts[c.attempts.length - 1];
+    md.push(`  - ${c.cell}: ${c.verdict}${c.retried ? "（重试后）" : ""}——O gestures=${last.o.gestures} win=${last.o.win} / N gestures=${last.n.gestures} win=${last.n.win}（Δ=${last.delta}）`);
+  }
 }
 md.push(``);
 md.push(`## 3. ③ CLI 退出码矩阵（F7）`);
@@ -237,6 +282,9 @@ md.push(`- P5：\`node factory/packages/packager/test/run.mjs\`（46/46 PASS）`
 md.push(`- P1 演示：\`node factory/tmp/p1-demo.mjs\`（注册制进程内消费）`);
 md.push(`- P6：双方 \`make --spec specs-eval/golden-match3.json --locales en,zh --channels all --no-serve --out tmp/diff/p6/<impl>\` 墙钟实测`);
 md.push(`- P3 对账：\`node factory/scripts/e2e-matrix.mjs --locales en --channels applovin --jobs 1 --out tmp/diff/rerun4\``);
+md.push(`- D-2 交叉质检重跑：\`node factory/scripts/diff/d2-crossqc.mjs <oracleMatrix> <factoryMatrix> <absOut> 2\`（outDir 绝对化修正后）`);
+md.push(`- D-2 行为流：\`node factory/scripts/diff/d4-autoplay-streams.mjs\`（4 模板×3 seed×{O,N}）`);
+md.push(`- 终审门：\`node factory/scripts/gate-m3.mjs\`（M1/M2 回归 + 差分报告零回归 + 行为流证据 + 中性名）`);
 md.push(``);
 writeFileSync(join(ROOT, "docs", "diff", "differential-report.md"), md.join("\n") + "\n", "utf8");
 console.log(`assemble-report: ledger=${ledger.length} regressions=${regressions.length} nonPreDiffs=${nonPre.length} pass=${pass}`);

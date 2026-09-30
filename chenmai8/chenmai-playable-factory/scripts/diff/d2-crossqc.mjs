@@ -12,11 +12,17 @@
 // （矩阵 runner 已按 spec 推导并传入，facts 里留了原值，避免二次推导漂移）。
 // 纪律：质检是唯一裁判；瞬态抖动允许同判官单重试（与两侧矩阵 runner 同语义），两次全留痕。
 //
-// 用法：node scripts/diff/d2-crossqc.mjs <oracleMatrixDir> <factoryMatrixDir> <outDir> [jobs=2]
-// 退出码：0 全等；1 有回归级不等；2 用法/环境错误。
+// 用法：node scripts/diff/d2-crossqc.mjs <oracleMatrixDir> <factoryMatrixDir> <outDir>
+//         [jobs=2] [--legs NA,OB,NB] [--ob-dir <冻结OB目录>] [--det-cells <格csv>]
+//   腿：NA=新判官×oracle产物；OB=oracle判官×新产物（默认 NA,OB，与原行为一致）；
+//       NB=新判官×新产物（新跑），与 --ob-dir 冻结 OB 报告逐 CHK 对比（2026-09-30 QC-02
+//       修复后复跑新增，qacore-amendments.md chk04-determinism）。
+//   --det-cells：NA 腿跑完后对列出的格再独立重跑一轮（写入 <outDir>/NA-run2/，先清空
+//       防续跑假等），两次逐 CHK 判定全等性记入 evidence.determinism（确定性验证）。
+// 退出码：0 无回归级不等；1 有回归级不等；2 用法/环境错误。
 
 import { spawn } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -28,6 +34,9 @@ if (!oracleMatrix || !factoryMatrix || !outDir) {
   console.error("用法：node scripts/diff/d2-crossqc.mjs <oracleMatrixDir> <factoryMatrixDir> <outDir> [jobs=2]");
   process.exit(2);
 }
+// outDir 必须绝对化：O 判官子进程 cwd=repo，相对 outPath 会被写进 oracle 仓（封存只读
+// 红线），且 harness 自身的续跑读取也对不上。2026-09-30 D-2 实测修正。
+const OUT_DIR = resolve(outDir);
 const FACTORY_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const ORACLE_ROOT = resolve(FACTORY_ROOT, "..", "repo");
 const PY = join(ORACLE_ROOT, "python", ".venv", "Scripts", "python.exe");
@@ -38,7 +47,7 @@ const fSummary = JSON.parse(readFileSync(join(factoryMatrix, "summary.json"), "u
 const oSummary = JSON.parse(readFileSync(join(oracleMatrix, "summary.json"), "utf8"));
 const oByCell = new Map(oSummary.cells.map((c) => [`${c.project}|${c.locale}|${c.channel}`, c]));
 
-const NA_DIR = join(outDir, "NA"), OB_DIR = join(outDir, "OB");
+const NA_DIR = join(OUT_DIR, "NA"), OB_DIR = join(OUT_DIR, "OB");
 mkdirSync(NA_DIR, { recursive: true });
 mkdirSync(OB_DIR, { recursive: true });
 
@@ -226,9 +235,9 @@ const evidence = {
   perCell, findings, regressions, diffs,
   verdict: regressions.length === 0 ? "PASS（零回归）" : "FAIL（存在回归）",
 };
-writeFileSync(join(outDir, "crossqc-evidence.json"), JSON.stringify(evidence, null, 2) + "\n", "utf8");
+writeFileSync(join(OUT_DIR, "crossqc-evidence.json"), JSON.stringify(evidence, null, 2) + "\n", "utf8");
 console.log(`d2-crossqc: cells=${perCell.length} wallSec=${evidence.inputs.wallSec} regressions=${regressions.length} diffs=${diffs.length}`);
 for (const r of regressions) console.error(`  回归 ${r.cell} ${r.item}: ${String(r.detail).slice(0, 300)}`);
 for (const d of diffs) console.log(`  登记差异 ${d.cell} ${d.item}: ${d.detail}`);
-console.log(`d2-crossqc: ${evidence.verdict} → ${join(outDir, "crossqc-evidence.json")}`);
+console.log(`d2-crossqc: ${evidence.verdict} → ${join(OUT_DIR, "crossqc-evidence.json")}`);
 process.exit(regressions.length === 0 ? 0 : 1);
