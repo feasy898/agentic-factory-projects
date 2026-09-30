@@ -117,7 +117,9 @@ Git 的 GNU tar 1.35，**不能读 zip**，故按绝对路径定位 bsdtar——
     { "path": "packages/templates/tmpl-match3/tests/logic-test.ts", "source": "repo/packages/templates/tmpl-match3/tests/logic-test.ts", "bytes": 3545, "sha256": "bb6da679e50ea1d38bece7e73727b4e83db95ac100b9e2341857fe10633083c1" },
     { "path": "packages/templates/tmpl-merge/tests/logic-test.ts", "source": "repo/packages/templates/tmpl-merge/tests/logic-test.ts", "bytes": 5255, "sha256": "28d87ad6288959f95127b56b87f89d7ab61d8571d0f53287a807fbb8d307d3d6" },
     { "path": "docs/specs/qacore.md", "source": "repo/docs/assets/specs/qacore.md", "bytes": 20230, "sha256": "924515fa1635fb35efeb09f6c338ae7a82d0323bb6efddb8d52b456e7fca5765" },
-    { "path": "qacore/tests/fixtures/mini.html", "source": "repo/python/qacore/tests/fixtures/mini.html", "bytes": 2220, "sha256": "72060c3062846f8fcb2cf621482ff99e0e3f5079bcb912a7dba2b5bd718bd0da" }
+    { "path": "qacore/tests/fixtures/mini.html", "source": "repo/python/qacore/tests/fixtures/mini.html", "bytes": 2220, "sha256": "72060c3062846f8fcb2cf621482ff99e0e3f5079bcb912a7dba2b5bd718bd0da" },
+    { "path": "docs/specs/orchestrator.md", "source": "repo/docs/assets/specs/orchestrator.md", "bytes": 9068, "sha256": "a0dec9f1e4615306aade81fdbe5ef11b53b5258548ad94ac146eb958e2e473b9" },
+    { "path": "docs/specs/pipeline-contract.md", "source": "repo/docs/assets/specs/pipeline-contract.md", "bytes": 15142, "sha256": "f44199f6f326bee32c80c5312e2ef39da4e12dca5530bb15bdfb107aca561e0a" }
   ]
 }
 ```
@@ -130,6 +132,7 @@ Git 的 GNU tar 1.35，**不能读 zip**，故按绝对路径定位 bsdtar——
 | packager 冻结自验收（46 断言：run.mjs + fixture/gen-pngs.mjs + fixture/match3-dist/） | `repo/packages/packager/test/` | `packages/packager/test/` | **M4 已落**（run.mjs 含 P5 单点移植，见 A 节注；fixture/gen-pngs 已字节登记） |
 | spec 冻结 ajv-check | `repo/packages/spec/test/ajv-check.mjs` | `packages/spec/test/` | **M1 已落**（A 节末条 #33 字节登记，cmp 与 oracle 字节全等；经 `src/validate.mjs` 壳原样跑通 AJV-CHECK: PASS exit 0，2026-09-30） |
 | qacore mini.html 夹具 | `repo/python/qacore/tests/fixtures/mini.html` | `qacore/tests/fixtures/` | **M2.2 已落**（A 节 #39 字节登记，sha256 一致） |
+| ORCHESTRATOR 资产 spec 文档（orchestrator.md + pipeline-contract.md） | `repo/docs/assets/specs/{orchestrator,pipeline-contract}.md` | `docs/specs/` | **M2.3 已落**（A 节 #40–#41 字节登记，sha256 一致；与 #25/#32/#34/#35/#38 同一处置方式） |
 | M8 资产 spec 文档（qacore.md） | `repo/docs/assets/specs/qacore.md` | `docs/specs/qacore.md` | **M2.2 已落**（A 节 #38 字节登记，sha256 一致；与 #25/#32/#34/#35 同一处置方式） |
 
 （M2.2 复验留档，2026-09-30）：本判官（`node qacore/cli.mjs`，playwright 1.63.0 钉版，
