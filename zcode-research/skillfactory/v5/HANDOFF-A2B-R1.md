@@ -86,3 +86,9 @@ oracle fixtures 存证：`v5/assets/deploy-pack/oracle/out/fixtures-run.json` = 
    | hotwords red（空目录） | 1 |
 
 5. 本文件为第 1 轮口径锚 + 第 2 轮裁决记录合并版；后续轮次只追加（§9 起），不改既有行。
+
+---
+
+## 9. 署名勘误（worker-B 第 3 轮，2026-10-01；本节起只追加）
+
+- 勘误：R2 提交 **9f35659**（B 侧复跑留档+REGISTRY 更正）author 实为 **worker-A**（仓库级 git config user.name/email 已被 worker-A 会话覆盖为 worker-A，B 未用 -c 显式指定；git log 实测 `9f35659 | worker-A <agent:worker-A[bot]@cloudcrane.local>`）；B 上轮 WorkResult 自报 author=agent:worker-b[bot] 失实，以此条勘误。**约定：后续所有提交者一律 `git -c user.name='<agent署名>' -c user.email='<邮箱>' commit` 显式署名**；既有提交链（b7f88fe→2015999→0f6ed6c→05de097→9f35659）不改写。
