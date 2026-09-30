@@ -73,7 +73,10 @@ class SpoonClassifier(Protocol):
   6 段 HSV 区间覆盖橙黄/绿/青蓝/紫红/红环绕两段）与 `config/bowl_markers.json`。
 - **food_hsv 六段端点数值（config/food_hsv.json 原值，2026-09-30 对照代码核验）**：
   JSON 每段只写 `h_lo/h_hi/s_lo/v_lo` 四端点，`s_hi/v_hi` 未写，由 config.py:129 缺省
-  补 255（代码为权威）。
+  补 255；**`s_lo/v_lo` 未写缺省取域下界 0**——数据类缺省（`HSVRange` 字段
+  `s_lo: int = 0` / `v_lo: int = 0`，config.py:40,42）与装载器缺省
+  （config.py:129 `("s_lo", 0), …, ("v_lo", 0)`）两处一致（2026-09-30 钉死；二轮
+  重生成件同日核对取值一致，重生成时须保持此缺省）。
 
   | 段 | H | S | V | 覆盖（eval.py:49-50 合成校验点） |
   |---|---|---|---|---|

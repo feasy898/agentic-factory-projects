@@ -1,7 +1,9 @@
 # cs_voice spec（交互层：VAD → 离线 ASR → 关键词意图 → TTS 播报）
 
 > 状态：**frozen**（2026-09-29 eval 实测 20/20 全对、exit 0）。本页对照 `chengshao/cs_voice/`
->（vad.py / asr.py / intent.py / tts.py / link.py / _compat.py / eval.py）逐行核验于 2026-09-29。
+>（vad.py / asr.py / intent.py / tts.py / link.py / _compat.py / eval.py）逐行核验于 2026-09-29；
+> **2026-09-30 订正**：§6 优先级表述依代码订正——select 不在规则表内，实为规则表
+> 全未命中后的兜底（全表最低优先级），旧文「done > select > pause > …」有误。
 
 ---
 
@@ -75,15 +77,20 @@ AsrEngine(backend="auto") 加载顺序：funasr → sherpa-onnx（§9 回退）�
 ## 6. 意图解析（intent.py，关键词规则、离线可解释）
 
 - 归一化：只去空白与标点（保留全部汉字）。
-- **规则表优先级（同句多命中按序取最优先）**：`done > select > pause > next > resume > greet`
-  （intent.py:34-43）。关键词表：
+- **优先级（真实语义，2026-09-30 依代码订正）**：规则表 `_RULES`（intent.py:34-40）只含
+  **五条**、顺序即优先级：`done > pause > next > resume > greet`——同句命中多条时按表序
+  取最优先（`_match` 命中即返回，intent.py:89-94）。**select 不在规则表内**：仅当规则表
+  五条全部未命中时才进菜名匹配（intent.py:68-78 else 分支），即 select 是**全表最低的
+  兜底优先级**，不是次高。反例：同句含『暂停』『芋泥』（如「暂停，我想吃芋泥」）判
+  **pause**（规则表先命中）而非 select。关键词表：
   - done：吃饱了/吃饱/吃不下了/不吃了/饱了
   - pause：等一下/暂停/等一等/等等/停一下/别动/慢一点
   - next：下一口/再来一口/来一口/喂我/接着喂下一口
   - resume：继续/接着来/可以了/接着喂
   - greet：你好/您好/在吗/嗨
-  - select：菜名命中即触发（槽位只取预注册表 DEFAULT_DISH_REGISTRY=芋泥/南瓜粥/椰子冻，
-    config 可扩展）；触发词（我想吃/想吃/来点/要吃/换个/换）仅用于置信度分档。
+  - select（兜底）：规则表全未命中后菜名命中即触发（槽位只取预注册表
+    DEFAULT_DISH_REGISTRY=芋泥/南瓜粥/椰子冻，config 可扩展）；
+    触发词（我想吃/想吃/来点/要吃/换个/换）仅用于置信度分档。
 - 置信度常数（无校准信号，保守固定）：命中 0.95；select 带触发词 0.90 / 无触发词 0.75；
   unknown 0.30。
 - **已知局限（文档化）**：否定句/复杂从句不在关键词规则能力内（"我不想吃芋泥了"会解析为

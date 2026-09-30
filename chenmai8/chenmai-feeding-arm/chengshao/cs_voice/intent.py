@@ -1,8 +1,11 @@
 """意图解析：ASR 文本 → 契约 ``VoiceIntent``（关键词规则，离线、可解释）。
 
 规则要点：
-- 归一化后做包含匹配（去空白/标点），同句命中多条时按规则表顺序取最优先
-  （done > select > pause > next > resume > greet）；
+- 归一化后做包含匹配（去空白/标点）；规则表（``_RULES``，五条）顺序即优先级，
+  同句命中多条时按表序取最优先：``done > pause > next > resume > greet``；
+- **select 不在规则表内**：规则表全部未命中后才做菜名匹配（本模块 parse 的
+  else 分支）——select 实为全表最低的兜底优先级，不是次高。反例：同句含
+  『暂停』『芋泥』判 pause（规则表先命中）而非 select；
 - select 的槽位 ``slots["dish"]`` 只取自预注册菜名表（契约约束，
   缺省表为 ``DEFAULT_DISH_REGISTRY``，可经 config 扩展）；
 - 未命中返回 ``unknown``（置信度低但结果仍合法，供行为树记录）。
