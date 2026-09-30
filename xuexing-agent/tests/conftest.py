@@ -15,7 +15,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 SRC = os.path.join(ROOT, "src")
 sys.path.insert(0, SRC)
 
-MODULES = ["kpgraph", "itembank", "diagnosis", "paper", "scheduler", "pedagogy", "route", "agent_shell", "kt", "blueprint", "grading", "recommend", "standard_coverage", "misconception_coverage", "itembank_v2", "dual_verify", "paper_layout", "xapi", "omr_sheet", "multitenant", "mm_client", "mm_ingest", "tts_reader"]
+MODULES = ["kpgraph", "itembank", "diagnosis", "paper", "scheduler", "pedagogy", "route", "agent_shell", "kt", "blueprint", "grading", "recommend", "standard_coverage", "misconception_coverage", "itembank_v2", "dual_verify", "paper_layout", "xapi", "omr_sheet", "multitenant", "mm_client", "mm_ingest", "tts_reader", "asr_answer"]
 
 import xuexing  # noqa: F401,E402  先完整加载参考包，再做顶替
 

@@ -228,7 +228,28 @@
   全套 637 测试 + 2 skip + validate_knowledge --min-items-per-kp 3（321/321
   dual-agent-verified 保留）+ run_contract 参考实现 / --impl-dir src/xuexing 注入
   （tts_reader 单模块）全绿）
-- [ ] **asr_answer 口述作答**：学生语音 → ASR 文本 → grading 数值判分衔接
+- [x] **asr_answer 口述作答**：学生语音 → ASR 文本 → grading 数值判分衔接
+  （完成于本轮，待主会话提交：src/xuexing/asr_answer.py（确定性内核：守卫冻结
+  V1–V4 任一失败零出网、恰好一次 client.asr(audio, filename=…)、回写非 str 报错
+  且判分器不被调用、client 异常原样传播；确定性口语答案抽取三段管线——clean_transcript
+  （全角折叠与 grading N1 同闭式 + 上下缘引号/标点/语气词剥离 + 句首引导语词表
+  HEAD_FILLERS 长度非增序循环剥离，只在头部剥、核心内容「x等于3」「-2」不触碰）→
+  spoken_to_math（口语数字文法：负/百分之/带分数「一又二分之一」/分数「三分之二」/
+  逐位小数「三点一四」/中文整数（十百千缺系数按 1、万亿大段、两=2、显式单位文法
+  「一百五」=105 不约算）+ 算符表 SPOKEN_OPERATORS「等于→=」「除以→/」等，最大匹配
+  逐位置扫描、单位词透传、**不做表达式求值**「三加五」→「3+5」不猜得数）→
+  extract_answer（空白/纯语气词返回 None 不伪造，部分可抽取交字面比对诚实判错）；
+  抽取签名与行为均与 item 无关（不偷看标答）；空白转写交 grader(item, None) 与
+  mm_ingest 空白语义一致；模块间零 import，client/grader 均注入鸭子参数，与
+  mm_client.DEFAULT_FILENAME「audio.wav」缺省/MODEL_ASR multipart 形状/grading
+  parse_numeric・grade_fill・grade_choice・grade_to_response 的一致性由契约测试
+  跨模块锁定，全角作答「选择Ｂ」经折叠与半角同判）
+  + specs/drafts/asr_answer.spec.md（I1–I7 全可检验）+
+  tests/contract/test_asr_answer_contract.py（25 项，自封闭全 mock 零网络，
+  闭式现算核实，数值等值用 grading.parse_numeric 独立复核）；已登记 run_contract
+  与根 conftest MODULES；全套 662 测试 + 2 skip + validate_knowledge
+  --min-items-per-kp 3（321/321 dual-agent-verified 保留）+ run_contract 参考
+  实现 / --impl-dir src/xuexing 注入（asr_answer 单模块）全绿）
 - [ ] **mm_grade VLM 辅助判分**：主观解答题的分步给分建议（规则冻结）→ 人机协同复核闭环
 - [ ] **知识注入第三波·初中加深**：题库 321→1000+（每 KP 6-10 题）、误解 202→300+、母题 52→100+，双代理复验回填
 - [ ] **学段扩张·小学 1-6 年级数学**：图谱~80 KP（低龄策略：游戏化优先）+ 基础题库~200 + 误解库，validate_knowledge 覆盖
