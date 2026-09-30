@@ -3,6 +3,9 @@
 > 状态：frozen。对照 `pipeline/m1_ingest.py` 逐行核验于 2026-09-29；
 > **2026-09-30 回炉二稿**：首轮重生成试点（_regen/drama-pilot）暴露的缺口回填——收件命名 / probe.json 全
 > schema / loudness 字段 / config 面 / 产物名模板 / CLI stdout / exit 2 承载 / `audio=skip` 位置修正，全部钉死。
+> **2026-09-30 二轮裁定钉死**：_regen2/drama2 二轮盲重生成 7 条被迫裁定逐条收口——两处行为级
+> （loudness_lufs falsy / 探针回退）已随 commit 134357d 入文；本次补钉 IngestError 消息全文（§3）、
+> M1 重生成自含副本形态（§2.1）、`pipeline/__init__.py` 面归属 + 重生成 gate 形态 + 二轮输入面（§5）。
 > 上游依赖：系统级 ffmpeg/ffprobe（PATH 可解析，硬依赖）；Python 侧仅 `pipeline/config.py` 的 YAML 读取
 > （PyYAML，requirements.txt 未显式钉版、经依赖连带在库）——`m1_ingest`/`scaffold` 本体零第三方、零模型依赖。
 
@@ -36,6 +39,12 @@
     `paths.*` 中的相对路径解析为绝对（相对 configs/ 目录锚定；绝对路径原样保留）后返回全 dict；
   - `jobs_dir(configs_dir=None)` = `Path(load_pipeline_config(configs_dir)["paths"]["jobs_dir"])`；
   - YAML 解析器不限实现（原实现 PyYAML safe_load），**冻结的是上述键位与解析语义**，不是解析库。
+- **M1 重生成自含副本形态**（二轮裁定钉死）：重生成范围内 `configs/pipeline.yaml` 允许**只写 M1 消费段落**——
+  `schema_version: 1` + `paths.jobs_dir: ../../jobs` + `media` 段（width 1080 / height 1920 / fps 25 /
+  audio.asr_sr 16000 / audio.mix_sr 48000）+ 顶层 `loudness_lufs: -16`；其余段落（clips_dir / models_dir /
+  label_zone / erase / subs / speed_window / m8 / m9 等）不属 M1 面，可不复制（spec 上文已明言
+  「其余段落与本模块无关」）。M1 消费键的仓内值即上列字面值（configs/pipeline.yaml），
+  二轮重生成副本（_regen2/drama2）逐键一致。
 
 ### 2.2 产物命名（冻结）
 
@@ -103,6 +112,11 @@ python -m pipeline.m1_ingest --ep ep01 --in clips/ep01_raw.mp4 [--jobs-dir <dir>
     `loudness in={实测}→{目标} LUFS`（仅实测非 null 时）；后三项按存在性追加；
   - 第二行 `   probe.json → <01_media 绝对路径>`（三个前导空格）。
 - stdout 失败一行：`FAIL m1_ingest: {IngestError 消息}`，exit 1。
+- IngestError 消息全文**冻结为以下五种**（二轮裁定钉死；与 `pipeline/m1_ingest.py:73/80/83/264/281` 逐字一致，
+  其余文案措辞不得自由发挥）：`未找到可执行文件 {exe!r}（请确认 ffmpeg 已安装并在 PATH）`（which 落空，:73）；
+  `{exe} 超时（>{timeout_s:.0f}s）: {cmd 前 6 个 token}...`（TimeoutExpired，:80）；
+  `{exe} 退出码 {rc}: {cmd 全量}` + 换行 + `{stderr 尾 2000 字符}`（:83）；
+  `输入不存在: {src}`（src 为 resolve 后绝对路径，:264）；`输入既无视频轨也无音轨: {src}`（:281）。
 - 子进程纪律：统一 utf-8 解码（errors=replace）+ timeout（媒体步默认 1800s，ffprobe 300s）；
   `shutil.which` 找不到 ffmpeg/ffprobe 即 IngestError。
 - 程序化 import 面（冻结测试逐名依赖）：`pipeline.m1_ingest.FFMPEG` / `FFPROBE`（值即 `"ffmpeg"`/`"ffprobe"`，
@@ -133,3 +147,17 @@ python -m pipeline.m1_ingest --ep ep01 --in clips/ep01_raw.mp4 [--jobs-dir <dir>
 - 白名单外 ep：`ep_dir` 抛未捕获 `ValueError`（不在 IngestError 之列，进程 exit 1 带 traceback）；
   校验发生在建任何目录之前。
 - 素材与工作区：`clips/`、`jobs/` 不入公开仓（.gitignore）；测试素材由 pytest 自备（ffmpeg lavfi 合成 3s）。
+- `pipeline/__init__.py` **不属 M1 冻结面**（二轮裁定钉死）：M1 重生成范围只要求包标记（import 期零重型依赖、
+  零 M1 符号）；仓内现值为 contracts 轻量再导出面（`from pipeline import contracts` +
+  34 符号 `__all__` + `__version__="0.1.0"`，pipeline/__init__.py:8/45/47），归 contract-io / m2-ocr
+  spec 面所有——「torch 先于 paddle」的进程级 bootstrap 在 `pipeline/m2_ocr.py:27` 的 `bootstrap()`
+  （m2-ocr spec §4），**不在 `__init__.py`**，勿误置入。
+- 重生成门（gate）**形态钉死**（二轮裁定钉死，_regen2/drama2/gate.py 即此形态）：①冻结测试 sha256 运行前后
+  各检一次（tests/test_m1.py = `00e54b184e4e8ddcf2cd8ab5f45089cb879668446c239d6fd08334cb6577b205`，
+  变动即 FAIL）；②PATH 前置 `D:/tools/bin` 后 `shutil.which` 预检 ffmpeg/ffprobe（落空即 FAIL）；
+  ③pytest 结束后校验输出无 skipped 行——**skipped 即 FAIL**，防「有跳过、无失败」假绿；
+  spec §4 命令逐字复跑在 gate 之外另行执行。
+- **二轮盲重生成输入面**（二轮裁定披露钉死）：回炉后 spec + 冻结测试（逐字节复制 + sha256 前后核）+
+  configs / 契约文档；实现期间禁读原仓实现代码与试点实现代码。同一 agent 先回炉后实现无法达成跨 agent
+  意义的全盲，纪律底线 = 二轮实现期间**不重读任何实现代码**（原仓 `pipeline/*.py` 与 `_regen/drama-pilot`
+  实现均不得打开）——这是本模块重生成时对「盲」的操作性定义。

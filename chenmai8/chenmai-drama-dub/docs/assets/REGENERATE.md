@@ -189,3 +189,4 @@ python scripts/gate_b3.py [--skip-gpu]    # M8/M9/M11 + gate_b2 整门回归（�
 | T16/B3（b25fc4b） | gate_b3 四道门收口（6/6 PASS 3469s，177 passed 零跳过） |
 | （本 commit） | docs/assets/ 四件套（manifest / specs×13 / REGENERATE / CONTRACTS） |
 | 回炉二稿（2026-09-30） | 首轮重生成试点缺口回填：m1-ingest spec 二稿（收件固定名 input.mp4 / 产物名随 targets 联动模板 / probe.json 全 schema+loudness 8 字段 / config 键位与 jobs_dir 解析语义 / CLI stdout 逐字形态 / exit 2=argparse SystemExit / `audio=skip` 位置修正：stdout 而非 probe.json）+ contract-io §3 LAYERS/EXPECTED_FILES 全表自含化 |
+| 二轮裁定钉死（2026-09-30，接 134357d） | _regen2/drama2 二轮盲重生成 7 条被迫裁定逐条收口（m1-ingest spec）：loudness_lufs falsy（0 等 falsy 一律取 -16.0，or 语义）与源探针收件副本缺失回退原路径两处行为级已随 134357d 入文；本次补钉 IngestError 消息全文五种冻结（§3）、M1 重生成自含副本形态（§2.1）、`pipeline/__init__.py` 面归属（contracts 再导出面非 M1 面、bootstrap 在 m2_ocr.py:27，§5）、重生成 gate 形态（冻结测试 sha256 夹具 + PATH 前置预检 + skipped 即 FAIL，§5）、二轮盲重生成输入面披露（§5） |
