@@ -11,12 +11,15 @@
 | `src/mock-control-plane.ts` | ts2021 假控制面（noise `NoiseIkResponder` 承载）：IK 握手、注册帧解密留痕、netmap 下发入队 |
 | `src/shell-status.ts` | UI 状态模型：`ShellSessionState`→`ShellConnState` 映射（Index.ets `ConnState` 常量逐值镜像） |
 | `src/shell-session.ts` | `ShellControlSession`：装配 fail-fast 校验 + `login()/pollMap()/statusSnapshot()/close()` + authKey 纪律 |
-| `test/bridge.test.ts` | node:test 套件（6 用例，全链路确定性可复现） |
+| `src/mock-udp-bus.ts` | 确定性 mock UDP 总线（NAT 公网映射仿真：投递源呈现公网视图、目的按公网端点反查）+ `MockStunServer`（STUN Binding 服务端，回发端观察映射） |
+| `src/shell-discovery.ts` | 发现面门面：`ShellDiscoClient`（disco Ping/自动 Pong/CallMeMaybe，密封经 disco 包）+ `ShellStunProbe`（`StunTransaction` 探测 + RTT 注入） |
+| `test/bridge.test.ts` | node:test 套件（7 用例，控制面链路，确定性可复现） |
+| `test/disco-netcheck.test.ts` | node:test 套件（6 用例，发现面链路：STUN NAT 映射/RTT、TxID 配对否定、Ping→Pong、CallMeMaybe、噪声/错钥容错、弃报计数） |
 
 ## 与核心库的依赖方向（D4/A29 不变）
 
 ```
-app/bridge  ──import──▶  @ohos-tailscale/common|crypto|noise|control   （只 import，零改动）
+app/bridge  ──import──▶  @ohos-tailscale/common|crypto|noise|control|disco|netcheck （只 import，零改动）
     ▲                        packages/*（worker-B 属地，公钥 API 冻结）
     └─ 未来 app/entry/src/main/ets/**（ArkTS）经本层接口消费协议核心
 ```
@@ -38,6 +41,8 @@ npm run typecheck:bridge   # tsc --noEmit -p app/bridge
 
 ## 已知边界（如实）
 
-- mock 控制面不实现 UDP 数据面 / DERP / protect(fd)——数据面注入（UDP socket、Dialer）待协议包二期接口定稿后按同模式补；
-- `endpoints` 由调用方传入（真机上来自 STUN 派生，二期）；
+- ~~mock 控制面不实现 UDP 数据面~~ → 第 2 轮已补确定性 mock UDP 总线（disco/STUN 发现面已打通）；**仍缺**：netcheck 引擎调度（多 server/端口映射协议）、disco 0x04–0x09 UDP relay 家族、DERP 随机选节点、netmap→WG 推导（协议侧二期，worker-B 面）；
+- 真机 UDP socket（@ohos.net.socket + `conn.protect(fd)` 防环路）替换点 = `UdpSocket`（send/receive 语义不变，事件化适配）；
+- mock 总线为同步队列形态（确定性测试用）；真机为异步回调，接口形状已钉死；
+- `endpoints` 仍由调用方传入，但第 2 轮起壳侧可用 `ShellStunProbe` 自行派生公网映射（README-app.md §4「STUN 派生公网映射」的 mock 实现面）；
 - ArkTS 未验证项（U6 `.ts` specifier 等）与本层无关：本层是 Node 侧桥，真机 ArkTS 侧集成形态见 README-app.md §4 三方案。
