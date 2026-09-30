@@ -103,7 +103,45 @@ make_utt_id("ep01", 12.40) == "ep01-u000012400"      # <ep>-u<起始毫秒,8 位
 
 ## 3. jobs/<ep> 工作区（scaffold.py）
 
-- 13 层目录 `00_raw…12_out`（`LAYERS`，scaffold.py:19-33）；各层预期产物名（`EXPECTED_FILES`，scaffold.py:36-65）。
+- 13 层目录 `00_raw…12_out`；各层预期产物名如下两表（**2026-09-30 回炉自含化**：原稿只给
+  scaffold.py 行号，重生成者无法凭行号重建布局，现全表钉死；与 scaffold.py 逐行一致）。
+
+### 3.1 LAYERS（13 层 + 子目录）
+
+| 层 | 子目录 |
+|---|---|
+| `00_raw` | — |
+| `01_media` | — |
+| `02_shots` | — |
+| `03_ocr` | — |
+| `04_dial` | `emo_refs` |
+| `05_cast` | `voicebank`, `consent` |
+| `06_mt` | — |
+| `07_synth` | `wavs` |
+| `08_mix` | — |
+| `09_lip` | `done` |
+| `10_subs` | — |
+| `11_labels` | — |
+| `12_out` | — |
+
+### 3.2 EXPECTED_FILES（各层预期产物名）
+
+| 层 | 预期产物（模块按此命名） |
+|---|---|
+| `00_raw` | `input.mp4`（M1 收件**固定名**，任意容器一律此名） |
+| `01_media` | `video_1080x1920_25fps.mp4`（M1 视频产物在**默认 targets** 下的名字；真名随 targets 联动，模板 `video_{W}x{H}_{fps}fps.mp4`）、`audio_16k.wav`、`audio_48k.wav`（M1 重采样混音，含 BGM/音效）、`bgm.wav`（M3 分离背景）、`video_1080x1920_25fps_clean.mp4`（T8/M11 擦除基带）、`probe.json`（M1 探针） |
+| `02_shots` | `shots.json`（C1） |
+| `03_ocr` | `ocr_raw.jsonl`、`ocr_merged.jsonl` |
+| `04_dial` | `vocals.wav`（B1 冻结：M3 人声、M4 唯一识别输入）、`asr.jsonl`、`forced.jsonl`、`diar.jsonl`（C2-pre）、`emo.jsonl`、`utterances.jsonl`（C2） |
+| `05_cast` | `characters.json`（C3） |
+| `06_mt` | `context.json`、`translations.jsonl`（C4） |
+| `07_synth` | `synth_plan.jsonl`（C5） |
+| `08_mix` | `dubbed.wav`、`mix.wav` |
+| `09_lip` | `lip_plan.jsonl`（C6） |
+| `10_subs` | `src.ass`、`tgt.en.ass`、`tgt.es.ass`、`tgt.ar.ass` |
+| `11_labels` | `labels.json`（C7）、`c2pa_manifest.json`、`audio_wm.wav` |
+| `12_out` | 按语种命名：`<ep>.<lang>.mp4`、`compliance.<lang>.json`（C8） |
+
 - **关键槽位（B1 冻结）**：`04_dial/vocals.wav` = M3 人声（M4 唯一识别输入）；`01_media/` 保存混音口径产物
   （audio_16k/48k + M3 背景 bgm.wav + M11 擦除基带 video_*_clean.mp4 + probe.json）。
 - `create_workspace(ep, jobs_dir)`：幂等建骨架，**不预生成任何文件**（避免空文件被当产物）。

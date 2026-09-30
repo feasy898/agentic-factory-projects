@@ -188,3 +188,4 @@ python scripts/gate_b3.py [--skip-gpu]    # M8/M9/M11 + gate_b2 整门回归（�
 | T14（81485e6）/ T8（aca8b08）/ T15（99011c1+bec2459） | M8 / M11 / M9（+models.yaml mix-m9、align-m8 登记） |
 | T16/B3（b25fc4b） | gate_b3 四道门收口（6/6 PASS 3469s，177 passed 零跳过） |
 | （本 commit） | docs/assets/ 四件套（manifest / specs×13 / REGENERATE / CONTRACTS） |
+| 回炉二稿（2026-09-30） | 首轮重生成试点缺口回填：m1-ingest spec 二稿（收件固定名 input.mp4 / 产物名随 targets 联动模板 / probe.json 全 schema+loudness 8 字段 / config 键位与 jobs_dir 解析语义 / CLI stdout 逐字形态 / exit 2=argparse SystemExit / `audio=skip` 位置修正：stdout 而非 probe.json）+ contract-io §3 LAYERS/EXPECTED_FILES 全表自含化 |
