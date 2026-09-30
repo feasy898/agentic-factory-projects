@@ -1,5 +1,13 @@
 # 试玩广告生产线
 
+> ## 🧊 封存声明（2026-09-30，成品切换）
+> **本仓自即时起冻结为回归参照（oracle）**：零新功能、零实现改动——后续一切修改仅限
+> 差分/回归用途且不改变行为。**正式成品在 factory 仓**
+> （`feasy898/chengmai-playable-factory`，TS/Node 22 单栈重写，模式 M 终审通过 + 独立复核）。
+> 两仓对齐层 = 契约层（PlayableSpec 输入 → 产物 + 质检报告 + CLI 退出码）；
+> 差分终审证据见 factory 仓 `docs/diff/differential-report.md`（PASS、零回归；
+> GATE-M3 4/4）。本 README 以下内容为封存时的历史原貌，按封存时点理解，不再更新。
+
 面向小游戏 / 休闲游戏出海买量的 HTML5 试玩广告自动化生产线：输入一份 PlayableSpec JSON，
 一条命令产出通过自动质检的多渠道可玩广告包（演示默认语言：中文）。
 
