@@ -250,7 +250,28 @@
   与根 conftest MODULES；全套 662 测试 + 2 skip + validate_knowledge
   --min-items-per-kp 3（321/321 dual-agent-verified 保留）+ run_contract 参考
   实现 / --impl-dir src/xuexing 注入（asr_answer 单模块）全绿）
-- [ ] **mm_grade VLM 辅助判分**：主观解答题的分步给分建议（规则冻结）→ 人机协同复核闭环
+- [x] **mm_grade VLM 辅助判分**：主观解答题的分步给分建议（规则冻结）→ 人机协同复核闭环
+  （完成于本轮，待主会话提交：src/xuexing/mm_grade.py（确定性内核：管线 =
+  solve 题 + 手写照片 → 注入 VLM 恰好一次转写学生步骤（schema 冻结：steps[]/
+  final_answer，花括号切片容忍闲话）→ 本地冻结规则分步给分——参考解行切分
+  （序号标记 `(1)`/`2.`/`（一）` 剥离）+ match_key（全角折叠+删全部空白+小写）
+  双向包含贪心配对（每学生步骤至多用一次、低置信步骤不计分只标记、多余步骤
+  不扣分）→ GradeSuggestion（分步 0/1 建议 + 四值复核原因：low_confidence/
+  final_answer_missing/partial_match/contradiction，词表序；partial 与
+  contradiction 互斥；步骤全配对却缺答案属转写自相矛盾双原因并报）→ 人机协同
+  闭环两路互斥：干净建议 suggest_response（correct 恒 True）、需复核建议
+  confirm_review（人终审，拒干净建议防静默绕过）；判分诚实性：VLM prompt 只含
+  题面 stem 绝不含 answer/solution（防抄参考答案进学生步骤），给分全在本地；
+  注入 answer_grader（grading.grade 满足）恰好一次且必须返回 bool；模块间零
+  import，IMAGE_FORMATS 与 mm_client.IMAGE_MIME 键集、grading 闭式判定
+  （"10/12"≡标答"5/6" 数值等值）、MMClient+MockTransport 线上 prompt 逐字节
+  均由契约测试跨模块锁定）
+  + specs/drafts/mm_grade.spec.md（I1–I9 全可检验，闭式题面 3x+30=480→x=150、
+  1/2+1/3=5/6 现算核实）+ tests/contract/test_mm_grade_contract.py（31 项，
+  自封闭全 mock 零网络）；已登记 run_contract 与根 conftest MODULES；
+  全套 693 测试 + 2 skip + validate_knowledge --min-items-per-kp 3
+  （321/321 dual-agent-verified 保留）+ run_contract 参考实现 / --impl-dir
+  src/xuexing 注入（mm_grade 单模块）全绿）
 - [ ] **知识注入第三波·初中加深**：题库 321→1000+（每 KP 6-10 题）、误解 202→300+、母题 52→100+，双代理复验回填
 - [ ] **学段扩张·小学 1-6 年级数学**：图谱~80 KP（低龄策略：游戏化优先）+ 基础题库~200 + 误解库，validate_knowledge 覆盖
 - [ ] **冻结契约第三波 + 终版入库 v0.3.0**
