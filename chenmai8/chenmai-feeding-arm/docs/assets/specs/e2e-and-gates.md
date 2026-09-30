@@ -41,7 +41,10 @@
 | ③c | cs_voice eval | `-m cs_voice.eval --input assets/voice_samples --report reports/voice_eval.json` |
 | ③d | cs_food 接口测试 | `-m pytest tests/test_food_interface.py -q`（cwd=仓库根） |
 | ④ | 报告独立复核 | `.venv python scripts/verify_g1_reports.py --report-dir chengshao/reports` |
-| ⑤ | 看板冒烟 | `-m pytest chengshao/tests/test_dashboard.py -q`（进程内套件，无子进程服务） |
+| ⑤ | 看板冒烟 | `-m pytest chengshao/tests/test_dashboard.py -q`（进程内套件，无子进程服务）。
+  **2026-09-30 抽查发现该内部路径有误**：仓库测试在仓库根 `tests/test_dashboard.py`，
+  `chengshao/tests/` 不存在；实测该命令 exit 4（file not found）——即门禁项⑤当前必红，
+  `scripts/gate_g1.py:182` 的 `PKG_ROOT/"tests"` 待修（本 spec 如实记录，代码未动） |
 
 证据落 `chengshao/reports/gate_g1.json`（含逐步 detail 与 exit code）。
 
@@ -72,14 +75,25 @@
   本资产包撰写时本页初稿曾因复述禁用词被本扫描器当场拦下 7 条 FORBIDDEN——
   门禁有效性的一次实测自证。
 
-## 5. 当前门禁状态（2026-09-29 如实记录）
+## 5. 当前门禁状态
+
+**2026-09-30 回炉更新**：`pytest tests/` 实测 **297 passed / 1 skipped、exit 0**
+（09-29 深夜 commit `cea83b1` 为模型发现回退链增补工作区外集中参考目录
+`D:/upstream-refs/robot-vendor` + `CS_VENDOR_ROOT` 覆盖后，模型件前提恢复——
+详见 [cs_sim](cs_sim.md) §8 坑 1）。09-29 的"36 failed / 260 passed / 2 skipped、
+全量门禁红"为当日参考件移出后、修复落地前的历史记录，已不再成立。**仍未绿的一项**：
+门禁项⑤看板冒烟——`gate_g1.py:182` 指向不存在的 `chengshao/tests/`（§2 表内已记，
+实测 exit 4），待修后 `python scripts/gate_g1.py` 方可整链复验。
+
+<details><summary>2026-09-29 当日记录（历史存档）</summary>
 
 - 本日独立复验**通过**：check_naming（exit 0）、cs_food.eval（exit 0）、
   cs_mouth.eval（exit 0，空载 lat_p95=39.7ms）、cs_voice.eval（exit 0，20/20）、
   tests/test_schema.py + tests/test_dashboard.py（88 passed）、
   tests/test_food_interface.py（54 passed）。
-- **全量门禁当前为红**：`pytest tests/` 36 failed / 260 passed / 2 skipped——根因是
+- **全量门禁当日为红**：`pytest tests/` 36 failed / 260 passed / 2 skipped——根因是
   cs_sim 模型回退链环境前提被破坏（参考件移出工作区后 `auto` 落 tier3 内置名义链 5 关节，
-  与契约 6 关节不符；详见 [cs_sim](cs_sim.md) §8 坑 1）。凡不依赖 `load_arm("auto")` 的
-  模块（schema/dashboard/food/voice/mouth 空载）全部绿；恢复 `_vendor` 参考件后应全绿复跑
-  `python scripts/gate_g1.py`。
+  与契约 6 关节不符）。凡不依赖 `load_arm("auto")` 的模块
+  （schema/dashboard/food/voice/mouth 空载）全部绿。
+
+</details>

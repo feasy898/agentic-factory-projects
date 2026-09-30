@@ -78,5 +78,6 @@ MouthEstimator 向后兼容 keyword-only 扩展）。
 ```
 
 - conftest.py 钩子在会话内跑过 test_schema 时自动落证据 `chengshao/reports/schema_eval.json`
-  （字段遵循报告 schema，见 CONTRACTS §R）。注意：`exit_status` 字段是**整个 pytest 会话**的
+  （字段遵循报告 schema，见 CONTRACTS C6——2026-09-30 订正：原文误写"§R"）。注意：
+  `exit_status` 字段是**整个 pytest 会话**的
   退出码——与其他失败模块同会话跑会记 1，独立跑才干净（坑，见 REGENERATE §8）。

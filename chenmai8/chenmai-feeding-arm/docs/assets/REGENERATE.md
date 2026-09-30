@@ -6,27 +6,31 @@
 
 ---
 
-## 0. 当前状态与首要前提（2026-09-29 如实记录——重生成前必读）
+## 0. 当前状态与首要前提（2026-09-30 回炉更新——重生成前必读）
 
-- **模型件前提**：cs_sim 的 `load_arm("auto")` 依赖工作区内 `_vendor/` 本地参考件
+- **模型件前提（2026-09-30 状态：已恢复）**：cs_sim 的 `load_arm("auto")` 依赖参考模型件
   （gitignore、永不入库；内部代号 `vendor-arm-model`，锁定 commit 与实体位置见
-  `chengshao/reports/upstream_lock.md`）。**参考件已于 2026-09-29 被整体移出工作区**
-  （安全扫描门禁要求）——此后 `auto` 回退链落到 tier3 内置名义链，
-  **该链只有 5 关节（无夹爪），与契约 `N_ARM_JOINTS=6` 不匹配**，凡经 `ArmState`
-  的路径全部失败。当日实测：`pytest tests/` 36 failed / 260 passed / 2 skipped
-  （失败集中在 test_arm_mock/test_sim/test_orchestra 的模型相关用例）；
-  `cs_orchestra.eval --mock 1` exit 1（同因）；schema/dashboard/food/voice/mouth
-  等不依赖 load_arm 的模块独立复验全部绿。
-- **恢复方法（二选一）**：
-  1. 把参考件放回可发现的 `_vendor/` 布局：仓库根或包根旁建 `_vendor/<参考件>/`，
+  `chengshao/reports/upstream_lock.md`）。参考件曾于 2026-09-29 被整体移出工作区
+  （安全扫描门禁要求），当日 `auto` 回退链落到 tier3 内置名义链（5 关节，与契约
+  `N_ARM_JOINTS=6` 不匹配），实测 `pytest tests/` 36 failed / 260 passed / 2 skipped。
+  **同日 commit `cea83b1` 修复**：模型发现回退链增补工作区外集中参考目录
+  `D:/upstream-refs/robot-vendor`（存在才加入）+ `CS_VENDOR_ROOT` 环境变量覆盖
+  （最高优先）。**2026-09-30 回炉实测：`pytest tests/` 297 passed / 1 skipped、
+  exit 0**（本机集中参考目录在位）。
+- **参考件放置方法（三选一）**：
+  1. 工作区外集中参考目录 `D:/upstream-refs/robot-vendor`（现行缺省，代码自动发现）；
+  2. 把参考件放回可发现的 `_vendor/` 布局：仓库根或包根旁建 `_vendor/<参考件>/`，
      使 `*/Simulation/*/*.xml`（或 `*.urdf`）glob 命中（评分规则见
      [cs_sim spec §2](specs/cs_sim.md)；判据：`reports/sim_eval.json` 历史记录
      tier=`mjcf`、模型指纹 `file_sha256_16=d75253eb568e8a72`、6 关节）；
      `_vendor` 已 gitignore，不入库；
-  2. 或对 eval/调用显式传模型路径 `load_arm(path)`（跳过 auto 发现）。
+  3. 设 `CS_VENDOR_ROOT` 指向任意含参考件的根，或对 eval/调用显式传模型路径
+     `load_arm(path)`（跳过 auto 发现）。
   恢复后先跑 `python -m cs_sim.eval`（tier 必须非 chain_builtin）再跑全量。
-- 门禁脚本 `python scripts/gate_g1.py` 在此前提缺失时**注定红**——这不是代码回归，
-  是环境前提；恢复前提后应全绿复跑并刷新 `reports/gate_g1.json`。
+- 门禁脚本 `python scripts/gate_g1.py` 在参考件完全缺失时**注定红**——这不是代码回归，
+  是环境前提；恢复前提后应全绿复跑并刷新 `reports/gate_g1.json`。**另一已知红项**：
+  门禁项⑤看板冒烟 `gate_g1.py:182` 指向不存在的 `chengshao/tests/`（实测 exit 4），
+  修复前整链 gate 无法全绿——见 [e2e-and-gates spec §2/§5](specs/e2e-and-gates.md)。
 
 ## 1. 环境准备（实测版本，钉版即契约）
 

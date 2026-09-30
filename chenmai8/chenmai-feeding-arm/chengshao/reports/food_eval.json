@@ -1,6 +1,6 @@
 {
   "module": "cs_food",
-  "date": "2026-09-29",
+  "date": "2026-09-30",
   "cmd": "python -m cs_food.eval --report reports/food_eval.json",
   "source": "synthetic",
   "metrics": {

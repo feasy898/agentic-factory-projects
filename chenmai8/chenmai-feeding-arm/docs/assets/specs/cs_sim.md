@@ -21,7 +21,10 @@ PNG 渲染；安全包络校验器（禁区/限速场/关节轨迹/连杆扫掠/
 ```
 load_arm("auto")
   └─ discover_model_file()：候选根 = 包根(chengshao/)与 cwd 各向上 4 级里的 "_vendor/" 目录
-     （model_source.py:62-81；_vendor 本地参考件，gitignore 永不入库）
+     ＋存在则追加的工作区外集中参考目录 D:/upstream-refs/robot-vendor（及其 _vendor/）
+     ＋环境变量 CS_VENDOR_ROOT 指向的根（最高优先、插最前）
+     （model_source.py:62-92，2026-09-29 commit cea83b1 增补外链；_vendor 本地参考件，
+     gitignore 永不入库）
      ├─ tier1 "mjcf"        ：glob "*/Simulation/*/*.xml"，评分选优
      ├─ tier2 "urdf_mujoco" ：glob "*/Simulation/*/*.urdf"
      └─ tier3 "chain_builtin"：都没找到 → 内置名义链（无文件依赖，最后手段）
@@ -31,7 +34,7 @@ _backend_for()（arm_model.py:229-260）：任一层装载/校验失败自动降
 load_arm(显式路径)：按扩展名 .xml/.mjcf/.urdf 选 MujocoBackend，不存在即 FileNotFoundError。
 ```
 
-- 候选评分 `_score`（model_source.py:84-91）：文件名含 `new_calib` 优先于含 `calib` 优先于其他；
+- 候选评分 `_score`（model_source.py:95-103）：文件名含 `new_calib` 优先于含 `calib` 优先于其他；
   含 `camera` 降级；含 `leader` 降级；再按文件名字典序。排除 `scene*` 汇总与 `*joints_properties*` 参数表。
 - 版本锁定：报告只记文件 SHA-256 前 16 位（`file_sha256_prefix`，无泄漏指纹）；
   参考件内部代号与锁定 commit 见 `chengshao/reports/upstream_lock.md`（`vendor-arm-model` 条目）。
@@ -162,14 +165,20 @@ margin = stop_distance − spoon_tip_reach − tracking_err_bound − sense_err_
 #   → 实测 wall ≈ 742s（可达性扫描占 ~705s；改 reachability 相关代码时预留 15 分钟）。
 ```
 
-**坑 1（最重要）**：`auto` 依赖工作区内 `_vendor/` 下的本地参考件（gitignore，不入库；内部代号
+**坑 1（最重要）**：`auto` 依赖参考模型件（gitignore，不入库；内部代号
 `vendor-arm-model`，见 reports/upstream_lock.md）。参考件于 2026-09-29 被整体移出工作区（安全扫描
 门禁要求，实体在外部目录，路径登记于 upstream_lock.md 头注）后，公开/无参考件环境的 `auto`
-落到 tier3 内置名义链——**该链只有 5 关节（无夹爪），与契约 N_ARM_JOINTS=6 不匹配**，
+一度落到 tier3 内置名义链——**该链只有 5 关节（无夹爪），与契约 N_ARM_JOINTS=6 不匹配**，
 凡经 `ArmState`（要求 6 元数组）的路径全部 pydantic `too_short` 失败
 （当日实测：全量 pytest 36 failed/260 passed；`cs_orchestra.eval --mock 1` exit 1 同因）。
-**重生成前置**：把参考件放回可发现的 `_vendor/` 布局（`_vendor/<参考件>/Simulation/<型号>/*.xml`，
-或用显式路径调 `load_arm(path)`）；_vendor 只在本地、永不入库。
+**已修复（2026-09-29 commit `cea83b1`，2026-09-30 回炉实测）**：`_candidate_roots()`
+（model_source.py:74-83）在 `_vendor` 之外追加发现工作区外集中参考目录
+`D:/upstream-refs/robot-vendor`（及其 `_vendor/`，存在才加入）并支持 `CS_VENDOR_ROOT`
+环境变量指向任意参考根（最高优先）；本机该目录在位，`pytest tests/` 实测
+**297 passed / 1 skipped（exit 0）**。完全无参考件的环境仍会落 tier3 → 同样失败面，
+**重生成前置**：参考件放回可发现位置——`_vendor/<参考件>/Simulation/<型号>/*.xml` 布局、
+集中参考目录 `D:/upstream-refs/robot-vendor`，或设 `CS_VENDOR_ROOT`；亦可用显式路径调
+`load_arm(path)`；_vendor 只在本地、永不入库。
 **坑 2**：模型文件含中文路径时物理引擎绝对路径装载失败——已用相对化规避；自建模型目录避免非 ASCII。
 **坑 3**：tier3/URDF(ikpy) 途径活动关节 = revolute 链接；URDF 链截断于名称含 "frame" 的工具系
 link（其后夹爪指不入链）。
