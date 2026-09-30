@@ -49,3 +49,10 @@ chengshao/training/config/train.local.json
 
 # Agent tool runtime dirs
 .mimosa/
+
+# Sibling project dirs (workspace layout leaks into this worktree; one repo one project)
+/具身助餐机器人/
+/咖啡豆质检/
+/政务AI脱敏网关/
+/短剧多国出海/
+/可玩的小游戏广告/
