@@ -9,8 +9,8 @@
   "properties": {
     "schema_version": {
       "type": "string",
-      "const": "1.0",
-      "description": "契约版本，当前冻结版 1.0。"
+      "enum": ["1.0", "1.1"],
+      "description": "契约版本。1.0 = 2026-09-30 冻结首版；1.1 = 2026-10-01 增量（新增可选 qc_context，记录上游声明的素材 profile / 已知拼接切点 / L0 预检结果，见 qc_context 节）。枚举同时收编 1.0：旧报告仍然合法（向后兼容，SPEC §6 回归纪律）。"
     },
     "clip_id": {
       "type": "string",
@@ -177,6 +177,26 @@
         "judge_files": {
           "type": "object",
           "description": "judge 代码 → 输入文件路径。"
+        }
+      }
+    },
+    "qc_context": {
+      "type": "object",
+      "description": "契约 1.1 新增（2026-10-01）：上游声明的 QC 上下文，全部为「声明制」——检测器/编排器不自行推断，只如实记录上游给了什么，保证豁免可审计。缺省（回放模式/未声明）不落本字段。",
+      "additionalProperties": false,
+      "properties": {
+        "profile": {
+          "type": ["string", "null"],
+          "description": "素材 profile 声明（如 avatar_talk=口播数字人）。qc_detectors_v2 据此对低运动平台 ghost 候选做豁免（工程方案v3.1 §3.4 机理1）；未声明时检测器行为不变。"
+        },
+        "known_cuts": {
+          "type": "array",
+          "description": "已知拼接切点（秒）白名单（工程方案v3.1 §3.4 机理2）：来自装配 manifest 的硬切点登记，qc_detectors_v2 对落入容差的 junction 不报 temporal_swap。",
+          "items": { "type": "number", "minimum": 0 }
+        },
+        "l0_preflight": {
+          "type": ["object", "null"],
+          "description": "L0 确定性预检结果快照（qc_orch_v2 在线模式实测数字：时长/黑屏占比/所用阈值），拒收件不产 QCReport、证据在 <clip_id>.l0.json。"
         }
       }
     },

@@ -235,17 +235,24 @@ clip + 判官输出 ──→ qc_orch.py ──→ qc_reports/*.json ───�
 
 ## 7. 已知边界与待办（如实记录，防止误当已完成）
 
-- J6 规则修复清单**未实施**（thresholds.yaml `judges.J6_detectors.known_broken_rules`：
-  freeze 几何失谐、garble OCR 误报、hue 绝对阈、scene_cut 误判、ghosting/pixelate 零覆盖）；
-  修复后须金标复测达 `promote_criteria`（召回≥0.85 且 FPR≤0.15）才可升否决层。
-- L0 确定性预检（时长偏差>2% / 黑帧占比>50% 拒收）已写入 yaml 但未挂进 qc_orch 主流程。
+- J6 v1 规则修复清单（thresholds.yaml `judges.J6_detectors.known_broken_rules`）中，
+  **时序四类已由 J6 v2 换装承接**（2026-09-30，`src/qc_detectors_v2.py`）；2026-10-01 起 v2
+  另支持低运动平台豁免与 known_cuts 切点白名单（均声明制，见 qc_context 契约 1.1 与
+  thresholds.yaml `J6_detectors_v2` 段）。**garble/hue_shift/scene_cut 三类 v1 规则仍未修**；
+  v2 升否决层仍须金标扩样（时序四类 n≥5 + 口播正例）后复测 `promote_criteria`
+  （召回≥0.85 且 FPR≤0.15；当前时序 clip 召回 7/8、C-FPR 0，n=2/类不升）。
+- L0 确定性预检（时长偏差>2% / 黑屏占比>50% 拒收）已于 2026-10-01 挂进 **qc_orch_v2 在线
+  模式**（--clip 默认执行，拒收 exit 4；profile=avatar 按 ceil(expect)+avatar_tail_max_s
+  豁免口播垫尾）。回放模式不检历史片（维持验收口径不变）。
 - gen_local/gen_api 的完整生成路径在 GPU 机器/网关上执行，本机只验证了
   `--validate-only` / `--dry-run` / `make-shots`（生成侧结论以今晚实跑产物为准）。
 - audio 结构化字段只登记不执行（TTS/配音管线未纳入本版）。
-- J7 kimi 金标批未跑（脚本在 `overnight/数据/kimi_work_golden_batch.py`，待补）。
+- J7 kimi 金标批已补跑（2026-09-30，`kimi_grok_基准.md`）；kimi 通道去留终裁待 owner
+  （工程方案v3.1 §7.2 P0-4）。
 
 ## 变更记录
 
 | 日期 | 版本 | 变更 |
 |---|---|---|
 | 2026-09-30 | 1.0 | 首版冻结：三契约 + 四模块 + eval 资产；验收 ACCEPT（§4） |
+| 2026-10-01 | 1.1 | QCReport 契约 1.1：schema_version 放宽为 enum[1.0,1.1]（向后兼容）+ 新增可选 `qc_context{profile,known_cuts,l0_preflight}`；L0 预检挂进 qc_orch_v2 在线模式（拒收 exit 4，avatar 垫尾豁免）；qc_detectors_v2 增低运动平台豁免（声明制）与 known_cuts 白名单；thresholds.yaml v2（E10 判定阈未动）。eval 回归：qc_orch_v2 与 qc_orch v1 双双 ACCEPT 零偏差（deliverables_v3/V3_BATCH1_WORKER_A.md） |

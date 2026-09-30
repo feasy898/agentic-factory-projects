@@ -8,7 +8,9 @@
 # 修改规程：改本文件 = 改判定行为 → 必须重跑 eval_run.py 并在 §结论 复核，
 #       结果退化时回滚（judge基准报告 §7 的扫描表是回滚依据）。
 # =====================================================================
-version: 1
+version: 2                   # 2026-10-01：J6_detectors_v2 增低运动平台豁免/known_cuts；
+                             # l0_preflight 增采样与 avatar 垫尾参数（工程方案v3.1 P0-1/P0-2）。
+                             # E10 合议与全部判定阈未动，eval 回归 ACCEPT 零偏差后方可生效。
 source_report: overnight/judge基准报告.md (2026-09-30)
 
 # ---------------------------------------------------------------
@@ -117,6 +119,11 @@ judges:
       ghost_lap_ratio: 0.85     # lap 支（R3）：线性运动混 blend 的清晰度矩形塌陷
       ghost_lap_out_min: 300.0
       ghost_lap_boundary: 1.15
+      ghost_plateau_in_max: 2.0     # 低运动平台：diff 支窗内帧差中位低于此值 ≈ 编码噪声级残余运动
+                                    # （实测 9/15 avatar 误报 in_med=0.71-1.64；真混叠 golden_034
+                                    #  in_med=0.841/028=0.001 与之交叠——不可作全局豁免阈）
+      ghost_plateau_exempt_profiles: [avatar_talk]   # 声明制豁免名单（上游 --profile 才生效）
+      known_cuts_tol_s: 0.5         # known_cuts 切点白名单容差（junction cut_t ±tol 不报 swap）
       emit_conf: 0.55
     measured_on_golden:         # 2026-09-30 本机实测（数据/j6_v2/results_r3b/_eval_R3b.json）
       a_temporal_clip_recall: 0.625
@@ -143,8 +150,16 @@ eval_admission:
   class_counts: { A: 16, B: 12, C: 12 }
 
 # ---------------------------------------------------------------
-# L0 确定性预检（§11.1：拒收层，沿用 vspec 已验证门槛，本轮未单独测）
+# L0 确定性预检（§11.1：拒收层。2026-10-01 挂进 qc_orch_v2 在线模式：
+#   提供 --clip 即跑，拒收 exit 4 不进 judge；回放模式不检历史片）
 # ---------------------------------------------------------------
 l0_preflight:
-  duration_dev_max: 0.02        # ffprobe 时长 vs spec 偏差 >2% 拒收
+  duration_dev_max: 0.02        # ffprobe 时长 vs spec 偏差 >2% 拒收（default profile）
   black_frame_ratio_max: 0.50   # 黑屏/单色帧占比 >50% 拒收
+  sample_frames: 64             # 黑屏/单色检查的均匀采样帧数（确定性）
+  black_luma_max: 8.0           # 单帧判「黑」的灰度均值上界（0-255）
+  mono_std_max: 2.0             # 单帧判「单色」的像素标准差上界
+  avatar_tail_max_s: 1.0        # profile=avatar 时长豁免：允许窗=[expect×(1-dev), ceil(expect)+本值]
+                                # （数字人实验报告 §7-4：成片时长=ceil(音频时长)+垫尾不是缺陷；
+                                #   实测垫尾 0.4-1.0s，取 1.0 上界）
+  avatar_profiles: [avatar_talk]  # 享受垫尾豁免的 profile 声明名单（声明制，与检测器豁免同名）

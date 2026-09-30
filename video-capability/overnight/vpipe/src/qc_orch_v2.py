@@ -18,11 +18,21 @@ qc_orch_v2.py — 质检编排（检测器规则引擎 + judge 合议）· 模�
   python src/qc_orch_v2.py --online --clip-id X [--clip X.mp4] [--detector-json X.qc.json] \
       [--judge-file J1=p.json ...] [--judge-probs J3=run_metadata.json] --thresholds eval/thresholds.yaml \
       [--out-dir out/qc_reports_online]
+      [--expect-duration S] [--profile avatar_talk] [--known-cuts cuts.json] [--skip-l0]
+
+L0 确定性预检（2026-10-01 接线，工程方案v3.1 P0-2；thresholds.yaml l0_preflight）：
+  在线模式提供 --clip 时默认先跑 L0（拒收层，不进 judge）：
+    ffprobe 时长 vs --expect-duration（偏差 >duration_dev_max 拒）；profile=avatar 时按
+    口播垫尾豁免（允许窗 = [expect×(1−dev), ceil(expect)+avatar_tail_max_s]，数字人实验
+    报告 §7-4：成片时长=ceil(音频时长)+垫尾不是缺陷）；采样帧黑屏/单色占比 >black_frame_ratio_max 拒。
+  拒收 → 写 <out-dir>/<clip_id>.l0.json（含全部实测数字），退出码 4，不跑判官。
+  全部数值只从 thresholds.yaml l0_preflight 段读。
 
 核心签名（SPEC §2.3）：
   run_j6_rules(detector_json, T, n_frames, dur_s) -> (cand, rule_status)
   j3_flag(probs, thr)                             -> (flag, hit_types)
   synthesize_qc_report(...)                       -> dict（纯函数，产出契约 JSON）
+  l0_preflight(clip_path, T, expect_s, profile)   -> (ok, result)（确定性，失败也是数据）
 
 J6 规则引擎重建说明（无旧实现可读，语义从三处合法材料重建）：
   1) eval/thresholds.yaml judges.J6_detectors.rule_params（参数名与 emit_conf）；
@@ -38,8 +48,10 @@ import argparse
 import datetime
 import hashlib
 import json
+import math
 import os
 import statistics
+import subprocess
 import sys
 from pathlib import Path
 
@@ -53,6 +65,11 @@ try:
     import yaml
 except ImportError:  # pragma: no cover
     yaml = None
+
+try:
+    import cv2
+except ImportError:  # L0 黑屏/单色采样用；缺库时该项弃权并记 errors
+    cv2 = None
 
 try:
     import jsonschema
@@ -97,6 +114,95 @@ def load_thresholds(path):
     if yaml is None:
         raise SystemExit("PyYAML 未安装，无法读 thresholds.yaml（判定阈值唯一来源）")
     return yaml.safe_load(Path(path).read_text(encoding="utf-8"))
+
+
+# =====================================================================
+# L0 确定性预检（judge基准报告 §11.1 拒收层；2026-10-01 挂进在线模式）
+# =====================================================================
+def l0_preflight(clip_path, T, expect_s=None, profile=None):
+    """L0 拒收层：ffprobe 时长 vs 期望 + 采样帧黑屏/单色占比。全部阈值只从
+    thresholds.yaml l0_preflight 段读；profile=avatar 按口播垫尾豁免时长判定
+    （数字人实验报告 §7-4：成片时长=ceil(音频时长)+垫尾不是缺陷）。
+    返回 (ok: bool, result: dict)；失败原因在 result["failures"]（失败也是数据）。"""
+    cfg = T.get("l0_preflight") or {}
+    res = {"clip": str(clip_path), "expect_duration_s": expect_s,
+           "profile": profile, "failures": [], "checks": {}}
+    if not cfg:
+        res["skipped"] = "thresholds.yaml 无 l0_preflight 段"
+        return True, res
+    p = Path(clip_path)
+    if not p.exists():
+        res["failures"].append("clip 不存在: %s" % p)
+        return False, res
+
+    # ---- 时长（ffprobe 实测）----
+    dev_max = float(cfg.get("duration_dev_max", 0.02))
+    try:
+        out = subprocess.run(
+            ["ffprobe", "-v", "error", "-show_entries", "format=duration",
+             "-of", "default=nw=1:nk=1", str(p)],
+            capture_output=True, text=True, timeout=60, check=True)
+        dur = float(out.stdout.strip())
+    except Exception as e:
+        res["failures"].append("ffprobe 时长获取失败 (%s: %s)" % (type(e).__name__, e))
+        return False, res
+    dur_chk = {"measured_s": round(dur, 3)}
+    if expect_s is not None and float(expect_s) > 0:
+        exp = float(expect_s)
+        avatar_profiles = [str(x) for x in (cfg.get("avatar_profiles") or [])]
+        if profile is not None and str(profile) in avatar_profiles:
+            tail = float(cfg.get("avatar_tail_max_s", 1.0))
+            lo, hi = exp * (1.0 - dev_max), math.ceil(exp) + tail
+            ok_dur = (lo - 1e-9) <= dur <= (hi + 1e-9)
+            dur_chk.update({"rule": "avatar_tail", "allowed_s": [round(lo, 3), round(hi, 3)],
+                            "avatar_tail_max_s": tail})
+        else:
+            dev = abs(dur - exp) / exp
+            ok_dur = dev <= dev_max
+            dur_chk.update({"rule": "dev_max", "dev": round(dev, 4), "dev_max": dev_max})
+        if not ok_dur:
+            res["failures"].append("L0 时长超差: measured=%.3fs expect=%.3fs rule=%s"
+                                   % (dur, exp, dur_chk.get("rule")))
+    else:
+        dur_chk["skipped"] = "未提供 --expect-duration"
+    res["checks"]["duration"] = dur_chk
+
+    # ---- 黑屏/单色帧占比（均匀采样，cv2 缺库弃权不拦截）----
+    n_samples = int(cfg.get("sample_frames", 64))
+    black_luma = float(cfg.get("black_luma_max", 8.0))
+    mono_std = float(cfg.get("mono_std_max", 2.0))
+    ratio_max = float(cfg.get("black_frame_ratio_max", 0.50))
+    bf = {"n_samples": n_samples, "black_luma_max": black_luma,
+          "mono_std_max": mono_std, "ratio_max": ratio_max}
+    if cv2 is None:
+        bf["skipped"] = "cv2 未安装（黑屏检查弃权）"
+    else:
+        cap = cv2.VideoCapture(str(p))
+        if not cap.isOpened():
+            res["failures"].append("L0 无法打开视频（cv2）: %s" % p)
+            return False, res
+        total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 0
+        idxs = sorted({min(total - 1, int(round(i * (total - 1) / max(1, n_samples - 1))))
+                       for i in range(n_samples)} if total > 0 else [])
+        bad = 0
+        used = 0
+        for fi in idxs:
+            cap.set(cv2.CAP_PROP_POS_FRAMES, fi)
+            ok, frame = cap.read()
+            if not ok:
+                continue
+            used += 1
+            g = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            if float(g.mean()) < black_luma or float(g.std()) < mono_std:
+                bad += 1
+        cap.release()
+        ratio = (bad / used) if used else 0.0
+        bf.update({"used": used, "bad_frames": bad, "ratio": round(ratio, 4)})
+        if used and ratio > ratio_max:
+            res["failures"].append("L0 黑屏/单色帧占比超差: %.3f > %.3f" % (ratio, ratio_max))
+    res["checks"]["black_mono_ratio"] = bf
+
+    return (not res["failures"]), res
 
 
 # =====================================================================
@@ -292,7 +398,8 @@ def j3_flag(probs: dict, thr: float):
 # 报告合成（纯函数）
 # =====================================================================
 def synthesize_qc_report(clip_id, mode, judges_raw, j6_cand, j6_emit, probs,
-                         thr_cfg, ens_id, thresholds_sha, inputs, errors):
+                         thr_cfg, ens_id, thresholds_sha, inputs, errors,
+                         qc_context=None):
     """按 E10（thresholds.yaml ensemble.recommended）合成 QCReport 契约 JSON。
 
     judges_raw: {code -> 原始六字段协议 JSON（一字不改，供 judges.* 嵌套）}
@@ -300,6 +407,8 @@ def synthesize_qc_report(clip_id, mode, judges_raw, j6_cand, j6_emit, probs,
     j6_emit:    过了 yaml emit_conf 的候选 {type -> candidate}
     probs:      J3 九通道概率 dict 或 None
     thr_cfg:    {ensemble_def, j3_thr, auto_reject_p, j6_emit_conf}
+    qc_context: 契约 1.1 可选字段 {profile, known_cuts, l0_preflight}（上游声明上下文，
+                2026-10-01；回放模式不传 = 不落该字段）
     """
     j1 = judges_raw.get("J1")
     e_def = thr_cfg["ensemble_def"]
@@ -410,7 +519,7 @@ def synthesize_qc_report(clip_id, mode, judges_raw, j6_cand, j6_emit, probs,
     overall = probs.get("overall") if probs else None
 
     rep = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "clip_id": clip_id,
         "generated_at": now_iso(),
         "qc_mode": mode,
@@ -438,6 +547,8 @@ def synthesize_qc_report(clip_id, mode, judges_raw, j6_cand, j6_emit, probs,
         "inputs": inputs,
         "errors": errors,
     }
+    if qc_context is not None:
+        rep["qc_context"] = qc_context
     return rep
 
 
@@ -679,6 +790,25 @@ def online(args):
     j6_cand, j6_emit, probs = {}, {}, None
     n_frames, dur_s = 0, 0.0
 
+    # ---- L0 确定性预检（拒收层：失败不进 judge，exit 4）----
+    l0_result = None
+    if args.clip and not args.skip_l0:
+        l0_ok, l0_result = l0_preflight(args.clip, T, args.expect_duration, args.profile)
+        if not l0_ok:
+            out_dir0 = Path(args.out_dir or (HERE.parent / "out" / "qc_reports_online"))
+            out_dir0.mkdir(parents=True, exist_ok=True)
+            fp0 = out_dir0 / ("%s.l0.json" % cid)
+            fp0.write_text(json.dumps(l0_result, ensure_ascii=False, indent=1),
+                           encoding="utf-8")
+            print("=== L0 拒收（不进 judge） === %s" % cid)
+            for f in l0_result["failures"]:
+                print("  [L0-FAIL]", f)
+            print("  证据 ->", fp0)
+            return 4
+        print("=== L0 通过 === %s  %s" % (
+            cid, json.dumps({k: v for k, v in l0_result["checks"].items()},
+                            ensure_ascii=False)))
+
     if args.detector_json:
         try:
             det = load_json(args.detector_json)
@@ -750,8 +880,13 @@ def online(args):
 
     inputs = {"clip": str(args.clip) if args.clip else None,
               "frames_dir": None, "judge_files": judge_files}
+    qc_context = None
+    if args.profile or args.known_cuts_list or l0_result is not None:
+        qc_context = {"profile": args.profile, "known_cuts": args.known_cuts_list,
+                      "l0_preflight": l0_result}
     rep = synthesize_qc_report(cid, "online", judges_raw, j6_cand, j6_emit, probs,
-                               thr_cfg, ens_id, thr_sha, inputs, errors)
+                               thr_cfg, ens_id, thr_sha, inputs, errors,
+                               qc_context=qc_context)
     ok, errs = validate_report(rep)
     out_dir = Path(args.out_dir or (HERE.parent / "out" / "qc_reports_online"))
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -783,7 +918,23 @@ def main():
                     help="J代码=六字段协议JSON 路径，可重复")
     ap.add_argument("--judge-probs", action="append", default=[],
                     help="J代码=概率源JSON（run_metadata 批格式或单片），可重复")
+    ap.add_argument("--expect-duration", type=float, default=None,
+                    help="L0 时长检查的期望时长（秒，来自 shot spec / 音频时长）")
+    ap.add_argument("--profile", default=None,
+                    help="素材 profile（如 avatar_talk）；影响 L0 时长豁免窗，"
+                         "并落入报告 qc_context 供追溯")
+    ap.add_argument("--known-cuts", dest="known_cuts_file", default=None,
+                    help="已知拼接切点 JSON（登记进报告 qc_context.known_cuts；"
+                         "检测器侧豁免由 qc_detectors_v2 --known-cuts 消费同一文件）")
+    ap.add_argument("--skip-l0", action="store_true", help="跳过 L0 预检（默认提供 --clip 即跑）")
     args = ap.parse_args()
+    args.known_cuts_list = []
+    if args.known_cuts_file:
+        raw = json.loads(Path(args.known_cuts_file).read_text(encoding="utf-8"))
+        if isinstance(raw, dict):
+            raw = raw.get("cuts") or []
+        args.known_cuts_list = sorted(float(e["t"]) if isinstance(e, dict) else float(e)
+                                      for e in raw)
 
     if not (args.from_tonight or args.online):
         ap.error("须指定 --from-tonight 或 --online")

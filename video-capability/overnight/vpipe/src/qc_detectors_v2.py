@@ -19,6 +19,15 @@ qc_detectors_v2.py — J6 时序规则 v2：基于帧序列分析的四类时序
   参数唯一来源：--params-yaml 的 judges.J6_detectors_v2 段（缺省用本文件 DEFAULT_PARAMS，
   与 yaml 同名键覆盖）；置信度映射保证真阳候选 ≥ emit_conf。
 
+  2026-10-01 增量（工程方案v3.1 P0-1，QC 机理回填）：
+    * 低运动平台豁免：diff 支凹窗窗内帧差中位 < ghost_plateau_in_max 时恒标注
+      low_motion_plateau；仅当 --profile 声明在 ghost_plateau_exempt_profiles 名单内
+      （如 avatar_talk=口播数字人）才弃权该候选——金标真混叠（golden_034/028）与
+      dh 误报在 in_med 上交叠，绝对阈不可分，豁免必须声明制。
+    * known_cuts 白名单：--known-cuts 传入上游拼接切点，junction cut_t 落入
+      known_cuts_tol_s 容差内不计入 temporal_swap 证据（同人物 A/B 拼接后向重入是必然）。
+    未声明 --profile/--known-cuts 时判定行为与 2026-09-30 版完全一致（已实测回归）。
+
 证据基线（2026-09-30 本机实测，见 overnight/数据/j6_v2/）：
   * 金标 A 类时序 8 条中 5 条注入未生效（017/028 无定格=尾部重复；004/030 无交替=恒定曝光
     偏移；022 与源片逐帧一致）——当晚 QA raw/_aclass_integrity.json 已记 signature_present=false。
@@ -86,11 +95,21 @@ DEFAULT_PARAMS = {
     "ghost_cut_free": 15.0,       # 凹窗内±0.25s 允许的最大帧差（不许含硬切）
     "ghost_interior_s": 0.5,      # 凹窗两端距片头/片尾的最小距离
     "ghost_boundary_ratio": 1.3,  # 凹窗两端外 0.33s 帧差中位 ≥ 窗内×此值（矩形阶跃）
-    "ghost_lap_ratio": 0.85,      # lap 支：窗内 laplacian var 中位 / 窗外 上限（线性运动混 blend→边缘塌陷）
-    "ghost_lap_out_min": 300.0,   # lap 支：窗外 laplacian var 下限（须有纹理可被模糊）
-    "ghost_lap_boundary": 1.15,   # lap 支：两端阶跃比
-    # 输出
-    "emit_conf": 0.55,            # 候选进入 defect_types 的置信度阈（对齐 thresholds.yaml J6 emit_conf）
+      "ghost_lap_ratio": 0.85,      # lap 支：窗内 laplacian var 中位 / 窗外 上限（线性运动混 blend→边缘塌陷）
+      "ghost_lap_out_min": 300.0,   # lap 支：窗外 laplacian var 下限（须有纹理可被模糊）
+      "ghost_lap_boundary": 1.15,   # lap 支：两端阶跃比
+      # 低运动平台豁免（工程方案v3.1 §3.4 机理1，2026-10-01）：说话/静台类素材的自然低运动段
+      # 会被 rect_dip 误读为 blend 混叠。实测（vpipe/out/j6v2_dh_v3base，9/15 avatar 片误报）：
+      # 全部 diff_dip 误报的窗内帧差中位 in_med=0.71-1.64（编码噪声级），但真混叠
+      # golden_034 in_med=0.841 / golden_028 in_med=0.001 与误报区间交叠——绝对阈不可分，
+      # 豁免必须由上游声明 profile（声明制，未声明时行为与原版完全一致）。
+      "ghost_plateau_in_max": 2.0,                       # 窗内帧差中位低于此值 ≈ 低运动平台
+      "ghost_plateau_exempt_profiles": ["avatar_talk"],  # 声明 profile 在名单内才豁免该候选
+      # known_cuts 白名单（工程方案v3.1 §3.4 机理2，2026-10-01）：拼接切点由上游登记，
+      # junction cut_t 落入已知切点 ±tol 不报 temporal_swap（同人物 A/B 拼接后向重入是必然）。
+      "known_cuts_tol_s": 0.5,
+      # 输出
+      "emit_conf": 0.55,            # 候选进入 defect_types 的置信度阈（对齐 thresholds.yaml J6 emit_conf）
 }
 
 TEMPORAL_TYPES = ["frame_freeze", "flicker", "temporal_swap", "ghosting"]
@@ -250,7 +269,7 @@ def _find_cuts(X, P):
     return [grp[int(np.argmax(d[grp[0]:grp[-1] + 1]))] for grp in merged], thr
 
 
-def rule_temporal_swap(X, P, cand):
+def rule_temporal_swap(X, P, cand, known_cuts=None):
     fps, n, d, S = X["fps"], X["n"], X["diff"], X["S"]
     L = max(4, int(round(float(P["reentry_win_s"]) * fps)))
     gap = float(P["reentry_gap_s"]); margin_min = float(P["reentry_margin"])
@@ -274,6 +293,21 @@ def rule_temporal_swap(X, P, cand):
         evs.append({"cut_t": round((i + 1) / fps, 3), "diff": round(float(d[i]), 2),
                     "back_score": round(sc_back, 4), "match_t": round(a / fps, 3),
                     "pre_score": round(sc_pre, 4), "margin": round(sc_back - sc_pre, 4)})
+    # known_cuts 白名单（§3.4 机理2）：上游登记的拼接切点，junction 落入 ±tol 一律不计入
+    # swap 证据（同人物 A/B 拼接的后向重入是结构性必然，非缺陷）。未声明时行为不变。
+    if known_cuts:
+        tol = float(P.get("known_cuts_tol_s", 0.5) or 0.0)
+
+        def _at_known_cut(e):
+            return min((abs(e["cut_t"] - float(k)) for k in known_cuts), default=1e9) <= tol
+
+        dropped = [e for e in evs if _at_known_cut(e)]
+        if dropped:
+            cand.setdefault("_rejected", {})["temporal_swap_known_cuts"] = {
+                "reason": "known_cuts_whitelist", "tol_s": tol,
+                "cutlist": sorted(float(k) for k in known_cuts),
+                "exempted_junctions": dropped}
+            evs = [e for e in evs if not _at_known_cut(e)]
     strong = [e for e in evs if e["margin"] >= margin_min]
     hit = None
     multi = [e for e in strong if e["back_score"] >= float(P["swap_multi_back_min"])]
@@ -358,7 +392,7 @@ def _rect_dips(series, fps, P, dip_ratio_key, out_min_key, boundary_key):
     return best
 
 
-def rule_ghosting(X, P, cand):
+def rule_ghosting(X, P, cand, profile=None):
     fps, d, lap = X["fps"], X["diff"], X["lap"]
     cut_thr = float(P["ghost_cut_free"]); m = int(round(0.25 * fps))
     recs = []
@@ -377,6 +411,20 @@ def rule_ghosting(X, P, cand):
     if not recs:
         return
     best = max(recs, key=lambda r: r["dur_s"])
+    # 低运动平台标注与豁免（§3.4 机理1）：diff 支窗内帧差中位低于 plateau 阈 = 编码噪声级残余
+    # 运动（口播停顿/静台的自然低运动段），恒标注 low_motion_plateau 供人审；仅当上游声明
+    # profile 且在豁免名单内才弃权该候选（声明制——金标 034/028 的真混叠同样低 in_med，
+    # 绝对阈不可分，未声明 profile 时行为与原版完全一致）。
+    plateau = (best["branch"] == "diff_dip"
+               and float(best["in_med"]) < float(P["ghost_plateau_in_max"]))
+    best["low_motion_plateau"] = plateau
+    if plateau and profile:
+        exempt = [str(x) for x in (P.get("ghost_plateau_exempt_profiles") or [])]
+        if str(profile) in exempt:
+            best["rejected_by"] = "low_motion_plateau(profile=%s, in_med=%s < %s)" % (
+                profile, best["in_med"], P["ghost_plateau_in_max"])
+            cand.setdefault("_rejected", {})["ghosting"] = best
+            return
     dip_ratio = float(P["ghost_dip_ratio"]) if best["branch"] == "diff_dip" \
         else float(P["ghost_lap_ratio"])
     conf = 0.55 + 0.25 * min(1.0, (best["dur_s"] - float(P["ghost_min_s"])) / max(float(P["ghost_min_s"]), 1e-6)) \
@@ -388,14 +436,14 @@ def rule_ghosting(X, P, cand):
 # =====================================================================
 # 主分析
 # =====================================================================
-def analyze_clip(clip_path, P):
+def analyze_clip(clip_path, P, known_cuts=None, profile=None):
     t0 = time.time()
     X = read_features(clip_path, P)
     cand = {}
     rule_frame_freeze(X, P, cand)
     rule_flicker(X, P, cand)
-    rule_temporal_swap(X, P, cand)
-    rule_ghosting(X, P, cand)
+    rule_temporal_swap(X, P, cand, known_cuts=known_cuts)
+    rule_ghosting(X, P, cand, profile=profile)
     rejected = cand.pop("_rejected", {})
     emit = float(P["emit_conf"])
     emitted = {t: ev for t, ev in cand.items() if ev.get("conf", 0) >= emit}
@@ -414,6 +462,7 @@ def analyze_clip(clip_path, P):
         "detector": "qc_detectors_v2.py temporal rules (frame-sequence, CPU-only, no VLM)",
         "clip_meta": {"duration_sec": round(X["dur"], 3), "fps": round(X["fps"], 3),
                       "n_frames": X["n"], "width": int(P["feat_width"])},
+        "qc_context": {"profile": profile, "known_cuts": sorted(float(k) for k in known_cuts) if known_cuts else []},
         "temporal_candidates": cand,
         "temporal_rejected": rejected,
         "temporal_protocol": proto,
@@ -432,6 +481,11 @@ def main():
     ap.add_argument("--out-dir", help="批量输出目录")
     ap.add_argument("--params-yaml", help="thresholds.yaml（读 judges.J6_detectors_v2 段，可选）")
     ap.add_argument("--set", action="append", default=[], help="参数覆盖 k=v，可多次")
+    ap.add_argument("--profile", default=None,
+                    help="上游声明的素材 profile（如 avatar_talk=口播数字人）；"
+                         "在 ghost_plateau_exempt_profiles 名单内时低运动平台 ghost 候选豁免")
+    ap.add_argument("--known-cuts", default=None,
+                    help="已知拼接切点 JSON：数字数组或 [{\"t\": 秒, ...}]（temporal_swap 白名单）")
     args = ap.parse_args()
     ov = {}
     for kv in args.set:
@@ -441,16 +495,24 @@ def main():
         except ValueError:
             ov[k] = v
     P = load_params(args.params_yaml, ov)
+    known_cuts = None
+    if args.known_cuts:
+        raw = json.loads(Path(args.known_cuts).read_text(encoding="utf-8"))
+        if isinstance(raw, dict):
+            raw = raw.get("cuts") or []
+        known_cuts = [float(e["t"]) if isinstance(e, dict) else float(e) for e in raw]
     if args.batch:
         if not args.out_dir:
             ap.error("--batch 需要 --out-dir")
         outd = Path(args.out_dir); outd.mkdir(parents=True, exist_ok=True)
         clips = sorted(Path(args.batch).glob("*.mp4"))
         summary = {"judge": "J6 时序规则 v2", "generated_by": "qc_detectors_v2.py",
-                   "params": P, "per_clip": {}}
+                   "params": P,
+                   "qc_context": {"profile": args.profile, "known_cuts": known_cuts or []},
+                   "per_clip": {}}
         for c in clips:
             try:
-                r = analyze_clip(c, P)
+                r = analyze_clip(c, P, known_cuts=known_cuts, profile=args.profile)
                 (outd / f"{c.stem}.qc2.json").write_text(
                     json.dumps(r, ensure_ascii=False, indent=1), encoding="utf-8")
                 summary["per_clip"][c.stem] = r["temporal_protocol"]
@@ -465,7 +527,7 @@ def main():
         log(f"batch done: {len(clips)} clips, detected={nd} → {outd}")
         return 0
     if args.clip:
-        r = analyze_clip(args.clip, P)
+        r = analyze_clip(args.clip, P, known_cuts=known_cuts, profile=args.profile)
         out = args.out or (Path(args.clip).stem + ".qc2.json")
         Path(out).write_text(json.dumps(r, ensure_ascii=False, indent=1), encoding="utf-8")
         log(f"WROTE {out} detected={r['temporal_protocol']['defect_detected']} "
