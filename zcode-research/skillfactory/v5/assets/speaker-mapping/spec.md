@@ -160,8 +160,12 @@ discover `--out` 模式：`[map_speakers.py] INFO: 发现 N 个说话人标签 /
      （未映射标签×次数；empty 组另查「映射键未出现」；出现无法识别的 WARNING 行判败）。
   3. `discover_stats` — 3 个 discover JSON 的 speakers 清单（含首次出现顺序）、
      total_utterances、draft_mapping、transcript 字段形态正确（附录 A.3）。
-  4. `reference_agreement_100pct` — 12 个主产物（9 txt + 3 json）与参照产物逐字节
-     一致，要求 **12/12（100%，无容差）**；参照缺失/损坏判败。
+  4. `reference_agreement_100pct` — 12 个主产物（9 txt + 3 json）与参照产物一致，
+     要求 **12/12（100%）**；参照缺失/损坏判败。比对口径（增补条款 A-2，2026-10-01）：
+     9 个 txt 逐字节无容差；3 个 discover JSON 的 `transcript` 路径回显字段两侧对称做
+     `\\`（JSON 转义的双字符反斜杠）→`/` 归一后比对——基线由 Windows 壳产出、被测
+     可能由 POSIX 壳产出，路径分隔符是壳的平台属性而非工具行为（先例：hotwords
+     contract §A.7 对 cmd.txt 机器相关路径的归一化）；其余字段仍逐字节。
 - **输出**：stdout 打印 `{"ok": bool, "summary": {total, pass, fail, tested_root,
   reference_root}, "checks": [{name, pass, detail}]}`；无时间戳，同输入同输出。
 - **退出码**：0 = 全过；1 = 任一检查失败（含空目录/产物缺失）；2 = 用法错误。

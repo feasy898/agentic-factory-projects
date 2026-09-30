@@ -21,7 +21,10 @@
                                  empty 组另查「映射键未出现」）
   3) discover_stats              3 个 discover JSON 的说话人清单（含首次出现顺序）、
                                  total_utterances、draft_mapping 正确
-  4) reference_agreement_100pct  12 个主产物（9 txt + 3 json）与参照产物逐字节一致，要求 12/12
+  4) reference_agreement_100pct  12 个主产物（9 txt + 3 json）与参照产物一致，要求 12/12
+                                 （增补条款 A-2：discover JSON 的 transcript 路径回显按
+                                 `\\`→`/` 对称归一后比对——基线为 Windows 壳产出的平台
+                                 路径分隔符差异不算行为差异；9 txt 仍逐字节严格比对）
 
 输出：stdout 打印 {"ok": bool, "summary": {total, pass, fail, tested_root, reference_root},
 "checks": [{name, pass, detail}]}；无时间戳，同输入同输出（确定性）。
@@ -40,6 +43,16 @@ MAPPINGS = ("m_full", "m_partial", "m_empty")
 MAP_COMBOS = [(t, m) for t in TRANSCRIPTS for m in MAPPINGS]
 PRIMARY_FILES = ["%s__%s.txt" % (t, m) for (t, m) in MAP_COMBOS] + \
                 ["discover__%s.json" % t for t in TRANSCRIPTS]
+
+
+def _norm_platform(name, data):
+    """增补条款 A-2（2026-10-01，contract v1.1）：discover JSON 的 transcript 字段是路径回显，
+    参照基线（oracle/out）由 Windows 壳产出，路径分隔符为 `\\`（JSON 转义为 `\\\\`）；
+    被测在 POSIX 壳产出为 `/`。对两侧对称做 `\\\\`→`/` 归一后比对，平台分隔符不算行为差异。
+    仅作用于 3 个 discover JSON；9 个 txt 主产物不归一，维持逐字节严格比对。"""
+    if name.startswith("discover__"):
+        return data.replace(b"\\\\", b"/")
+    return data
 
 UNMAPPED_RE = re.compile(r'WARNING: 未映射说话人标签 "([^"]+)"，出现 (\d+) 次')
 UNUSED_RE = re.compile(r'WARNING: 映射键 "([^"]+)" 在转写稿中未出现')
@@ -322,12 +335,12 @@ def check4_agreement(root, ref_root, checks):
         if r_err:
             ref_broken.append("%s: 参照侧 %s" % (name, r_err))
             continue
-        if t_data != r_data:
+        if _norm_platform(name, t_data) != _norm_platform(name, r_data):
             diff.append("%s: %s" % (name, first_diff(r_data, t_data)))
     pairs = len(PRIMARY_FILES)
     match = pairs - len(diff)
     ok = not diff and not ref_broken and match == pairs
-    detail = "与参照产物逐字节一致 %d/%d（100%%，确定性要求）" % (match, pairs)
+    detail = "与参照产物一致 %d/%d（100%%，确定性要求；discover JSON 按 A-2 归一，9 txt 逐字节）" % (match, pairs)
     if diff:
         detail += "，不一致: " + "; ".join(diff)
     if ref_broken:

@@ -1,3 +1,7 @@
+# docker-compose.yml — 由 gen_deploy.py 自动生成（勿手工编辑；调参改 .env 即可）
+# 项目: asr-todo
+# 服务: asr, todo
+
 name: asr-todo
 
 services:
@@ -5,10 +9,11 @@ services:
     image: "${ASR_IMAGE:-placeholder/asr:dev}"
     restart: unless-stopped
     environment:
+      ASR_INPUT_DIR: "${ASR_INPUT_DIR:-./data/incoming}"
       ASR_OUTPUT_DIR: "${ASR_OUTPUT_DIR:-./data/asr-out}"
       ASR_MODEL: "${ASR_MODEL:-base}"
     volumes:
-      - "${ASR_INPUT_DIR:-./data/asr-in}:/data/in"
+      - "${ASR_INPUT_DIR:-./data/incoming}:/data/in"
       - "${ASR_OUTPUT_DIR:-./data/asr-out}:/data/out"
     ports:
       - "${ASR_PORT:-8001}:8000"
