@@ -2,6 +2,8 @@
 
 > 状态：frozen（契约冻结，字段只增不改名）。对照 `masking/{mapper,models,session_store,remap,toolbuf}.py`
 > 逐行核验于 2026-09-30（含 T8.4 容错改形还原增补，`88b176f`/`515d024`/`80d87ae` 三提交）。
+> **2026-09-30 二轮收尾钉死 2 项**（C1 严格口径零行为级裁定）：§2.3 存量双索引保守维护、
+> §6 restore_broke_json 日志器来源（二轮重生成件此项取值分歧，按仓内钉死）。
 > 目标读者：只凭本页 + eval（`evals.m3_masking` 9 检查、`evals.m7_audit` C 节）重建本模块的新 agent。
 
 ---
@@ -120,6 +122,11 @@ placeholder = "〔" + 中文标签 + "·" + digest8 + "〕"      # 例：〔人�
 - 构造形状：`SessionMapper(session_id, key, *, on_insert=None)`；
   `placeholder_for(entity_type, normalized) -> tuple[placeholder, MappingEntry]`；
   `hydrate(entries) -> int`；`purge_expired(cutoff) -> int`；`entries() -> list[MappingEntry]`。
+- **存量双索引的保守维护钉死（2026-09-30 二轮裁定，代码为权威）**：`hydrate` 对已在内存的
+  占位符跳过不覆盖，且对 `(type.value, normalized) → placeholder` 快路径索引用 **`setdefault`**
+  ——同键已映射时**保留首行不覆盖**（mapper.py:254-258）；`purge_expired` 删快路径索引键
+  **仅当其当前指向被删占位符**（`self._by_value.get(key) == ph` 才 `del`，mapper.py:267-269）
+  ——同值异占位符（碰撞升位等场景）的另一映射不被级联误删。二轮盲重生成件同项取值一致。
 
 已知改形形态目录（`evals.m3_masking` step `remap:mangled-forms` 冻结 11 形态 + 4 负例，
 构造样本直测、不依赖模型随机性）：verbatim / backtick-wrap（反引号在括号**外**，属普通文本
@@ -225,6 +232,11 @@ T8.4 起改形形态同样逐条以 2 个随机种子走流式还原全等断言
   只发生在字符串字面量内部）；还原改变了串且原串可 JSON 解析、还原后不可解析 → 记结构化
   warning（`toolbuf.restore_broke_json`）但**保留还原结果**（占位符→原值是正确语义，不回退）；
   纯文本非 JSON 参数照常替换、无占位符原样返回（:64-75）；
+  **该告警的日志器钉死（2026-09-30 二轮裁定，代码为权威）**：取 M0 结构化日志入口
+  `from common.logs import get_logger` + `log = get_logger(__name__)`（toolbuf.py:34,39），
+  即 JSON 行格式 / UTC 时间戳 / 零明文红线随 `common/logs.py` 骨架（common/logs.py:77）；
+  **不得**直接 stdlib `logging.getLogger` 裸取——二轮盲重生成件同项取了后者（分歧登记，
+  重生成/复刻必须随仓内）。
 - 与流式文本还原的分工：文本流必须在线放行（状态机缓冲）；参数流允许整段 hold 到
   finish，拼接视角逐字相等，整段 restore 与"逐块还原"严格等价——后者正是占位符被
   切进两个 arguments 增量时漏配的根源。冻结验收含：显式两块切分全扫描（切点扫过全部
