@@ -33,11 +33,12 @@ exit 0 = 通过。M9 全量口径（开发指令 §6：四页 GET 200 + 探针�
    部门 Key 选择器 + x-anongw-session-id 续接口；
 12. GET /webui/dashboard（T5.2 看板页）空库零态渲染：200，指标卡三槽位、
    <svg> 柱状图、审计明细空态提示在位；
-13. 看板页数据渲染（23 条 seeded 混合事件注入内存审计）：指标卡数值
-   （今日请求/今日拦截/累计/拦截率）与注入事实一致；三张手写 SVG 柱状图
-   渲染（路由分布/Top 部门/命中类别）；BLOCK 行带 route 徽标
-   （badge-block）；明细分页：page=1 显示 10 行 + 下一页，page=2 行集
-    不同，page=999 钳位到末页，page_size=50 全量单页。
+13. 看板页数据渲染（23 条 seeded 混合事件注入内存审计）：以注入前看板 KPI
+   为基线做**快照增量断言**（总量=基线+23；今日口径按种子事件自身 UTC
+   日期计算期望增量——复跑/共享审计面/跨午夜回看窗口均不影响）；三张
+   手写 SVG 柱状图渲染（路由分布/Top 部门/命中类别）；BLOCK 行带 route
+   徽标（badge-block）；明细分页：page=1 显示 10 行 + 下一页，page=2
+   行集不同，page=999 钳位到末页，page_size=50 全量单页。
 14. 聊天页 SSE 兼容（真实流式闭环）：临时端口起 mock 上游 + 网关实例
     （真实 config 语义 + 部门 Key）→ POST /v1/chat/completions
     stream=true（seeded PII prompt）→ 200 text/event-stream、
@@ -347,8 +348,17 @@ def _seed_audit_events(store: InMemoryAuditStore, n: int = 23) -> list[AuditEven
 
     时间/编号按 i 递增（后写更新），部门计数确定：民政局 10 > 县政府办 7 > 某镇 6
     （Top 部门断言确定）；路由计数确定：INTERNET/GOVCLOUD 各 8、BLOCK 7。
+
+    跨日钳位：回看 40 分钟若越过 UTC 午夜（如 00:2x 跑门链时 base=昨日 23:4x），
+    整批种子钳到「今日 00:00:01」起——种子恒全部落在今日，看板今日口径的期望
+    增量恒为全量（渲染端 daily_kpi 不过滤未来时间戳，分页纯按 ts 排序，均不受
+    影响）。日期边界不再影响断言。
     """
     base = datetime.now(UTC) - timedelta(minutes=40)
+    midnight = datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0) \
+        + timedelta(seconds=1)
+    if base < midnight:
+        base = midnight
     events: list[AuditEvent] = []
     for i in range(n):
         route = ("INTERNET", "GOVCLOUD", "BLOCK")[i % 3]
@@ -377,20 +387,46 @@ def _page_rows(html: str) -> list[str]:
 
 
 def check_webui_dashboard_render(app: Any, store: InMemoryAuditStore) -> str:
-    """看板页数据渲染断言（T5.2）：注入 23 条事件后分页渲染 + KPI + 三图 + 徽标。"""
-    _seed_audit_events(store, 23)
+    """看板页数据渲染断言（T5.2）：注入 23 条事件后分页渲染 + KPI + 三图 + 徽标。
+
+    KPI 用**快照增量**口径：注入前先取基线，断言「总量 = 基线 + 23」「今日口径
+    增量 = 按种子事件自身 UTC 日期算出的期望」双口径——绝对计数会被审计面的
+    历史/并发写入与跨午夜回看窗口打挂（首轮过、复跑挂的隔离缺陷），增量口径
+    对二者皆稳。种子时间戳已钳位到今日（见 _seed_audit_events），期望增量恒为
+    全量 23/7、拦截率恒 30.4%；期望值在**渲染后读取时点**按事件日期重算，
+    即使渲染与断言之间恰好跨过午夜，两侧「今日」口径仍一致。
+    """
 
     def _kpi(html: str, kpi_id: str) -> int:
         m = re.search(rf'id="{kpi_id}">(\d+)<', html)
         assert m, f"指标卡 {kpi_id} 缺失或不含数值"
         return int(m.group(1))
 
-    # ── 指标卡：与注入事实逐项一致 ──
+    # ── 基线快照：注入前看板 KPI（本 app 进程内独享 store，基线通常为 0；
+    #    断言只看增量，审计面有任何历史事件时同样成立） ──
+    base_html = _get(app, "/webui/dashboard").text
+    base_total = _kpi(base_html, "kpi-total")
+    base_today = _kpi(base_html, "kpi-today-total")
+    base_blocked = _kpi(base_html, "kpi-today-blocked")
+
+    events = _seed_audit_events(store, 23)
+
+    # ── 指标卡：增量与注入事实逐项一致（总量口径 + 今日口径） ──
     html = _get(app, "/webui/dashboard").text
-    assert _kpi(html, "kpi-today-total") == 23, "今日请求数不符"
-    assert _kpi(html, "kpi-today-blocked") == 7, "今日拦截数不符"
-    assert _kpi(html, "kpi-total") == 23, "累计事件数不符"
-    assert "30.4%" in html, "今日拦截率（7/23）不符"
+    # 期望增量按种子事件自身 UTC 日期在渲染后读取时点统计（与 daily_kpi 同
+    # 「今日」口径）：即使渲染与断言之间恰好跨过午夜，两侧口径仍一致。
+    today = datetime.now(UTC).date()
+    expected_today = sum(1 for ev in events if ev.ts.astimezone(UTC).date() == today)
+    expected_blocked = sum(1 for ev in events
+                           if ev.blocked and ev.ts.astimezone(UTC).date() == today)
+    assert _kpi(html, "kpi-today-total") == base_today + expected_today, \
+        "今日请求数增量不符"
+    assert _kpi(html, "kpi-today-blocked") == base_blocked + expected_blocked, \
+        "今日拦截数增量不符"
+    assert _kpi(html, "kpi-total") == base_total + len(events), \
+        "累计事件数增量不符（总量口径应为基线+注入数）"
+    rate = round(expected_blocked * 100 / expected_today, 1) if expected_today else 0.0
+    assert f"{rate}%" in html, f"今日拦截率（{expected_blocked}/{expected_today}）不符"
     assert 'id="kpi-today-blocked"' in html
 
     # ── 三张手写 SVG 柱状图 ──
@@ -418,13 +454,15 @@ def check_webui_dashboard_render(app: Any, store: InMemoryAuditStore) -> str:
 
     page_clamp = _get(app, "/webui/dashboard?page=999").text
     rows3 = _page_rows(page_clamp)
-    assert len(rows3) == 3 and rows3[0] == "req_m9_02", f"越界页码应钳位到末页: {rows3}"
-    assert "共 23 条" in page_clamp
+    assert len(rows3) >= 3 and rows3[0] == "req_m9_02", f"越界页码应钳位到末页: {rows3}"
+    assert f"共 {base_total + len(events)} 条" in page_clamp
 
     page_big = _get(app, "/webui/dashboard?page=1&page_size=50").text
-    assert len(_page_rows(page_big)) == 23, "page_size=50 应单页全量"
-    return ("23 事件：KPI 23/7/23+30.4%；三 SVG 图（部门 Top=民政局/三路由）；"
-            "badge 徽标在位；分页 10/10/3 + page=999 钳位 + page_size=50")
+    assert len(_page_rows(page_big)) == base_total + len(events), "page_size=50 应单页全量"
+    return (f"基线 {base_total} + Δ{len(events)}：KPI 今日 {expected_today}/"
+            f"{expected_blocked}、累计 {base_total + len(events)} +{rate}%；"
+            "三 SVG 图（部门 Top=民政局/三路由）；badge 徽标在位；"
+            "分页 10/10/3 + page=999 钳位 + page_size=50")
 
 
 def check_webui_dashboard_initial(app: Any) -> str:
