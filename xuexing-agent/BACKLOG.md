@@ -197,7 +197,20 @@
   无 XX_LLM_API_KEY/STEPFUN_API_KEY，冒烟真调未执行、如实留待有 key 会话）；
   已登记 run_contract 与根 conftest MODULES；全套 586 测试+1 skip +
   validate_knowledge --min-items-per-kp 3 + run_contract 参考实现（EXIT=0）全绿）
-- [ ] **mm_ingest 拍照录入管线**：image → VLM 结构化转写（题号→学生答案 JSON，schema 冻结）→ 确定性校验（题号∈卷面、答案形态）→ grading.grade_to_response；低置信进人机协同复核队列
+- [x] **mm_ingest 拍照录入管线**：image → VLM 结构化转写（题号→学生答案 JSON，schema 冻结）→ 确定性校验（题号∈卷面、答案形态）→ grading.grade_to_response；低置信进人机协同复核队列
+  （完成于本轮，待主会话提交：src/xuexing/mm_ingest.py（确定性内核：卷面题号 1..N
+  与 omr_sheet/paper_layout 同编号语义；学生面卫生 prompt——只含题号/题型/choice
+  标签，绝不含题干/答案/解析/选项正文；转写 schema 三键必填解析、花括号切片容忍
+  围栏与闲话；路由优先级冻结 unknown>duplicate>low_confidence>answer_form，空白交
+  grader(item,None) 不伪造作答、缺号恒进复核队、responses 恒按题号升序；VLM client
+  与判分器均为注入鸭子参数，模块间零 import，一致性由契约测试跨模块锁定
+  mm_client.IMAGE_MIME 键集 / omr_sheet.parse_option 标签列 / grading.grade_to_response
+  判分等值 / omr_sheet 未涂语义 / MMClient+MockTransport 端到端线上 prompt 逐字节）
+  + specs/drafts/mm_ingest.spec.md + tests/contract/test_mm_ingest_contract.py
+  （26 项，自封闭全 mock 零网络，闭式现算核实）；已登记 run_contract 与根 conftest
+  MODULES；全套 612 测试 + 1 skip + validate_knowledge --min-items-per-kp 3
+  （321/321 dual-agent-verified 保留）+ run_contract 参考实现 / --impl-dir 注入
+  （mm_ingest 单模块）全绿）
 - [ ] **tts_reader 语音读题**：题干+选项 → TTS 音频（低龄/无障碍），缓存键=题目id+voice，接口可注入 MockTTS
 - [ ] **asr_answer 口述作答**：学生语音 → ASR 文本 → grading 数值判分衔接
 - [ ] **mm_grade VLM 辅助判分**：主观解答题的分步给分建议（规则冻结）→ 人机协同复核闭环
