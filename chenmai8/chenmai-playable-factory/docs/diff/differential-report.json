@@ -1,0 +1,136 @@
+{
+  "task": "D1 oracle 差分终审（模式 M 批次 3）",
+  "generatedAt": "2026-09-30T06:48:16.284Z",
+  "inputs": {
+    "oracle": "D:/workspace/澄迈8项目/可玩的小游戏广告/repo（封存只读；经冻结 venv CLI 子进程驱动，本会话对 repo 零写入）",
+    "factory": "D:/workspace/澄迈8项目/可玩的小游戏广告/factory（批次 1+2 全绿基础上差分）",
+    "oracleFreshMatrix": "factory/tmp/diff/oracle-matrix（本会话新跑 48 格 0 FAIL）"
+  },
+  "ledger": [
+    {
+      "id": "PKG-01",
+      "classification": "consistent",
+      "dimension": "F2/D2 辅助",
+      "detail": "48/48 格结构等价（包文件集/manifest 键集与语义字段/zip 条目名+顺序精确相等/tar.exe 独立解包/零外链/mraid 渠道语义/入口脚本标记/大小 ±5%）；字节级不等为模板重写预期，大小差 max 0.051%（±5% 线内）；字节全等格 0/48",
+      "evidence": "tmp/diff/d1-packages-evidence.json"
+    },
+    {
+      "id": "PKG-02",
+      "classification": "nonpre-diff",
+      "dimension": "F2（manifest 字段语义）",
+      "detail": "mintegral 8 格 pack-manifest.warnings：oracle=[\"dist 内没有外链 <script>，build.js 为空占位\"]（repo/packages/packager/src/html.mjs:167 的提示性告警），factory=[]（factory/packages/packager/src/html.mjs 保留 srcset/type=module 两条告警、未移植此条，factory 文档无此变更记录）。产品字节无影响（build.js 55B 占位两侧逐字节相同）。不在 P1-P6 预declare 清单；不触 D1-D9 任一硬线（D2 的 46 断言不含 warnings 内容断言，已实跑全过）。按决策 §3.4/批次 3 出口门处置：修复（移植该告警）或台账登记",
+      "evidence": "tmp/diff/d1-packages-evidence.json；两仓 packages/packager/src/html.mjs 对照"
+    },
+    {
+      "id": "PKG-03",
+      "classification": "consistent",
+      "dimension": "F2（实现内两次构建字节一致）",
+      "detail": "oracle 与 factory 各以冻结 CLI（模板 build.mjs + packager bin.mjs build）同输入同路径构建两遍：index.html 与 pack-manifest.json 逐字节相同（tiktok zip 渠道，d3 pack-repro 双实现均字节一致）",
+      "evidence": "tmp/diff/d1-packages-evidence.json (repro)；tmp/diff/d3-cli-noBrowser-evidence.json (pack-repro)"
+    },
+    {
+      "id": "QC-01",
+      "classification": "consistent",
+      "dimension": "F3/D5（其余腿）",
+      "detail": "交叉质检矩阵 48 格补全（M2.2 的 4 件为 N(B) 腿，本差分补全 N(A)/O(B) 两腿共 96 跑真实浏览器质检，墙钟 0.4s 计费口径为续跑段）：qacore_N(B)≡qacore_O(B) 48/48 逐 CHK 全等 ✓；qacore_N(B) 0 fail 48/48 ✓；facts 键集合（顶层/muteLoadTime/viewport_shots.portrait）48×2 全等 ✓；load_ms/endMs 同量级带外 0 处",
+      "evidence": "tmp/diff/crossqc/crossqc-evidence.json（NA/OB 报告全量留存）"
+    },
+    {
+      "id": "QC-02",
+      "classification": "regression",
+      "dimension": "F3/D5（N(A) 腿 CHK04）",
+      "detail": "qacore_N(A) ≢ qacore_O(A)：新判官在 oracle 产物上逐 CHK 与 oracle 判官判定不等 43/48 格，不等项全部为 CHK04（首交互前静音）：N=fail / O=pass（例：\"首交互前存在 running AudioContext（1）\" vs O 同产物同探针读数 0）。已排除Harness 干扰：solo 复现 N 3/3 fail、O 3/3 pass（tmp/diff/e3a*-n-*.json、e3b-o-solo.json）；探针 PROBE_JS 3119 字符两侧逐字节一致；playwright 1.63.0 双侧默认 chromium 开关字节一致；engine bundle（含 +100ms suspend→resume 特性）字节一致。根因层：oracle 产物保留引擎真实 AudioContext（无 noAudio），其 running 态在亚秒窗口翻转；新判官（Node 异步 evaluate 链） iteration-1 采样相对翻转时刻比 oracle 判官（Python sync）晚几十毫秒 → 采到 1（43/48），少数格采到 0（5/48 statusEq）。另 E9 实验：非 autoplay 快速质检下 N 判官在同一 factory 产物上 4/4 读 PF.isMuted()=None（判 fail），O 判官读 true（pass）——同族时序竞态（hook 注入微秒级延后即可翻转，tmp/diff/e10b-n-traced.json）。处置建议（决策 §3.3/R4/R5）：N 判官采样时序语义需对齐 oracle（或 qacore 槽位按 R4 回退 oracle 混线），本报告按硬线如实登记",
+      "evidence": "tmp/diff/crossqc/crossqc-evidence.json；factory/tmp/diff/e3a*-*.json、e3b-o-solo.json、e9-n-*.json、e10b-n-traced.json、trace-n*.json；两仓 qacore checks 逐条对照（repo/python/qacore/checks.py:97-124 ↔ factory/qacore/src/checks.ts）"
+    },
+    {
+      "id": "CLI-A",
+      "classification": "consistent",
+      "dimension": "F7",
+      "detail": "20 组同输入探针：无浏览器组（validate 11 件/glob/用法、make、packager、字节复现）。双实现同判",
+      "evidence": "tmp/diff/d3-cli-noBrowser-evidence.json"
+    },
+    {
+      "id": "CLI-B",
+      "classification": "regression",
+      "dimension": "F7",
+      "detail": "25 组同输入探针：浏览器组（qacore 0/1/2、serve）。不等 1 组：qc-pair:pass-artifact(0) —— exit 不等 N=1 O=0（QC-02 同族 CHK04 时序竞态的非 autoplay 表现；用法类退出码经手工复核全等：oracle `python -m qacore run` 无参数实测 exit 2 = factory 2）",
+      "evidence": "tmp/diff/d3-cli-browser-evidence.json"
+    },
+    {
+      "id": "M1-01",
+      "classification": "consistent",
+      "dimension": "F1/D1",
+      "detail": "F1 校验裁定 11 件（golden×4+demo-zh+bad×6）：新 TS 校验器 vs oracle JS 镜像 vs oracle Python 权威 三方 ok + issue 集 {path,code} 全等 = 11/11",
+      "evidence": "factory/artifacts/diff/M1.2a-spec-eval.json（本会话重跑）"
+    },
+    {
+      "id": "M1-02",
+      "classification": "consistent",
+      "dimension": "F6/D4（M1 子集）",
+      "detail": "F6-M1 数值向量 14 组逐值全等（Lcg/pullpin roles/match3 board+findMove/sort scramble+solved）= true",
+      "evidence": "factory/artifacts/diff/M1.2a-spec-eval.json（本会话重跑）"
+    },
+    {
+      "id": "E2E-01",
+      "classification": "consistent",
+      "dimension": "D7 留痕",
+      "detail": "全量 48 包双实现 0 FAIL：oracle 冻结 e2e 本会话新跑 48/48 pass（0 retried，wall 655.2s，jobs=2）；factory 批次矩阵 48/48 pass（wall 655.3s，jobs=2，retried 7）。同机同并发墙钟差 0.1s（≈持平）",
+      "evidence": "tmp/diff/oracle-matrix/summary.json；factory/artifacts/matrix/summary.json"
+    },
+    {
+      "id": "P1",
+      "classification": "predeclared",
+      "dimension": "预declare",
+      "detail": "可解性单一真源达成：factory/packages/spec/src/invariants.ts:231-246 registerTemplateCheck/listTemplateChecks/clearTemplateChecks 注册制接缝 + validate.ts:52-56 进程内消费（schema→不变式→注册 check，单一 TS 源）；oracle 为 python/pfcore/validation.py 权威 + packages/spec JS 镜像双实现。机制演示（本会话实跑 tmp/p1-demo.mjs）：模板侧 registerTemplateCheck({template:'match3',check}) 后 validateSpec 进程内消费其 issue（ok 翻转）；冻结单测 invariants.test.mjs:196-206 以第 5 玩法 'fifth' 注册断言 listTemplateChecks()==['fifth','match3']——新增玩法只需模板包一处注册。F1 11/11 全等不受影响（M1-01）",
+      "evidence": "factory/packages/spec/src/invariants.ts；factory/packages/spec/test/invariants.test.mjs；factory/tmp/p1-demo.mjs；factory/artifacts/diff/M1.2a-spec-eval.json"
+    },
+    {
+      "id": "P2",
+      "classification": "predeclared",
+      "dimension": "预declare",
+      "detail": "单运行时达成（本机可验部分）：factory 产品树（pf/ qacore/ packages/ webui/ scripts/）0 个 .py、0 处 python 调用（grep 全扫，仅注释提及迁移来源）；本会话全部门/矩阵/CLI 由 node+playwright 驱动，oracle venv 仅作差分参照（决策 §3.1）。『干净 Windows 机两步安装演练』属破坏性验证（需清 factory node_modules），本差分未重复执行——README.md:9 已固化两步安装（npm ci + npx playwright install chromium），此前批次安装即按此完成",
+      "evidence": "grep 实测；factory/README.md:9"
+    },
+    {
+      "id": "P3",
+      "classification": "predeclared（非劣达成；≤250s 目标线未达，降级登记）",
+      "dimension": "预declare",
+      "detail": "P3 判定（给数据）：并行化已实现（两侧 e2e 默认 jobs=4/本机建议 2）；本共享机多代理负载下双方 jobs=2 实测 oracle 655.2s vs factory 655.3s（同条件持平，非劣达成；oracle 留档 422.8s 串行、本会话前 oracle 361.6s 为安静机数据）。决策目标线 48 包 ≤250s 未达（机器负载主导；CHK09 冻结 2.0s 阈值下并发上限 2）。『抽 4 格串行复跑对账』已执行：4/4 pass，逐格 CHK 与批次矩阵全等。『并行失败自动降级串行重判』未实现为自动机制，factory e2e-matrix.mjs 采用同判官抖动单重试（首检 FAIL 至多重跑一次，两跑留痕），48 格 7 格重试后全过——按 P 线未达标降级登记，不阻塞",
+      "evidence": "两仓 scripts/e2e-matrix*；tmp/diff/oracle-matrix/summary.json；factory/artifacts/matrix/summary.json"
+    },
+    {
+      "id": "P3-RUN4",
+      "classification": "consistent",
+      "dimension": "P3 对账",
+      "detail": "抽 4 格（4 模板 × en × applovin）jobs=1 串行复跑：4/4 pass 0 fail，逐格 CHK 状态与批次矩阵报告全等",
+      "evidence": "tmp/diff/rerun4/summary.json"
+    },
+    {
+      "id": "P4",
+      "classification": "predeclared（实质达成；schema 工件未落地，降级登记）",
+      "dimension": "预declare",
+      "detail": "报告 schema 化：report.schema.json 文件在 factory 未创建（全仓 *.schema.json 仅 playable-spec.schema.json）——P4 工件缺失。实质（字段零增删）已达成并有数据：本会话 96 份报告（oracle 新跑 48 + factory 48）字段签名完全单一（顶层/facts/muteLoadTime/viewport_shots.portrait 键集 + CHK01-CHK10 逐项键集，distinct signatures=1），即新判官报告对 oracle 报告字段零增零删。按 P 线降级登记，不阻塞",
+      "evidence": "factory/tmp/diff/crossqc/ 与 factory/tmp/diff/oracle-matrix/ 全部 report.json 签名聚类；factory/packages/spec/playable-spec.schema.json"
+    },
+    {
+      "id": "P5",
+      "classification": "predeclared",
+      "dimension": "预declare",
+      "detail": "zip 交叉验证去 venv 化达成：factory/packages/packager/test/run.mjs:137-141 以系统 tar.exe（bsdtar/libarchive）为独立读取器，CRC 损坏即非零退出；oracle run.mjs:137-155 为 python zipfile+venv 条件分支且带 SKIP 兜底（:155 '[SKIP ] mintegral: python zipfile 交叉验证（未找到 venv python）'）——factory 该 SKIP 分支已删除（grep 零命中），断言总数保持 46（本会话实跑 run.mjs：46/46 PASS exit 0），断言语义保持（条目名/入口引用/CRC）",
+      "evidence": "factory/packages/packager/test/run.mjs（本会话 46/46 PASS）；repo/packages/packager/test/run.mjs:155"
+    },
+    {
+      "id": "P6",
+      "classification": "predeclared（仅登记，不阻塞）",
+      "dimension": "预declare",
+      "detail": "make 墙钟实测（同机串行、--no-serve、en,zh × all 渠道、含首个 single-html 渠道 qacore --autoplay）：factory 38s vs oracle 40.5s（本会话同条件复测；oracle 留档 28.9s 见 repo/docs/assets/specs/pipeline-contract.md §5）。判定：factory ≤ oracle 留档 28.9s → 未达 28.9s，按决策 P6 仅登记不阻塞；factory vs oracle 同条件 更快/持平。demo-prebuilt+二维码随 make 产出（factory 已产出）",
+      "evidence": "tmp/diff/p6-make-walls.json（含双方 make stdout 计时行原文）"
+    }
+  ],
+  "summary": {
+    "regressions": 2,
+    "nonPreDiffs": 1,
+    "predeclaredJudged": 10,
+    "pass": false
+  }
+}
