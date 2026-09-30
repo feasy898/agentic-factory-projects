@@ -173,3 +173,18 @@
   （✅ 完成于 2026-09-29 夜，v0.2.0：8/8 规格经对抗评审冻结（43 处问题修订，specs/frozen/ 共 16 份），
   每模块连续 3 轮独立重生成 100% 通过契约测试（相似度 0.05–0.55 无抄袭，world.run 门控），
   终版实例一次性通过契约+集成+数据联合门后替换 src/xuexing/，558 测试全绿，tag v0.2.0）
+
+## P3（第三波，多模态 + 知识全量注入）
+
+> 多模态 API 能力矩阵见 docs/multimodal-api.md（阶跃 step-5-preview 视觉/TTS/ASR 实测可用）。
+> 凭据纪律：key 只从环境变量 STEPFUN_API_KEY/XX_LLM_API_KEY 读，端点白名单（https+api.stepfun.com+解析IP阻断私网），
+> 冒烟默认关闭（XX_MM_SMOKE=1 才真调）。内容生成（命题/教研）用 step API，代码实现用常规工作流子代理。
+
+- [ ] **mm_client 多模态客户端**：src/xuexing/mm_client.py 封装 chat/vision/tts/asr 四能力（端点白名单+key纪律+LLMError），契约测试全 mock，XX_MM_SMOKE=1 冒烟真调
+- [ ] **mm_ingest 拍照录入管线**：image → VLM 结构化转写（题号→学生答案 JSON，schema 冻结）→ 确定性校验（题号∈卷面、答案形态）→ grading.grade_to_response；低置信进人机协同复核队列
+- [ ] **tts_reader 语音读题**：题干+选项 → TTS 音频（低龄/无障碍），缓存键=题目id+voice，接口可注入 MockTTS
+- [ ] **asr_answer 口述作答**：学生语音 → ASR 文本 → grading 数值判分衔接
+- [ ] **mm_grade VLM 辅助判分**：主观解答题的分步给分建议（规则冻结）→ 人机协同复核闭环
+- [ ] **知识注入第三波·初中加深**：题库 321→1000+（每 KP 6-10 题）、误解 202→300+、母题 52→100+，双代理复验回填
+- [ ] **学段扩张·小学 1-6 年级数学**：图谱~80 KP（低龄策略：游戏化优先）+ 基础题库~200 + 误解库，validate_knowledge 覆盖
+- [ ] **冻结契约第三波 + 终版入库 v0.3.0**
