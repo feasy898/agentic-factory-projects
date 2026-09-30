@@ -11,8 +11,9 @@
 **做**：任意输入 → 规范化媒体三件 + probe.json + 原件收件（工作区自含）。只读写 `00_raw/` 与 `01_media/`。
 **不做**：不分离（M3）、不识别（M4）、不做精响度两通归一（成片级归一属 M9；此处只做摄取级基础归一）。
 
-**收件先行**：输入原件先 `shutil.copy2` 进 `00_raw/input.mp4`，此后视频/音频两路处理**一律以收件副本为
-输入**（重放不依赖外部路径）。收件幂等：源路径与收件路径解析为同一下时跳过复制。
+**收件先行**：输入原件先 `shutil.copy2` 进 `00_raw/input.mp4`，此后**源探针与视频/音频两路处理一律以
+收件副本为输入**（重放不依赖外部路径）。收件幂等：源路径与收件路径解析为同一下时跳过复制；
+收件副本意外缺失时源探针回退探原路径（防御分支，二轮回填）。
 
 ## 2. 对外契约
 
@@ -25,7 +26,8 @@
   - **顶层** `loudness_lufs`（float）——**不在 media 段内**。
 - 缺省兜底（media 段或键缺失时）：`_DEFAULT_MEDIA = {width:1080, height:1920, fps:25,
   audio:{asr_sr:16000, mix_sr:48000}}`、`_DEFAULT_LUFS = -16.0`；合并语义 = media 段先浅合并、
-  `audio` 子字典再合并（部分覆盖合法）；`loudness_lufs` 键缺失取 -16.0。
+  `audio` 子字典再合并（部分覆盖合法）；`loudness_lufs` 键缺失**或值为 0 等 falsy** 时取 -16.0
+  （`cfg.get("loudness_lufs") or _DEFAULT_LUFS` 语义，二轮回填）。
 - 编码参数**不是配置键**，是代码常量：libx264 **crf 18 / preset veryfast**；loudnorm 目标
   `TRUE_PEAK_DBTP = -1.5`、`LRA = 11.0`（模块级常量，M9 直接 import 复用）；容器内音轨 AAC 192k/48k/立体声。
 - 读取助手行为契约（`pipeline/config.py`，冻结测试 import 面，逐名）：
