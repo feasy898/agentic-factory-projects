@@ -1,14 +1,27 @@
 # Dependencies
 node_modules/
+.npm/
+package-lock.bak
 
 # Build output
 dist/
 build/
 *.tsbuildinfo
 
+# DevEco / hvigor（鸿蒙侧构建产物）
+app/build/
+app/oh_modules/
+app/entry/build/
+app/entry/oh_modules/
+app/.hvigor/
+app/local.properties
+**/.cxx/
+*.hap.sig
+
 # Caches
 .npm/
 cache/
+.mimosa/
 
 # Logs
 *.log
@@ -22,3 +35,10 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# Secrets（任何真实凭据不得入库）
+*.hwp
+*.cer
+*.p7b
+*.p12
+*.keystore
