@@ -1,0 +1,55 @@
+{
+  "template_id": "store_ambiance_22s",
+  "name_zh": "到店氛围",
+  "duration_range": [20, 25],
+  "orientation": "portrait",
+  "variables": {
+    "store_name": "老灶火锅",
+    "street": "解放西路"
+  },
+  "numbers": {
+    "price": "39.9",
+    "discount": "8.8折"
+  },
+  "scenes": [
+    {
+      "slot": "hook",
+      "narrative_slot": "storefront_night",
+      "duration_sec": 4,
+      "role": "hook",
+      "narration": "{street}上最好认的招牌，{store_name}到了"
+    },
+    {
+      "slot": "ambiance_1",
+      "narrative_slot": "ambiance_scene",
+      "duration_sec": 5,
+      "role": "ambiance",
+      "narration": "推门就是热气和人声，锅底咕嘟咕嘟地等你"
+    },
+    {
+      "slot": "ambiance_2",
+      "narrative_slot": "rain_window",
+      "duration_sec": 4,
+      "role": "ambiance",
+      "narration": "下雨天更要来，玻璃上的雾气都是烟火气"
+    },
+    {
+      "slot": "product",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 5,
+      "role": "evidence",
+      "narration": "锅底是牛油老配方，越煮越香"
+    },
+    {
+      "slot": "cta",
+      "narrative_slot": "cta_store",
+      "duration_sec": 4,
+      "role": "cta",
+      "background": {
+        "type": "solid",
+        "color": "0x7A1F1F"
+      },
+      "narration": "到店报暗号，全场{discount}，人均{price}吃到扶墙"
+    }
+  ]
+}

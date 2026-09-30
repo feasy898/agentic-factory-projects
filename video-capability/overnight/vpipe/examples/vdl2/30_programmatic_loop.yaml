@@ -1,0 +1,267 @@
+# ============================================================================
+# 示例 3/3 · 程序化模板（商品循环展示物料：本地 LTX 草稿 0 积分 + Loop/TextOverlay/
+# DeliverableSet + 槽位全参数化）
+# 依据：VDL_v2_草案.md §4（LoopIntent/TextOverlayIntent/DeliverableSet 行）、
+#       工程方案v3 §2.1（LTX 本地草稿主力 76.7s/条 0 积分 42/42 全成）、§5.1（ffmpeg 合成层
+#       字节级复现）；G2/G3 绕行定稿（小字→程序渲染字牌）。
+# 注：意图全部内嵌（不用 $file）——保证 template.slots[].path 的数组索引稳定可解析。
+# 校验：python src/vdl2/vdl2_validate.py --pkg examples/vdl2/30_programmatic_loop.yaml
+# ============================================================================
+vdl_version: "2.0"
+work_id: product_loop_demo
+created: "2026-09-30T00:00:00Z"
+default_prompt_mode: compiled
+budget:
+  credit_cap_total: 0                    # 程序化模板默认全本地 0 积分链路
+  wallet_check_uri_note: "本地链路无计费；若升 api_h3max 终稿再开预算（280 积分/5s）"
+
+# ---- 模板与槽位（程序化模板：包内可变点全部槽位化）----
+template:
+  template_id: product_loop_9x16_v1
+  description: "竖屏商品循环展示模板：槽位换品即得新物料；本地草稿 + 确定性后处理"
+  slots:
+    - name: product_claim
+      kind: text
+      required: true
+      path: intents[1].diegetic.verbatim        # TextOverlay 逐字受控文案（G2 绕行核心槽）
+      constraints: { max_len: 16 }
+      intent_binding: i-to-loop-0001.diegetic
+      description: "画面内商品标语（程序渲染，逐字受控）"
+    - name: scene_motion
+      kind: text
+      required: true
+      path: shots[0].camera.description
+      description: "场景运镜说明（环绕/平移等）"
+    - name: loop_seconds
+      kind: number
+      required: true
+      path: shots[0].duration_s
+      constraints: { min: 4, max: 15 }           # H3 单段 4-15s；本地 LTX 同界
+      description: "循环时长（秒）"
+    - name: master_width
+      kind: number
+      required: false
+      default: 1080
+      path: deliverable.pixel_map.native_w
+      constraints: { min: 480, max: 2160 }
+      description: "交付像素宽（改槽位即改交付合同）"
+
+# ---- VPO L2 意图 ----
+intents:
+  # [0] CameraIntent：商品环绕
+  - identity: { intent_id: i-cam-loop-0001, version: "1.0.0" }
+    intent_type: vpo:craft.intent_object.camera_intent
+    target: { kind: product, ref: product_demo_01 }
+    scope: { level: vpo:delivery.scope.shot, ref: shot_loop_0001 }
+    temporal_extent: { time_base: { rate_num: 24, rate_den: 1 }, start_frame: 0, end_frame: 192 }
+    reference_context: { prompt_mode: vpo:delivery.prompt_mode.new }
+    predicate: "商品置于转台中心，相机水平环绕一周，光洁表面高光缓慢流动"
+    value: "商品环绕展示镜头"
+    strength: vpo:delivery.strength.must
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    exceptions: []
+    acceptance_ref: "acc-loop-motion-0001:v1.0.0"
+    authority: brand_ops
+    control_channel: [vpo:delivery.control_channel.text]
+    shot_scale: vpo:cine.shot_scale_coarse.medium
+    subject_frame_ratio: vpo:cine.subject_frame_ratio.50pct
+    camera_angle: vpo:cine.angle_coarse.eye_level
+    movement: vpo:cine.movement_primary.orbit
+    movement_direction: vpo:motion.displacement_direction.clockwise   # orbit 缺方向即拒（编译防线）
+    movement_speed: vpo:cine.movement_speed.slow
+    framing_anchor: vpo:cine.framing_anchor.center
+
+  # [1] TextOverlayIntent：字牌绕行（G2 小字 → post_comp 通道）
+  - identity: { intent_id: i-to-loop-0001, version: "1.0.0" }
+    intent_type: vpo:craft.intent_object.text_overlay_intent
+    target: { kind: shot, ref: shot_loop_0001 }
+    scope: { level: vpo:delivery.scope.shot, ref: shot_loop_0001 }
+    temporal_extent: { time_base: { rate_num: 24, rate_den: 1 } }
+    reference_context: {}
+    predicate: "底部标语字牌程序渲染，白字深底描边，逐字受控"
+    value: "商品标语字牌"
+    strength: vpo:delivery.strength.must
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    exceptions: []
+    acceptance_ref: "acc-overlay-verbatim-0001:v1.0.0"
+    authority: brand_ops
+    control_channel: [vpo:delivery.control_channel.post_comp]
+    kind: vpo:style.overlay_kind.lower_third
+    safe_area: { top_pct: 5, bottom_pct: 12, unit: pct }
+    min_font_height_pct: { value: 5.5, unit: pct, measurement_basis: "1080x1920 交付帧高" }
+    contrast_ratio_min: 4.5
+    standard: "WCAG 2.x 4.5:1"
+    diegetic:
+      verbatim: "一秒即热 随行随饮"       # ← 槽位 product_claim
+      surface: "画面底部安全区内"
+      readability_note: "白字深底描边，最小字高按交付帧高 5.5%"
+    typography:
+      render_owner: vpo:delivery.render_owner.post   # 后期烧字（生成侧小字必乱，G2 实测绕行定稿）
+
+  # [2] LoopIntent：无缝循环物料
+  - identity: { intent_id: i-loop-0001, version: "1.0.0" }
+    intent_type: vpo:craft.intent_object.loop_intent
+    target: { kind: work, ref: product_loop_demo }
+    scope: { level: vpo:delivery.scope.work, ref: product_loop_demo }
+    temporal_extent: { time_base: { rate_num: 24, rate_den: 1 } }
+    reference_context: {}
+    predicate: "首尾帧无缝循环，CFR 帧率，闭合 GOP"
+    value: "循环交付形态"
+    strength: vpo:delivery.strength.must
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    exceptions: []
+    acceptance_ref: "acc-loop-motion-0001:v1.0.0"
+    authority: brand_ops
+    control_channel: [vpo:delivery.control_channel.post_comp]
+    mode: vpo:delivery.loop_mode.seamless_file
+    seam_grade: vpo:delivery.seam_grade.good
+    first_last_match_tolerance:
+      motion_px: 6.0
+      unit: px
+      measurement_basis: "1080x1920 交付分辨率"
+      luma_pct: 2.0
+      allowed_dissolve_frames: 0
+    gop_policy: vpo:delivery.gop_policy.closed_idr_start
+    frame_rate_mode: vpo:delivery.frame_rate_mode.cfr
+    tail_trim_policy: vpo:delivery.tail_trim.to_next_gop_boundary
+    audio_encoder_delay_policy: vpo:delivery.audio_delay.compensate_equal_length
+
+  # [3] PostProcessIntent：确定性后处理链（本机 ffmpeg）
+  - identity: { intent_id: i-pp-loop-0001, version: "1.0.0" }
+    intent_type: vpo:craft.intent_object.postprocess_intent
+    target: { kind: shot, ref: shot_loop_0001 }
+    scope: { level: vpo:delivery.scope.shot, ref: shot_loop_0001 }
+    temporal_extent: { time_base: { rate_num: 24, rate_den: 1 } }
+    reference_context: {}
+    predicate: "字牌烧录 + 循环规格转码（CFR/闭合GOP/尾帧裁剪）"
+    value: "循环物料后处理"
+    strength: vpo:delivery.strength.must
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    exceptions: []
+    acceptance_ref: "acc-overlay-verbatim-0001:v1.0.0"
+    authority: brand_ops
+    control_channel: [vpo:delivery.control_channel.post_comp]
+    ops:
+      - op: vpo:delivery.postprocess_op.subtitle_burn
+        params:
+          max_chars_per_line_cjk: { value: 8, unit: chars, measurement_basis: "1080x1920 交付帧" }
+      - op: vpo:delivery.postprocess_op.transcode
+        params:
+          fps: { value: 24, unit: fps, measurement_basis: "源 24fps CFR 保持" }
+          gop_size: { value: 48, unit: frames, measurement_basis: "闭合 IDR 起，2s 一个 GOP" }
+    input_refs: ["clip:shot_loop_0001@local_ltx"]
+    output_kind: vpo:delivery.deliverable_kind.master
+
+# ---- 包级交付合同（DeliverableSet，包级一份）----
+deliverable:
+  identity: { intent_id: i-ds-loop-0001, version: "1.0.0" }
+  intent_type: vpo:craft.intent_object.deliverable_set
+  target: { kind: work, ref: product_loop_demo }
+  scope: { level: vpo:delivery.scope.work, ref: product_loop_demo }
+  temporal_extent: { time_base: { rate_num: 24, rate_den: 1 } }
+  reference_context: {}
+  predicate: "抖音信息流竖屏循环物料交付合同"
+  value: "9:16 循环物料"
+  strength: vpo:delivery.strength.must
+  tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+  exceptions: []
+  acceptance_ref: "acc-overlay-verbatim-0001:v1.0.0"
+  authority: brand_ops
+  control_channel: [vpo:delivery.control_channel.api_param]
+  display_target:
+    venue_class: vpo:delivery.venue_class.online_feed
+    viewing_distance_m: 0.35
+    unit: m
+    measurement_basis: "手持移动端典型观看距离"
+    motion_of_audience: vpo:delivery.audience_motion.stationary
+    ambient_class: vpo:delivery.ambient_class.mixed
+    platform: douyin
+  pixel_map:
+    native_w: 1080                       # ← 槽位 master_width
+    native_h: 1920
+    unit: px
+    measurement_basis: "平台上传规格"
+    aspect_class: vpo:delivery.aspect_class.a9x16
+    scale_policy: vpo:delivery.scale_policy.fit_no_crop
+  encode_contract:
+    container: mp4
+    codec: h264
+    fps: { value: 24, unit: fps }
+    max_bitrate: { value: 8, unit: Mbps, measurement_basis: "平台推荐上限" }
+    max_file_mb: { value: 60, unit: MB }
+    audio_policy: vpo:delivery.audio_policy.silent
+    duration_exact_frames: 192           # 8s×24fps 精确帧数
+  readability:
+    max_words: 12
+    min_stroke_px: { value: 3, unit: px, measurement_basis: "1080x1920 交付帧" }
+    qr_allowed: false
+    contrast_floor: { value: 4.5, unit: ratio, measurement_basis: "WCAG 2.x 对比度" }
+    safe_area_pct: { value: 8, unit: pct }
+  optical:
+    designed_ambient: "混合光照环境（室内/室外）"
+    apl_policy: "全帧 APL ≤ 60%，避免平台转码削高光"
+    night_safe: false
+
+# ---- 执行计划 ----
+shots:
+  - schema_version: "2.0"
+    shot_id: shot_loop_0001
+    axis: OTHER                          # 商品展示非九轴边界测试（自由生成场景填 OTHER）
+    duration_s: 8                        # ← 槽位 loop_seconds
+    aspect: "9:16"
+    resolution: 480P                     # 本地 LTX 实测边界（V100S-32GB fp16 仅 480P）
+    seed: 2026
+    characters: []                       # 无人物：商品主体由 prompt 语义承载
+    camera:
+      movement: orbit
+      description: "商品置于转台中心，相机水平顺时针环绕一周"   # ← 槽位 scene_motion
+    audio: { generate: false, speech: "", music: "" }
+    intent_refs: [i-cam-loop-0001, i-to-loop-0001, i-loop-0001]
+    prompt_mode: compiled
+    engine:
+      channel: local_ltx                 # 本地草稿主力（0 积分 76.7s/条，工程方案v3 §2.1）
+      fallback: [api_h3max]              # 终稿升级链
+      route_rule: G2_post_bypass
+    continuity:
+      link: first_frame_condition        # 循环物料：首帧条件自拍自收（LoopIntent 语义）
+      seed_policy: fix_for_iteration     # 本地通道合法（R2 仅限 api_* 通道；同种子字节级复现实测）
+      lock_restatement: [scene]
+      d3_split_declared: false
+      tail_source: real_rendered
+    cache:
+      strategy: content_fingerprint      # 本地层内容指纹→像素级命中（同种子字节级复现，工程方案v3 §5.1）
+      fingerprint_includes: [prompt_hash, seed, duration_s, aspect, resolution]
+    edit_ops: []
+    acceptance_refs: [acc-loop-motion-0001, acc-overlay-verbatim-0001]
+    budget: { credit_cap_per_shot: 0, max_retries: 3 }   # 本地 0 积分：重试只花电费
+
+# ---- 包级确定性后处理 ----
+post_ops:
+  - intent_ref: i-pp-loop-0001
+    run_after: [shot_loop_0001]
+
+# ---- L4 验收层：执行前冻结 ----
+acceptance:
+  - schema: "https://vpo.example/schemas/v1/l4/acceptance-spec.schema.json"
+    criterion_id: acc-loop-motion-0001
+    version: "1.0.0"
+    intent_path: "i-loop-0001.first_last_match_tolerance"
+    metric: "first_last_frame_match"              # ffprobe/帧差脚本实算（J1 禁口算红线）
+    tolerance:
+      evidence_status: vpo:delivery.evidence_status.prior
+      metric: first_last_frame_delta
+      unit: px
+      upper: 6.0
+      measurement_basis: "1080x1920 交付分辨率帧差"
+    gate: vpo:delivery.gate.flag                  # 循环接缝灰区 → 人工复核
+    detector_id: J6_detectors
+    detector_version: "vpipe1.0"
+  - schema: "https://vpo.example/schemas/v1/l4/acceptance-spec.schema.json"
+    criterion_id: acc-overlay-verbatim-0001
+    version: "1.0.0"
+    intent_path: "i-to-loop-0001.diegetic.verbatim"
+    metric: "subtitle_verbatim_match"             # 确定性烧录逐字核对
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    gate: vpo:delivery.gate.block
+    detector_id: J6_detectors
+    detector_version: "vpipe1.0"

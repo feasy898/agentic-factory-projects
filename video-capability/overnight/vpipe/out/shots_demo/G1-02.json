@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G1-02",
+ "axis": "G1",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "双手十指交叉相扣的特写，手指缓慢收紧，指节分明，浅景深，电影感布光",
+ "seed": 41002,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

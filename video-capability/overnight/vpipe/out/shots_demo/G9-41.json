@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G9-41",
+ "axis": "G9",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "数字人图书馆场景：男学生背着包走向书架停下，踮脚从上层取下一本书，走到桌边坐下翻开阅读",
+ "seed": 41041,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

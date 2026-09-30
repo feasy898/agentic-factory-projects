@@ -1,0 +1,62 @@
+{
+  "template_id": "product_seeding_25s_v2",
+  "name_zh": "产品种草(变体2·虾滑)",
+  "duration_range": [25, 30],
+  "orientation": "portrait",
+  "variables": {
+    "product_name": "手打鲜虾滑",
+    "store_name": "老灶火锅"
+  },
+  "numbers": {
+    "price": "45.9",
+    "offer": "加一元送酸梅汤"
+  },
+  "scenes": [
+    {
+      "slot": "hook",
+      "narrative_slot": "hook_product",
+      "duration_sec": 3,
+      "role": "hook",
+      "narration": "{store_name}的{product_name}，整颗虾仁看得见"
+    },
+    {
+      "slot": "evidence_1",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 5,
+      "role": "evidence",
+      "narration": "手打上千次，弹到能当乒乓球"
+    },
+    {
+      "slot": "evidence_2",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 5,
+      "role": "evidence",
+      "narration": "凌晨到港的鲜虾，只卖当天"
+    },
+    {
+      "slot": "evidence_3",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 5,
+      "role": "evidence",
+      "narration": "红汤里滚三滚，鲜甜全锁住"
+    },
+    {
+      "slot": "ambiance",
+      "narrative_slot": "ambiance_scene",
+      "duration_sec": 4,
+      "role": "ambiance",
+      "narration": "锅里咕嘟咕嘟，人就来劲了"
+    },
+    {
+      "slot": "cta",
+      "narrative_slot": "cta_store",
+      "duration_sec": 3,
+      "role": "cta",
+      "background": {
+        "type": "solid",
+        "color": "0x7A1F1F"
+      },
+      "narration": "今晚只要{price}一位，{offer}，手慢无"
+    }
+  ]
+}

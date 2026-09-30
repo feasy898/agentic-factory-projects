@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G9-40",
+ "axis": "G9",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "数字人居家场景：一名穿米色毛衣的女子走向沙发坐下，从茶几上端起茶杯喝一口再放回，动作流畅",
+ "seed": 41040,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

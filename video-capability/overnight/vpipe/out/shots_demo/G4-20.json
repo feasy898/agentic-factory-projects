@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G4-20",
+ "axis": "G4",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "一排二十张彩色多米诺骨牌，第一张被手指推倒，骨牌依次连锁倒下直至最后一张，微距侧面机位",
+ "seed": 41020,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

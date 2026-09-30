@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G3-12",
+ "axis": "G3",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "俯拍白色瓷砖台面，上面整齐排列着五只一模一样的蓝色马克杯，排成一排，镜头缓慢下降",
+ "seed": 41012,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

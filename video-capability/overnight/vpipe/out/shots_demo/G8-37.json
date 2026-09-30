@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G8-37",
+ "axis": "G8",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "日系剧场版动画风格：电车驶过黄昏的铁路道口，云层细节丰富，光晕弥漫，前景电线杆剪影",
+ "seed": 41037,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G6-27",
+ "axis": "G6",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "镜头从一朵玫瑰花的特写持续拉远，逐渐揭示出整个百花盛开的温室全景",
+ "seed": 41027,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

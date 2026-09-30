@@ -1,0 +1,7 @@
+torch>=2.4
+transformers>=5.0
+peft>=0.15
+accelerate
+safetensors
+pillow
+# video input (mso/video.py) also needs the ffmpeg and ffprobe binaries on PATH

@@ -1,0 +1,19 @@
+{
+  "video_id": "v2_t1_seeding_v1",
+  "template": "product_seeding_30s_v2",
+  "slots": {
+    "hook": "S02",
+    "evidence_1": "S03",
+    "evidence_2": "S04",
+    "ambiance_1": "S09",
+    "ambiance_2": "S07",
+    "offer_1": "S13",
+    "ambiance_3": "S08",
+    "evidence_3": "S17",
+    "evidence_demo": "S18"
+  },
+  "numbers": {
+    "price": "42.8",
+    "offer": "锅底免费续"
+  }
+}

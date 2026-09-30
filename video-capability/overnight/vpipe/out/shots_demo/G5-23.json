@@ -1,0 +1,29 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G5-23",
+ "axis": "G5",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "办公室会议室，红裙女子站立讲解，蓝西装男子坐在桌边提问，镜头从两人侧面缓慢环绕，人物特征保持一致",
+ "seed": 41023,
+ "characters": [
+  {
+   "char_id": "charA",
+   "desc": "25岁亚洲女性「林夏」，齐肩黑色直发，红色连衣裙，气质温和，单人定妆照",
+   "ref_image": "..\\数据\\references_api\\charA_linxia_red_dress.png"
+  },
+  {
+   "char_id": "charB",
+   "desc": "30岁亚洲男性「陈默」，利落短发，深蓝色西装配白衬衫，气质沉稳，单人定妆照",
+   "ref_image": "..\\数据\\references_api\\charB_chenmo_blue_suit.png"
+  }
+ ],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

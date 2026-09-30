@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "vpipe/contracts/shot.schema.json",
+  "title": "ShotSpec",
+  "description": "镜头 spec（冻结契约 v1.0）。vpipe 流水线的统一输入单位：gen_local.py 与 gen_api.py 都只消费本契约的 JSON，禁止读取彼此的内部状态。字段语义见各 description；改动本文件 = 破坏契约，必须走 SPEC.md 的契约冻结流程（升 minor 版本 + 全模块回归 eval_run.py）。",
+  "type": "object",
+  "required": ["schema_version", "shot_id", "prompt", "duration_s", "aspect"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "契约版本。当前冻结版 1.0。不匹配则模块必须拒收（fail fast，不做静默兼容）。"
+    },
+    "shot_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$",
+      "description": "镜头唯一 ID。用于文件名（clip 命名 <shot_id>@<model>.mp4）、manifest 登记、QC 报告回链。禁止中文与空格（跨 Windows/GPU 机器 scp 安全）。"
+    },
+    "axis": {
+      "type": "string",
+      "enum": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "OTHER"],
+      "description": "能力边界测试轴（边界测试方案.md §2.1 的 9 轴）。仅溯源用，不参与生成逻辑。自由生成场景填 OTHER。"
+    },
+    "duration_s": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 15,
+      "description": "目标时长（秒）。本地引擎按 fps 换算帧数（wan: 16fps 4k+1 帧；ltx: 24fps 8k+1 帧），API 引擎原样映射 params.duration（字符串化，H3 限 4-15）。"
+    },
+    "aspect": {
+      "type": "string",
+      "pattern": "^[0-9]+:[0-9]+$",
+      "description": "画幅比，如 \"9:16\" / \"16:9\"。API 引擎直传 params.aspect_ratio；本地引擎按 ratio 推 width/height（详见 gen_local.py 的 aspect→wh 映射表）。"
+    },
+    "resolution": {
+      "type": "string",
+      "enum": ["480P", "768P", "2K"],
+      "default": "480P",
+      "description": "分辨率档。本地引擎目前只支持 480P（V100S 32GB fp16 实测边界，见 overnight/边界报告.md）；768P/2K 仅 API 引擎支持。声明与引擎能力不符时 gen 模块记 capability_mismatch 并按请求方指定的降级策略执行。"
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 7000,
+      "description": "生成 prompt。上限 7000 字 = MiniMax-H3 的实测限制（D:/agent-knowledge/07-minimax-design-api.md §三）。"
+    },
+    "negative_prompt": {
+      "type": "string",
+      "description": "负向 prompt。本地引擎直传；API H3 无此参数（被 DTO 白名单拒绝），gen_api 忽略并记录 ignored_fields。"
+    },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295,
+      "default": 42,
+      "description": "确定性种子。gen_local 恒定使用（torch.Generator.manual_seed）；gen_api 按 state.seed_send_enabled 决定是否随 params 发送（H3 种子控制能力实测见 overnight/数据/api_seed_test.json）。缺省 42。"
+    },
+    "characters": {
+      "type": "array",
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "required": ["char_id"],
+        "additionalProperties": false,
+        "properties": {
+          "char_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{1,32}$",
+            "description": "角色 ID，跨镜头一致性引用键（G5/G7 轴核心）。"
+          },
+          "desc": {
+            "type": "string",
+            "description": "角色外貌描述。定妆照不可得时 gen_api 用它经图像 API 兜底生成（降级路径）。"
+          },
+          "ref_image": {
+            "type": ["string", "null"],
+            "description": "定妆照路径：hub 工作区相对路径（API 引擎）或本地路径（复制进 hub 工作区由 gen_api 负责）。null=无参考图。H3 上限 9 张参考图（手册 §三）。"
+          }
+        }
+      },
+      "description": "出场角色列表。供 gen_api 解析顶层 image_paths（注意：H3 参考图必须走顶层 image_paths，params.reference_images 会被静默忽略——07 手册勘误）；gen_local 在纯 T2V 下忽略本字段。"
+    },
+    "camera": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "movement": {
+          "type": "string",
+          "enum": ["static", "push_in", "pull_out", "pan", "tilt", "tracking", "handheld", "orbit", "other"],
+          "description": "运镜语义标签（G6 轴）。目前仅作 spec 元数据供 QC/报告维度切分；生成侧靠 prompt 文字表达。"
+        },
+        "description": {
+          "type": "string",
+          "description": "运镜自由文本（会拼入 API prompt 的镜头语言描述，如「缓慢推进到面部」）。"
+        }
+      },
+      "description": "运镜描述。写进 prompt 优先，结构化字段只作检索用。"
+    },
+    "audio": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "generate": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否生成音轨。API 映射 params.generate_audio（字符串布尔 \"true\"/\"false\"，H3 原生出声）；本地 Wan/LTX 无音频能力，true 会被记为 engine_unsupported 并忽略。"
+        },
+        "speech": { "type": "string", "description": "台词/旁白文本（本版契约仅登记，不驱动 TTS；预留 H3 音频参考扩展）。" },
+        "music": { "type": "string", "description": "音乐/氛围描述（仅登记）。" },
+        "sfx": { "type": "string", "description": "音效描述（仅登记）。" }
+      },
+      "description": "音频意图。本版契约只登记不执行（夜间测试未覆盖 TTS 管线），字段保留防止未来破契约。"
+    },
+    "engine_hint": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "preferred": {
+          "type": "string",
+          "enum": ["api", "local"],
+          "description": "优先引擎。调度方（人/上层脚本）读它决定调 gen_api 还是 gen_local；两个 gen 模块自身不读不裁。"
+        },
+        "model": {
+          "type": "string",
+          "description": "模型提示：API 侧为 model_id（如 MiniMax-H3 / MiniMax-H3-Max），本地侧为 wan|ltx。"
+        }
+      },
+      "description": "引擎提示（可选）。契约不强制调度行为，只传递意图。"
+    },
+    "notes": {
+      "type": "string",
+      "description": "自由备注，不参与任何生成逻辑。"
+    }
+  }
+}

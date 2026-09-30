@@ -1,0 +1,99 @@
+{
+ "package": "D:\\workspace\\video-capability-research\\overnight\\vpipe\\examples\\vdl2\\99_negative_must_reject.yaml",
+ "compiled_at": "2026-09-30T18:07:22",
+ "compiler": "vdl2_compile.py@vpipe2.0-dev",
+ "ok": false,
+ "errors": [
+  {
+   "code": "GATE_A.structure",
+   "where": "shots/0/duration_s",
+   "msg": "18 is greater than the maximum of 15"
+  },
+  {
+   "code": "GATE_B.intent_content",
+   "where": "intents[1]/<root>",
+   "msg": "Unevaluated properties are not allowed ('acceptance_ref', 'authority', 'control_channel', 'exceptions', 'identity', 'predicate', 'reference_context', 'scope', 'strength', 'target', 'temporal_extent', 'tolerance', 'value' were unexpected)"
+  },
+  {
+   "code": "GATE_B.intent_content",
+   "where": "intents[1]/predicate",
+   "msg": "'违规：用 Wan2.1 生成这个镜头' should not be valid under {'pattern': '(?i)\\\\b(runway|houdini|nuke|after effects|premiere|davinci|resolve|blender|unreal|maya|cinema 4d|c4d|ae\\x08|comfyui|gen-4|gen4|(?:wan|seedance|veo|hailuo|aleph|kling|pika)(?:[\\\\s.-]?[0-9]+(?:\\\\.[0-9]+)?)?|sora|luma|lightwrap|shadow catcher)\\\\b'}"
+  },
+  {
+   "code": "REF.dangling_shot_ref",
+   "where": "intents[2].outgoing_shot_ref",
+   "msg": "outgoing_shot_ref='shot_ghost_9999' 未解析到包内 shot_id（transition 意图跨镜引用）"
+  },
+  {
+   "code": "R1.dangling_postop_ref",
+   "where": "post_ops[0].intent_ref",
+   "msg": "intent_ref='i-not-exist' 未解析到包内 intent_id"
+  },
+  {
+   "code": "REF.dangling_shot_ref",
+   "where": "post_ops[0].run_after[0]",
+   "msg": "run_after='shot_ghost_9999' 未解析到包内 shot_id"
+  },
+  {
+   "code": "R1.dangling_intent_path",
+   "where": "acceptance[0].intent_path",
+   "msg": "intent_path 首段 'i-not-exist' 未解析到包内 intent_id"
+  },
+  {
+   "code": "REF.dangling_slot_path",
+   "where": "template.slots[0].path",
+   "msg": "path='shots[0].not_exist_field' 解析失败：字段 'not_exist_field' 不存在"
+  },
+  {
+   "code": "R1.dangling_intent_binding",
+   "where": "template.slots[0].intent_binding",
+   "msg": "intent_binding 首段 'i-not-exist' 未解析到包内 intent_id"
+  },
+  {
+   "code": "R1.dangling_intent_ref",
+   "where": "shots[0](shot_bad_0001).intent_refs[1]",
+   "msg": "intent_ref='i-not-exist' 未解析到包内 intents[].identity.intent_id"
+  },
+  {
+   "code": "R1.dangling_acceptance_ref",
+   "where": "shots[0](shot_bad_0001).acceptance_refs[1]",
+   "msg": "acceptance_ref='acc-not-exist' 未解析到包内 acceptance[].criterion_id"
+  },
+  {
+   "code": "R2.api_seed_policy",
+   "where": "shots[0](shot_bad_0001).continuity.seed_policy",
+   "msg": "api_* 通道禁 fix_for_iteration（API seed 零控制力实测，工程方案v3 §1；仅本地通道合法）"
+  },
+  {
+   "code": "R2.api_cache_strategy",
+   "where": "shots[0](shot_bad_0001).cache.strategy",
+   "msg": "api_* 通道禁 content_fingerprint（API 层同指纹重提交必然新样本，缓存只命中提交参数层，工程方案v3 §5.3-2）"
+  },
+  {
+   "code": "R3.duration_over_engine_limit",
+   "where": "shots[0](shot_bad_0001).duration_s",
+   "msg": "duration_s=18 超引擎单段上限 15s（H3 4-15s，shot.schema.json:28）"
+  },
+  {
+   "code": "R4.compiled_with_handwritten",
+   "where": "shots[0](shot_bad_0001).prompt",
+   "msg": "prompt_mode=compiled 禁手写 prompt（单一事实源，草案 §3.2 #2/R4）"
+  },
+  {
+   "code": "REF.head_shot_no_prev",
+   "where": "shots[0](shot_bad_0001).continuity.link",
+   "msg": "首镜声明 link=prev_tail_frame，但本镜之前无镜头可取真实尾帧（D3-3）"
+  }
+ ],
+ "warnings": [],
+ "conflicts": [],
+ "outputs": {},
+ "stats": {},
+ "validation": {
+  "ok": false,
+  "gate_a_errors": 1,
+  "gate_b_errors": 2,
+  "total_errors": 16,
+  "warnings": 0
+ }
+}

@@ -1,0 +1,7 @@
+
+---
+
+## V2-M5 收尾（终报与交付定版）
+
+- **D-073** (2026-09-09, V2-M5): whisper-medium.pt 保留裁定。M4 CER medium 复核重新下载的 `~/.cache/whisper/medium.pt`(1.53G, 实测在盘)不删: 当前磁盘 avail 28G > 20G 红线(D-051 口径), 删除收益小, 而后续 CER 复核/同音字争议仲裁还需要它(D-047 先例: medium 同口径复核是 CER 争议的仲裁口径, small 为生产口径)。触发红线时先删它(可再生, ModelScope/hf 通道)。v2 期无其他新增大文件(gallery_v2/夹具索引均为 KB 级文本; overlay 916KB 内 mp4 已随 M3 入库)。
+- **D-074** (2026-09-09, V2-M5): V2-M5 收尾口径。① **pass_candidate 确认清单口径**: 17 条一张清单(`reports/fixtures/CONFIRMATION.md`), A 组 13 条系统判过请确认 + B 组 4 条系统判杀(FX-C001/C002/C003/C010)标"系统判杀请你复核"——把 G7_CALIBRATION §6 的 4 条复核清单与 M0 雏形 INDEX 的 17 条清单合并为唯一人工动作入口, 每条附首/中/尾三联拼图 + mp4 + G7 分数; ② **gallery_v2 组织口径**: v2 期漏网=0(校准 15/15 拦截 + 生产 25/25 过 + 21 帧目检 0 形变)如实声明, 目录定位为"不对称原则的代价侧档案", 收 overlay 审计 FAIL 4 例(判定 5 次/物理失败文件 3 个; mist_cool v1 为重生成功对照, 原件被替换无独立视频, 以 D-069 数字+manifest 现值佐证) + 校准判杀 4 例; 案例媒体**引用库内相对路径不复制**——overlay/夹具 mp4 已随 git 入库(D-053/M3), 与 v1 画廊"媒体不在库内故全量复制"(D-049)的条件不同; ③ `reports/FINAL_REPORT_V2.md` 为 v2 唯一终报入口: 头条数字置顶, 诚实披露 7 条(G7e skipped/G7 集成链假绿修复/overlay 3/6/首轮 100% 良率无产线被杀样本/evidence 演示源非实拍/CER 同音字/两次代理死亡), §9 十项自检逐项带证据路径; ④ 终版产物(`reports/fixtures/INDEX.md`、`CONFIRMATION.md`、`gallery_failures_v2/`)由 `tools/m5v2_build_{fixtures_index,gallery_v2}.py` 幂等生成, 数字实时取自落盘 JSON 不手抄(D-049 精神延续); ⑤ 收尾复测 pytest 309 passed(`workdir/logs/v2m5_pytest.log`)后 commit "V2-M5: FINAL_REPORT_V2 + fixtures index + gallery_v2 + README" 并打 tag **v2.0**。

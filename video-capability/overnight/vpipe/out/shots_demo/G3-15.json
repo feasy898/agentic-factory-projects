@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G3-15",
+ "axis": "G3",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "窗台特写：两只白鸽和一只黑鸽并排落在栏杆上，一共三只鸽子，微风吹动羽毛，浅景深",
+ "seed": 41015,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

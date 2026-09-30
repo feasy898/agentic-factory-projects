@@ -1,0 +1,224 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_030",
+ "generated_at": "2026-09-30T03:57:53",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "manual_review",
+  "confidence": 0.8763,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=True, types=['flicker', 'ghosting'], conf=0.8)",
+   "J3@0.7 flag=True hits=['color_shift', 'ghosting'] max_channel_P=0.8763",
+   "J6 信号(仅信号不否决): garble_text@1.00"
+  ]
+ },
+ "defects": [
+  {
+   "type": "color_shift",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.8763,
+   "evidence": {
+    "J3": {
+     "channel_P": 0.8763
+    }
+   }
+  },
+  {
+   "type": "flicker",
+   "sources": [
+    "J1",
+    "J5"
+   ],
+   "confidence": 0.8,
+   "evidence": {
+    "J1": {
+     "confidence": 0.8,
+     "notes": "实测逐帧亮度[102.6,104.5,73.7,72.3,76.9,76.6,108.6,107.4]中段骤暗后恢复；且各帧白墙/树/花均有双影错位轮廓"
+    },
+    "J5": {
+     "confidence": 0.8
+    }
+   }
+  },
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 1.0,
+   "span": {
+    "start_s": 0.315,
+    "end_s": 0.945
+   },
+   "evidence": {
+    "J6": {
+     "kind": "conf_drop",
+     "drop": 0.605,
+     "frames": [
+      1,
+      0
+     ],
+     "mean_scores": [
+      0.138,
+      0.743
+     ]
+    }
+   }
+  },
+  {
+   "type": "ghosting",
+   "sources": [
+    "J1",
+    "J3"
+   ],
+   "confidence": 0.8226,
+   "evidence": {
+    "J1": {
+     "confidence": 0.8,
+     "notes": "实测逐帧亮度[102.6,104.5,73.7,72.3,76.9,76.6,108.6,107.4]中段骤暗后恢复；且各帧白墙/树/花均有双影错位轮廓"
+    },
+    "J3": {
+     "channel_P": 0.8226
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.4061,
+   "flicker": 0.282,
+   "color_shift": 0.8763,
+   "face_blur": 0.0483,
+   "garble_text": 0.0541,
+   "temporal_swap": 0.299,
+   "pixelate": 0.6715,
+   "ghosting": 0.8226
+  },
+  "overall": 0.7105,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "d39953c05717cdcdeb22b2d586c035538c64c4adf1fb13e671ea4e5a154ae0fd"
+  }
+ },
+ "spans": [
+  {
+   "type": "garble_text",
+   "start_s": 0.315,
+   "end_s": 0.945,
+   "evidence": {
+    "kind": "conf_drop",
+    "drop": 0.605,
+    "frames": [
+     1,
+     0
+    ],
+    "mean_scores": [
+     0.138,
+     0.743
+    ]
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "flicker: f03-f06（视频中段）亮度由~104骤降至~73再回升至~108；ghosting: 全片8帧"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_030",
+   "defect_detected": true,
+   "defect_types": [
+    "flicker",
+    "ghosting"
+   ],
+   "confidence": 0.8,
+   "spans": "flicker: f03-f06（视频中段）亮度由~104骤降至~73再回升至~108；ghosting: 全片8帧",
+   "notes": "实测逐帧亮度[102.6,104.5,73.7,72.3,76.9,76.6,108.6,107.4]中段骤暗后恢复；且各帧白墙/树/花均有双影错位轮廓"
+  },
+  "J5": {
+   "clip_id": "golden_030",
+   "defect_detected": true,
+   "defect_types": [
+    "flicker"
+   ],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[\"flicker\"],\"other\":false,\"reason\":\"帧间画面快速闪烁\"}"
+  },
+  "J3": {
+   "clip_id": "golden_030",
+   "defect_detected": true,
+   "defect_types": [
+    "color_shift",
+    "pixelate",
+    "ghosting"
+   ],
+   "confidence": 0.8763,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.406 flicker=0.282 color_shift=0.876 face_blur=0.048 garble_text=0.054 temporal_swap=0.299 pixelate=0.671 ghosting=0.823; overall=0.711; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_030",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text"
+   ],
+   "confidence": 1.0,
+   "spans": [
+    {
+     "type": "garble_text",
+     "start_s": 0.315,
+     "end_s": 0.945,
+     "evidence": {
+      "kind": "conf_drop",
+      "drop": 0.605,
+      "frames": [
+       1,
+       0
+      ],
+      "mean_scores": [
+       0.138,
+       0.743
+      ]
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_030.mp4",
+  "frames_dir": "frames/golden_030/",
+  "judge_files": {
+   "J1": "..\\数据\\judges\\glm8\\golden_030.json",
+   "J5": "..\\数据\\judges\\videochat3\\golden_030.json",
+   "J3": "..\\数据\\judges\\omnijev\\run_metadata.json",
+   "J6": "..\\数据\\judges\\detectors\\raw\\golden_030.qc.json"
+  }
+ },
+ "errors": {}
+}

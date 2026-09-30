@@ -1,0 +1,187 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_023",
+ "generated_at": "2026-09-30T03:57:53",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "auto_reject",
+  "confidence": 0.9602,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=True, types=['pixelate'], conf=1.0)",
+   "J3@0.7 flag=True hits=['pixelate', 'ghosting'] max_channel_P=0.9602",
+   "J6 信号(仅信号不否决): garble_text@0.85"
+  ]
+ },
+ "defects": [
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.85,
+   "span": {
+    "start_s": 0.0,
+    "end_s": 5.042
+   },
+   "evidence": {
+    "J6": {
+     "kind": "uniform_low_conf",
+     "max_mean": 0.186
+    }
+   }
+  },
+  {
+   "type": "ghosting",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.8736,
+   "evidence": {
+    "J3": {
+     "channel_P": 0.8736
+    }
+   }
+  },
+  {
+   "type": "pixelate",
+   "sources": [
+    "J1",
+    "J3",
+    "J5"
+   ],
+   "confidence": 1.0,
+   "evidence": {
+    "J1": {
+     "confidence": 1.0,
+     "notes": "f01-f02与f07-f08为正常公路红车画面；中段四帧中央出现明显约12px块状马赛克，块内路面标线与车辆碎成色斑，边界清晰；其余各帧无定格/闪烁/色偏"
+    },
+    "J3": {
+     "channel_P": 0.9602
+    },
+    "J5": {
+     "confidence": 0.8
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.1652,
+   "flicker": 0.2134,
+   "color_shift": 0.2978,
+   "face_blur": 0.622,
+   "garble_text": 0.5197,
+   "temporal_swap": 0.455,
+   "pixelate": 0.9602,
+   "ghosting": 0.8736
+  },
+  "overall": 0.7203,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "d39953c05717cdcdeb22b2d586c035538c64c4adf1fb13e671ea4e5a154ae0fd"
+  }
+ },
+ "spans": [
+  {
+   "type": "garble_text",
+   "start_s": 0.0,
+   "end_s": 5.042,
+   "evidence": {
+    "kind": "uniform_low_conf",
+    "max_mean": 0.186
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "f03–f06（约中段，画面中央 x≈230-480 / y≈155-330 大块粗颗粒马赛克）"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_023",
+   "defect_detected": true,
+   "defect_types": [
+    "pixelate"
+   ],
+   "confidence": 1.0,
+   "spans": "f03–f06（约中段，画面中央 x≈230-480 / y≈155-330 大块粗颗粒马赛克）",
+   "notes": "f01-f02与f07-f08为正常公路红车画面；中段四帧中央出现明显约12px块状马赛克，块内路面标线与车辆碎成色斑，边界清晰；其余各帧无定格/闪烁/色偏"
+  },
+  "J5": {
+   "clip_id": "golden_023",
+   "defect_detected": true,
+   "defect_types": [
+    "pixelate"
+   ],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[\"pixelate\"],\"other\":false,\"reason\":\"画面中存在马赛克块状像素化\"}"
+  },
+  "J3": {
+   "clip_id": "golden_023",
+   "defect_detected": true,
+   "defect_types": [
+    "face_blur",
+    "garble_text",
+    "pixelate",
+    "ghosting"
+   ],
+   "confidence": 0.9602,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.165 flicker=0.213 color_shift=0.298 face_blur=0.622 garble_text=0.520 temporal_swap=0.455 pixelate=0.960 ghosting=0.874; overall=0.720; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_023",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text"
+   ],
+   "confidence": 0.85,
+   "spans": [
+    {
+     "type": "garble_text",
+     "start_s": 0.0,
+     "end_s": 5.042,
+     "evidence": {
+      "kind": "uniform_low_conf",
+      "max_mean": 0.186
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_023.mp4",
+  "frames_dir": "frames/golden_023/",
+  "judge_files": {
+   "J1": "..\\数据\\judges\\glm8\\golden_023.json",
+   "J5": "..\\数据\\judges\\videochat3\\golden_023.json",
+   "J3": "..\\数据\\judges\\omnijev\\run_metadata.json",
+   "J6": "..\\数据\\judges\\detectors\\raw\\golden_023.qc.json"
+  }
+ },
+ "errors": {}
+}

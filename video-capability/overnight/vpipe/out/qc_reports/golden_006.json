@@ -1,0 +1,150 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_006",
+ "generated_at": "2026-09-30T03:31:25",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": false,
+  "decision": "pass",
+  "confidence": 0.0,
+  "decided_by": "E10",
+  "reasons": [
+   "E10 未触发：J1 未检出且 J3 无通道 P>0.70"
+  ]
+ },
+ "defects": [
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.6932049194971721,
+   "evidence": {
+    "J6": {
+     "kind": "conf_drop",
+     "conf_src": 0.693
+    }
+   },
+   "span": {
+    "start_s": 2.906,
+    "end_s": 4.844
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.6317,
+   "flicker": 0.2831,
+   "color_shift": 0.5958,
+   "face_blur": 0.1947,
+   "garble_text": 0.0457,
+   "temporal_swap": 0.2881,
+   "pixelate": 0.1141,
+   "ghosting": 0.5963
+  },
+  "overall": 0.5902,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "d39953c05717cdcdeb22b2d586c035538c64c4adf1fb13e671ea4e5a154ae0fd"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "text": "全片 f01-f08（0-5.2s）",
+    "source": "J1"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f01/f05/f08",
+    "source": "J2"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "full_clip:fps=1.0解码",
+    "source": "J5"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_006",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.85,
+   "spans": "全片 f01-f08（0-5.2s）",
+   "notes": "红裙女子花田中转头动作连续自然，8帧间色调/人脸/手部/服装均无异常，未见任何注入缺陷迹象"
+  },
+  "J2": {
+   "clip_id": "golden_006",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.85,
+   "spans": "f01/f05/f08",
+   "notes": "花田红裙女子三帧身份一致、人脸清晰、色彩自然，无可见缺陷"
+  },
+  "J5": {
+   "clip_id": "golden_006",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中人物和背景均无明显异常，帧间过渡自然，无定格、闪烁、偏色、模糊、乱码、错乱、像素化或拖影等缺陷\"}"
+  },
+  "J6": {
+   "clip_id": "golden_006",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text"
+   ],
+   "confidence": 0.693,
+   "spans": [
+    {
+     "type": "garble_text",
+     "start_s": 2.906,
+     "end_s": 4.844,
+     "evidence": {
+      "kind": "conf_drop",
+      "drop": 0.347,
+      "frames": [
+       7,
+       4
+      ],
+      "mean_scores": [
+       0.441,
+       0.788
+      ]
+     }
+    }
+   ]
+  },
+  "J3": {
+   "clip_id": "golden_006",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.6317,
+   "spans": "16帧4x4拼图 9通道概率（run_metadata.json），阈值 0.70",
+   "notes": "frame_freeze=0.632; flicker=0.283; color_shift=0.596; face_blur=0.195; garble_text=0.046; temporal_swap=0.288; pixelate=0.114; ghosting=0.596; overall=0.590"
+  }
+ },
+ "inputs": {
+  "clip": null,
+  "frames_dir": null,
+  "judge_files": {
+   "J1": "..\\数据\\judges\\glm8\\golden_006.json",
+   "J2": "..\\数据\\judges\\glm3\\golden_006.json",
+   "J5": "..\\数据\\judges\\videochat3\\golden_006.json",
+   "J6": "..\\数据\\judges\\detectors\\golden_006.json",
+   "J3": "..\\数据\\judges\\omnijev\\run_metadata.json"
+  }
+ },
+ "errors": {}
+}

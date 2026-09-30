@@ -1,0 +1,162 @@
+{
+ "schema_version": "2.0",
+ "work_id": "avatar_talk_demo",
+ "compiled_at": "2026-09-30T18:07:27",
+ "compiler": "vdl2_compile.py@vpipe2.0-dev",
+ "source_package": {
+  "path": "D:\\workspace\\video-capability-research\\overnight\\vpipe\\examples\\vdl2\\20_avatar_talk.yaml",
+  "sha256": "c4258d5edbd874241c5aeaa7bb6d909a2ddec30bd85544a44c36941f8d125d0b"
+ },
+ "validation": {
+  "ok": true,
+  "gate_a_errors": 0,
+  "gate_b_errors": 0,
+  "total_errors": 0,
+  "warnings": 2
+ },
+ "default_prompt_mode": "compiled",
+ "budget": {
+  "credit_cap_total": 40,
+  "wallet_check_uri_note": "Vidu /ent/v2/credits（key 只从 env 读；本轮 avatar 专属池上限 3000 积分）"
+ },
+ "deliverable": null,
+ "post_ops": [
+  {
+   "intent_ref": "i-pp-av-sub",
+   "run_after": [
+    "shot_av_0002"
+   ]
+  }
+ ],
+ "shots": [
+  {
+   "shot_id": "shot_av_0001",
+   "prompt_mode": "compiled",
+   "prompt_hash": "79c3fefad16bfb65a94580e933f85c6e928bf2b3cdd9d4ad3de0376a49ff47ee",
+   "engine": {
+    "channel": "api_vidu_avatar",
+    "fallback": [],
+    "route_rule": "G9a_avatar_talk"
+   },
+   "cache": {
+    "strategy": "submit_params",
+    "fingerprint_includes": [
+     "prompt_hash",
+     "speech_text",
+     "image_ref_sha"
+    ]
+   },
+   "budget": {
+    "credit_cap_per_shot": 12,
+    "max_retries": 1
+   },
+   "acceptance_refs": [
+    "acc-lip-sync-0001"
+   ],
+   "intent_refs": [
+    "i-lm-avatar-0001@1.0.0",
+    "i-au-avatar-0001@1.0.0"
+   ],
+   "continuity": {
+    "link": "none",
+    "seed_policy": "none",
+    "lock_restatement": [
+     "characters"
+    ],
+    "d3_split_declared": false,
+    "tail_source": "planned"
+   },
+   "edit_ops": [],
+   "v1_shot": "shots_v1/shot_av_0001.json",
+   "avatar": {
+    "tts_input": "三步教你挑到不踩坑的入门相机，第三点最容易被忽略。",
+    "image_ref": "avatar_assets/host_a_portrait.png",
+    "duration_follows": "audio",
+    "billing_rule": "1积分/s×ceil(音频秒)，失败不扣（b2_run.log credits=0）",
+    "wallet_endpoint": "/ent/v2/credits",
+    "watermark": false
+   }
+  },
+  {
+   "shot_id": "shot_av_0002",
+   "prompt_mode": "compiled",
+   "prompt_hash": "2e4a85872a73555ba64105103e3ad8d8c75b44b0f53c1c7924cece7688510bba",
+   "engine": {
+    "channel": "api_vidu_avatar",
+    "fallback": [],
+    "route_rule": "G9a_avatar_talk"
+   },
+   "cache": {
+    "strategy": "submit_params",
+    "fingerprint_includes": [
+     "prompt_hash",
+     "speech_text",
+     "image_ref_sha"
+    ]
+   },
+   "budget": {
+    "credit_cap_per_shot": 16,
+    "max_retries": 1
+   },
+   "acceptance_refs": [
+    "acc-lip-sync-0001",
+    "acc-av-subtitle-0002"
+   ],
+   "intent_refs": [
+    "i-lm-avatar-0001@1.0.0",
+    "i-au-avatar-0001@1.0.0"
+   ],
+   "continuity": {
+    "link": "prev_tail_frame",
+    "seed_policy": "vary",
+    "lock_restatement": [
+     "characters",
+     "camera_movement"
+    ],
+    "d3_split_declared": false,
+    "tail_source": "real_rendered"
+   },
+   "edit_ops": [],
+   "v1_shot": "shots_v1/shot_av_0002.json",
+   "avatar": {
+    "tts_input": "第一看传感器尺寸，底大一级压死人；第二看防抖，走路拍摄不糊；第三别忽视麦克风接口，收音差再好的画面也白搭。",
+    "image_ref": "avatar_assets/host_a_portrait.png",
+    "duration_follows": "audio",
+    "billing_rule": "1积分/s×ceil(音频秒)，失败不扣（b2_run.log credits=0）",
+    "wallet_endpoint": "/ent/v2/credits",
+    "watermark": false
+   }
+  }
+ ],
+ "projection_manifest": [
+  {
+   "shot_id": "shot_av_0001",
+   "intent_versions": [
+    "i-lm-avatar-0001@1.0.0",
+    "i-au-avatar-0001@1.0.0"
+   ],
+   "prompt_mode": "compiled",
+   "prompt_hash": "79c3fefad16bfb65a94580e933f85c6e928bf2b3cdd9d4ad3de0376a49ff47ee",
+   "acceptance_refs": [
+    "acc-lip-sync-0001"
+   ],
+   "v1_shot": "shots_v1/shot_av_0001.json",
+   "model_hint": "Vidu-avatar-offline"
+  },
+  {
+   "shot_id": "shot_av_0002",
+   "intent_versions": [
+    "i-lm-avatar-0001@1.0.0",
+    "i-au-avatar-0001@1.0.0"
+   ],
+   "prompt_mode": "compiled",
+   "prompt_hash": "2e4a85872a73555ba64105103e3ad8d8c75b44b0f53c1c7924cece7688510bba",
+   "acceptance_refs": [
+    "acc-lip-sync-0001",
+    "acc-av-subtitle-0002"
+   ],
+   "v1_shot": "shots_v1/shot_av_0002.json",
+   "model_hint": "Vidu-avatar-offline"
+  }
+ ]
+}

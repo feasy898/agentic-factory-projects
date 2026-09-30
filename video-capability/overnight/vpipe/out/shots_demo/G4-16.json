@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G4-16",
+ "axis": "G4",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "高速摄影：透明玻璃壶往玻璃杯中倒水，水流连续不断，水面逐渐上升且一滴不洒，逆光展示水流折射，浅色背景",
+ "seed": 41016,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

@@ -1,0 +1,10 @@
+{
+  "video_id": "t3_offer_v1",
+  "template": "instant_offer_17s",
+  "slots": {
+    "offer_shot_1": "S13",
+    "offer_shot_2": "S03",
+    "evidence_1": "S17",
+    "evidence_2": "S02"
+  }
+}

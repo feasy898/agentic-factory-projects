@@ -1,0 +1,13 @@
+{
+ "schema": "https://vpo.example/schemas/v1/l4/acceptance-record.schema.json",
+ "criterion_ref": {
+  "criterion_id": "acc-av-subtitle-0002",
+  "version": "1.0.0"
+ },
+ "artifact_ref": "clip:shot_av_0002@api_vidu_avatar",
+ "artifact_revision": "2e4a85872a73555ba64105103e3ad8d8c75b44b0f53c1c7924cece7688510bba",
+ "target_ref": "shot_av_0002",
+ "status": "vpo:delivery.record_status.unknown",
+ "evaluator_id": "J6_detectors",
+ "evaluator_version": "vpipe1.0"
+}

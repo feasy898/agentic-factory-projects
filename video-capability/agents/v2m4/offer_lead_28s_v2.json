@@ -1,0 +1,95 @@
+{
+  "template_id": "offer_lead_28s_v2",
+  "name_zh": "限时优惠·三车道v2(优惠主导, 10幕8镜头)",
+  "duration_range": [25, 30],
+  "orientation": "portrait",
+  "variables": {
+    "product_name": "手打虾滑",
+    "store_name": "老灶火锅"
+  },
+  "numbers": {
+    "price": "49.9",
+    "offer": "前100名送毛肚",
+    "cta_line": "点击定位，马上出发"
+  },
+  "scenes": [
+    {
+      "slot": "offer_card",
+      "narrative_slot": "cta_store",
+      "duration_sec": 2,
+      "role": "hook",
+      "background": {
+        "type": "solid",
+        "color": "0xB34619"
+      },
+      "narration": "{price}元！{offer}！"
+    },
+    {
+      "slot": "hook",
+      "narrative_slot": "hook_product",
+      "duration_sec": 3,
+      "role": "hook",
+      "narration": "{store_name}的{product_name}，手打看得见"
+    },
+    {
+      "slot": "evidence_1",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 4,
+      "role": "evidence",
+      "narration": "每日鲜配，看得出新鲜"
+    },
+    {
+      "slot": "ambiance_1",
+      "narrative_slot": "rain_window",
+      "duration_sec": 2,
+      "role": "ambiance",
+      "narration": "窗外的雨刚好"
+    },
+    {
+      "slot": "offer_1",
+      "narrative_slot": "offer_product",
+      "duration_sec": 4,
+      "role": "offer",
+      "narration": "今晚{price}一位，{offer}"
+    },
+    {
+      "slot": "ambiance_2",
+      "narrative_slot": "ambiance_scene",
+      "duration_sec": 1.5,
+      "role": "ambiance",
+      "narration": "热气一冒，胃口就开"
+    },
+    {
+      "slot": "evidence_2",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 4,
+      "role": "evidence",
+      "narration": "红汤滚三滚，鲜掉眉毛"
+    },
+    {
+      "slot": "storefront",
+      "narrative_slot": "storefront_night",
+      "duration_sec": 2,
+      "role": "ambiance",
+      "narration": "灯笼底下就是门"
+    },
+    {
+      "slot": "evidence_demo",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 3,
+      "role": "evidence",
+      "narration": "每日到港，绝不隔夜"
+    },
+    {
+      "slot": "cta",
+      "narrative_slot": "cta_store",
+      "duration_sec": 3,
+      "role": "cta",
+      "background": {
+        "type": "solid",
+        "color": "0x7A1F1F"
+      },
+      "narration": "{cta_line}"
+    }
+  ]
+}

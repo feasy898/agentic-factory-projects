@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G8-34",
+ "axis": "G8",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "赛璐璐动画风格：少女在夕阳下的屋顶奔跑，裙摆飘动，背景是橙色渐变天空与飞鸟，赛璐璐色块分明，描线清晰",
+ "seed": 41034,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

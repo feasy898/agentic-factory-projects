@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G2-06",
+ "axis": "G2",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "雨夜街头，一块霓虹灯牌亮起三个汉字「开放中」，红光在湿漉漉的地面反射，镜头缓慢上摇",
+ "seed": 41006,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

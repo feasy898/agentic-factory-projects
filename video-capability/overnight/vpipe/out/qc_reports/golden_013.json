@@ -1,0 +1,142 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_013",
+ "generated_at": "2026-09-30T03:31:25",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": false,
+  "decision": "pass",
+  "confidence": 0.0,
+  "decided_by": "E10",
+  "reasons": [
+   "E10 未触发：J1 未检出且 J3 无通道 P>0.70"
+  ]
+ },
+ "defects": [
+  {
+   "type": "face_blur",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.7867059111595154,
+   "evidence": {
+    "J6": {
+     "kind": null,
+     "conf_src": 0.787
+    }
+   },
+   "span": {
+    "start_s": 0.323,
+    "end_s": 0.969
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.3881,
+   "flicker": 0.2778,
+   "color_shift": 0.5943,
+   "face_blur": 0.1514,
+   "garble_text": 0.04,
+   "temporal_swap": 0.3015,
+   "pixelate": 0.1632,
+   "ghosting": 0.3278
+  },
+  "overall": 0.5164,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "d39953c05717cdcdeb22b2d586c035538c64c4adf1fb13e671ea4e5a154ae0fd"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "text": "无",
+    "source": "J1"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f01/f05/f08",
+    "source": "J2"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "full_clip:fps=1.0解码",
+    "source": "J5"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_013",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "无",
+   "notes": "新闻主播身份服装8帧一致、人脸清晰、口型手势自然；稿纸小字模糊为源素材质感，非注入乱码"
+  },
+  "J2": {
+   "clip_id": "golden_013",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.85,
+   "spans": "f01/f05/f08",
+   "notes": "演播室主播三帧人脸清晰、手部与稿件正常，无可见缺陷（稿件小字分辨率不足无法核读）"
+  },
+  "J5": {
+   "clip_id": "golden_013",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中无明显缺陷\"}"
+  },
+  "J6": {
+   "clip_id": "golden_013",
+   "defect_detected": true,
+   "defect_types": [
+    "face_blur"
+   ],
+   "confidence": 0.787,
+   "spans": [
+    {
+     "type": "face_blur",
+     "start_s": 0.323,
+     "end_s": 0.969,
+     "evidence": {
+      "pair": 0,
+      "cos": 0.3427
+     }
+    }
+   ]
+  },
+  "J3": {
+   "clip_id": "golden_013",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.5943,
+   "spans": "16帧4x4拼图 9通道概率（run_metadata.json），阈值 0.70",
+   "notes": "frame_freeze=0.388; flicker=0.278; color_shift=0.594; face_blur=0.151; garble_text=0.040; temporal_swap=0.301; pixelate=0.163; ghosting=0.328; overall=0.516"
+  }
+ },
+ "inputs": {
+  "clip": null,
+  "frames_dir": null,
+  "judge_files": {
+   "J1": "..\\数据\\judges\\glm8\\golden_013.json",
+   "J2": "..\\数据\\judges\\glm3\\golden_013.json",
+   "J5": "..\\数据\\judges\\videochat3\\golden_013.json",
+   "J6": "..\\数据\\judges\\detectors\\golden_013.json",
+   "J3": "..\\数据\\judges\\omnijev\\run_metadata.json"
+  }
+ },
+ "errors": {}
+}

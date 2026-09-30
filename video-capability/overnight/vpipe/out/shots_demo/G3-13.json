@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G3-13",
+ "axis": "G3",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "客厅场景：一只橘猫坐在纸箱左边，一只柯基犬坐在纸箱右边，两者中间是一个牛皮纸箱，固定机位",
+ "seed": 41013,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

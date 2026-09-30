@@ -1,0 +1,55 @@
+{
+  "template_id": "store_ambiance_22s_v2",
+  "name_zh": "到店氛围(变体2)",
+  "duration_range": [20, 25],
+  "orientation": "portrait",
+  "variables": {
+    "store_name": "老灶火锅",
+    "street": "建设路"
+  },
+  "numbers": {
+    "price": "45.9",
+    "discount": "8.5折"
+  },
+  "scenes": [
+    {
+      "slot": "hook",
+      "narrative_slot": "storefront_night",
+      "duration_sec": 4,
+      "role": "hook",
+      "narration": "{street}口的红灯笼亮起来，就是{store_name}"
+    },
+    {
+      "slot": "ambiance_1",
+      "narrative_slot": "ambiance_scene",
+      "duration_sec": 5,
+      "role": "ambiance",
+      "narration": "长廊灯光一暖，心就落了地"
+    },
+    {
+      "slot": "ambiance_2",
+      "narrative_slot": "rain_window",
+      "duration_sec": 4,
+      "role": "ambiance",
+      "narration": "落雨的晚上，窗上的雾气都是烟火气"
+    },
+    {
+      "slot": "product",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 5,
+      "role": "evidence",
+      "narration": "牛油锅底越煮越香，回头客都懂"
+    },
+    {
+      "slot": "cta",
+      "narrative_slot": "cta_store",
+      "duration_sec": 4,
+      "role": "cta",
+      "background": {
+        "type": "solid",
+        "color": "0x7A1F1F"
+      },
+      "narration": "到店报暗号，全场{discount}，人均{price}吃到扶墙"
+    }
+  ]
+}

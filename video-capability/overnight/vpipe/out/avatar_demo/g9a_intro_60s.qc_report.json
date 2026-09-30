@@ -1,0 +1,76 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "g9a_intro_60s",
+ "generated_at": "2026-09-30T18:02:55",
+ "qc_mode": "online",
+ "verdict": {
+  "defect_detected": false,
+  "decision": "pass",
+  "confidence": 0.0,
+  "decided_by": "E10",
+  "reasons": [
+   "E10 未触发：J1 未检出且 J3 无通道 P>0.70"
+  ]
+ },
+ "defects": [],
+ "scores": {
+  "per_type": {
+   "frame_freeze": null,
+   "flicker": null,
+   "color_shift": null,
+   "face_blur": null,
+   "garble_text": null,
+   "temporal_swap": null,
+   "pixelate": null,
+   "ghosting": null
+  },
+  "overall": null,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [],
+ "judges": {
+  "J6": {
+   "clip_id": "g9a_intro_60s@vidu-s1",
+   "defect_detected": true,
+   "defect_types": [
+    "ghosting"
+   ],
+   "confidence": 0.627,
+   "spans": [
+    {
+     "type": "ghosting",
+     "start_s": 55.75,
+     "end_s": 57.25,
+     "evidence": {
+      "kind": "rect_dip_blend",
+      "start_s": 55.75,
+      "end_s": 57.25,
+      "dur_s": 1.5,
+      "dip_ratio": 0.587,
+      "out_med": 1.254,
+      "in_med": 0.736,
+      "boundary_ratio": 1.69,
+      "branch": "diff_dip"
+     }
+    }
+   ],
+   "notes": "J6 v2 帧序列时序检测（qc_detectors_v2.py, params=eval/thresholds.yaml J6_detectors_v2）",
+   "detector": "qc_detectors_v2.py temporal rules (frame-sequence, CPU-only, no VLM)"
+  }
+ },
+ "inputs": {
+  "clip": "out/avatar_demo/g9a_intro_60s@vidu-s1.mp4",
+  "frames_dir": null,
+  "judge_files": {
+   "J6": "out/avatar_demo/g9a_intro_60s.j6v2_protocol.json"
+  }
+ },
+ "errors": {},
+ "evidence_rule_status": {}
+}

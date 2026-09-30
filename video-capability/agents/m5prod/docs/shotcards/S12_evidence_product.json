@@ -1,0 +1,50 @@
+{
+  "shot_id": "S12",
+  "narrative_slot": "evidence_product",
+  "lane": "ken_burns",
+  "orientation": "portrait",
+  "duration_sec": 5,
+  "resolution": [
+    480,
+    832
+  ],
+  "fps": 16,
+  "camera": {
+    "scale": "closeup",
+    "angle": "high_45",
+    "motion": "static_hold",
+    "depth": "shallow"
+  },
+  "subject": {
+    "type": "hands_action",
+    "desc_zh": "手部入画:筷子夹起毛肚在红汤中涮烫(高风险演示)"
+  },
+  "prompt_en": "close-up of chopsticks held by a hand dipping beef tripe into boiling red broth, professional food photography, warm amber lighting, appetizing, shallow depth of field, steam rising, rich color grading, no people",
+  "first_frame_asset": "assets/products/maodu_01.png",
+  "negative": [
+    "human face",
+    "hands",
+    "fingers",
+    "text",
+    "watermark",
+    "logo",
+    "deformed",
+    "extra limbs"
+  ],
+  "n_best": 3,
+  "retry_max": 2,
+  "acceptance": {
+    "clip_ref_min": 0.65,
+    "clip_text_min": 0.22,
+    "temporal_clip_min": 0.85,
+    "vlm_overall_min": 0.7,
+    "vlm_defect_max": 0.2,
+    "duration_tol": 0.5
+  },
+  "fallback": {
+    "type": "ken_burns",
+    "asset": "assets/products/maodu_01.png",
+    "motion": "zoom_in_1.06",
+    "duration_sec": 5
+  }
+}

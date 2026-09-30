@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G6-29",
+ "axis": "G6",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "环绕镜头：围绕一辆停在山顶的复古跑车缓慢旋转一百八十度，背景云海翻涌",
+ "seed": 41029,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

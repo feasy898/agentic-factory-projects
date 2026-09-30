@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G2-07",
+ "axis": "G2",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "报纸头版特写，大标题印着「号外」两个大字，下方有密集的小字正文，镜头缓缓拉远露出整版报纸",
+ "seed": 41007,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

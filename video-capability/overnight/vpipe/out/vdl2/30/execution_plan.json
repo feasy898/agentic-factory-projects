@@ -1,0 +1,97 @@
+{
+ "schema_version": "2.0",
+ "work_id": "product_loop_demo",
+ "compiled_at": "2026-09-30T18:07:48",
+ "compiler": "vdl2_compile.py@vpipe2.0-dev",
+ "source_package": {
+  "path": "examples\\vdl2\\30_programmatic_loop.yaml",
+  "sha256": "9019114d6a6c8fb943fa346ceb8e53fbb1e597a3b8d4e593a4dcf21207f41c74"
+ },
+ "validation": {
+  "ok": true,
+  "gate_a_errors": 0,
+  "gate_b_errors": 0,
+  "total_errors": 0,
+  "warnings": 1
+ },
+ "default_prompt_mode": "compiled",
+ "budget": {
+  "credit_cap_total": 0,
+  "wallet_check_uri_note": "本地链路无计费；若升 api_h3max 终稿再开预算（280 积分/5s）"
+ },
+ "deliverable": "i-ds-loop-0001",
+ "post_ops": [
+  {
+   "intent_ref": "i-pp-loop-0001",
+   "run_after": [
+    "shot_loop_0001"
+   ]
+  }
+ ],
+ "shots": [
+  {
+   "shot_id": "shot_loop_0001",
+   "prompt_mode": "compiled",
+   "prompt_hash": "af1f28824feab758d6280f4d23176df37ce58249ac6b6dc47e24c46365c6f397",
+   "engine": {
+    "channel": "local_ltx",
+    "fallback": [
+     "api_h3max"
+    ],
+    "route_rule": "G2_post_bypass"
+   },
+   "cache": {
+    "strategy": "content_fingerprint",
+    "fingerprint_includes": [
+     "prompt_hash",
+     "seed",
+     "duration_s",
+     "aspect",
+     "resolution"
+    ]
+   },
+   "budget": {
+    "credit_cap_per_shot": 0,
+    "max_retries": 3
+   },
+   "acceptance_refs": [
+    "acc-loop-motion-0001",
+    "acc-overlay-verbatim-0001"
+   ],
+   "intent_refs": [
+    "i-cam-loop-0001@1.0.0",
+    "i-to-loop-0001@1.0.0",
+    "i-loop-0001@1.0.0"
+   ],
+   "continuity": {
+    "link": "first_frame_condition",
+    "seed_policy": "fix_for_iteration",
+    "lock_restatement": [
+     "scene"
+    ],
+    "d3_split_declared": false,
+    "tail_source": "real_rendered"
+   },
+   "edit_ops": [],
+   "v1_shot": "shots_v1/shot_loop_0001.json"
+  }
+ ],
+ "projection_manifest": [
+  {
+   "shot_id": "shot_loop_0001",
+   "intent_versions": [
+    "i-cam-loop-0001@1.0.0",
+    "i-to-loop-0001@1.0.0",
+    "i-loop-0001@1.0.0"
+   ],
+   "prompt_mode": "compiled",
+   "prompt_hash": "af1f28824feab758d6280f4d23176df37ce58249ac6b6dc47e24c46365c6f397",
+   "acceptance_refs": [
+    "acc-loop-motion-0001",
+    "acc-overlay-verbatim-0001"
+   ],
+   "v1_shot": "shots_v1/shot_loop_0001.json",
+   "model_hint": "ltx"
+  }
+ ]
+}

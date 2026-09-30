@@ -1,0 +1,31 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "shot_av_0002",
+ "axis": "G9",
+ "duration_s": 12,
+ "aspect": "9:16",
+ "resolution": "480P",
+ "seed": 42,
+ "characters": [
+  {
+   "char_id": "avatar_host_01",
+   "desc": "30 岁左右女性主播，米色针织衫，暖光棚拍背景",
+   "ref_image": "avatar_assets/host_a_portrait.png"
+  }
+ ],
+ "camera": {
+  "movement": "static",
+  "description": "胸上景口播机位，固定"
+ },
+ "audio": {
+  "generate": true,
+  "speech": "第一看传感器尺寸，底大一级压死人；第二看防抖，走路拍摄不糊；第三别忽视麦克风接口，收音差再好的画面也白搭。",
+  "music": ""
+ },
+ "prompt": "镜头：static，胸上景口播机位，固定\n主体：30 岁左右女性主播，米色针织衫，暖光棚拍背景\n语义：口播数字人：真口型随台词，躯干稳定，仅头部微动与自然眨眼\n运镜说明：胸上景口播机位，固定",
+ "engine_hint": {
+  "preferred": "api",
+  "model": "Vidu-avatar-offline"
+ },
+ "notes": "vdl2:axis_v2=G9a | vdl2:prompt_hash=2e4a85872a73555ba64105103e3ad8d8c75b44b0f53c1c7924cece7688510bba | vdl2:intents=i-lm-avatar-0001@1.0.0,i-au-avatar-0001@1.0.0"
+}

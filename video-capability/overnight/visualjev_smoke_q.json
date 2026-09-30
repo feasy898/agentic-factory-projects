@@ -1,0 +1,13 @@
+{
+  "questions": {
+    "fingers": {
+      "type": "choice",
+      "instructions": "How many fingers are shown on the hand?",
+      "criteria": {
+        "five": null,
+        "four": null,
+        "other": "any other number or unclear"
+      }
+    }
+  }
+}

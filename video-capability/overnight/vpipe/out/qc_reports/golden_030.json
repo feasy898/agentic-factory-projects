@@ -1,0 +1,228 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_030",
+ "generated_at": "2026-09-30T03:31:24",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "manual_review",
+  "confidence": 0.8763,
+  "decided_by": "E10",
+  "reasons": [
+   "E10 检出、未达 auto_reject 线：灰区人工复核（J3@0.70 触发[color_shift,ghosting] 最大P=0.876）"
+  ]
+ },
+ "defects": [
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 1.0,
+   "evidence": {
+    "J6": {
+     "kind": "conf_drop",
+     "conf_src": 1.0
+    }
+   },
+   "span": {
+    "start_s": 3.466,
+    "end_s": 4.097
+   }
+  },
+  {
+   "type": "color_shift",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.8763,
+   "evidence": {
+    "J3": {
+     "channel_probs": {
+      "frame_freeze": 0.4061,
+      "flicker": 0.282,
+      "color_shift": 0.8763,
+      "face_blur": 0.0483,
+      "garble_text": 0.0541,
+      "temporal_swap": 0.299,
+      "pixelate": 0.6715,
+      "ghosting": 0.8226
+     },
+     "overall": 0.7105
+    }
+   }
+  },
+  {
+   "type": "ghosting",
+   "sources": [
+    "J1",
+    "J3"
+   ],
+   "confidence": 0.8226,
+   "evidence": {
+    "J1": {
+     "notes": "实测逐帧亮度[102.6,104.5,73.7,72.3,76.9,76.6,108.6,107.4]中段骤暗后恢复；且各帧白墙/树/花均有双影错位轮廓"
+    },
+    "J3": {
+     "channel_probs": {
+      "frame_freeze": 0.4061,
+      "flicker": 0.282,
+      "color_shift": 0.8763,
+      "face_blur": 0.0483,
+      "garble_text": 0.0541,
+      "temporal_swap": 0.299,
+      "pixelate": 0.6715,
+      "ghosting": 0.8226
+     },
+     "overall": 0.7105
+    }
+   }
+  },
+  {
+   "type": "flicker",
+   "sources": [
+    "J1",
+    "J2",
+    "J5"
+   ],
+   "confidence": 0.8,
+   "evidence": {
+    "J1": {
+     "notes": "实测逐帧亮度[102.6,104.5,73.7,72.3,76.9,76.6,108.6,107.4]中段骤暗后恢复；且各帧白墙/树/花均有双影错位轮廓"
+    },
+    "J2": {
+     "notes": "中帧全画面亮度显著低于首尾帧（白墙变灰），静态场景下不符合自然光照变化，判定亮度闪变"
+    },
+    "J5": {
+     "notes": "解析=json; 回答={\"defect_types\":[\"flicker\"],\"other\":false,\"reason\":\"帧间画面快速闪烁\"}"
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.4061,
+   "flicker": 0.282,
+   "color_shift": 0.8763,
+   "face_blur": 0.0483,
+   "garble_text": 0.0541,
+   "temporal_swap": 0.299,
+   "pixelate": 0.6715,
+   "ghosting": 0.8226
+  },
+  "overall": 0.7105,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "d39953c05717cdcdeb22b2d586c035538c64c4adf1fb13e671ea4e5a154ae0fd"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "text": "flicker: f03-f06（视频中段）亮度由~104骤降至~73再回升至~108；ghosting: 全片8帧",
+    "source": "J1"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f05（约片中段）整帧曝光下降变暗去饱和，f01/f08 恢复明亮",
+    "source": "J2"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "full_clip:fps=1.0解码",
+    "source": "J5"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_030",
+   "defect_detected": true,
+   "defect_types": [
+    "flicker",
+    "ghosting"
+   ],
+   "confidence": 0.8,
+   "spans": "flicker: f03-f06（视频中段）亮度由~104骤降至~73再回升至~108；ghosting: 全片8帧",
+   "notes": "实测逐帧亮度[102.6,104.5,73.7,72.3,76.9,76.6,108.6,107.4]中段骤暗后恢复；且各帧白墙/树/花均有双影错位轮廓"
+  },
+  "J2": {
+   "clip_id": "golden_030",
+   "defect_detected": true,
+   "defect_types": [
+    "flicker"
+   ],
+   "confidence": 0.65,
+   "spans": "f05（约片中段）整帧曝光下降变暗去饱和，f01/f08 恢复明亮",
+   "notes": "中帧全画面亮度显著低于首尾帧（白墙变灰），静态场景下不符合自然光照变化，判定亮度闪变"
+  },
+  "J5": {
+   "clip_id": "golden_030",
+   "defect_detected": true,
+   "defect_types": [
+    "flicker"
+   ],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[\"flicker\"],\"other\":false,\"reason\":\"帧间画面快速闪烁\"}"
+  },
+  "J6": {
+   "clip_id": "golden_030",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text"
+   ],
+   "confidence": 1.0,
+   "spans": [
+    {
+     "type": "garble_text",
+     "start_s": 3.466,
+     "end_s": 4.096,
+     "evidence": {
+      "kind": "conf_drop",
+      "drop": 0.605,
+      "frames": [
+       6,
+       5
+      ],
+      "mean_scores": [
+       0.138,
+       0.743
+      ]
+     }
+    }
+   ]
+  },
+  "J3": {
+   "clip_id": "golden_030",
+   "defect_detected": true,
+   "defect_types": [
+    "color_shift",
+    "ghosting"
+   ],
+   "confidence": 0.8763,
+   "spans": "16帧4x4拼图 9通道概率（run_metadata.json），阈值 0.70",
+   "notes": "frame_freeze=0.406; flicker=0.282; color_shift=0.876; face_blur=0.048; garble_text=0.054; temporal_swap=0.299; pixelate=0.671; ghosting=0.823; overall=0.711"
+  }
+ },
+ "inputs": {
+  "clip": null,
+  "frames_dir": null,
+  "judge_files": {
+   "J1": "..\\数据\\judges\\glm8\\golden_030.json",
+   "J2": "..\\数据\\judges\\glm3\\golden_030.json",
+   "J5": "..\\数据\\judges\\videochat3\\golden_030.json",
+   "J6": "..\\数据\\judges\\detectors\\golden_030.json",
+   "J3": "..\\数据\\judges\\omnijev\\run_metadata.json"
+  }
+ },
+ "errors": {}
+}

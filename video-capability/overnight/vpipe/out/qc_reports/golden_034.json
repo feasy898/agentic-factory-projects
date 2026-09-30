@@ -1,0 +1,149 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_034",
+ "generated_at": "2026-09-30T03:31:25",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "auto_reject",
+  "confidence": 0.9295,
+  "decided_by": "E10",
+  "reasons": [
+   "J3 最大通道 P=0.929 ≥ 0.90（高置信区间实测 8/8 全对，基准报告 §5）"
+  ]
+ },
+ "defects": [
+  {
+   "type": "ghosting",
+   "sources": [
+    "J1",
+    "J2",
+    "J3"
+   ],
+   "confidence": 0.9295,
+   "evidence": {
+    "J1": {
+     "notes": "列车驶过场景中段帧火车车身呈双重曝光式拖影、路灯光头出现叠影，明显重于首尾帧f01/f02/f07/f08的清晰车窗，符合相邻帧50%混合的拖影注入特征。"
+    },
+    "J2": {
+     "notes": "中帧相比尾帧明显更糊且呈邻帧混合质感，但本片为快速横摇运动模糊素材，静帧下与运动模糊难完全区分"
+    },
+    "J3": {
+     "channel_probs": {
+      "frame_freeze": 0.4494,
+      "flicker": 0.2782,
+      "color_shift": 0.6672,
+      "face_blur": 0.5533,
+      "garble_text": 0.0668,
+      "temporal_swap": 0.3293,
+      "pixelate": 0.3848,
+      "ghosting": 0.9295
+     },
+     "overall": 0.5138
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.4494,
+   "flicker": 0.2782,
+   "color_shift": 0.6672,
+   "face_blur": 0.5533,
+   "garble_text": 0.0668,
+   "temporal_swap": 0.3293,
+   "pixelate": 0.3848,
+   "ghosting": 0.9295
+  },
+  "overall": 0.5138,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "d39953c05717cdcdeb22b2d586c035538c64c4adf1fb13e671ea4e5a154ae0fd"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "text": "中段 f03-f06（约1.5-3.5s）",
+    "source": "J1"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f05（约片中段）：列车与天线边缘双重发虚、背景植被平滑",
+    "source": "J2"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "full_clip:fps=1.0解码",
+    "source": "J5"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_034",
+   "defect_detected": true,
+   "defect_types": [
+    "ghosting"
+   ],
+   "confidence": 0.8,
+   "spans": "中段 f03-f06（约1.5-3.5s）",
+   "notes": "列车驶过场景中段帧火车车身呈双重曝光式拖影、路灯光头出现叠影，明显重于首尾帧f01/f02/f07/f08的清晰车窗，符合相邻帧50%混合的拖影注入特征。"
+  },
+  "J2": {
+   "clip_id": "golden_034",
+   "defect_detected": true,
+   "defect_types": [
+    "ghosting"
+   ],
+   "confidence": 0.5,
+   "spans": "f05（约片中段）：列车与天线边缘双重发虚、背景植被平滑",
+   "notes": "中帧相比尾帧明显更糊且呈邻帧混合质感，但本片为快速横摇运动模糊素材，静帧下与运动模糊难完全区分"
+  },
+  "J5": {
+   "clip_id": "golden_034",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中火车移动流畅，无定格、闪烁、偏色、模糊、乱码、错乱、像素化或拖影等明显缺陷\"}"
+  },
+  "J6": {
+   "clip_id": "golden_034",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "J3": {
+   "clip_id": "golden_034",
+   "defect_detected": true,
+   "defect_types": [
+    "ghosting"
+   ],
+   "confidence": 0.9295,
+   "spans": "16帧4x4拼图 9通道概率（run_metadata.json），阈值 0.70",
+   "notes": "frame_freeze=0.449; flicker=0.278; color_shift=0.667; face_blur=0.553; garble_text=0.067; temporal_swap=0.329; pixelate=0.385; ghosting=0.929; overall=0.514"
+  }
+ },
+ "inputs": {
+  "clip": null,
+  "frames_dir": null,
+  "judge_files": {
+   "J1": "..\\数据\\judges\\glm8\\golden_034.json",
+   "J2": "..\\数据\\judges\\glm3\\golden_034.json",
+   "J5": "..\\数据\\judges\\videochat3\\golden_034.json",
+   "J6": "..\\数据\\judges\\detectors\\golden_034.json",
+   "J3": "..\\数据\\judges\\omnijev\\run_metadata.json"
+  }
+ },
+ "errors": {}
+}

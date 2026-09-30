@@ -1,0 +1,19 @@
+{
+  "video_id": "v2_t2_ambiance_v3",
+  "template": "store_ambiance_28s_v2",
+  "slots": {
+    "ambiance_1": "S08",
+    "hook": "S02",
+    "evidence_1": "S01",
+    "evidence_2": "S15",
+    "offer": "S14",
+    "ambiance_2": "S10",
+    "ambiance_3": "S09",
+    "ambiance_4": "S11",
+    "evidence_demo": "S19"
+  },
+  "numbers": {
+    "price": "36.9",
+    "offer": "夜宵档送小食"
+  }
+}

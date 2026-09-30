@@ -1,0 +1,103 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "vpipe/contracts/asset_manifest.schema.json",
+  "title": "AssetManifest",
+  "description": "资产登记表（冻结契约 v1.0）。内容寻址：每个资产以 sha256 为身份登记，gen_local/gen_api 登记 clip 与元数据，qc_orch 登记输入判官文件与输出报告，report.py 消费并抽检。改造自今晚已验证的 build_metadata.py（其 sha256+ffprobe 双登记模式，见 overnight/数据/build_metadata.py:30-52）。",
+  "type": "object",
+  "required": ["schema_version", "name", "generated_at", "items"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0",
+      "description": "契约版本，当前冻结版 1.0。"
+    },
+    "name": {
+      "type": "string",
+      "description": "登记表名称，如 \"vpipe-night-20260930\"。同一资产可出现在多张表，身份以 sha256 为准。"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "登记表最后写入时刻 ISO-8601。"
+    },
+    "generator": {
+      "type": "string",
+      "description": "产表模块与版本，如 \"qc_orch.py@vpipe1.0\"。"
+    },
+    "items": {
+      "type": "array",
+      "description": "资产条目。asset_id+kind 允许重复（同一逻辑资产的多版本），(path, sha256) 唯一确定一个物理文件。",
+      "items": {
+        "type": "object",
+        "required": ["asset_id", "kind", "path", "sha256", "size_bytes", "registered_at"],
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9_.@:/-]{0,127}$",
+            "description": "逻辑资产 ID（冒号为命名空间分隔符）：clip 用 <shot_id>@<model> 或 golden_NNN；QC 报告用 qc:<clip_id>；判官输出用 judge:<J代码>:<clip_id>；元数据用 meta:<clip_id>。"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["clip", "frames", "reference_image", "metadata", "judge_output", "qc_report", "report", "golden_record"],
+            "description": "资产类型：clip=成片 mp4；frames=抽帧目录（登记代表帧或目录哈希清单）；reference_image=定妆照；metadata=生成元数据 JSON；judge_output=判官协议 JSON；qc_report=qc_orch 输出；report=report.py 汇总产物；golden_record=金标 manifest/注入记录。"
+          },
+          "path": {
+            "type": "string",
+            "description": "资产路径。相对路径以登记表所在目录为基准解析（跨机迁移安全）；绝对路径允许但 discouraged。"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$",
+            "description": "内容寻址哈希（文件字节级 sha256）。frames 目录登记：sha256 为「排序后逐文件 hash 拼接再哈希」的目录哈希，evidence.dir_manifest 留逐文件清单。"
+          },
+          "size_bytes": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "文件字节数。与 sha256 一起构成完整性双校验。"
+          },
+          "registered_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "登记时刻 ISO-8601。"
+          },
+          "provenance": {
+            "type": "object",
+            "description": "来源信息（能拿到的都写，拿不到的省略）：模型/种子/prompt/任务号/积分成本/耗时。",
+            "additionalProperties": false,
+            "properties": {
+              "module": { "type": "string", "description": "产出模块：gen_local|gen_api|qc_orch|report|external（今晚脚本）。" },
+              "model": { "type": ["string", "null"], "description": "生成模型，如 Wan2.1-T2V-1.3B / LTX-Video / MiniMax-H3。" },
+              "seed": { "type": ["integer", "null"], "description": "生成种子（登记了 seed_sent 的才可信，见下）。" },
+              "seed_sent": { "type": ["boolean", "null"], "description": "API 通道种子是否真的随请求发送（H3 DTO 校验实测通过，见 api_seed_test.json；false 时 seed 仅登记未生效）。" },
+              "shot_id": { "type": ["string", "null"] },
+              "prompt_id": { "type": ["string", "null"], "description": "9 轴矩阵的 prompt ID（G1-01 等）。" },
+              "task_id": { "type": ["string", "null"], "description": "API 任务号（Design 网关 task_id / provider_task_id）。" },
+              "credit_cost": { "type": ["integer", "null"], "description": "该资产生成实扣积分（wallet 终态差分，build_metadata.py 模式）。" },
+              "elapsed_s": { "type": ["number", "null"], "description": "生成耗时秒。" },
+              "source": { "type": "string", "description": "上游资产 asset_id 或外部来源说明。" }
+            }
+          },
+          "probe": {
+            "type": "object",
+            "description": "媒体探针结果（ffprobe，clip/reference_image 类登记时建议附带；build_metadata.py 已验证字段）。",
+            "additionalProperties": false,
+            "properties": {
+              "width": { "type": "integer" },
+              "height": { "type": "integer" },
+              "codec": { "type": "string" },
+              "fps": { "type": "string" },
+              "duration_s": { "type": "number" },
+              "has_audio": { "type": "boolean" }
+            }
+          },
+          "evidence": {
+            "type": "object",
+            "description": "自由证据位：目录哈希清单、注入参数、判官阈值快照等。"
+          }
+        }
+      }
+    }
+  }
+}

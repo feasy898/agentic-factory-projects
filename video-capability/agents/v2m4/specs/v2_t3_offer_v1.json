@@ -1,0 +1,19 @@
+{
+  "video_id": "v2_t3_offer_v1",
+  "template": "offer_lead_28s_v2",
+  "slots": {
+    "hook": "S02",
+    "storefront": "S08",
+    "evidence_1": "S01",
+    "ambiance_1": "S09",
+    "offer_1": "S13",
+    "ambiance_2": "S07",
+    "evidence_2": "S03",
+    "evidence_demo": "S18"
+  },
+  "numbers": {
+    "price": "49.9",
+    "offer": "前100名送毛肚",
+    "cta_line": "点击定位，马上出发"
+  }
+}

@@ -1,0 +1,24 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G7-30",
+ "axis": "G7",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "参考图中的红裙女子提着裙摆快步走过雨后街道，水洼倒影，与定妆照同一人物同一服装",
+ "seed": 41030,
+ "characters": [
+  {
+   "char_id": "charA",
+   "desc": "25岁亚洲女性「林夏」，齐肩黑色直发，红色连衣裙，气质温和，单人定妆照",
+   "ref_image": "..\\数据\\references_api\\charA_linxia_red_dress.png"
+  }
+ ],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

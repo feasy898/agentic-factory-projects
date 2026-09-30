@@ -1,0 +1,19 @@
+{
+  "video_id": "v2_t3_offer_v3",
+  "template": "offer_lead_28s_v2",
+  "slots": {
+    "hook": "S02",
+    "storefront": "S08",
+    "evidence_1": "S03",
+    "ambiance_1": "S09",
+    "offer_1": "S13",
+    "ambiance_2": "S11",
+    "evidence_2": "S01",
+    "evidence_demo": "S18"
+  },
+  "numbers": {
+    "price": "45.9",
+    "offer": "锅底免费续",
+    "cta_line": "导航搜老灶"
+  }
+}

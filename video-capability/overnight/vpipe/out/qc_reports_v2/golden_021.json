@@ -1,0 +1,175 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_021",
+ "generated_at": "2026-09-30T03:57:53",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "manual_review",
+  "confidence": 0.8853,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=True, types=['hand_anomaly'], conf=0.9)",
+   "J3@0.7 flag=True hits=['ghosting'] max_channel_P=0.8853",
+   "J6 信号(仅信号不否决): garble_text@0.85"
+  ]
+ },
+ "defects": [
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.8471,
+   "span": {
+    "start_s": 0.0,
+    "end_s": 5.042
+   },
+   "evidence": {
+    "J6": {
+     "kind": "uniform_low_conf",
+     "max_mean": 0.402
+    }
+   }
+  },
+  {
+   "type": "ghosting",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.8853,
+   "evidence": {
+    "J3": {
+     "channel_P": 0.8853
+    }
+   }
+  },
+  {
+   "type": "hand_anomaly",
+   "sources": [
+    "J1"
+   ],
+   "confidence": 0.9,
+   "evidence": {
+    "J1": {
+     "confidence": 0.9,
+     "notes": "双手交扣特写：上手手指与掌心处指状突起根部融合，f03/f04中央两根指状突起直接自掌纹处长出且带指甲，全片可辨指状突起约7-8个无法按正常手计数；亮度148-150/饱和度88.7→77.3单调平滑，无定格/闪烁/色偏/马赛克等注入痕迹"
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.4108,
+   "flicker": 0.315,
+   "color_shift": 0.6996,
+   "face_blur": 0.1099,
+   "garble_text": 0.0366,
+   "temporal_swap": 0.3783,
+   "pixelate": 0.3694,
+   "ghosting": 0.8853
+  },
+  "overall": 0.7731,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "d39953c05717cdcdeb22b2d586c035538c64c4adf1fb13e671ea4e5a154ae0fd"
+  }
+ },
+ "spans": [
+  {
+   "type": "garble_text",
+   "start_s": 0.0,
+   "end_s": 5.042,
+   "evidence": {
+    "kind": "uniform_low_conf",
+    "max_mean": 0.402
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "全程 f01–f08"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_021",
+   "defect_detected": true,
+   "defect_types": [
+    "hand_anomaly"
+   ],
+   "confidence": 0.9,
+   "spans": "全程 f01–f08",
+   "notes": "双手交扣特写：上手手指与掌心处指状突起根部融合，f03/f04中央两根指状突起直接自掌纹处长出且带指甲，全片可辨指状突起约7-8个无法按正常手计数；亮度148-150/饱和度88.7→77.3单调平滑，无定格/闪烁/色偏/马赛克等注入痕迹"
+  },
+  "J5": {
+   "clip_id": "golden_021",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中无明显缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_021",
+   "defect_detected": true,
+   "defect_types": [
+    "color_shift",
+    "ghosting"
+   ],
+   "confidence": 0.8853,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.411 flicker=0.315 color_shift=0.700 face_blur=0.110 garble_text=0.037 temporal_swap=0.378 pixelate=0.369 ghosting=0.885; overall=0.773; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_021",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text"
+   ],
+   "confidence": 0.8471,
+   "spans": [
+    {
+     "type": "garble_text",
+     "start_s": 0.0,
+     "end_s": 5.042,
+     "evidence": {
+      "kind": "uniform_low_conf",
+      "max_mean": 0.402
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_021.mp4",
+  "frames_dir": "frames/golden_021/",
+  "judge_files": {
+   "J1": "..\\数据\\judges\\glm8\\golden_021.json",
+   "J5": "..\\数据\\judges\\videochat3\\golden_021.json",
+   "J3": "..\\数据\\judges\\omnijev\\run_metadata.json",
+   "J6": "..\\数据\\judges\\detectors\\raw\\golden_021.qc.json"
+  }
+ },
+ "errors": {}
+}

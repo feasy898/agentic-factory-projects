@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G9-38",
+ "axis": "G9",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "数字人办公室场景：一名穿白衬衫的男职员从画面左侧走向办公桌，拉开椅子坐下，伸手拿起桌上的手机看了一眼屏幕，动作连贯自然",
+ "seed": 41038,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

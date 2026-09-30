@@ -1,0 +1,50 @@
+{
+  "shot_id": "S10",
+  "narrative_slot": "ambiance_scene",
+  "lane": "first_frame_i2v",
+  "orientation": "portrait",
+  "duration_sec": 5,
+  "resolution": [
+    480,
+    832
+  ],
+  "fps": 16,
+  "camera": {
+    "scale": "medium",
+    "angle": "high_45",
+    "motion": "orbit_slow",
+    "depth": "medium"
+  },
+  "subject": {
+    "type": "environment",
+    "desc_zh": "空餐桌摆位整齐,餐具反光,等待开席"
+  },
+  "prompt_en": "neatly set empty hotpot table, polished tableware, apricot pot centered, anticipation, professional food photography, warm amber lighting, appetizing, shallow depth of field, steam rising, rich color grading, no people",
+  "first_frame_asset": "assets/scenes/table_01.png",
+  "negative": [
+    "human face",
+    "hands",
+    "fingers",
+    "text",
+    "watermark",
+    "logo",
+    "deformed",
+    "extra limbs"
+  ],
+  "n_best": 3,
+  "retry_max": 2,
+  "acceptance": {
+    "clip_ref_min": 0.65,
+    "clip_text_min": 0.22,
+    "temporal_clip_min": 0.85,
+    "vlm_overall_min": 0.7,
+    "vlm_defect_max": 0.2,
+    "duration_tol": 0.5
+  },
+  "fallback": {
+    "type": "ken_burns",
+    "asset": "assets/scenes/table_01.png",
+    "motion": "pan_right",
+    "duration_sec": 5
+  }
+}

@@ -1,0 +1,13 @@
+{
+ "schema": "https://vpo.example/schemas/v1/l4/acceptance-record.schema.json",
+ "criterion_ref": {
+  "criterion_id": "acc-lip-sync-0001",
+  "version": "1.0.0"
+ },
+ "artifact_ref": "clip:shot_av_0001@api_vidu_avatar",
+ "artifact_revision": "79c3fefad16bfb65a94580e933f85c6e928bf2b3cdd9d4ad3de0376a49ff47ee",
+ "target_ref": "shot_av_0001",
+ "status": "vpo:delivery.record_status.unknown",
+ "evaluator_id": "J1_glm8",
+ "evaluator_version": "vpipe1.0"
+}

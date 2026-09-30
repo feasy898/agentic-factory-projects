@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G6-28",
+ "axis": "G6",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "跟拍镜头：肩扛摄影机跟在骑车人身后穿过林荫小道，阳光穿过树叶，画面随步伐轻微起伏",
+ "seed": 41028,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

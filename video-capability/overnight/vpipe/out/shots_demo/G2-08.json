@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G2-08",
+ "axis": "G2",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "清晨的老街，三家店铺招牌从左到右依次写着「面馆」「药店」「超市」，镜头从左向右横移逐一扫过",
+ "seed": 41008,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

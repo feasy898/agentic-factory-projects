@@ -1,0 +1,122 @@
+total events: 121
+2026-09-07T23:04:19+00:00 status ABS01L: pending -> generating
+2026-09-07T23:04:23+00:00 首帧风格统一失败 ABS01L, 用原始首帧: Cannot load model stabilityai/stable-diffusion-xl-base-1.0: model is not cac
+2026-09-07T23:08:13+00:00 force_status ABS01L: -> pending (崩溃恢复: 孤儿 generating → pending 重生成)
+2026-09-07T23:08:13+00:00 recover(): 重置 1 个孤儿任务
+2026-09-07T23:08:13+00:00 status ABS01L: pending -> generating
+2026-09-07T23:08:26+00:00 首帧风格统一完成: ABS01L (denoise=0.3)
+2026-09-07T23:14:45+00:00 status ABS01L: generating -> gating
+2026-09-07T23:14:45+00:00 status ABS01P: pending -> generating
+2026-09-07T23:14:51+00:00 首帧风格统一完成: ABS01P (denoise=0.3)
+2026-09-07T23:20:57+00:00 status ABS01P: generating -> gating
+2026-09-07T23:20:57+00:00 status ABS03L: pending -> generating
+2026-09-07T23:21:03+00:00 首帧风格统一完成: ABS03L (denoise=0.3)
+2026-09-07T23:27:06+00:00 status ABS03L: generating -> gating
+2026-09-07T23:27:06+00:00 status ABS03P: pending -> generating
+2026-09-07T23:27:12+00:00 首帧风格统一完成: ABS03P (denoise=0.3)
+2026-09-07T23:33:21+00:00 status ABS03P: generating -> gating
+2026-09-07T23:33:21+00:00 status ABS07L: pending -> generating
+2026-09-07T23:33:26+00:00 首帧风格统一完成: ABS07L (denoise=0.3)
+2026-09-07T23:39:29+00:00 status ABS07L: generating -> gating
+2026-09-07T23:39:29+00:00 status ABS07P: pending -> generating
+2026-09-07T23:39:35+00:00 首帧风格统一完成: ABS07P (denoise=0.3)
+2026-09-07T23:45:41+00:00 status ABS07P: generating -> gating
+2026-09-07T23:45:41+00:00 status ABS08L: pending -> generating
+2026-09-07T23:45:47+00:00 首帧风格统一完成: ABS08L (denoise=0.3)
+2026-09-07T23:51:51+00:00 status ABS08L: generating -> gating
+2026-09-07T23:51:51+00:00 status ABS08P: pending -> generating
+2026-09-07T23:51:56+00:00 首帧风格统一完成: ABS08P (denoise=0.3)
+2026-09-07T23:58:05+00:00 status ABS08P: generating -> gating
+2026-09-07T23:58:05+00:00 status ABS11L: pending -> generating
+2026-09-07T23:58:11+00:00 首帧风格统一完成: ABS11L (denoise=0.3)
+2026-09-08T00:04:16+00:00 status ABS11L: generating -> gating
+2026-09-08T00:04:16+00:00 status ABS11P: pending -> generating
+2026-09-08T00:04:22+00:00 首帧风格统一完成: ABS11P (denoise=0.3)
+2026-09-08T00:10:29+00:00 status ABS11P: generating -> gating
+2026-09-08T00:10:56+00:00 status ABS01L: gating -> accepted
+2026-09-08T00:11:11+00:00 status ABS01P: gating -> accepted
+2026-09-08T00:11:26+00:00 status ABS03L: gating -> accepted
+2026-09-08T00:11:41+00:00 status ABS03P: gating -> accepted
+2026-09-08T00:11:55+00:00 status ABS07L: gating -> accepted
+2026-09-08T00:12:10+00:00 status ABS07P: gating -> accepted
+2026-09-08T00:12:25+00:00 status ABS08L: gating -> accepted
+2026-09-08T00:12:40+00:00 status ABS08P: gating -> accepted
+2026-09-08T00:12:54+00:00 status ABS11L: gating -> accepted
+2026-09-08T00:13:09+00:00 status ABS11P: gating -> accepted
+2026-09-08T00:13:39+00:00 连续 3 轮无进展(存在等待合成素材或被阻塞的任务), 主循环退出
+2026-09-08T00:20:27+00:00 status S01: pending -> generating
+2026-09-08T00:20:40+00:00 首帧风格统一完成: S01 (denoise=0.3)
+2026-09-08T00:23:12+00:00 成片完成(compose-video): t1_smoke -> /root/cradle_m5/output/t1_smoke.mp4
+2026-09-08T00:24:16+00:00 成片完成(compose-video): t1_smoke -> /root/cradle_m5/output/t1_smoke.mp4
+2026-09-08T00:39:19+00:00 status S01: generating -> gating
+2026-09-08T00:39:19+00:00 status S02: pending -> generating
+2026-09-08T00:39:24+00:00 首帧风格统一完成: S02 (denoise=0.3)
+2026-09-08T00:47:34+00:00 status S02: generating -> gating
+2026-09-08T00:47:34+00:00 status S03: pending -> generating
+2026-09-08T00:47:40+00:00 首帧风格统一完成: S03 (denoise=0.3)
+2026-09-08T01:06:03+00:00 status S03: generating -> gating
+2026-09-08T01:06:03+00:00 status S04: pending -> generating
+2026-09-08T01:06:09+00:00 首帧风格统一完成: S04 (denoise=0.3)
+2026-09-08T01:24:30+00:00 status S04: generating -> gating
+2026-09-08T01:24:30+00:00 status S05: pending -> generating
+2026-09-08T01:24:36+00:00 首帧风格统一完成: S05 (denoise=0.3)
+2026-09-08T01:42:57+00:00 status S05: generating -> gating
+2026-09-08T01:42:57+00:00 status S06: pending -> generating
+2026-09-08T01:43:03+00:00 首帧风格统一完成: S06 (denoise=0.3)
+2026-09-08T02:01:27+00:00 status S06: generating -> gating
+2026-09-08T02:01:27+00:00 status S07: pending -> generating
+2026-09-08T02:01:32+00:00 首帧风格统一完成: S07 (denoise=0.3)
+2026-09-08T02:19:58+00:00 status S07: generating -> gating
+2026-09-08T02:19:58+00:00 status S08: pending -> generating
+2026-09-08T02:20:03+00:00 首帧风格统一完成: S08 (denoise=0.3)
+2026-09-08T02:38:25+00:00 status S08: generating -> gating
+2026-09-08T02:38:25+00:00 status S09: pending -> generating
+2026-09-08T02:38:31+00:00 首帧风格统一完成: S09 (denoise=0.3)
+2026-09-08T02:56:54+00:00 status S09: generating -> gating
+2026-09-08T02:56:54+00:00 status S10: pending -> generating
+2026-09-08T02:57:00+00:00 首帧风格统一完成: S10 (denoise=0.3)
+2026-09-08T03:15:24+00:00 status S10: generating -> gating
+2026-09-08T03:15:24+00:00 status S11: pending -> generating
+2026-09-08T03:15:29+00:00 首帧风格统一完成: S11 (denoise=0.3)
+2026-09-08T03:40:03+00:00 status S11: generating -> gating
+2026-09-08T03:40:03+00:00 status S12: pending -> generating
+2026-09-08T03:40:05+00:00 status S12: generating -> gating
+2026-09-08T03:40:05+00:00 status S13: pending -> generating
+2026-09-08T03:40:10+00:00 首帧风格统一完成: S13 (denoise=0.3)
+2026-09-08T03:58:33+00:00 status S13: generating -> gating
+2026-09-08T03:58:33+00:00 status S14: pending -> generating
+2026-09-08T03:58:38+00:00 首帧风格统一完成: S14 (denoise=0.3)
+2026-09-08T04:17:04+00:00 status S14: generating -> gating
+2026-09-08T04:17:04+00:00 status S15: pending -> generating
+2026-09-08T04:17:10+00:00 首帧风格统一完成: S15 (denoise=0.3)
+2026-09-08T04:35:36+00:00 status S15: generating -> gating
+2026-09-08T04:35:36+00:00 status S16: pending -> generating
+2026-09-08T04:35:41+00:00 首帧风格统一完成: S16 (denoise=0.3)
+2026-09-08T04:54:04+00:00 status S16: generating -> gating
+2026-09-08T04:54:04+00:00 status S17: pending -> generating
+2026-09-08T04:54:09+00:00 首帧风格统一完成: S17 (denoise=0.3)
+2026-09-08T05:12:33+00:00 status S17: generating -> gating
+2026-09-08T05:13:31+00:00 status S01: gating -> accepted
+2026-09-08T05:14:15+00:00 status S02: gating -> accepted
+2026-09-08T05:15:00+00:00 status S03: gating -> accepted
+2026-09-08T05:15:44+00:00 status S04: gating -> accepted
+2026-09-08T05:16:28+00:00 status S05: gating -> accepted
+2026-09-08T05:17:13+00:00 status S06: gating -> accepted
+2026-09-08T05:17:57+00:00 status S07: gating -> accepted
+2026-09-08T05:18:42+00:00 status S08: gating -> accepted
+2026-09-08T05:19:26+00:00 status S09: gating -> accepted
+2026-09-08T05:20:11+00:00 status S10: gating -> accepted
+2026-09-08T05:21:10+00:00 status S11: gating -> accepted
+2026-09-08T05:21:25+00:00 status S12: gating -> accepted
+2026-09-08T05:22:10+00:00 status S13: gating -> accepted
+2026-09-08T05:22:54+00:00 status S14: gating -> accepted
+2026-09-08T05:23:39+00:00 status S15: gating -> accepted
+2026-09-08T05:24:23+00:00 status S16: gating -> accepted
+2026-09-08T05:25:08+00:00 status S17: gating -> accepted
+2026-09-08T05:25:38+00:00 连续 3 轮无进展(存在等待合成素材或被阻塞的任务), 主循环退出
+2026-09-08T11:39:55+00:00 成片完成(compose-video): t1_seeding_v1 -> /root/cradle_m5/output/t1_seeding_v1.mp4
+2026-09-08T11:40:31+00:00 成片完成(compose-video): t1_seeding_v2 -> /root/cradle_m5/output/t1_seeding_v2.mp4
+2026-09-08T11:41:07+00:00 成片完成(compose-video): t1_seeding_v3 -> /root/cradle_m5/output/t1_seeding_v3.mp4
+2026-09-08T11:41:38+00:00 成片完成(compose-video): t2_ambiance_v1 -> /root/cradle_m5/output/t2_ambiance_v1.mp4
+2026-09-08T11:42:09+00:00 成片完成(compose-video): t2_ambiance_v2 -> /root/cradle_m5/output/t2_ambiance_v2.mp4
+2026-09-08T11:42:36+00:00 成片完成(compose-video): t2_ambiance_v3 -> /root/cradle_m5/output/t2_ambiance_v3.mp4

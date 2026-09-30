@@ -1,0 +1,237 @@
+# ============================================================================
+# 示例 2/3 · 模板线口播（G9a 数字人口播：TTS→Vidu avatar 专线 + 槽位模板）
+# 依据：工程方案v3.1.md §2.4（口播主体镜头定 API 通道 Vidu avatar）/ §219（avatar 契约登记位）、
+#       VDL_v2_草案.md §4（LimitedMotion+Audio 意图 → G9 轴）+ 任务新增面（槽位定义供模板线）。
+# 说明：avatar 专属参数（voice_id/tts_engine 等）止步于 v2 执行计划侧（编译产物
+#       execution_plan.json 的 shots[].avatar 段）；v1 ShotSpec 冻结不扩字段。
+# 校验：python src/vdl2/vdl2_validate.py --pkg examples/vdl2/20_avatar_talk.yaml
+# ============================================================================
+vdl_version: "2.0"
+work_id: avatar_talk_demo
+created: "2026-09-30T00:00:00Z"
+default_prompt_mode: compiled            # 模板线：语义全部来自意图与槽位，禁手写
+budget:
+  credit_cap_total: 40                    # Vidu 1 积分/s×ceil(音频秒)：两镜约 20s 台词 + 余量（avatar 池预算内）
+  wallet_check_uri_note: "Vidu /ent/v2/credits（key 只从 env 读；本轮 avatar 专属池上限 3000 积分）"
+
+# ---- 模板与槽位（任务新增面：编译产物 slots.json 供模板调用方填充，填充后重编译得实例包）----
+template:
+  template_id: avatar_talk_v1
+  description: "竖屏数字人口播双段模板：开场钩子 + 卖点讲解；台词与形象图是槽位"
+  slots:
+    - name: hook_line
+      kind: text
+      required: true
+      path: shots[0].audio.speech          # 槽位路径必须解析到包内存在的位置
+      constraints: { max_len: 40 }
+      intent_binding: i-au-avatar-0001.cues
+      description: "开场钩子台词（TTS 输入源；成片时长 = ceil(音频秒)）"
+    - name: sell_points
+      kind: text
+      required: true
+      path: shots[1].audio.speech
+      constraints: { max_len: 120 }
+      intent_binding: i-au-avatar-0001.cues
+      description: "卖点讲解台词"
+    - name: avatar_image
+      kind: image_ref
+      required: true
+      path: shots[0].characters[0].ref_image
+      intent_binding: i-lm-avatar-0001.predicate
+      description: "数字人形象定妆照（image 通道身份源；Vidu avatar 参考图即身份）"
+    - name: bgm_desc
+      kind: text
+      required: false
+      default: "轻快节奏的合成器流行乐，低音量垫底"
+      path: shots[0].audio.music
+      description: "背景音乐氛围描述（仅登记）"
+
+# ---- VPO L2 意图 ----
+intents:
+  - identity: { intent_id: i-lm-avatar-0001, version: "1.0.0" }
+    intent_type: vpo:craft.intent_object.limited_motion_intent
+    target: { kind: character, ref: avatar_host_01 }
+    scope: { level: vpo:delivery.scope.shot, ref: shot_av_0001 }
+    temporal_extent: { time_base: { rate_num: 24, rate_den: 1 } }
+    reference_context: {}
+    predicate: "口播数字人：真口型随台词，躯干稳定，仅头部微动与自然眨眼"
+    value: "有限微动作口播"
+    strength: vpo:delivery.strength.must
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    exceptions: []
+    acceptance_ref: "acc-lip-sync-0001:v1.0.0"
+    authority: director
+    control_channel: [vpo:delivery.control_channel.video, vpo:delivery.control_channel.text]
+    field_channels:
+      "characters[0].ref_image": [vpo:delivery.control_channel.image]
+    animatable_parts: ["面部口型", "眼睑", "头部"]
+    frozen_parts: ["躯干", "双手", "双腿"]
+    blink:
+      period: { value: 4.0, unit: s, measurement_basis: "成片 24fps 观测窗" }
+      duration: { value: 0.12, unit: s, measurement_basis: "成片 24fps 观测窗" }
+      suppress_during: []
+    breath:
+      period: { value: 4.0, unit: s, measurement_basis: "成片 24fps 观测窗" }
+      amplitude: 0.5
+      amplitude_unit: "肩部像素位移归一值"
+      measurement_basis: "1080x1920 交付分辨率下半身固定取景"
+      suppress_during: []
+    lips:
+      set: vpo:motion.lip_set.aiueo_closed
+      max_error_frames: 3                # const 3（时序盲区红线：QC 时序结论不作自动放行依据）
+      blend_ms: 40
+      unit: ms
+    body_while_speaking: "肩线水平稳定，允许小幅重心转移"
+    motion_energy: vpo:motion.energy.low
+    behaviors:
+      - target_ref: avatar_host_01
+        semantic_region: "头部"
+        time_range: { start_frame: 0, end_frame: 144 }
+        time_base: { rate_num: 24, rate_den: 1 }
+        behavior_type: vpo:motion.limited_motion_term.head_nod
+        approved_profile_ref: "profile:avatar_talk_nod_v1"
+        trigger_event_ref: "cue:sell_points_start"
+        suppression_rules: ["说话句中抑制大幅点头"]
+        observable_amplitude: 3.0
+        unit: px
+        measurement_basis: "540p 档输出"
+        period_or_event_timing: "事件驱动（卖点句起）"
+        cadence: "每句至多一次"
+        phase_policy: "句间执行，句中冻结"
+        priority_and_conflict_policy: "与眨眼冲突时眨眼优先"
+        tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+        verification_ref: "acc-lip-sync-0001:v1.0.0"
+
+  - identity: { intent_id: i-au-avatar-0001, version: "1.0.0" }
+    intent_type: vpo:craft.intent_object.audio_intent
+    target: { kind: shot, ref: shot_av_0001 }
+    scope: { level: vpo:delivery.scope.shot, ref: shot_av_0001 }
+    temporal_extent: { time_base: { rate_num: 24, rate_den: 1 } }
+    reference_context: {}
+    predicate: "台词由数字人 onsite 口型同步说出，响度对齐平台标准"
+    value: "口播音轨"
+    strength: vpo:delivery.strength.must
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    exceptions: []
+    acceptance_ref: "acc-lip-sync-0001:v1.0.0"
+    authority: director
+    control_channel: [vpo:delivery.control_channel.api_param]
+    atmosphere: vpo:sound.acoustics.dominant_acoustic_level.intimate_close
+    cues: []                              # 词级 cue 由 TTS 时间轴后置生成（S3 tts.py 接线后回填）
+    loudness: { target_lufs: -16, unit: LUFS, standard: R128 }
+    dialogue_class: vpo:sound.dialogue_class.on_camera
+    voice_identity_ref: "voice:avatar_host_female_01"
+    audio_approach: vpo:delivery.audio_approach.native
+
+  - identity: { intent_id: i-pp-av-sub, version: "1.0.0" }
+    intent_type: vpo:craft.intent_object.postprocess_intent
+    target: { kind: shot, ref: shot_av_0002 }
+    scope: { level: vpo:delivery.scope.shot, ref: shot_av_0002 }
+    temporal_extent: { time_base: { rate_num: 24, rate_den: 1 } }
+    reference_context: {}
+    predicate: "口播要点字幕程序烧录，逐字受控"
+    value: "程序渲染字牌"
+    strength: vpo:delivery.strength.must
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    exceptions: []
+    acceptance_ref: "acc-av-subtitle-0002:v1.0.0"
+    authority: director
+    control_channel: [vpo:delivery.control_channel.post_comp]
+    ops:
+      - op: vpo:delivery.postprocess_op.subtitle_burn
+        params:
+          max_chars_per_line_cjk: { value: 12, unit: chars, measurement_basis: "deliverable 1080x1920" }
+          anchor: "bottom_safe_area"
+    input_refs: ["clip:shot_av_0002@api_vidu_avatar"]
+    output_kind: vpo:delivery.deliverable_kind.master
+
+# ---- 执行计划 ----
+shots:
+  - schema_version: "2.0"
+    shot_id: shot_av_0001
+    axis: G9a                             # 口播主体线（工程方案v3.1 §2.1 新增轴）
+    duration_s: 8                         # 声明值；avatar 通道成片时长=ceil(音频秒)（V10 实测）
+    aspect: "9:16"
+    resolution: 480P                      # v1 档位登记；avatar 实际输出 540p/720p 由客户端参数定（R5 注记）
+    seed: 42
+    characters:
+      - char_id: avatar_host_01
+        desc: "30 岁左右女性主播，米色针织衫，暖光棚拍背景"
+        ref_image: "avatar_assets/host_a_portrait.png"   # image 通道身份源
+    camera: { movement: static, description: "胸上景口播机位，固定" }
+    audio:
+      generate: true
+      speech: "三步教你挑到不踩坑的入门相机，第三点最容易被忽略。"   # ← 槽位 hook_line
+      music: "轻快节奏的合成器流行乐，低音量垫底"                    # ← 槽位 bgm_desc
+    intent_refs: [i-lm-avatar-0001, i-au-avatar-0001]
+    prompt_mode: compiled                 # 模板线禁手写（R4）
+    engine:
+      channel: api_vidu_avatar            # G9a 专线（TTS→avatar；H3 系音轨不可控不作口播首选）
+      fallback: []                        # 无降级链：avatar 是唯一已验证口播通道
+      route_rule: G9a_avatar_talk
+    continuity:
+      link: none
+      seed_policy: none                   # R2：api 通道禁 fix_for_iteration
+      lock_restatement: [characters]
+      d3_split_declared: false
+      tail_source: planned                # avatar 首段无上游尾帧
+    cache:
+      strategy: submit_params             # R2：API 通道只命中提交参数层
+      fingerprint_includes: [prompt_hash, speech_text, image_ref_sha]
+    edit_ops: []
+    acceptance_refs: [acc-lip-sync-0001]
+    budget: { credit_cap_per_shot: 12, max_retries: 1 }
+
+  - schema_version: "2.0"
+    shot_id: shot_av_0002
+    axis: G9a
+    duration_s: 12
+    aspect: "9:16"
+    resolution: 480P
+    seed: 42
+    characters:
+      - { char_id: avatar_host_01, desc: "30 岁左右女性主播，米色针织衫，暖光棚拍背景", ref_image: "avatar_assets/host_a_portrait.png" }
+    camera: { movement: static, description: "胸上景口播机位，固定" }
+    audio:
+      generate: true
+      speech: "第一看传感器尺寸，底大一级压死人；第二看防抖，走路拍摄不糊；第三别忽视麦克风接口，收音差再好的画面也白搭。"   # ← 槽位 sell_points
+      music: ""
+    intent_refs: [i-lm-avatar-0001, i-au-avatar-0001]
+    prompt_mode: compiled
+    engine: { channel: api_vidu_avatar, fallback: [], route_rule: G9a_avatar_talk }
+    continuity:
+      link: prev_tail_frame               # 与上镜拼接：跨片身份一致（数字人实验报告 §0 实测）
+      seed_policy: vary
+      lock_restatement: [characters, camera_movement]
+      d3_split_declared: false
+      tail_source: real_rendered          # D3-3：拼接条件用上段真实尾帧
+    cache: { strategy: submit_params, fingerprint_includes: [prompt_hash, speech_text, image_ref_sha] }
+    edit_ops: []
+    acceptance_refs: [acc-lip-sync-0001, acc-av-subtitle-0002]
+    budget: { credit_cap_per_shot: 16, max_retries: 1 }
+
+# ---- 包级确定性后处理（ffmpeg 确定性链：合成层字节级复现实测成立，工程方案v3.1 §218）----
+post_ops:
+  - intent_ref: i-pp-av-sub
+    run_after: [shot_av_0002]
+
+# ---- L4 验收层：执行前冻结 ----
+acceptance:
+  - schema: "https://vpo.example/schemas/v1/l4/acceptance-spec.schema.json"
+    criterion_id: acc-lip-sync-0001
+    version: "1.0.0"
+    intent_path: "i-lm-avatar-0001.lips"
+    metric: "lip_sync_human_spotcheck"            # 时序缺陷：三 VLM 全漏定格实测 → 人工抽检项
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior, notes: "时序盲区：QC 报告时序结论不作自动放行依据" }
+    gate: vpo:delivery.gate.human                 # 表演/口型属人工灰区（草案 §7.3 映射表 human 行）
+    detector_id: J1_glm8
+    detector_version: "vpipe1.0"
+  - schema: "https://vpo.example/schemas/v1/l4/acceptance-spec.schema.json"
+    criterion_id: acc-av-subtitle-0002
+    version: "1.0.0"
+    intent_path: "i-pp-av-sub.ops[0]"
+    metric: "subtitle_verbatim_match"
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    gate: vpo:delivery.gate.block                 # 确定性烧录逐字核对
+    detector_id: J6_detectors
+    detector_version: "vpipe1.0"

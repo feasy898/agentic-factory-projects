@@ -1,0 +1,133 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_005",
+ "generated_at": "2026-09-30T18:07:34",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "manual_review",
+  "confidence": 0.8,
+  "decided_by": "E10",
+  "reasons": [
+   "E10 检出、未达 auto_reject 线：灰区人工复核（J1 检出（无概率通道≥0.90））"
+  ]
+ },
+ "defects": [
+  {
+   "type": "garble_text",
+   "sources": [
+    "J1",
+    "J2"
+   ],
+   "confidence": 0.8,
+   "evidence": {
+    "J1": {
+     "notes": "放大裁剪确认状态栏时间为'8:134'（非法格式乱码）；f07-f08蓝色气泡内白色字形与输入框'好'不符且不可读；'明天见'气泡及键盘QWERTY正常，手部形态正常"
+    },
+    "J2": {
+     "notes": "手机屏幕状态栏出现非法时间文本；键盘候选区汉字散布近似 iOS 拼音键盘属正常，故仅低置信度判文字异常"
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.4052,
+   "flicker": 0.3842,
+   "color_shift": 0.5972,
+   "face_blur": 0.1667,
+   "garble_text": 0.2487,
+   "temporal_swap": 0.3417,
+   "pixelate": 0.1855,
+   "ghosting": 0.3943
+  },
+  "overall": 0.5027,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "text": "状态栏时间全8帧异常；f07-f08顶部蓝色已发送气泡文字",
+    "source": "J1"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f01 状态栏时间显示 8:134（非法时间格式），顶栏联系人小字模糊难辨",
+    "source": "J2"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "full_clip:fps=1.0解码",
+    "source": "J5"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_005",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text"
+   ],
+   "confidence": 0.8,
+   "spans": "状态栏时间全8帧异常；f07-f08顶部蓝色已发送气泡文字",
+   "notes": "放大裁剪确认状态栏时间为'8:134'（非法格式乱码）；f07-f08蓝色气泡内白色字形与输入框'好'不符且不可读；'明天见'气泡及键盘QWERTY正常，手部形态正常"
+  },
+  "J2": {
+   "clip_id": "golden_005",
+   "defect_detected": true,
+   "defect_types": [
+    "text_error"
+   ],
+   "confidence": 0.5,
+   "spans": "f01 状态栏时间显示 8:134（非法时间格式），顶栏联系人小字模糊难辨",
+   "notes": "手机屏幕状态栏出现非法时间文本；键盘候选区汉字散布近似 iOS 拼音键盘属正常，故仅低置信度判文字异常"
+  },
+  "J5": {
+   "clip_id": "golden_005",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中无明显缺陷\"}"
+  },
+  "J6": {
+   "clip_id": "golden_005",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "J3": {
+   "clip_id": "golden_005",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.5972,
+   "spans": "16帧4x4拼图 9通道概率（run_metadata.json），阈值 0.70",
+   "notes": "frame_freeze=0.405; flicker=0.384; color_shift=0.597; face_blur=0.167; garble_text=0.249; temporal_swap=0.342; pixelate=0.185; ghosting=0.394; overall=0.503"
+  }
+ },
+ "inputs": {
+  "clip": null,
+  "frames_dir": null,
+  "judge_files": {
+   "J1": "D:\\workspace\\video-capability-research\\overnight\\数据\\judges\\glm8\\golden_005.json",
+   "J2": "D:\\workspace\\video-capability-research\\overnight\\数据\\judges\\glm3\\golden_005.json",
+   "J5": "D:\\workspace\\video-capability-research\\overnight\\数据\\judges\\videochat3\\golden_005.json",
+   "J6": "D:\\workspace\\video-capability-research\\overnight\\数据\\judges\\detectors\\golden_005.json",
+   "J3": "D:\\workspace\\video-capability-research\\overnight\\数据\\judges\\omnijev\\run_metadata.json"
+  }
+ },
+ "errors": {}
+}

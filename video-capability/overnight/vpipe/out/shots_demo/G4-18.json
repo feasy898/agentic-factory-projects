@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G4-18",
+ "axis": "G4",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "台球桌特写：白色母球直线撞击静止的红球，红球沿受力方向滚入袋口，母球减速停在撞击点附近，俯视机位",
+ "seed": 41018,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

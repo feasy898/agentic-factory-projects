@@ -1,0 +1,24 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G5-22",
+ "axis": "G5",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "同一个红衣女子出现在两个镜头：第一个镜头她走过街角，第二个镜头切到她的面部特写回眸，服装发型完全一致",
+ "seed": 41022,
+ "characters": [
+  {
+   "char_id": "charA",
+   "desc": "25岁亚洲女性「林夏」，齐肩黑色直发，红色连衣裙，气质温和，单人定妆照",
+   "ref_image": "..\\数据\\references_api\\charA_linxia_red_dress.png"
+  }
+ ],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

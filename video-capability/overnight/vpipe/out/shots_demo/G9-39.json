@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G9-39",
+ "axis": "G9",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "数字人主播场景：女主播走到直播台后坐下，双手整理稿件，然后拿起一支笔向镜头讲解，伴随自然手势",
+ "seed": 41039,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

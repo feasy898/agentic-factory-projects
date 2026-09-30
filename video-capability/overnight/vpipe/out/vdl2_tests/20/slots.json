@@ -1,0 +1,52 @@
+{
+ "schema_version": "2.0",
+ "work_id": "avatar_talk_demo",
+ "template_id": "avatar_talk_v1",
+ "description": "竖屏数字人口播双段模板：开场钩子 + 卖点讲解；台词与形象图是槽位",
+ "slots": [
+  {
+   "name": "hook_line",
+   "kind": "text",
+   "required": true,
+   "path": "shots[0].audio.speech",
+   "constraints": {
+    "max_len": 40
+   },
+   "intent_binding": "i-au-avatar-0001.cues",
+   "description": "开场钩子台词（TTS 输入源；成片时长 = ceil(音频秒)）",
+   "current_value": "三步教你挑到不踩坑的入门相机，第三点最容易被忽略。"
+  },
+  {
+   "name": "sell_points",
+   "kind": "text",
+   "required": true,
+   "path": "shots[1].audio.speech",
+   "constraints": {
+    "max_len": 120
+   },
+   "intent_binding": "i-au-avatar-0001.cues",
+   "description": "卖点讲解台词",
+   "current_value": "第一看传感器尺寸，底大一级压死人；第二看防抖，走路拍摄不糊；第三别忽视麦克风接口，收音差再好的画面也白搭。"
+  },
+  {
+   "name": "avatar_image",
+   "kind": "image_ref",
+   "required": true,
+   "path": "shots[0].characters[0].ref_image",
+   "intent_binding": "i-lm-avatar-0001.predicate",
+   "description": "数字人形象定妆照（image 通道身份源；Vidu avatar 参考图即身份）",
+   "current_value": "avatar_assets/host_a_portrait.png"
+  },
+  {
+   "name": "bgm_desc",
+   "kind": "text",
+   "required": false,
+   "default": "轻快节奏的合成器流行乐，低音量垫底",
+   "path": "shots[0].audio.music",
+   "description": "背景音乐氛围描述（仅登记）",
+   "current_value": "轻快节奏的合成器流行乐，低音量垫底"
+  }
+ ],
+ "compiler": "vdl2_compile.py@vpipe2.0-dev",
+ "compiled_at": "2026-09-30T18:07:27"
+}
