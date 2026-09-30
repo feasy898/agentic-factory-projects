@@ -1,0 +1,44 @@
+{
+  "schemaVersion": "mimosa-finding-ledger-batch/v1",
+  "batchId": "stop-20260928T193305122Z-16112-2e00d9af30e1",
+  "runId": "20260928T193305122Z-16112-2e00d9af30e1",
+  "runStatus": "inconclusive",
+  "coverage": {
+    "status": "partial",
+    "reasons": [
+      {
+        "code": "baseline_partial",
+        "stage": "baseline",
+        "target": ".",
+        "detail": "baseline capture had enumeration or snapshot errors",
+        "affectsCompletion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "baseline",
+        "target": ".",
+        "detail": "baseline_partial: baseline capture had enumeration or snapshot errors",
+        "affectsCompletion": true
+      }
+    ]
+  },
+  "source": {
+    "component": "zcode-hook",
+    "operationId": "Stop"
+  },
+  "revision": null,
+  "diffHash": "8a4680000eb5500120e48f78cf80c7dd237f6704e1f5c1c8de35d27d9f323c1f",
+  "rulesVersion": "unavailable",
+  "sessionHash": "f3be7e8568fe236f93022ac583bf8e2334d8ca083a5d655202a44615a0159fc1",
+  "reportRef": ".mimosa/reports/task-review-sess_ccb8433f-29c8-4bf0-9565-20f6a5651126-20260928T193305122Z-16112-2e00d9af30e1.json",
+  "events": [],
+  "observedFindingIds": [],
+  "verifiedFiles": [
+    {
+      "file": "packages/noise/src/controlbase.ts",
+      "direct": "complete",
+      "projectContext": "partial"
+    }
+  ],
+  "recordedAt": "2026-09-28T19:33:05.994Z"
+}

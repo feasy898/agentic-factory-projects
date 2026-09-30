@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "mimosa-finding-history/v1",
+  "runId": "20260928T192134417Z-28748-2123cd1af1af",
+  "runStatus": "inconclusive",
+  "errors": [
+    "candidate-select:packages/crypto/test/debug-naclbox.test.ts: changed_file_unreadable: observed changed file no longer exists or cannot be read",
+    "candidate-select:packages/crypto/test/debug2.test.ts: changed_file_unreadable: observed changed file no longer exists or cannot be read",
+    "candidate-select:packages/crypto/test/debug3.test.ts: changed_file_unreadable: observed changed file no longer exists or cannot be read",
+    "candidate-select:packages/crypto/test/debug4.test.ts: changed_file_unreadable: observed changed file no longer exists or cannot be read",
+    "candidate-select:packages/crypto/test/debug5.test.ts: changed_file_unreadable: observed changed file no longer exists or cannot be read",
+    "candidate-select:packages/crypto/test/debug6.test.ts: changed_file_unreadable: observed changed file no longer exists or cannot be read",
+    "candidate-select:packages/crypto/test/debug7.test.ts: changed_file_unreadable: observed changed file no longer exists or cannot be read",
+    "candidate-select:package-lock.json: candidate_limit_exceeded: 36 changed reviewable file(s) were not scanned because the limit is 20",
+    "scan:packages/noise/src/controlbase.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/noise/src/index.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/noise/test/controlbase.test.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/control/src/tailcfg.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/control/src/noisehttp.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/control/test/interop.test.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/control/src/index.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:interop/register.node.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:interop/start-headscale.sh: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:interop/h2c.node.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/crypto/src/naclbox.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/crypto/src/index.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/crypto/test/naclbox.test.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/derp/src/frame.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/derp/src/client.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:interop/arkts-check.js: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/common/src/zz-negative-control.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:interop/arkts-mirror.sh: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:interop/derp.node.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+    "scan:packages/derp/test/client.test.ts: scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+  ],
+  "target": ".",
+  "revision": null,
+  "diffHash": "93141d73353661a57ccd1fdaec7394122a96d80d921edf36bdab986931660451",
+  "rulesVersion": "unavailable",
+  "recordedAt": "2026-09-28T19:21:34.417Z",
+  "timing": {
+    "startedAt": "2026-09-28T19:21:30.629Z",
+    "completedAt": "2026-09-28T19:21:34.417Z",
+    "durationMs": 3788
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "modelCalls": 0,
+    "measurement": "known-zero"
+  },
+  "findings": {
+    "total": 0,
+    "bySeverity": {},
+    "byStatus": {}
+  },
+  "coverage": {
+    "status": "partial",
+    "reasonCounts": {
+      "changed_file_unreadable": 7,
+      "candidate_limit_exceeded": 1,
+      "scanner_failed": 20,
+      "project_check_failed": 28
+    }
+  },
+  "evidenceBoundary": "static_only",
+  "immutableReport": ".mimosa/reports/task-review-sess_ccb8433f-29c8-4bf0-9565-20f6a5651126-20260928T192134417Z-28748-2123cd1af1af.json"
+}

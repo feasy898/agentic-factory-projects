@@ -8,9 +8,10 @@
 
 - 本仓库已包含完整源码：`packages/`（六包 TypeScript 协议核心库，Node 侧测试全绿 238/238）、`app/`（HarmonyOS 工程壳，**从未编译过**）、`docs/`（协议取证、ArkTS 约束、架构契约）、`interop/`（真实 headscale 联调脚本，供参考）。
 - 控制面/DERP 真实互通已在 x86 环境打通（见 `DELIVERY_REPORT.md` §5），你不需要重复协议联调——**你的战场是把 `app/` 编译出来并跑起来**。
-- 克隆方式（匿名只读）：
+- 克隆方式（匿名只读，git 协议）：
   ```bash
-  git clone http://203.0.113.10:9418/ohos-tailscale.git
+  git clone git://203.0.113.10:9418/ohos-tailscale.git
+  cd ohos-tailscale
   ```
 
 ## 1. 环境判定（第一步先做，结论写进报告）
@@ -67,9 +68,9 @@ ArkTS 官方检查（可选，价值高）：DevEco 的 SDK 里有 ets-loader（
 1. **git push**（有 hk-gateway SSH 权限时）：`git checkout -b harmony-pc-work && git add -A && git commit -m "harmony-pc build" && git push origin harmony-pc-work`（push URL 用 `ssh://root@203.0.113.10:22/srv/git/ohos-tailscale.git`，端口非 22 则按实际）。
 2. **HTTP 收件箱**（无 SSH 时）：
    ```bash
-   curl -X POST --data-binary @HARMONY_PC_REPORT.md "http://203.0.113.10:8090/upload/<TOKEN>/HARMONY_PC_REPORT.md"
+   curl -X POST --data-binary @HARMONY_PC_REPORT.md "http://203.0.113.10:8090/upload/[UPLOAD-TOKEN-REDACTED]/HARMONY_PC_REPORT.md"
    ```
-   `<TOKEN>` 见克隆来源渠道提供的说明（一次性令牌，仅写不读）。HAP 产物同理上传（文件名带日期）。
+   返回 OK 即成功（令牌仅写不读；HAP 产物同理上传，文件名带日期，如 `app-20261001.hap`）。
 3. 都不通：把报告全文直接粘贴给用户。
 
 ## 7. 仓库文档索引（遇到问题先查这里）

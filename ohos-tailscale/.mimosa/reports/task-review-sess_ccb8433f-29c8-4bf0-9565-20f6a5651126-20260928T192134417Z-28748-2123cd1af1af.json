@@ -1,0 +1,1285 @@
+{
+  "schema_version": "mimosa-task-review/v2",
+  "run_id": "20260928T192134417Z-28748-2123cd1af1af",
+  "run_status": "inconclusive",
+  "errors": [
+    {
+      "stage": "candidate-select",
+      "target": "packages/crypto/test/debug-naclbox.test.ts",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    },
+    {
+      "stage": "candidate-select",
+      "target": "packages/crypto/test/debug2.test.ts",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    },
+    {
+      "stage": "candidate-select",
+      "target": "packages/crypto/test/debug3.test.ts",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    },
+    {
+      "stage": "candidate-select",
+      "target": "packages/crypto/test/debug4.test.ts",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    },
+    {
+      "stage": "candidate-select",
+      "target": "packages/crypto/test/debug5.test.ts",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    },
+    {
+      "stage": "candidate-select",
+      "target": "packages/crypto/test/debug6.test.ts",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    },
+    {
+      "stage": "candidate-select",
+      "target": "packages/crypto/test/debug7.test.ts",
+      "reason": "changed_file_unreadable: observed changed file no longer exists or cannot be read"
+    },
+    {
+      "stage": "candidate-select",
+      "target": "package-lock.json",
+      "reason": "candidate_limit_exceeded: 36 changed reviewable file(s) were not scanned because the limit is 20"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/noise/src/controlbase.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/noise/src/index.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/noise/test/controlbase.test.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/control/src/tailcfg.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/control/src/noisehttp.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/control/test/interop.test.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/control/src/index.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "interop/register.node.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "interop/start-headscale.sh",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "interop/h2c.node.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/crypto/src/naclbox.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/crypto/src/index.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/crypto/test/naclbox.test.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/derp/src/frame.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/derp/src/client.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "interop/arkts-check.js",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/common/src/zz-negative-control.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "interop/arkts-mirror.sh",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "interop/derp.node.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    },
+    {
+      "stage": "scan",
+      "target": "packages/derp/test/client.test.ts",
+      "reason": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT"
+    }
+  ],
+  "coverage": {
+    "schema_version": "mimosa-hook-coverage/v1",
+    "status": "partial",
+    "scope": "hook_observed_diff",
+    "baseline": {
+      "complete": true,
+      "captured_files": 99,
+      "candidate_limit": 5000,
+      "truncated": false,
+      "enumeration_error_count": 0,
+      "snapshot_error_count": 0,
+      "compensated_target_count": 38
+    },
+    "change_tracking": {
+      "touched_observed": 27,
+      "touched_retained": 27,
+      "truncated": false,
+      "bash_mutation": true,
+      "bash_discovered": 56,
+      "bash_discovery_limit": 80,
+      "bash_discovery_truncated": false
+    },
+    "candidates": {
+      "eligible_files": 56,
+      "selected_files": 20,
+      "limit": 20,
+      "truncated": true
+    },
+    "scanning": {
+      "required_files": 20,
+      "scanned_files": 0,
+      "skipped_files": 0,
+      "failed_files": 20,
+      "project_checks_required": 0,
+      "project_checks_completed": 0
+    },
+    "notification": {
+      "eligible_findings": 0,
+      "detailed_findings": 0,
+      "detail_limit": 3,
+      "truncated": false
+    },
+    "reason_counts": {
+      "changed_file_unreadable": 7,
+      "candidate_limit_exceeded": 1,
+      "scanner_failed": 20,
+      "project_check_failed": 28
+    },
+    "reasons": [
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug-naclbox.test.ts",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug2.test.ts",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug3.test.ts",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug4.test.ts",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug5.test.ts",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug6.test.ts",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "changed_file_unreadable",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug7.test.ts",
+        "detail": "observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "candidate_limit_exceeded",
+        "stage": "candidate-select",
+        "target": "package-lock.json",
+        "detail": "36 changed reviewable file(s) were not scanned because the limit is 20",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/noise/src/controlbase.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/noise/src/index.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/noise/test/controlbase.test.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/control/src/tailcfg.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/control/src/noisehttp.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/control/test/interop.test.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/control/src/index.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "interop/register.node.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "interop/start-headscale.sh",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "interop/h2c.node.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/crypto/src/naclbox.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/crypto/src/index.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/crypto/test/naclbox.test.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/derp/src/frame.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/derp/src/client.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "interop/arkts-check.js",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/common/src/zz-negative-control.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "interop/arkts-mirror.sh",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "interop/derp.node.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "scanner_failed",
+        "stage": "scan",
+        "target": "packages/derp/test/client.test.ts",
+        "detail": "spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug-naclbox.test.ts",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug2.test.ts",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug3.test.ts",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug4.test.ts",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug5.test.ts",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug6.test.ts",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "packages/crypto/test/debug7.test.ts",
+        "detail": "changed_file_unreadable: observed changed file no longer exists or cannot be read",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "candidate-select",
+        "target": "package-lock.json",
+        "detail": "candidate_limit_exceeded: 36 changed reviewable file(s) were not scanned because the limit is 20",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/noise/src/controlbase.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/noise/src/index.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/noise/test/controlbase.test.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/control/src/tailcfg.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/control/src/noisehttp.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/control/test/interop.test.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/control/src/index.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "interop/register.node.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "interop/start-headscale.sh",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "interop/h2c.node.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/crypto/src/naclbox.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/crypto/src/index.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/crypto/test/naclbox.test.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/derp/src/frame.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/derp/src/client.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "interop/arkts-check.js",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/common/src/zz-negative-control.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "interop/arkts-mirror.sh",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "interop/derp.node.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      },
+      {
+        "code": "project_check_failed",
+        "stage": "scan",
+        "target": "packages/derp/test/client.test.ts",
+        "detail": "scanner_failed: spawnSync C:\\Program Files\\nodejs\\node.exe ETIMEDOUT",
+        "affects_completion": true
+      }
+    ],
+    "reasons_truncated": false
+  },
+  "generated_at": "2026-09-28T19:21:34.417Z",
+  "session_id": "sess_ccb8433f-29c8-4bf0-9565-20f6a5651126",
+  "target": ".",
+  "revision": null,
+  "rules_version": "unavailable",
+  "diff_hash": "93141d73353661a57ccd1fdaec7394122a96d80d921edf36bdab986931660451",
+  "diff": {
+    "algorithm": "sha256",
+    "changed_file_count": 20,
+    "changed_files": [
+      {
+        "file": "interop/arkts-check.js",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 76
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "2b0acac62cc8447015f32c85764b3778d8b5dc43db0397464e7519adaefb097e"
+      },
+      {
+        "file": "interop/arkts-mirror.sh",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 32
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "f968398ef5c37eb0aab6df8426f54a4725880abbe07a914f8c22a216a9a15c6f"
+      },
+      {
+        "file": "interop/derp.node.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 367
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "6f09b4a748634d0a61a167c76c1b62d24e89ec88e7ad1610d24168715f1de9c4"
+      },
+      {
+        "file": "interop/h2c.node.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 281
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "5ba9b276e09418316a56d06ec28273cdcd373612b27b2f3f6ee2ff6b525eeb82"
+      },
+      {
+        "file": "interop/register.node.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 291
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "5221ea92e68e4645430ffc6c083e7d7d9e335414497bc45b3d736fd185c21875"
+      },
+      {
+        "file": "interop/start-headscale.sh",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 19
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "09e8b8e0b0e918593da4a6d56702d336219399ef55a5424e586acc943f5ce8b4"
+      },
+      {
+        "file": "packages/common/src/zz-negative-control.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 21
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "3f036e98ec06dff45ca99c8ac3031d6809c6b547d86256677aca034891657c24"
+      },
+      {
+        "file": "packages/control/src/index.ts",
+        "ranges": [
+          {
+            "start": 46,
+            "end": 69
+          }
+        ],
+        "before_hash": "19be9920287252cc741c604009379c5094a0a8796cc5d9cee094ffa0655509e1",
+        "after_hash": "cdd6d4bd460fff5dca0d63277e621d9604be06429179b0511d71125d61fc200c"
+      },
+      {
+        "file": "packages/control/src/noisehttp.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 336
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "f6cd3682d45c10b7afaa2281d7ee672a8abe7ec3a4d546d620e2448d0fcb8699"
+      },
+      {
+        "file": "packages/control/src/tailcfg.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 211
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "cb68783e14a4b8da239b509d70ea9ea9028a815f98e7c063b0635bb5ca8b6949"
+      },
+      {
+        "file": "packages/control/test/interop.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 152
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "1499743b03450dfb9b43adc698f74c2d08ebd4abd229357e8744742ccb6765d3"
+      },
+      {
+        "file": "packages/crypto/src/index.ts",
+        "ranges": [
+          {
+            "start": 31,
+            "end": 38
+          }
+        ],
+        "before_hash": "8a9842989402f7b5d8d7ef10acfe064c4efc06f8c78534b4d06e0ca5682a1e48",
+        "after_hash": "83eb97df5cec0bdeeac25c6dcbc49e78be0146e79a57ce47f8e7ee22a779c56d"
+      },
+      {
+        "file": "packages/crypto/src/naclbox.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 262
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "cc730f51610ffdb5a4068819d52b45341d4a7f16fd42d90b26d86e992e8c8304"
+      },
+      {
+        "file": "packages/crypto/test/naclbox.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 83
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "fca5d7708aaf2ad390b05e3e7f2b8744b2c6b5efd3cdcbb1169aae61f385780f"
+      },
+      {
+        "file": "packages/derp/src/client.ts",
+        "ranges": [
+          {
+            "start": 2,
+            "end": 2
+          },
+          {
+            "start": 5,
+            "end": 6
+          },
+          {
+            "start": 10,
+            "end": 14
+          },
+          {
+            "start": 16,
+            "end": 17
+          },
+          {
+            "start": 21,
+            "end": 22
+          },
+          {
+            "start": 24,
+            "end": 24
+          },
+          {
+            "start": 74,
+            "end": 75
+          },
+          {
+            "start": 78,
+            "end": 78
+          },
+          {
+            "start": 81,
+            "end": 81
+          },
+          {
+            "start": 84,
+            "end": 92
+          },
+          {
+            "start": 96,
+            "end": 96
+          },
+          {
+            "start": 114,
+            "end": 120
+          },
+          {
+            "start": 124,
+            "end": 124
+          },
+          {
+            "start": 161,
+            "end": 162
+          },
+          {
+            "start": 165,
+            "end": 171
+          },
+          {
+            "start": 173,
+            "end": 176
+          },
+          {
+            "start": 185,
+            "end": 195
+          },
+          {
+            "start": 200,
+            "end": 200
+          },
+          {
+            "start": 253,
+            "end": 253
+          },
+          {
+            "start": 277,
+            "end": 277
+          },
+          {
+            "start": 282,
+            "end": 282
+          },
+          {
+            "start": 288,
+            "end": 288
+          },
+          {
+            "start": 291,
+            "end": 292
+          },
+          {
+            "start": 294,
+            "end": 294
+          },
+          {
+            "start": 297,
+            "end": 297
+          },
+          {
+            "start": 304,
+            "end": 304
+          },
+          {
+            "start": 308,
+            "end": 314
+          },
+          {
+            "start": 317,
+            "end": 317
+          },
+          {
+            "start": 324,
+            "end": 324
+          },
+          {
+            "start": 408,
+            "end": 408
+          },
+          {
+            "start": 411,
+            "end": 411
+          }
+        ],
+        "before_hash": "9e0ac887e8638d0dc472f84c19e69a8b0e411d2a89d1ef4ea166137b04deb152",
+        "after_hash": "b3811a26fa617b77dda3cea09761da87c1893b20645a0d0c60e9881414a9216d"
+      },
+      {
+        "file": "packages/derp/src/frame.ts",
+        "ranges": [
+          {
+            "start": 2,
+            "end": 2
+          },
+          {
+            "start": 4,
+            "end": 4
+          },
+          {
+            "start": 6,
+            "end": 13
+          },
+          {
+            "start": 20,
+            "end": 20
+          },
+          {
+            "start": 23,
+            "end": 24
+          },
+          {
+            "start": 27,
+            "end": 29
+          },
+          {
+            "start": 31,
+            "end": 42
+          },
+          {
+            "start": 48,
+            "end": 48
+          },
+          {
+            "start": 51,
+            "end": 61
+          },
+          {
+            "start": 66,
+            "end": 88
+          },
+          {
+            "start": 92,
+            "end": 92
+          },
+          {
+            "start": 108,
+            "end": 109
+          },
+          {
+            "start": 112,
+            "end": 112
+          },
+          {
+            "start": 123,
+            "end": 123
+          },
+          {
+            "start": 125,
+            "end": 125
+          },
+          {
+            "start": 132,
+            "end": 132
+          },
+          {
+            "start": 138,
+            "end": 139
+          },
+          {
+            "start": 142,
+            "end": 144
+          },
+          {
+            "start": 146,
+            "end": 146
+          },
+          {
+            "start": 150,
+            "end": 151
+          },
+          {
+            "start": 157,
+            "end": 157
+          },
+          {
+            "start": 164,
+            "end": 164
+          },
+          {
+            "start": 187,
+            "end": 188
+          },
+          {
+            "start": 190,
+            "end": 193
+          },
+          {
+            "start": 195,
+            "end": 195
+          },
+          {
+            "start": 201,
+            "end": 201
+          }
+        ],
+        "before_hash": "bd6a718734fa03b62133b62c906251727fa659b2c61f2f09c3a0c1530ad52b60",
+        "after_hash": "8c2f4b8ad94a1567e5988973ce528d1f3297cf818c67b9b662b128f873449d50"
+      },
+      {
+        "file": "packages/derp/test/client.test.ts",
+        "ranges": [
+          {
+            "start": 3,
+            "end": 4
+          },
+          {
+            "start": 14,
+            "end": 14
+          },
+          {
+            "start": 22,
+            "end": 45
+          },
+          {
+            "start": 99,
+            "end": 100
+          },
+          {
+            "start": 114,
+            "end": 129
+          },
+          {
+            "start": 145,
+            "end": 145
+          },
+          {
+            "start": 148,
+            "end": 149
+          },
+          {
+            "start": 157,
+            "end": 179
+          },
+          {
+            "start": 186,
+            "end": 197
+          },
+          {
+            "start": 234,
+            "end": 234
+          },
+          {
+            "start": 236,
+            "end": 236
+          },
+          {
+            "start": 242,
+            "end": 242
+          },
+          {
+            "start": 246,
+            "end": 248
+          },
+          {
+            "start": 250,
+            "end": 251
+          },
+          {
+            "start": 253,
+            "end": 277
+          },
+          {
+            "start": 283,
+            "end": 290
+          },
+          {
+            "start": 294,
+            "end": 294
+          },
+          {
+            "start": 297,
+            "end": 300
+          },
+          {
+            "start": 307,
+            "end": 318
+          },
+          {
+            "start": 321,
+            "end": 322
+          },
+          {
+            "start": 328,
+            "end": 328
+          },
+          {
+            "start": 333,
+            "end": 333
+          },
+          {
+            "start": 337,
+            "end": 347
+          },
+          {
+            "start": 354,
+            "end": 365
+          },
+          {
+            "start": 377,
+            "end": 377
+          },
+          {
+            "start": 390,
+            "end": 390
+          },
+          {
+            "start": 395,
+            "end": 401
+          },
+          {
+            "start": 406,
+            "end": 406
+          },
+          {
+            "start": 408,
+            "end": 408
+          },
+          {
+            "start": 410,
+            "end": 412
+          },
+          {
+            "start": 414,
+            "end": 414
+          },
+          {
+            "start": 416,
+            "end": 417
+          },
+          {
+            "start": 419,
+            "end": 419
+          },
+          {
+            "start": 424,
+            "end": 425
+          },
+          {
+            "start": 443,
+            "end": 444
+          },
+          {
+            "start": 481,
+            "end": 482
+          },
+          {
+            "start": 484,
+            "end": 486
+          },
+          {
+            "start": 488,
+            "end": 491
+          },
+          {
+            "start": 496,
+            "end": 497
+          },
+          {
+            "start": 499,
+            "end": 499
+          },
+          {
+            "start": 502,
+            "end": 502
+          },
+          {
+            "start": 504,
+            "end": 506
+          },
+          {
+            "start": 515,
+            "end": 517
+          },
+          {
+            "start": 521,
+            "end": 532
+          },
+          {
+            "start": 534,
+            "end": 535
+          },
+          {
+            "start": 537,
+            "end": 537
+          },
+          {
+            "start": 549,
+            "end": 550
+          },
+          {
+            "start": 559,
+            "end": 559
+          },
+          {
+            "start": 561,
+            "end": 561
+          }
+        ],
+        "before_hash": "6f6573c7429afce4f044b47fb3d55820ef50da585f5ec47e9b190d81c167ea05",
+        "after_hash": "893ee786ba05a3c1d56b5d78c2e8b3cfda76e9eec481e3c79d745ebfe87bf46f"
+      },
+      {
+        "file": "packages/noise/src/controlbase.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 323
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "5071776b87dc5f45d102456b68ae6dcec985d50f4a13ca70e6c51591bd7357ec"
+      },
+      {
+        "file": "packages/noise/src/index.ts",
+        "ranges": [
+          {
+            "start": 21,
+            "end": 33
+          }
+        ],
+        "before_hash": "1ea4282994bf351f308812b9ed39a795eb5a4ae790552928052ea9c1f9422995",
+        "after_hash": "4ed29c273716c2188482a8f1e71457979ea8e5a19850d1259943e6797ed21c7d"
+      },
+      {
+        "file": "packages/noise/test/controlbase.test.ts",
+        "ranges": [
+          {
+            "start": 1,
+            "end": 285
+          }
+        ],
+        "before_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "after_hash": "df2a09a48368d7e9d1678832c8ba47728a09ee4df335649c2f6706009120a8cc"
+      }
+    ]
+  },
+  "timing": {
+    "started_at": "2026-09-28T19:21:30.629Z",
+    "completed_at": "2026-09-28T19:21:34.417Z",
+    "duration_ms": 3788,
+    "measurement": "hook_wall_clock"
+  },
+  "tokens": {
+    "input": 0,
+    "output": 0,
+    "total": 0,
+    "model_calls": 0,
+    "measurement": "known-zero"
+  },
+  "telemetry": {
+    "schemaVersion": "mimosa-gate-telemetry/v1",
+    "profile": "gate",
+    "operation": "Stop",
+    "outcome": "partial/INCONCLUSIVE",
+    "latencyMs": 3788,
+    "peakMemoryBytes": 77402112,
+    "memoryMeasurement": "max-observed-process-rss",
+    "scannedFiles": 0,
+    "cache": {
+      "hits": 0,
+      "misses": 0,
+      "measurement": "not-applicable"
+    },
+    "denyCount": 0,
+    "tokens": {
+      "input": 0,
+      "output": 0,
+      "total": 0,
+      "modelCalls": 0,
+      "measurement": "known-zero"
+    }
+  },
+  "finding_count": 0,
+  "rewake_finding_count": 0,
+  "evidence_boundary": {
+    "scan": "candidate",
+    "static_fix_verification": "observed_static_only",
+    "runtime_verification": "not_performed"
+  },
+  "finding_events": [],
+  "findings": [],
+  "artifacts": {
+    "immutable_report": ".mimosa/reports/task-review-sess_ccb8433f-29c8-4bf0-9565-20f6a5651126-20260928T192134417Z-28748-2123cd1af1af.json",
+    "latest_report": ".mimosa/reports/task-review-sess_ccb8433f-29c8-4bf0-9565-20f6a5651126.json",
+    "history_summary": ".mimosa/history/run-20260928T192134417Z-28748-2123cd1af1af.json"
+  }
+}
