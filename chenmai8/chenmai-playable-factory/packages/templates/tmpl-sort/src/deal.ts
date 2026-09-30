@@ -15,7 +15,8 @@
 
 import { sortScramble, isSolved, type Board, type SortMove } from "./board.ts";
 import { solveOptimal } from "./solver.ts";
-import { Lcg } from "@pf/spec";
+// invariants 叶子（@pf/spec 桶入口含 ajv 校验器，不得打进游戏 HTML——零外链红线）。
+import { Lcg } from "@pf/spec/invariants";
 
 /** 发牌重试上限（与 match3 的 64 次重生成同一先例）。 */
 export const DEAL_RETRY_MAX = 64;

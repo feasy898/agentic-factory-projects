@@ -13,11 +13,13 @@
 //     顺序走完仍没拔到救援针 → 失败。
 // 全部函数无 DOM 依赖，可在 Node 下单测。
 
+// 运行期引用一律走 invariants 叶子（@pf/spec 桶入口含 ajv 校验器——打包进游戏 HTML
+// 会触打包器零外链红线；invariants.ts 纯逻辑零依赖，tsc/esbuild 同图解析）。
 import {
   pullpinLevelRoles as frozenLevelRoles,
   pullpinSimulate as frozenPullpinSimulate,
   PULLPIN_REROLL_MAX,
-} from "@pf/spec";
+} from "@pf/spec/invariants";
 
 /** 与 @pf/spec 常量一致：角色针重抽的最大尝试次数（再导出供冻结测试对照）。 */
 export { PULLPIN_REROLL_MAX };

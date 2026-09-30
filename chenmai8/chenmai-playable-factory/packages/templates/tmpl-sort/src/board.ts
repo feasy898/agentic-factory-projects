@@ -15,13 +15,15 @@
 //     rods*layersPerRod 步——可逆 ⇒ 与已解态连通 ⇒ 必有解。
 // 全部函数无 DOM 依赖，可在 Node 下单测。
 
+// 运行期引用一律走 invariants 叶子（@pf/spec 桶入口含 ajv 校验器——打包进游戏 HTML
+// 会触打包器零外链红线；invariants.ts 纯逻辑零依赖，tsc/esbuild 同图解析）。
 import {
   sortSolvedBoard,
   sortLegalMoves as frozenLegalMoves,
   sortApplyMove as frozenApplyMove,
   sortInverseLegal as frozenInverseLegal,
   sortScramble as frozenScramble,
-} from "@pf/spec";
+} from "@pf/spec/invariants";
 
 /** 盘面：rods 根柱，每柱自底向上的颜色下标栈。 */
 export type Board = number[][];
