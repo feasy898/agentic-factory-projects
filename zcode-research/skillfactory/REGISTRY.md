@@ -167,3 +167,12 @@ hot-templates-skill    → rating A（5/5），15:48:32
 > 注 2：三件均**不进 dist/**——可分发门=确定性+盲评+体检(A) 三者齐，且发布动作待雇主批准（红线）。
 > 注 3：speaker-mapping 唯一红项修复路径＝contract §6 基线升版流程（Linux 重跑 12 命令重建 `oracle/out` + 同步 spec 附录 A.3 + 升版本号），属生成侧（worker-A）动作，本轮未代办。
 > 注 4：本轮 worker-B 未重跑双臂盲评（Δ/胜率），未做被测-参照全量对拍以外的新增评测面；v0.2 及更早各行数字与本轮无涉。
+
+### 更正（2026-10-01 R2，worker-B 终门复跑留档后；只追加，不改上方任何既有行）
+
+> 证据：`v5/report/EVAL-RUN-20261001.md` + `v5/report/eval-records/`（8 门 JSON/gates.tsv/keyfiles.sha256 R2 刷新版）。R1 节（L153 起）两行更正如下，其余行（含 hotwords）复跑无变化。
+
+| 名称 | 更正内容 |
+|---|---|
+| deploy-pack | 确定性评测更正：**package vs oracle 终门 4/4、rate 1.0**（复跑 exit 0；修复前 2/4、rate 0.6；R1 行内「dp05 绿 direct」实为 oracle 自评 self_eval=true，经 **2015999 模板对齐迭代修复**；本轮 deploy-pack.gate.json 为 self_eval=false 的 package 终门实证）。状态维持**内部就绪（工具/基建件）**，体检 C 形态备注不变。 |
+| speaker-mapping | 状态更正：待迭代 → **内部就绪（12/12）**——复跑 gate/self 均 exit 0（4 项检查全过；contract v1.1 增补条款 A-2 平台路径归一，仅及 discover JSON transcript 字段，9 txt 仍逐字节）；空目录红路 exit 1 保持 fail-closed。体检 C 形态备注不变。 |

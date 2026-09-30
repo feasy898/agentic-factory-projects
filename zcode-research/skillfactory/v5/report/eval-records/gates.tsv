@@ -1,0 +1,8 @@
+speaker-mapping.gate exit=0 expect=0
+speaker-mapping.self exit=0 expect=0
+speaker-mapping.red exit=1 expect=1
+deploy-pack.gate exit=0 expect=0
+deploy-pack.self exit=0 expect=0
+deploy-pack.red exit=1 expect=1
+hotwords.gate exit=0 expect=0
+hotwords.red exit=1 expect=1

@@ -1,0 +1,32 @@
+{
+  "ok": false,
+  "summary": {
+    "total": 4,
+    "pass": 0,
+    "fail": 4,
+    "tested_root": "/tmp/wb_red_empty_sm",
+    "reference_root": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/speaker-mapping/oracle/out"
+  },
+  "checks": [
+    {
+      "name": "replacement_line_by_line",
+      "pass": false,
+      "detail": "不一致 9/9: normal__m_full.txt: 缺少 /tmp/wb_red_empty_sm/normal__m_full.txt; normal__m_partial.txt: 缺少 /tmp/wb_red_empty_sm/normal__m_partial.txt; normal__m_empty.txt: 缺少 /tmp/wb_red_empty_sm/normal__m_empty.txt; partial__m_full.txt: 缺少 /tmp/wb_red_empty_sm/partial__m_full.txt; partial__m_partial.txt: 缺少 /tmp/wb_red_empty_sm/partial__m_partial.txt; partial__m_empty.txt: 缺少 /tmp/wb_red_empty_sm/partial__m_empty.txt; empty__m_full.txt: 缺少 /tmp/wb_red_empty_sm/empty__m_full.txt; empty__m_partial.txt: 缺少 /tmp/wb_red_empty_sm/empty__m_partial.txt; empty__m_empty.txt: 缺少 /tmp/wb_red_empty_sm/empty__m_empty.txt"
+    },
+    {
+      "name": "unmapped_warnings",
+      "pass": false,
+      "detail": "警告不一致 9/9: normal__m_full.stderr.txt: 缺少 /tmp/wb_red_empty_sm/normal__m_full.stderr.txt; normal__m_partial.stderr.txt: 缺少 /tmp/wb_red_empty_sm/normal__m_partial.stderr.txt; normal__m_empty.stderr.txt: 缺少 /tmp/wb_red_empty_sm/normal__m_empty.stderr.txt; partial__m_full.stderr.txt: 缺少 /tmp/wb_red_empty_sm/partial__m_full.stderr.txt; partial__m_partial.stderr.txt: 缺少 /tmp/wb_red_empty_sm/partial__m_partial.stderr.txt; partial__m_empty.stderr.txt: 缺少 /tmp/wb_red_empty_sm/partial__m_empty.stderr.txt; empty__m_full.stderr.txt: 缺少 /tmp/wb_red_empty_sm/empty__m_full.stderr.txt; empty__m_partial.stderr.txt: 缺少 /tmp/wb_red_empty_sm/empty__m_partial.stderr.txt; empty__m_empty.stderr.txt: 缺少 /tmp/wb_red_empty_sm/empty__m_empty.stderr.txt"
+    },
+    {
+      "name": "discover_stats",
+      "pass": false,
+      "detail": "不一致 3/3: discover__normal.json: 缺少 /tmp/wb_red_empty_sm/discover__normal.json; discover__partial.json: 缺少 /tmp/wb_red_empty_sm/discover__partial.json; discover__empty.json: 缺少 /tmp/wb_red_empty_sm/discover__empty.json"
+    },
+    {
+      "name": "reference_agreement_100pct",
+      "pass": false,
+      "detail": "与参照产物一致 0/12（100%，确定性要求；discover JSON 按 A-2 归一，9 txt 逐字节），不一致: normal__m_full.txt: 被测侧 缺少 /tmp/wb_red_empty_sm/normal__m_full.txt; normal__m_partial.txt: 被测侧 缺少 /tmp/wb_red_empty_sm/normal__m_partial.txt; normal__m_empty.txt: 被测侧 缺少 /tmp/wb_red_empty_sm/normal__m_empty.txt; partial__m_full.txt: 被测侧 缺少 /tmp/wb_red_empty_sm/partial__m_full.txt; partial__m_partial.txt: 被测侧 缺少 /tmp/wb_red_empty_sm/partial__m_partial.txt; partial__m_empty.txt: 被测侧 缺少 /tmp/wb_red_empty_sm/partial__m_empty.txt; empty__m_full.txt: 被测侧 缺少 /tmp/wb_red_empty_sm/empty__m_full.txt; empty__m_partial.txt: 被测侧 缺少 /tmp/wb_red_empty_sm/empty__m_partial.txt; empty__m_empty.txt: 被测侧 缺少 /tmp/wb_red_empty_sm/empty__m_empty.txt; discover__normal.json: 被测侧 缺少 /tmp/wb_red_empty_sm/discover__normal.json; discover__partial.json: 被测侧 缺少 /tmp/wb_red_empty_sm/discover__partial.json; discover__empty.json: 被测侧 缺少 /tmp/wb_red_empty_sm/discover__empty.json"
+    }
+  ]
+}
