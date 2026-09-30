@@ -1,0 +1,125 @@
+{
+ "tolerance_s": 0.35,
+ "min_freeze_s": 1.0,
+ "all_pass": true,
+ "clips": [
+  {
+   "clip_id": "golden_017",
+   "expect": "freeze",
+   "keyframe_count": 6,
+   "threshold": 0.08,
+   "score_stats": {
+    "max": 0.421569,
+    "median": 0.089461,
+    "p95": 0.352237
+   },
+   "detected_spans": [
+    {
+     "start_s": 1.562,
+     "end_s": 3.5,
+     "duration_s": 1.938
+    }
+   ],
+   "injected": {
+    "start_s": 1.531,
+    "end_s": 3.531,
+    "duration_s": 2.0,
+    "mode": "freeze_last_frame"
+   },
+   "eps": 0.004,
+   "outside_motion": true,
+   "sheets": [
+    {
+     "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_017/overview.jpg",
+     "width": 1600,
+     "height": 702,
+     "cells": 6
+    }
+   ],
+   "verdict": "PASS"
+  },
+  {
+   "clip_id": "golden_028",
+   "expect": "freeze",
+   "keyframe_count": 10,
+   "threshold": 0.08,
+   "score_stats": {
+    "max": 0.181066,
+    "median": 0.092218,
+    "p95": 0.162316
+   },
+   "detected_spans": [
+    {
+     "start_s": 1.562,
+     "end_s": 3.5,
+     "duration_s": 1.938
+    }
+   ],
+   "injected": {
+    "start_s": 1.531,
+    "end_s": 3.531,
+    "duration_s": 2.0,
+    "mode": "freeze_last_frame"
+   },
+   "eps": 0.004,
+   "outside_motion": true,
+   "sheets": [
+    {
+     "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_028/overview.jpg",
+     "width": 1600,
+     "height": 1412,
+     "cells": 10
+    }
+   ],
+   "verdict": "PASS"
+  },
+  {
+   "clip_id": "golden_001",
+   "expect": "clean",
+   "keyframe_count": 5,
+   "threshold": 0.08,
+   "score_stats": {
+    "max": 0.607721,
+    "median": 0.40337,
+    "p95": 0.566495
+   },
+   "detected_spans": [],
+   "injected": null,
+   "eps": 0.004,
+   "outside_motion": true,
+   "sheets": [
+    {
+     "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_001/overview.jpg",
+     "width": 1600,
+     "height": 2114,
+     "cells": 5
+    }
+   ],
+   "verdict": "PASS"
+  },
+  {
+   "clip_id": "golden_006",
+   "expect": "clean",
+   "keyframe_count": 6,
+   "threshold": 0.08,
+   "score_stats": {
+    "max": 0.22837,
+    "median": 0.09277,
+    "p95": 0.170306
+   },
+   "detected_spans": [],
+   "injected": null,
+   "eps": 0.004,
+   "outside_motion": true,
+   "sheets": [
+    {
+     "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_006/overview.jpg",
+     "width": 1600,
+     "height": 2114,
+     "cells": 6
+    }
+   ],
+   "verdict": "PASS"
+  }
+ ]
+}
