@@ -91,6 +91,11 @@ python scripts/e2e_mock_run.py --profile rerun   # 全链 mock + 调试流旁挂
 
 （脚本能力细节见各自 `--help` 与 docstring；录制兜底：演示前备好三段各 90s 录屏。）
 
+> **演示/验收期警示**：勿在演示或评委验收前随手跑全量 pytest 或 e2e——conftest
+> 会话级钩子会当场改写 `reports/` 的 schema/food/dashboard 三份证据报告（坑 5），
+> 小规模试验会覆盖 trace 审计流（坑 13）。误跑后
+> `git checkout -- chengshao/reports/` 恢复证据文件再演示。
+
 ## 4. 替换/重生成模块时的回归清单
 
 | 被替换模块 | 必跑回归 | 额外人工检查 |
@@ -128,6 +133,9 @@ python scripts/e2e_mock_run.py --profile rerun   # 全链 mock + 调试流旁挂
 
 - 本资产包（docs/assets/）随代码演进：模块状态变化 → 改 manifest.md/json 的 status 与
   verified；契约变更 → 走 [CONTRACTS §变更流程](CONTRACTS.md)。
+- **README.md 的模块进度表随状态变化同步刷新**（README 是资产包同步纪律之外的第一入口，
+  曾停更两代里程碑——2026-09-30 订正；表内声明状态权威=manifest.md，两处不一致以
+  manifest 为准，但摘要表本身不得停留在过期状态）。
 - 公开仓纪律自查（每次发布前）：`python chengshao/scripts/check_naming.py` 必须零 FORBIDDEN
   （WARNING 级人工复核）；`_vendor/`、上游原始路径不入库、不入 commit message。
 - 报告复核：`python scripts/verify_g1_reports.py`（独立重算，防"自报即通过"）。

@@ -105,7 +105,9 @@ eval 断言 8 键齐（cs_orchestra.eval `blackboard_frozen_keys`）。
   （cs_schema/__init__.py）；cs_arm `__version__="0.1.0"`；包络缺省=config/workspace.json。
 - **谁批准**：契约（C1–C7）变更由仓库 owner / PM 批准；实现者不得单方面变更。
 - **怎么广播**（每次契约变更必须全做）：
-  1. 更新本页对应小节 + 受影响 specs/*（各 spec 头部"对照文件与核验日期"同步刷新）；
+  1. 更新本页对应小节 + 受影响 specs/*（各 spec 头部"对照文件与核验日期"同步刷新）
+     + **manifest.md/json 的冻结契约列同步**（语义口径变更最易漏的同步点——2026-09-30
+     cs_voice 意图优先级订正时 spec 已改而 manifest 冻结契约列残留旧口径，即此漏洞实证）；
   2. cs_schema 模型/枚举/常量同步改 + fixtures 补齐 + CHANGELOG.md 追加修订记录；
   3. 受影响模块实现同步改；相关 eval 全绿（模块 eval + 受影响 pytest + gate_g1）；
   4. 单独 commit，标题带 `contract-change:` 前缀；破坏性变更进大版本（v1.1→v2.0）。

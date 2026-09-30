@@ -134,7 +134,7 @@
       ],
       "contract": {
         "voiceLink": "start/poll/say 冻结；poll=清空积压只留最新",
-        "intentPriority": "done > select > pause > next > resume > greet；select 槽位只取注册菜名表；置信度 0.95/0.90/0.75/0.30",
+        "intentPriority": "规则表五条顺序即优先级 done > pause > next > resume > greet；select=规则表全未命中后的兜底（全表最低，槽位只取注册菜名表；2026-09-30 依代码订正）；置信度 0.95/0.90/0.75/0.30",
         "asrFallback": "funasr（本地缓存优先，torch 单线程）→ sherpa-onnx（CS_VOICE_ONNX_DIR）；富标签剥除",
         "tts": "合成=pyttsx3 进程级单例工作线程；播放=一次性线程原生 SAPI COM 异步+10s 硬超时"
       },

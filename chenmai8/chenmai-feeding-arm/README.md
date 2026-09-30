@@ -37,23 +37,29 @@ chengshao/
 scripts/         gate_g1.py 门禁与 verify_g1_reports.py 报告独立复核
 ```
 
-> 详细模块规格与验收标准见 `docs/`，逐模块 spec+eval 驱动开发。
+> 详细模块规格与验收标准见 `docs/assets/`（manifest + 逐模块 spec + CONTRACTS +
+> REGENERATE 整仓再生手册），逐模块 spec+eval 驱动开发。
 
 ## 模块进度
+
+> **状态权威 = `docs/assets/manifest.md`**（下表为其摘要，两处不一致时以 manifest 为准）。
 
 | 模块 | 状态 | 验收 |
 |---|---|---|
 | cs_schema | 契约冻结 v1.1 | `pytest tests/test_schema.py` |
-| cs_food | 勺上检查接口 + 启发式基线（合成自检） | `pytest tests/test_food_interface.py` |
-| cs_dashboard | 看板骨架 | `pytest tests/test_dashboard.py` |
-| cs_mouth | 口部三维估计（mono 主路径 + depth/腕部 IPD 保留） | `python -m cs_mouth.eval`（包根下执行） |
 | cs_sim | 仿真：FK/IK/可达空间/安全包络 + 独立违规轨迹 oracle | `python -m cs_sim.eval`（包根下执行） |
+| cs_arm | 执行层：MockArm（cs_sim 虚拟执行）+ SafetyEnvelope 硬闸 + FeetechArm 骨架（fail-closed，真机 T10） | `pytest tests/test_arm_mock.py` + `python -m cs_arm.eval_mock`（包根下执行） |
+| cs_mouth | 口部三维估计（mono 主路径 + depth/腕部 IPD 保留） | `python -m cs_mouth.eval`（包根下执行） |
 | cs_voice | 离线语音链路 | `python -m cs_voice.eval`（包根下执行） |
-| cs_arm | 执行层：MockArm（cs_sim 虚拟执行）+ SafetyEnvelope 硬闸 + FeetechArm 骨架 | `pytest tests/test_arm_mock.py` + `python -m cs_arm.eval_mock`（包根下执行） |
-| cs_orchestra | 未开工（行为树在 G3 起，消费 cs_arm 硬闸） | — |
+| cs_food | 勺上检查接口 + 启发式基线（合成自检） | `pytest tests/test_food_interface.py` |
+| cs_dashboard | 护理看板（HTTP 契约 + SQLite + 实时刷新） | `pytest tests/test_dashboard.py` |
+| cs_orchestra | 编排：行为树全节点（mock 验收 30/30 回合，真机接线已备） | `python -m cs_orchestra.eval --mock`（包根下执行） |
 
-一键门禁：`python scripts/gate_g1.py`（命名扫描 + 全量 pytest + 各模块
-eval + 报告独立复核 + 看板冒烟）。
+e2e 与门禁：`python scripts/e2e_mock_run.py`（全链 mock 端到端 30 口）、
+`python scripts/gate_g1.py`（一键门禁 8 步，命名扫描 + 全量 pytest + 各模块
+eval + 报告独立复核 + 看板冒烟；2026-09-30 整门 8/8 PASS）。
+无硬件演示三件套：`python chengshao/scripts/demo_sim.py` /
+`python chengshao/scripts/demo_mouth.py` / `python scripts/e2e_mock_run.py --profile rerun`。
 
 ### cs_mouth：口部三维估计
 
