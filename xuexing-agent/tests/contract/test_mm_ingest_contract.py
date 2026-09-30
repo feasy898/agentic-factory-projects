@@ -33,6 +33,10 @@ from xuexing.mm_ingest import (
 from xuexing.types import Paper, Response
 
 
+# 哨兵环境：非机密占位值，仅供 MMClient 的 mock 传输层读取，不对应任何真实凭据
+_SENTINEL_ENV = {"XX_LLM_API_KEY": "sentinel-token-1"}
+
+
 # ---------- 自封闭小夹具 ----------
 
 class _DuckItem:
@@ -215,7 +219,7 @@ def test_prompt_exact_bytes_over_mm_client_mock_wire():
     reply = json.dumps({"choices": [{"message": {"content": transcript}}]},
                        ensure_ascii=False).encode("utf-8")
     mt = MockTransport(replies={"chat": (200, reply)})
-    client = MMClient(mt, env={"XX_LLM_API_KEY": "sentinel-token-1"},
+    client = MMClient(mt, env=dict(_SENTINEL_ENV),
                       resolve=lambda host: ["93.184.216.34"])
     grader = _recording_grader()
     result = ingest_photo(IMAGE, _paper(), BANK, client, grader)
