@@ -2,7 +2,9 @@
 
 > 版本：契约基线 schemas v1.0（v1.1 只增 `GradingDecision.warnings`，2026-09-28 W9 增补）。
 > 本页汇总跨模块冻结契约：**单粒 / 整盘 / 护照三张 JSON schema 的字段全表** + 横切契约 +
-> 已识别痛点候选。字段定义对照 `beaneye/schemas.py` 逐行核验于 2026-09-29；
+> 已识别痛点候选。字段定义对照 `beaneye/schemas.py` 逐行核验于 2026-09-29，2026-09-30
+> 回炉复核（C2.4 pairing_cost 两口径强制、C2.6/不变式① normal 键口径、C5 逐类归属/rank
+> 现查/worst_detail 双 None 补引）；
 > 一切跨模块数据只走这些 Pydantic v2 模型（`extra="forbid"`：多余字段报错；
 > `to_json()/from_json()` 往返必须无损）。
 
@@ -29,7 +31,7 @@
 |---|---|---|---|
 | `obs_id` | str | **必须 == mask.mask_id** | 观测 id |
 | `side` | top/bottom | **必须 == mask.side** | 面 |
-| `defect` | str | **必须在 taxonomy**（构造期校验，非法即 ValidationError） | 类别键；`normal` 表好豆 |
+| `defect` | str | **必须在 taxonomy**（构造期校验，非法即 ValidationError；schemas.py:205-210。溯因侧 `CauseItem.defect` 同，schemas.py:462-469；`defect_is_countable` 对未知类恒 False 仅纵深防御，schemas.py:81-91） | 类别键；`normal` 表好豆 |
 | `defect_conf` | float | [0,1] | 置信度 |
 | `severity_rank` | int | >=0；**normal 恒 0，缺陷类恒 >0** | 0=normal 越大越严重，取 taxonomy/标准 YAML 序 |
 | `crop_path` | str | min_length=1 | 掩码裁剪 RGBA PNG 证据（相对路径，M13 解析） |
@@ -72,7 +74,7 @@
 |---|---|---|---|
 | `bean_id` | str | min_length=1 | `b0001..`（锚定质心 (x,y) 稳定序） |
 | `top` / `bottom` | BeanObservation \| None | — | 两面观测（可缺面） |
-| `pairing_cost` | float | **单面/占位 = -1；双面 >=0（mm 距离）** | 配对判定坐标系下距离 |
+| `pairing_cost` | float | **两口径强制（校验器三分支逐一强制，schemas.py:290-300）**：单面（恰一面 None）与双 None 占位必须恰 = -1；双面齐全必须 >=0（mm 距离），传 -1/任何负值即 ValidationError | 配对判定坐标系下距离 |
 | `worst_side` | `top`/`bottom`/`both`/`none` | **必须与裁决器重算一致**（校验器逐位复核） | 见 C5 裁决规则 |
 | `final_defect` | str | 同上 | 两面中 severity_rank 最高者（平级取 conf 高） |
 | `final_severity_rank` | int | 同上 | — |
@@ -103,7 +105,7 @@
 | `grade` | str | min_length=1 | 级别名或 fail_grade（如"未达 Fine"/"等外"） |
 | `passed` | bool | — | **warnings 非空时引擎强制 False**（阈值未核对不宣布通过） |
 | `primary_count` / `secondary_count` | int | >=0；**BatchResult 校验其与豆列表按 taxonomy 分计一致** | peaberry 等不可计类不计 |
-| `defect_counts` | dict[str,int] | 计数 >=0；**必须与逐粒 final_defect 直方一致（含 normal 键）** | 每粒只计一次 |
+| `defect_counts` | dict[str,int] | 计数 >=0；**与逐粒 final_defect 直方一致：非 normal 键双向强制（缺键/计数不符均报错），normal 键可省（写则必校）**——计数函数 include_normal 缺省 = False，M9 引擎写出的直方不含 normal 键（engine.py:117）；校验器内部按 include_normal=True 取全直方比对（schemas.py:530-542，2026-09-30 探针实测两向） | 每粒只计一次 |
 | `reasons` | list[str] | — | i18n 模板键+数值：`键:k=v;k=v`（M10 按 lang 渲染） |
 | `warnings` | list[str] | 默认 []（v1.1 增补，只增不改名） | 标准 YAML verified:false 清单（稳定键路径） |
 | `standard_yaml_sha` | str | `^[0-9a-f]{64}$` | 标准 YAML 文件字节 sha256 |
@@ -121,7 +123,7 @@
 | `pipeline_versions` | dict[str,str] | — | 如 `{"segment":"classic","classify":"rules_v0","agent":"template","standard":"cqi_fine_robusta"}`；固定键：calibration=aruco4:v1 / pairing=hungarian:v1 / metrology=measure:v1 / report=passport:v1 |
 
 **BatchResult 三重一致性不变式**（model_validator，违规即 ValidationError）：
-① `grading.defect_counts` == 逐粒 `final_defect` 直方（含 normal 键，双向）；
+① `grading.defect_counts` == 逐粒 `final_defect` 直方（校验器内部按 include_normal=True 取全直方，schemas.py:530-542；非 normal 键双向强制，normal 键可省、写则必校）；
 ② `primary_count/secondary_count` == 豆列表按 taxonomy 主/次归属分计（不可计类不计）；
 ③ `measurements.bean_count` == `len(beans)`。
 
@@ -151,11 +153,22 @@
 ## C5 裁决与计数契约（M7 与契约校验器逐位一致）
 
 - 裁决：rank 高者胜；平级取 conf 高并记 `worst_side="both"`（conf 完全相等偏向 top）；
-  单面取另面；两面皆 None → ("normal","none")；**非可计缺陷类（counts_as_defect=false，
-  peaberry）不参与比较**（存在可计面时只在可计面间裁决；皆非可计退回全量，标注不丢）。
+  单面取另面；两面皆 None → ("normal","none")（M7 明细版 `worst_detail` 全取值
+  `winner_side="none"/winner_conf=None/tie=False`，adjudicate.py:185-186）；
+  **非可计缺陷类（counts_as_defect=false，peaberry）不参与比较**（存在可计面时只在可计面间
+  裁决；皆非可计退回全量，标注不丢）。rank 一律按当前生效序**现场查找、无缓存**
+  （`SeverityOrder.rank`/`Taxonomy.severity_rank` 皆每次现查）；观测上的 `severity_rank`
+  是冻结存储字段而非缓存，换序后必须经 `rebase_observation` 改写为当前序位次
+  （`adjudicate_pairs` 内置），否则契约校验器（比存储字段，schemas.py:257）与 M7 现查
+  （adjudicate.py:211）可能分歧。
 - 计数：`most_severe_per_bean`——每粒只按 `final_defect` 计一次；`defect_counts` 直方即
   BatchResult 不变式①；主/次分计 peaberry 不计。契约 `defect_counts_from_beans` 与
-  M7 `count_defects` 独立双实现 + eval 交叉验证。
+  M7 `count_defects` 独立双实现 + eval 交叉验证；两处 `include_normal` **缺省均 = False**
+  （normal 不入直方，normal 键口径见不变式①）。主/次分计按 taxonomy `kind` 归属：
+  primary 5 类（insect/dried/sour/mold/black）+ secondary 可计 6 类，peaberry
+  （`counts_as_defect=false`）剔除——**逐类 primary/secondary 归属与 counts_as_defect
+  全表唯一权威 = 契约附件 `configs/taxonomy.yaml`**（快照表见
+  [severity spec §2](specs/severity.md)）。
 - severity_order 契约：`[0]` 恒 normal（rank 0），缺陷类 rank>0；taxonomy 默认序与标准
   YAML 覆盖序（须全排列）见 [severity spec](specs/severity.md)。
 
