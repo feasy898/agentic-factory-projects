@@ -1,9 +1,9 @@
 {
-  "$comment": "资产包总表（机器可读版），与 manifest.md 逐格对齐。status 取值：frozen_cn=冻结（实现且 eval 全绿）；frozen_known_regression=冻结·已知回归；regenerating=重生成中（在飞）；placeholder=占位桩；planned=未开工；degraded_runtime=降级运行。2026-09-29 实测基线：全套件 434 用例（已入库模块集）=431 绿+3 已知失败（M6 密排统计场景，钉种子确定性复现）。公开仓红线：本文件与全部资产包页面零上游名（上游代号只存在于不入库内部文件 configs/upstream_mapping.internal.yaml）。",
+  "$comment": "资产包总表（机器可读版），与 manifest.md 逐格对齐。status 取值：frozen_cn=冻结（实现且 eval 全绿）；frozen_known_regression=冻结·已知回归；regenerating=重生成中（在飞）；placeholder=占位桩；planned=未开工；degraded_runtime=降级运行。2026-09-30 实测基线：全套件 508 用例全绿（pytest tests/ -q，exit 0；74f020e 回退 943d8cc 的 RNG 迁移后密排 3 例已消除），M12 合成 / M4 分割 / M5 分类已于 09-30 前落库转冻结（eval=synth 23 + segment 23 + oracle 9 + classify 19 = 74 用例）。公开仓红线：本文件与全部资产包页面零上游名（上游代号只存在于不入库内部文件 configs/upstream_mapping.internal.yaml）。",
   "assetPack": {
     "name": "啡眼 BeanEye · 咖啡生豆质检台 spec+eval 资产包",
-    "version": "1.0.0",
-    "updated": "2026-09-29",
+    "version": "1.1.0",
+    "updated": "2026-09-30",
     "contractVersion": "schemas v1.0（v1.1 只增 GradingDecision.warnings）/ taxonomy v1 / 标准阈值占位基线（verified:false）",
     "documents": {
       "manifest": "docs/assets/manifest.md",
@@ -12,12 +12,13 @@
       "specsDir": "docs/assets/specs/"
     },
     "measuredBaseline": {
-      "date": "2026-09-29",
+      "date": "2026-09-30",
       "suite": "python -m pytest tests/ -q",
-      "result": "3 failed, 431 passed（434 用例，已入库模块集）；失败全部为 tests/test_pairing.py 密排统计 3 例（回归根源：提交 943d8cc 随机源切换改变了随机流）",
-      "gateD2": "FAIL (2/5)：① doctor PASS ② 全绿 FAIL ③ 3/4 入口 exit0（W6 FAIL）④ 中性名零命中（28 条）⑤ 禁止 IO 零命中",
-      "gateD3": "FAIL (1/4)：① PASS ② FAIL（并发写入瞬态快照）③ 4/4 入口 exit0 ④ 中性名零命中（23 条）",
-      "gateD1": "FAIL (1/4)：① DOCTOR PASS ② test_schemas 60 绿 ④ 数据集 README PASS；③ 现场重跑 oss_smoke 超时 >600s（本机当时网络受限，非产物回归）"
+      "result": "508 passed（exit 0；09-30 复跑口径，见 manifest.md 实测注记·现状）。历史快照（09-29 落成时点 434 用例 = 431 绿 + 3 已知失败）留档于 manifest.md，已被本口径取代",
+      "gateD2": "09-30 复跑 PASS (5/5)：② 508 全绿 ③ 4/4 入口 exit0 ④ 中性名零命中（133 文件×28 条）⑤ 禁止 IO 零命中",
+      "gateD3": "09-30 复跑 PASS (4/4)（经 gate_d4 ③ 原样回归项）",
+      "gateD4": "PASS (4/4)（提交 9346ec6 时点：① 508 passed 404.32s ② e2e_synth_run 缺省 3 盘 exit0 ③ gate_d3 4/4 ④ 中性名零命中）",
+      "gateD1": "FAIL (1/4)：① DOCTOR PASS ② test_schemas 60 绿 ④ 数据集 README PASS；③ 现场重跑 oss_smoke 超时 >600s（本机当时网络受限，非产物回归；网络恢复后复跑即可）"
     }
   },
   "modules": [
@@ -98,7 +99,7 @@
     {
       "id": "M6-pairing",
       "name": "上下配对",
-      "status": "frozen_known_regression",
+      "status": "frozen_cn",
       "lang": "Python + numpy + scipy.optimize.linear_sum_assignment",
       "responsibility": "两面观测质心 mm 欧氏距离 + 门限 12mm + 哑节点匈牙利全局最优（不配对为一等选项）+ 两遍整体配准残差矫正（中位数鲁棒 + 严格变优劣化守卫）；单面豆一等保留 pairing_cost=-1；bean_id 按锚定质心 (x,y) 稳定编号。",
       "physicalLocations": [
@@ -111,8 +112,8 @@
       "dependsOn": ["M1-contract"],
       "eval": {
         "commands": ["python -m pytest tests/test_pairing.py -q"],
-        "passLine": "2026-09-29 实测 24 passed / 3 failed：基线统计（200 粒 σ3mm 10% 丢面 5% 伪观测 P0.989 R0.994）、5mm 整体平移（P0.995 R1.0）等全绿；密排 3 例（324 粒间距 8mm P0.8818<0.90 等）确定性失败——已知构型局限（规则点阵+整分数偏移锁错模），回归根源=提交 943d8cc 随机源切换改变随机流",
-        "knownRegression": "修复归属 M6 属主；数字口径为合成观测统计，不构成现场承诺（docs/calibration-error-budget.md §3）"
+        "passLine": "27 passed（2026-09-30 复跑；09-29 快照 24 passed/3 failed 已由提交 74f020e 回退 RNG 迁移消除，密排 pitch8mm 实测 precision=0.9316 ≥ 0.90 回归下限。历史口径留档 manifest.md 实测注记）",
+        "caliberNote": "数字口径为合成观测统计，不构成现场承诺（docs/calibration-error-budget.md §3）"
       },
       "regenOrder": 4,
       "specDoc": "docs/assets/specs/pairing.md"
@@ -255,7 +256,7 @@
         "ingest": "上传 ≤64MB/图、解码后 ≥200×200px；synth 参数域 n_beans[0,400] 默认36 / width,height[256,4096] 默认1024 / seed[0,2^31-1] 默认20260928 / defect_rate[0,1] 默认0.2；标准缺省 cqi_fine_robusta；langs ⊆ zh,en,vi",
         "dataRoot": "$BEANEYE_DATA_ROOT 或 <仓库>/out/app"
       },
-      "dependsOn": ["M1-contract", "M3-calibration", "M6-pairing", "M8-metrology", "M9-standards", "M10-report", "M11-agent"],
+      "dependsOn": ["M1-contract", "M3-calibration", "M4-segment", "M5-classify", "M6-pairing", "M8-metrology", "M9-standards", "M10-report", "M11-agent", "M12-synth"],
       "eval": {
         "commands": ["python -m pytest tests/test_app.py -q"],
         "passLine": "14 passed（httpx ASGI 端到端，2026-09-29 实测）"
@@ -266,60 +267,77 @@
     {
       "id": "M12-synth",
       "name": "合成数据引擎（差异化核心）",
-      "status": "regenerating",
-      "lang": "Python（在飞）",
-      "responsibility": "素材库（单粒 RGBA+标签+mm）→ 随机铺盘 → top/bottom 成对图 + 逐豆真值 manifest；成对真值语义=两图共享同一布局坐标与 bean_id，bottom 面重采样/镜像不破坏配对真值；种子可复现像素级一致。",
+      "status": "frozen_cn",
+      "lang": "Python（程序化生成，无外部数据集路径）",
+      "responsibility": "素材库（taxonomy 13 类 × 每类 ≥24 程序化变体：几何/CIE Lab 颜色/轮廓波纹/虫孔/斑块/弦切/空腔弧/纵皱纹形态算子）→ 随机铺盘（拒绝采样自由摆放 + 接触/重叠目标摆放 + 四角码区矩形避让）→ top/bottom 成对整盘图（四角 ArUco，M3 直接可用）+ 逐豆真值 manifest（多边形 mm + 托盘网格 COCO RLE）；成对真值语义=两图共享同一布局坐标与 bean_id，bottom 面重采样/镜像不破坏配对真值；全部随机性 default_rng([seed,stage]) 派生，同种子图像像素级一致、labels JSON 字节级一致。",
       "physicalLocations": [
-        "工作树在飞件（未入库，不入本包）：beaneye/synth/、configs/synth.yaml、beaneye/segment/、configs/segment.yaml、tests/test_segment.py、tests/_segment_synth.py",
-        "beaneye/acquisition/synth_source.py（M2 接入点占位：SynthSource.capture_pair 待 W12b 接线）"
+        "beaneye/synth/beans.py（W12a-lite 类画像 CLASS_PROFILES + sample_library/sample_spec + render_sprite，alpha 即真值轮廓）",
+        "beaneye/synth/compose.py（W12b compose_tray/write_batch/labels_to_json/rasterize_poly_mm/rle_encode/rle_decode；标注先按 3 位小数取整使 JSON 往返恒等）",
+        "beaneye/synth/config.py（configs/synth.yaml 严格加载校验回写，未知键拒绝）",
+        "configs/synth.yaml（标准 YAML 输入格式，同 schema 亦是 write_batch 落盘的 batch manifest 格式）",
+        "beaneye/acquisition/synth_source.py（M2 接入点仍占位：capture_pair 显式抛错，接线待办）"
       ],
       "contract": {
-        "truthSemantics": "见 REGENERATE §5（成对真值语义：同布局/同 bean_id/同 mm 尺度；真值 manifest M1 兼容 + 固定种子 5 盘像素级复现；验收线：真值与渲染 alpha 重合 IoU=1.0、mm 尺寸与素材规格偏差 ≤0.1mm）",
-        "note": "D4 重生成进行中；本包不为其写可重生 spec，契约语义以内部开发指令 §4 M12 为准，落地后回填本表"
+        "truthSemantics": "见 REGENERATE §5（成对真值语义：同布局/同 bean_id/同 mm 尺度；真值 manifest M1 兼容 + 同种子字节级复现；真值一致性=RLE 解码==标注多边形自栅格化逐字节）",
+        "determinism": "同种子两次 compose 图像 array_equal、labels JSON 字节相等、write_batch 四件产物字节相等；异种子必异"
       },
       "dependsOn": ["M1-contract", "DATA-tray"],
       "eval": {
-        "commands": ["（eval 入口未定；在飞 tests/test_segment.py 为 M4 侧用例）"],
-        "passLine": "待 D4 落地后回填"
+        "commands": ["python -m pytest tests/test_synth.py -q"],
+        "passLine": "23 passed（2026-09-30 实测：类画像/变体/库种子复现、RLE==多边形逐字节、接触重叠目标复核、同种子字节级复现、manifest 回读复现、M1 契约往返）"
       },
       "regenOrder": 11,
-      "specDoc": "docs/assets/REGENERATE.md"
+      "specDoc": "docs/assets/specs/segment-classify-synth.md"
     },
     {
       "id": "M4-segment",
-      "name": "分割（识别腿一）",
-      "status": "planned",
-      "lang": "Python + OpenCV（在飞 ClassicSeg 雏形未入库）",
-      "responsibility": "整盘正射网格 → 逐粒 BeanMask（mm 坐标）；三腿可替换：Oracle（合成真值）/ Classic（阈值+分水岭）/ NN（微调权重）。",
-      "physicalLocations": ["（未入库）"],
+      "name": "分割（ClassicSeg + OracleSeg；NN 腿规划中）",
+      "status": "frozen_cn",
+      "lang": "Python + OpenCV + numpy + scipy",
+      "responsibility": "ClassicSeg：标定 warp 后正射网格 → Otsu（背景锚定，先抑制四角码区）+ 形态学 + 连通域 + 距离变换分水岭 → 逐粒 BeanMask（mm 坐标，source=classic，单峰 0.9/切分 0.72）；OracleSeg：合成 manifest 真值透传（top 逐字段恒等、bottom 解析重算，source=oracle conf=1.0，评估专用黄金分割器）。",
+      "physicalLocations": [
+        "beaneye/segment/classic.py（ClassicSeg；已知短板：深度重叠 >~60% 共用深峰切不开）",
+        "beaneye/segment/oracle.py（OracleSeg + OracleSegError + truth_rasters 统一真值入口 + from_batch_dir/from_tray 真值注册）",
+        "beaneye/segment/config.py（configs/segment.yaml 14 类非法参数拒绝）",
+        "configs/segment.yaml（ClassicSeg 参数集中：背景锚定 bg_delta_gray/种子支配度/码区抑制等）",
+        "tests/_segment_synth.py（W12 就绪前的简化程序化豆夹具，独立于被测模块）"
+      ],
       "contract": {
-        "wiring": "M13 装配器约定 <pkg>.build_default(**kwargs) 工厂；缺位时 NullSegModel 显式降级（0 检出，version=unavailable:null）"
+        "wiring": "M13 装配器约定 <pkg>.build_default(**kwargs) 工厂（缺省接 ClassicSeg=产品链）；OracleSeg 由 e2e/评测侧显式注入；缺位时 NullSegModel 显式降级（0 检出，version=unavailable:null）",
+        "protocol": "SegModel.predict(img_rgb, scan) 不携带 side，同实例按面各备（side 属性/masks_for）",
+        "caliber": "classic 在真实合成盘上真值 IoU≈0.63、掩码外扩 56-67%（阴影/亮底渗入）——产品链分类一致率低的根因之一，改进归 D7/NN 路线（W4b 已验收参数不擅调）"
       },
-      "dependsOn": ["M12-synth"],
+      "dependsOn": ["M1-contract", "M3-calibration", "M12-synth"],
       "eval": {
-        "commands": ["（在飞 tests/test_segment.py，未入库不计）"],
-        "passLine": "规划线：Oracle IoU=1.0；Classic 稀疏盘粒数误差 ≤5%、平均 IoU ≥0.85（详见内部开发指令 §4 M4）"
+        "commands": ["python -m pytest tests/test_segment.py -q", "python -m pytest tests/test_oracle.py -q"],
+        "passLine": "test_segment 23 passed（简化夹具稀疏盘 40 粒：粒数误差 0% ≤5% 线、平均 IoU 0.961 ≥0.85 线；接触对分离召回 9/12=0.75 ≥0.70 自定线；2048² ≤5s）；test_oracle 9 passed（真值透传 + 双面栅格 IoU=1.0 逐字节；oracle-vs-classic 对照报告 out/eval/oracle_vs_classic_report.json：top mean IoU 0.6261 / bottom 0.5455 如实记录，classic 通过线未定，0.60 配对率/0.40 平均 IoU 为保守护栏）"
       },
       "regenOrder": 12,
-      "specDoc": ""
+      "specDoc": "docs/assets/specs/segment-classify-synth.md"
     },
     {
       "id": "M5-classify",
-      "name": "分类（识别腿二）",
-      "status": "planned",
-      "lang": "Python（RulesV0 规则表 / NN 占位）",
-      "responsibility": "单粒 RGBA crop + 掩码 → (defect, conf, severity_rank)；缺位时 NullClsModel 恒 normal（无掩码即无 crop，实际不会被调用）。",
-      "physicalLocations": ["（未开工）"],
+      "name": "分类（RulesV0 规则表；NN 腿规划中）",
+      "status": "frozen_cn",
+      "lang": "Python + numpy + PyYAML",
+      "responsibility": "单粒 RGBA crop + 掩码 → LAB/几何/纹理特征 + configs/rules_v0.yaml 逐条规则评估 → (defect, conf, severity_rank)；多规则命中取 severity 高者（rank 从 taxonomy 现查）、平级取 conf 高、无命中 normal；特征提取退化恒降级 normal 不抛异常；area_ratio 特征依赖调用序滚动窗口（不足 area_min_ref 时该特征 -1 静默失效，见 CONTRACTS 痛点 #8）。",
+      "physicalLocations": [
+        "beaneye/classify/rules.py（RulesV0 + decide_features 裁决路径）",
+        "beaneye/classify/features.py（特征提取 FEATURE_NAMES + FeatureParams + ColorRefs）",
+        "beaneye/classify/config.py（rules_v0.yaml 严格加载，未列键拒绝）",
+        "configs/rules_v0.yaml（全部类别知识；阈值按 4 个开发种子 52 盘 pooled 分布 p05/p95 标定，D7 真实豆只改此文件）"
+      ],
       "contract": {
-        "wiring": "同 M4：build_default 工厂 + M13 装配器探测；输出经 _validate_cls_output 校验（taxonomy 合法/conf∈[0,1]/normal rank=0/缺陷 rank>0）"
+        "wiring": "build_default 工厂 + M13 装配器探测；输出经 _validate_cls_output 校验（taxonomy 合法/conf∈[0,1]/normal rank=0/缺陷 rank>0）",
+        "caliber": "acc 0.7712≥0.75 为 oracle 掩码口径（上界）；产品链 classic 掩码下 final 一致率 ~0.034（掩码外扩污染 LAB 特征 + mold 亮斑规则被背景顶爆），如实记录于 out/e2e_synth/summary.json，门禁不作硬线——对外口径「AI 初检+人工复核」，改进归 D7 阈值回填/掩码内缩/NN 路线"
       },
-      "dependsOn": ["M4-segment"],
+      "dependsOn": ["M1-contract", "M4-segment"],
       "eval": {
-        "commands": ["（未开工）"],
-        "passLine": "规划线：macro-F1 ≥0.60、black/broken 两类 F1 ≥0.75、≤50ms/crop（详见内部开发指令 §4 M5）"
+        "commands": ["python -m pytest tests/test_classify.py -q"],
+        "passLine": "19 passed（2026-09-30 实测：26 评测盘 896 粒 oracle 掩码生产同路裁剪，acc 0.7712≥0.75、normal 召回 ≥0.95、混淆矩阵落盘 out/eval/classify_report.json、16.4ms/crop；验收种子不参与阈值标定）"
       },
       "regenOrder": 13,
-      "specDoc": ""
+      "specDoc": "docs/assets/specs/segment-classify-synth.md"
     }
   ],
   "dataFiles": [
@@ -332,7 +350,8 @@
   ],
   "gates": [
     {"id": "GATE-d1", "path": "scripts/gate_d1.py", "checks": "① doctor exit0 ② pytest tests/test_schemas.py 全绿 ③ 现场重跑 oss_smoke（aruco+qrcode 硬项 ok，数据集允许 BLOCKED） ④ 数据集 README 含解锁步骤", "passLine": "GATE D1: PASS (4/4) exit0", "measured": "FAIL (1/4)：①②④ PASS；③ oss_smoke 现场重跑超时 >600s（网络受限拉取超时，非产物回归）"},
-    {"id": "GATE-d2", "path": "scripts/gate_d2.py", "checks": "① doctor ② pytest tests/ 全绿 ③ W3/W6/W7/W2 入口逐个 exit0 ④ 中性名零命中（28 条模式，豁免 9 内部件，产品面零豁免） ⑤ 禁止 IO 零命中（cv2.imread / cv2.imwrite / np.fromfile 三种直传路径调用形态）", "passLine": "GATE D2: PASS (5/5) exit0", "measured": "FAIL (2/5)：② 3 failed/431 passed ③ W6 FAIL（3 例密排）；①④⑤ PASS"},
-    {"id": "GATE-d3", "path": "scripts/gate_d3.py", "checks": "① doctor ② pytest tests/ 全绿 ③ W8/W9/W10/W11 入口逐个 exit0 ④ 中性名零命中（23 条模式）", "passLine": "GATE D3: PASS (4/4) exit0", "measured": "FAIL (1/4)：①③④ PASS（③ 31/57/27/79 全绿）；② 并发写入瞬态快照 FAIL，稳定复跑失败集合仍为密排 3 例"}
+    {"id": "GATE-d2", "path": "scripts/gate_d2.py", "checks": "① doctor ② pytest tests/ 全绿 ③ W3/W6/W7/W2 入口逐个 exit0 ④ 中性名零命中（28 条模式，豁免 9 内部件，产品面零豁免） ⑤ 禁止 IO 零命中（cv2.imread / cv2.imwrite / np.fromfile 三种直传路径调用形态）", "passLine": "GATE D2: PASS (5/5) exit0", "measured": "09-30 复跑 PASS (5/5)：② 508 全绿 ③ 4/4 入口 exit0（34/27/83/22）④ 中性名零命中（133 文件×28 条）⑤ 禁止 IO 零命中（74f020e 回退后 ②③ 转绿；09-29 落成时点 FAIL 快照留档 manifest.md 实测注记）"},
+    {"id": "GATE-d3", "path": "scripts/gate_d3.py", "checks": "① doctor ② pytest tests/ 全绿 ③ W8/W9/W10/W11 入口逐个 exit0 ④ 中性名零命中（23 条模式）", "passLine": "GATE D3: PASS (4/4) exit0", "measured": "09-30 复跑 PASS (4/4)（经 gate_d4 ③ 原样回归项；09-29 落成时点 ② 并发写入瞬态快照 FAIL，稳定复跑失败集合仍为密排 3 例，已消除）"},
+    {"id": "GATE-d4", "path": "scripts/gate_d4.py", "checks": "① pytest tests/ 全绿 ② scripts/e2e_synth_run.py 缺省参数 exit0（全链硬断言：装配非降级 / 标定 px_per_mm ≤2% / 配对 ≥真值 50% / 三语护照 QR 回读一致） ③ gate_d3 原样回归 exit0 ④ 中性名扫描零命中（import 复用 gate_d3 模式表，单一事实源）", "passLine": "GATE D4: PASS (4/4) exit0", "measured": "PASS (4/4)（提交 9346ec6 时点：① 508 passed 404.32s ② e2e 缺省 3 盘 exit0 ③ GATE D3 4/4 ④ 中性名 0 命中；2026-09-30 评审复跑 ① 508 passed 245.88s ② E2E PASS；同日处置复跑 synth+segment+oracle+classify 四入口 74 passed 216.25s）"}
   ]
 }

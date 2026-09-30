@@ -133,7 +133,7 @@ M9 引擎直接复用这三个函数（不再另写计数），保证「引擎�
 （M6 配对、测试 fixture、手工构造）写入的 `final_*` 字段与两面观测不一致立即 `ValidationError`。
 M7 侧 `SeverityAdjudicator.worst_detail` 提供明细版（多返回 `winner_side/winner_conf/tie`，
 供展示与调试），核心规则逐位相同且共用 `defect_is_countable`。**改动任何一侧的裁决规则 =
-破坏契约**，必须两侧同步 + 三道门复跑。
+破坏契约**，必须两侧同步 + 四道门复跑。
 
 ## 6. eval
 

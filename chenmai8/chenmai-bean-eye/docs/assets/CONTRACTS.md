@@ -177,14 +177,16 @@
 - Mock 采集：`default_rng([seed, frame_idx])`，同 seed 同帧序**像素级一致**；
   `captured_at` 带时区但不进像素流。
 - bean_id 稳定序（锚定质心 (x,y)+obs_id 兜底）→ 同输入同输出。
-- 合成器（M12 在飞）契约：固定种子像素级复现；真值 manifest 可再驱动（REGENERATE §5）。
+- 合成器（M12 已落库冻结）契约：固定种子像素级复现（同种子图像 array_equal、labels JSON
+  字节相等）；真值 manifest 可再驱动（REGENERATE §5；configs/synth.yaml 同 schema 回写）。
 - 护照：同 BatchResult → 同 sha256 → 同 QR；占位图 sha256 派生、同输入像素级一致。
 - LLM 不确定性被模板保底兜住：`backend` 字段显式标注本次来源。
 
 ## C7 eval 契约（裁定规则）
 
-- 通过线唯一裁定 = **真实运行**：每模块 `pytest tests/test_<pkg>.py -q` + 三道门
-  （gate_d1/d2/d3，任意 cwd，内部自定位仓库根与 .venv）。
+- 通过线唯一裁定 = **真实运行**：每模块 `pytest tests/test_<pkg>.py -q` + 四道门
+  （gate_d1/d2/d3/d4，任意 cwd，内部自定位仓库根与 .venv；d4 含合成盘全链 e2e 硬断言，
+  并经 import 复用 d3 的中性名扫描模式表——单一事实源）。
 - 纪律：skip 不是 pass；门禁入口缺失=FAIL；中性名扫描产品面零豁免（上游代号只存在于
   不入库内部文件）；禁止 IO 静态扫描（cv2.imread / cv2.imwrite / np.fromfile 直传路径
   三种形态）；**已知失败必须如实标注状态**（本包 manifest「冻结·已知回归」用法）。
@@ -206,10 +208,11 @@
 | 1 | `SegModel.predict(img_rgb, scan)` 不携带 side | 装配器只能每面各调一次再规范化（side/scan_id/mask_id 重键），实现方易踩 | v2 给 predict 增加 side 参数或改签名 `predict(img_rgb, side, scan)` |
 | 2 | `count_rule: per_side` 可通过加载、evaluate 才报错 | 配置作者到运行期才发现不支持 | 加载期即拒绝 per_side，或在契约层支持 per_side 计数（需同步改 BatchResult 不变式①） |
 | 3 | 标准 YAML `reference_lab` 行内注释写"0-255 标度"，loader 实际按 CIE 解析 | 文档误导配置作者（数值本身是 CIE，负 a/b 不可能为 lab8） | 清理三份 YAML 注释（文档修复，无行为变更） |
-| 4 | pairing 密排构型 3 例统计用例在随机源切换（943d8cc）后跌破回归下限 | gate_d2 ②③ 持续 FAIL，掩盖真回归 | M6 属主二选一：改算法（点阵构型去锁模）或按新随机流重新钉场景/通过线（附数据依据） |
+| 4 | ~~pairing 密排构型 3 例统计用例在随机源切换（943d8cc）后跌破回归下限~~ | **已解决（2026-09-30，提交 74f020e）**：回退该 RNG 迁移、恢复 stdlib 序列与原通过线配套，生产代码零改动；27 passed、gate_d2 5/5 PASS。教训留档：测试随机源切换=换场景实例，必须连带重标通过线（REGENERATE 坑 8） | （无——已按「保持基线绿+阈值诚实」取舍关闭；若确要迁 numpy default_rng 须连带重标密排下限，属 M6 属主决策） |
 | 5 | `PassportReport.html_paths` 实现取绝对路径 | 产物目录不可整体搬移 | 契约明确为相对 out_dir 的相对路径并迁移消费方 |
 | 6 | LLMAgent 的 response_format 支持探测=响应体子串匹配 | 个别网关错误文案不含该词时多打一轮请求（有兜底，不阻塞） | 记录为已知边界；或按状态码+JSON 解析失败统一判"不支持" |
-| 7 | `SynthSource` 占位、`synth` JSON 请求回退 MockSource | 演示盘面是程序化合成而非素材库真实缺陷豆（响应已注明降级） | M12 落地后接线 SynthSource，回退路径保留为显式降级语义 |
+| 7 | `SynthSource` 占位、`synth` JSON 请求回退 MockSource | **现状（2026-09-30 更新）**：M12 合成引擎已落库，但 app 合成入口（`beaneye/app/main.py` `_ingest_synth_json`）与 `beaneye/acquisition/synth_source.py` 仍走 MockSource 回退（显式降级语义，响应已注明）——演示页合成盘面与 e2e 的 compose_tray 合成器不同源 | 接线 `beaneye.synth.compose_tray`（带四角码真实合成器盘面），MockSource 回退保留为显式降级；登记于 docs/assets/feedback.md（生豆到货前按需接线） |
+| 8 | `RulesV0` 的 `area_ratio` 特征依赖**跨调用滚动窗口状态**（取前 `area_window` 粒面积中位数为参考，不足 `area_min_ref` 时特征恒 -1 静默失效，rules.py docstring 自记录） | 分类结果依赖调用顺序：单粒零散调用 / 换盘 / 未来并行重打分时行为改变；该隐藏语义未进本页契约 | NN 分类腿或并行化接入前，把 area_ref 从滚动窗口改为请求级批参数或显式注入；此前对外/评测口径注明「按整盘顺序调用」 |
 
 ## 版本与变更流程（冻结）
 
@@ -220,5 +223,5 @@
 - **怎么广播**（每次契约变更必须全做）：
   1. 更新本页对应小节 + 受影响 specs/* + 契约附件（taxonomy/标准 YAML/根因知识表）；
   2. 契约校验器与消费模块同步改，fixtures 按需再生成；
-  3. 三道门 + 全套件复跑（稳定树上）全绿（或如实登记新的已知状态）；
+  3. 四道门 + 全套件复跑（稳定树上）全绿（或如实登记新的已知状态）；
   4. 单独 commit（`contract-change:` 前缀），版本锚递增（破坏性变更进大版本）。

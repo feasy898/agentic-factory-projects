@@ -339,7 +339,8 @@ async def _ingest_synth_json(request: Request, default_langs: list[str]) -> _Ing
     if not isinstance(synth, dict):
         raise _BadRequest('"synth" 须为对象')
 
-    # 合成引擎（beaneye.synth）尚未落地 → 内置确定性模拟源兜底（显式降级）
+    # 合成引擎（beaneye.synth）已落库、采集源接线未完成 → 内置确定性模拟源兜底
+    # （显式降级；接线待办登记于 docs/assets/feedback.md）
     from beaneye.acquisition import MockSource
 
     req_id = _short_uid()
@@ -377,8 +378,8 @@ async def _ingest_synth_json(request: Request, default_langs: list[str]) -> _Ing
         standard_id=standard_id,
         langs=langs,
         degraded_reasons={
-            "synth": "M12 合成数据引擎（beaneye.synth）未接入——已回退内置确定性模拟源"
-            "（source=mock），盘面豆粒与缺陷为程序化合成，不代表真实样品"
+            "synth": "合成引擎已落库但本入口未接线（synth_source 接线待办）——已回退内置"
+            "确定性模拟源（source=mock），盘面豆粒与缺陷为程序化合成，不代表真实样品"
         },
     )
 

@@ -3,6 +3,9 @@
 > 目标：新 agent 只凭本手册 + 各 spec + 契约（CONTRACTS.md），在干净 Windows 机器上从零
 > 重建全部已实现模块并通过验收门。所有命令在**仓库根**执行（另有注明除外）；
 > 通过线数字为 2026-09-29 `.venv` 实测（门禁与全绿态见 §3 的当日注记）。
+> **2026-09-30 现状订正**：M12 合成 / M4 分割 / M5 分类已落库转「冻结」（步骤 11 已回填
+> 再生步骤），全套件 508 用例全绿（步骤 4 配对密排 3 例已由提交 74f020e 回退消除）、
+> 验收门扩为四道（§3 补 gate_d4）。
 
 ---
 
@@ -35,30 +38,40 @@ powershell -File scripts/setup_env.ps1
 | 1 | M1 契约 | `./.venv/Scripts/python.exe -m pytest tests/test_schemas.py -q` | 60 passed（2026-09-29 实测） | CONTRACTS |
 | 2 | M2 采集 | `... -m pytest tests/test_acquisition.py -q` | 22 passed；Mock 帧标定 px_per_mm 误差 <1% | REGENERATE §7 坑 1/2 |
 | 3 | M3 标定 | `... -m pytest tests/test_calibration.py -q` | 34 passed；反投影 ≤0.5mm；12MP ≤3s | [markers-geometry](specs/markers-geometry.md) |
-| 4 | M6 配对 | `... -m pytest tests/test_pairing.py -q` | **2026-09-29：24 passed / 3 failed**（密排 3 例已知回归，见 [pairing §7](specs/pairing.md)；修复前此步不算全绿） | [pairing](specs/pairing.md) |
+| 4 | M6 配对 | `... -m pytest tests/test_pairing.py -q` | **27 passed**（2026-09-30 现状；09-29 快照 24+3f 的密排回归已由 74f020e 回退消除，见 [pairing §7](specs/pairing.md) 与 manifest 实测注记） | [pairing](specs/pairing.md) |
 | 5 | M7 严重度 | `... -m pytest tests/test_severity.py -q` | 83 passed | [severity](specs/severity.md) |
 | 6 | M8 计量 | `... -m pytest tests/test_metrology.py -q` | 31 passed；直径误差 ≤2%；350 粒 3.6ms | [metrology](specs/metrology.md) |
 | 7 | M9 标准 | `... -m pytest tests/test_standards.py -q` | 57 passed；三 YAML 全载 | [standards-yaml](specs/standards-yaml.md) |
 | 8 | M10 护照 | `... -m pytest tests/test_report.py -q` | 27 passed；三语各 94–98KB；QR 解码回读一致 | [passport](specs/passport.md) |
 | 9 | M11 溯因 | `... -m pytest tests/test_agent.py -q` | 79 passed；断网全绿 | [rootcause-kb](specs/rootcause-kb.md) |
 | 10 | M13 应用 | `... -m pytest tests/test_app.py -q`；起服务 `... -m beaneye.app`（默认 127.0.0.1:8600） | 14 passed；`/demo` 零外链 | [passport §6](specs/passport.md) |
-| 11 | M12 合成 + M4 分割 / M5 分类 | **重生成中（D4 在飞）**——工作树在飞件未入库；本包不提供其再生步骤 | 待落地后回填 | （regenerating） |
+| 11 | M12 合成 | `... -m pytest tests/test_synth.py -q` | **23 passed**（素材库/真值一致性/接触重叠/同种子字节级复现/manifest 回读/M1 兼容） | [segment-classify-synth](specs/segment-classify-synth.md) |
+| 12 | M4 分割 | `... -m pytest tests/test_segment.py -q` 然后 `... -m pytest tests/test_oracle.py -q` | **23 passed + 9 passed**（classic：稀疏盘粒数误差 ≤5%、平均 IoU ≥0.85、接触对召回 ≥0.70 自定线；oracle：真值透传 + 双面栅格 IoU=1.0 逐字节；classic 真实合成盘对照 0.626 如实记录不作硬线） | [segment-classify-synth](specs/segment-classify-synth.md) |
+| 13 | M5 分类 | `... -m pytest tests/test_classify.py -q` | **19 passed**（26 评测盘 896 粒 oracle 掩码生产同路裁剪：acc ≥0.75、normal 召回 ≥0.95、混淆矩阵落盘 out/eval/classify_report.json；验收种子不参与阈值标定） | [segment-classify-synth](specs/segment-classify-synth.md) |
+| 14 | 合成盘全链 e2e | `... python scripts/e2e_synth_run.py`（缺省 3 盘） | exit 0（逐盘硬断言：非降级装配 / px_per_mm ≤2% / 配对 ≥真值 50% / 三语护照 QR 回读一致；粒数恢复率与逐粒一致率**如实记录不作硬线**） | [segment-classify-synth](specs/segment-classify-synth.md) |
 
-在飞注记：M13 装配器按 `<pkg>.build_default()` 工厂探测接线——M4/M5 落地即自动进管线，
+装配注记（M4/M5 已落库，语义不变）：M13 装配器按 `<pkg>.build_default()` 工厂探测接线——
+`beaneye.segment.build_default()` 缺省接 ClassicSeg（产品链），`OracleSeg` 由 e2e/评测侧显式
+注入；分类链自动接 `beaneye.classify` 的 RulesV0。任何替换实现走同一 Protocol，
 缺位时显式降级（0 检出 + degraded_stages 标注），**不要为了"看起来完整"而伪造识别实现**。
 
-## 3. 全仓验收（三道门，验收顺序固定）
+## 3. 全仓验收（四道门，验收顺序固定）
 
 ```bash
 python scripts/gate_d1.py    # D1 契约门：doctor / test_schemas / oss_smoke 现场重跑（aruco+QR 硬项）/ 数据集 README
 python scripts/gate_d2.py    # D2 门：doctor / pytest 全绿 / W3·W6·W7·W2 入口逐个 / 中性名 28 条 / 禁止 IO 3 条
 python scripts/gate_d3.py    # D3 门：doctor / pytest 全绿 / W8·W9·W10·W11 入口逐个 / 中性名 23 条
+python scripts/gate_d4.py    # D4 门：pytest 全绿 / e2e_synth_run 缺省硬断言 / gate_d3 原样回归 / 中性名（复用 D3 模式表）
 ```
 
-- 门禁纪律：skip 不是 pass；入口文件缺失按该模块 FAIL；中性名扫描对 git 跟踪文本文件
+- 门禁纪律：skip 不是 pass；入口文件缺失=FAIL；中性名扫描对 git 跟踪文本文件
   全量扫描（产品面 beaneye/ tests/ configs/ docs/ **零豁免**，豁免名单只收不入库内部版
   文件与门脚本自身——门脚本须枚举上游名清单才能扫描）。
-- **2026-09-29 实测态（如实记录）**：
+- **2026-09-30 现状（当前口径）**：gate_d2 复跑 **PASS (5/5)**（508 全绿）、gate_d3 复跑
+  **PASS (4/4)**（经 gate_d4 ③ 原样回归项）、gate_d4 **PASS (4/4)**（提交 9346ec6 时点；
+  同日评审复跑 508 passed 245.88s + E2E PASS）。gate_d1 保持 FAIL (1/4)：③ oss_smoke
+  现场重跑曾因本机网络受限超时（非产物回归，网络恢复后复跑即可）。
+- **2026-09-29 实测态（历史留档，已被上条取代）**：
   - gate_d1 → FAIL (1/4)：① doctor PASS、② test_schemas 60 绿、④ README PASS；
     **③ oss_smoke 现场重跑超时 >600s**——本机当时网络受限（doctor 输出同步出现 SSL 握手
     超时告警），NN 冒烟件拉取超时，**非产物回归**；网络恢复后复跑即可。
@@ -83,12 +96,13 @@ python scripts/gate_d3.py    # D3 门：doctor / pytest 全绿 / W8·W9·W10·W1
 | M10 护照 | test_report + test_app（端点/下载头） | 三语键集对等；QR 往返；占位图确定性；字体链按语言 |
 | M11 智能体 | test_agent + test_report（溯因段） | 降级路径全等断言；知识表 12 类一一对应 |
 | M13 应用 | test_app + 全套件 | 降级语义（绝不静默伪装）；timings 与护照定型顺序 |
-| 任何模块 | 三道门（§3）+ 中性名/禁止 IO 扫描 | 门禁先清疑问再跑：FAIL 时先对照本文与 spec 的"已知状态"，分清**产物回归**与**环境/在飞干扰** |
+| 任何模块 | 四道门（§3）+ 中性名/禁止 IO 扫描 | 门禁先清疑问再跑：FAIL 时先对照本文与 spec 的"已知状态"，分清**产物回归**与**环境/在飞干扰** |
 
-## 5. 合成器真值语义（M12 · regenerating，契约先于实现冻结）
+## 5. 合成器真值语义（M12 · 已落库冻结，W12a-lite+W12b）
 
-> M12 在 D4 重生成中（在飞件未入库）；本节是**成对真值契约**——实现落地时按此验收，
-> 下游（M4 Oracle 腿 / M6 配对 eval / M14 e2e）按此消费。
+> M12 已落库（`beaneye/synth/`，eval=tests/test_synth.py 23 passed）；本节是**成对真值契约**
+> ——实现按此验收通过，下游（M4 Oracle 腿 / M6 配对 eval / e2e）按此消费。
+> 实现细节与再生要点见 [segment-classify-synth spec](specs/segment-classify-synth.md)。
 
 - **成对语义**：同一布局生成 top 与 bottom 两图，**两图共享同一布局坐标与 bean_id**。
   bottom 面素材不可知（翻面看不见另一面），就重采样"同 mm 同类"的另一粒或镜像同粒——
@@ -98,8 +112,10 @@ python scripts/gate_d3.py    # D3 门：doctor / pytest 全绿 / W8·W9·W10·W1
 - **真值 manifest**：逐粒记录 `{bean_id, class_top, class_bottom, poly_mm, eq_diameter_mm}`
   （M1 兼容 + 掩码编码），batch index 记录实际生效参数 + 种子——反序列化后可直接再驱动
   一次合成（可复现）。托盘几何与四角码布局**不进合成配置**：单一真源是 configs/tray.yaml。
-- **验收线（规划冻结）**：固定种子 5 盘**像素级一致**；真值与渲染 alpha 重合 IoU=1.0；
-  mm 尺寸与素材规格偏差 ≤0.1mm；labels 过 M1 契约校验。
+- **验收线（规划冻结，已实现达标）**：固定种子 5 盘**像素级一致**（实现为同种子两次
+  compose 图像 array_equal + labels JSON 字节相等，强于像素级线）；真值与渲染 alpha 重合
+  IoU=1.0（实现为 RLE 解码==标注多边形自栅格化逐字节）；labels 过 M1 契约校验。
+  mm 尺寸与素材规格偏差 ≤0.1mm（tests/test_synth.py 解析恒等用例覆盖）。
 - **口径纪律**：合成图上的全部精度数字是**管线自洽性数字**（oracle 管线 vs 真值），
   不是现场检测精度——与 docs/calibration-error-budget.md 同一口径纪律。
 
@@ -175,4 +191,6 @@ python scripts/gate_d3.py    # D3 门：doctor / pytest 全绿 / W8·W9·W10·W1
 
 | commit | 内容 |
 |---|---|
-| （本包落成 commit） | manifest + 7 张 spec + REGENERATE + CONTRACTS 首版（对照 2026-09-29 HEAD 全量核验；含当日门禁/套件实测态与在飞件注记） |
+| `f247edd`（09-29） | manifest + 7 张 spec + REGENERATE + CONTRACTS 首版（对照 2026-09-29 HEAD 全量核验；含当日门禁/套件实测态与在飞件注记） |
+| `b8f0e05`（09-30） | manifest 快照订正到 74f020e 回退后现状（508 全绿口径） |
+| 本批（09-30 反馈处置） | REGENERATE：§2 步骤 11 回填为 M12/M4/M5 三步再生步骤 + 步骤 14 e2e、§3 扩四道门并补 09-30 实测态、§5 现状化；配套 manifest 双格式回填、CONTRACTS 痛点表更新、新增合并 spec segment-classify-synth、README 重写（清单与口径声明） |
