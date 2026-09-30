@@ -1,0 +1,45 @@
+# Headscale v0.29.4 本机联调配置（仅供核心库互操作测试）
+server_url: http://127.0.0.1:8080
+listen_addr: 0.0.0.0:8080
+metrics_listen_addr: 127.0.0.1:19090
+grpc_listen_addr: 127.0.0.1:50443
+grpc_allow_insecure: false
+
+noise:
+  private_key_path: /home/dev/interop/noise_private.key
+
+prefixes:
+  v4: 100.64.0.0/10
+  v6: fd7a:115c:a1e0::/48
+
+derp:
+  server:
+    enabled: true
+    region_id: 999
+    region_code: interop
+    region_name: Headscale-Interop
+    stun_listen_addr: "0.0.0.0:3478"
+    private_key_path: /home/dev/interop/derp_server_private.key
+  auto_update_enabled: false
+  update_frequency: 24h
+  urls: []
+  paths: []
+
+database:
+  type: sqlite
+  sqlite:
+    path: /home/dev/interop/headscale.db
+
+dns:
+  magic_dns: false
+  base_domain: interop.internal
+  override_local_dns: false
+  nameservers:
+    global: []
+
+log:
+  level: debug
+  format: text
+
+unix_socket: /home/dev/interop/headscale.sock
+unix_socket_permission: "0770"

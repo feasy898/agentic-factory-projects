@@ -1,0 +1,10 @@
+{
+  "name": "@ohos-tailscale/crypto",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cryptographic primitives for the ohos-tailscale core: X25519 (RFC 7748), ChaCha20-Poly1305 (RFC 8439), SHA-256, BLAKE2s (RFC 7693) and HKDF. Pure computation, no IO - see docs/architecture.md §4.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

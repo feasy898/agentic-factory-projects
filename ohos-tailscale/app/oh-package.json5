@@ -1,0 +1,12 @@
+{
+  "modelVersion": "5.0.0",
+  "name": "ohos-tailscale-app",
+  "version": "1.0.0",
+  "description": "ohos-tailscale HarmonyOS 应用壳工程（结构说明见 README-app.md）",
+  "main": "",
+  "author": "ohos-tailscale contributors",
+  "license": "BSD-3-Clause",
+  "dependencies": {
+    // 应用级三方依赖在此声明。核心库（@ohos-tailscale/*）的本地集成方式见 README-app.md「核心库本地依赖集成」。
+  }
+}

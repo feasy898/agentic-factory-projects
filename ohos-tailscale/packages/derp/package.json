@@ -1,0 +1,13 @@
+{
+  "name": "@ohos-tailscale/derp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "DERP relay frame protocol (codec + cross-chunk reassembly), region data structures and client state machine skeleton. Network IO fully injected via in-package DerpDialer.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ohos-tailscale/common": "^0.1.0"
+  }
+}

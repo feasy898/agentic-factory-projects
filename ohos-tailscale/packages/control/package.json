@@ -1,0 +1,10 @@
+{
+  "name": "@ohos-tailscale/control",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tailscale-style control-plane client: TLV message codec over the ts2021 Noise channel (HttpTransport-injected), RegisterRequest/RegisterResponse plus a simplified NetworkMap - see docs/architecture.md section 7.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

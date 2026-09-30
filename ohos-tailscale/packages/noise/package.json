@@ -1,0 +1,10 @@
+{
+  "name": "@ohos-tailscale/noise",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Noise IK handshake (Noise_IK_25519_ChaChaPoly_BLAKE2s) and post-handshake transport encryption for the ts2021 control-plane session, plus channel framing - see docs/architecture.md section 6.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

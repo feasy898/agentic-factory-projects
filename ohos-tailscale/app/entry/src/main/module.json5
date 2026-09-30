@@ -1,0 +1,63 @@
+{
+  "module": {
+    "name": "entry",
+    "type": "entry",
+    "description": "$string:module_desc",
+    "mainElement": "EntryAbility",
+    "deviceTypes": [
+      "phone",
+      "tablet"
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    // 权限声明说明（详见 app/README-app.md「权限与受限权限申请」）：
+    // - ohos.permission.INTERNET：OpenHarmony《连接VPN》官方指南明确要求（VPN + 控制面长轮询都要联网）。
+    //   级别 normal、授权方式 system_grant，无需 reason/usedScene（该两项仅 user_grant 权限必填）。
+    // - ohos.permission.GET_NETWORK_INFO：可选，用于 UI 展示当前网络信息（normal、system_grant）。
+    // - VPN 本身不走权限授权：首次 startVpnExtensionAbility 时由系统弹出「VPN 信任授权」对话框。
+    "requestPermissions": [
+      {
+        "name": "ohos.permission.INTERNET"
+      },
+      {
+        "name": "ohos.permission.GET_NETWORK_INFO"
+      }
+    ],
+    "abilities": [
+      {
+        "name": "EntryAbility",
+        "srcEntry": "./ets/entryability/EntryAbility.ets",
+        "description": "$string:EntryAbility_desc",
+        "icon": "$media:icon",
+        "label": "$string:EntryAbility_label",
+        "startWindowIcon": "$media:startIcon",
+        "startWindowBackground": "$color:start_window_background",
+        "exported": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home"
+            ]
+          }
+        ]
+      }
+    ],
+    "extensionAbilities": [
+      {
+        // 三方 VPN 扩展（官方形态：name + srcEntry + "type": "vpn"，另加 exported/description）。
+        // 启动方式：UI 侧调用 vpnExtension.startVpnExtensionAbility(want)（见 pages/Index.ets），
+        // 首次启动系统弹 VPN 授权框，用户同意后本 Ability 的 onCreate 被回调。
+        // 注意：若 DevEco 提示无法识别 "type": "vpn"，见 README-app.md「导入与构建」中的处理办法。
+        "name": "VpnExtensionAbility",
+        "srcEntry": "./ets/vpnextensionability/VpnExtensionAbility.ets",
+        "description": "$string:vpn_ability_desc",
+        "type": "vpn",
+        "exported": false
+      }
+    ]
+  }
+}

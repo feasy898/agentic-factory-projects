@@ -1,0 +1,44 @@
+{
+  "color": [
+    {
+      "name": "start_window_background",
+      "value": "#F7F8FA"
+    },
+    {
+      "name": "page_background",
+      "value": "#F7F8FA"
+    },
+    {
+      "name": "card_background",
+      "value": "#FFFFFF"
+    },
+    {
+      "name": "brand_primary",
+      "value": "#3B82F6"
+    },
+    {
+      "name": "btn_secondary",
+      "value": "#E53E3E"
+    },
+    {
+      "name": "status_connected",
+      "value": "#38A169"
+    },
+    {
+      "name": "status_connecting",
+      "value": "#DD6B20"
+    },
+    {
+      "name": "status_disconnected",
+      "value": "#E53E3E"
+    },
+    {
+      "name": "text_primary",
+      "value": "#182431"
+    },
+    {
+      "name": "text_secondary",
+      "value": "#99182431"
+    }
+  ]
+}
