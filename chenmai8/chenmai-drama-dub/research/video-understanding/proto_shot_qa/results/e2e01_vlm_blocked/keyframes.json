@@ -1,0 +1,61 @@
+{
+ "video": "/opt/gpumachine/projects/chenmai8/短剧多国出海/clips/e2e01_raw.mp4",
+ "width": 1080,
+ "height": 1920,
+ "fps": 25.0,
+ "duration": 10.32,
+ "n_frames_decoded": 258,
+ "decoded_coverage": 1.0,
+ "threshold": 0.008,
+ "noise_median": 0.000306,
+ "noise_k": 4.0,
+ "keyframe_count": 7,
+ "overview_count": 1,
+ "overviews": [
+  "results/e2e01_vlm_blocked/overview.jpg"
+ ],
+ "keyframes": [
+  {
+   "n": 0,
+   "time": 0.0,
+   "diff": 0.0,
+   "path": "results/e2e01_vlm_blocked/frames/kf_000000.jpg"
+  },
+  {
+   "n": 81,
+   "time": 3.24,
+   "diff": 0.002083,
+   "path": "results/e2e01_vlm_blocked/frames/kf_000081.jpg"
+  },
+  {
+   "n": 123,
+   "time": 4.92,
+   "diff": 0.000797,
+   "path": "results/e2e01_vlm_blocked/frames/kf_000123.jpg"
+  },
+  {
+   "n": 147,
+   "time": 5.88,
+   "diff": 0.00049,
+   "path": "results/e2e01_vlm_blocked/frames/kf_000147.jpg"
+  },
+  {
+   "n": 189,
+   "time": 7.56,
+   "diff": 0.000551,
+   "path": "results/e2e01_vlm_blocked/frames/kf_000189.jpg"
+  },
+  {
+   "n": 213,
+   "time": 8.52,
+   "diff": 0.000613,
+   "path": "results/e2e01_vlm_blocked/frames/kf_000213.jpg"
+  },
+  {
+   "n": 235,
+   "time": 9.4,
+   "diff": 0.000613,
+   "path": "results/e2e01_vlm_blocked/frames/kf_000235.jpg"
+  }
+ ]
+}

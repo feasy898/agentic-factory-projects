@@ -1,0 +1,6 @@
+{
+ "video": "/opt/gpumachine/projects/chenmai8/短剧多国出海/materials/raw/didaozhan_p1.mp4",
+ "ep": "didaozhan_p1",
+ "status": "BLOCKED-corrupt-source",
+ "reason": "decode coverage too low: decoded 570 frames (19.02s) of container 1541.83s (1.2%) — source likely corrupt"
+}

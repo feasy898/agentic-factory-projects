@@ -1,0 +1,7 @@
+# 大产物只留盘不入库；小体积证据（report/keyframes JSON）显式保留
+# （目录名用 results/ 不用 out/：仓库根 .gitignore:41 的全局 out/ 会整树排除，
+#   祖先目录被排除后子级否定规则无效）
+results/**
+!results/**/
+!results/**/report.json
+!results/**/keyframes.json

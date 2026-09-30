@@ -1,0 +1,63 @@
+{
+ "video": "/opt/gpumachine/projects/chenmai8/短剧多国出海/clips/e2e01_raw.mp4",
+ "ep": "e2e01",
+ "duration_s": 10.32,
+ "fps": 25.0,
+ "resolution": "1080x1920",
+ "threshold_auto": 0.008,
+ "noise_median": 0.000306,
+ "keyframe_count": 7,
+ "overview_count": 1,
+ "overviews": [
+  "results/e2e01/overview.jpg"
+ ],
+ "candidate_bounds": [
+  0.0,
+  3.24,
+  4.92,
+  5.88,
+  7.56,
+  8.52,
+  9.4,
+  10.32
+ ],
+ "contract_c1_shotshot_valid": true,
+ "contract_shot_count": 7,
+ "baseline_compare": {
+  "tolerance_s": 0.6,
+  "m5_cut_count": 0,
+  "my_changepoint_count": 6,
+  "matched_of_mine": 0,
+  "matched_of_m5": 0,
+  "precision_of_mine": 0.0,
+  "recall_of_m5": null,
+  "f1": null,
+  "my_changepoints": [
+   {
+    "t": 3.24,
+    "matches_m5": false
+   },
+   {
+    "t": 4.92,
+    "matches_m5": false
+   },
+   {
+    "t": 5.88,
+    "matches_m5": false
+   },
+   {
+    "t": 7.56,
+    "matches_m5": false
+   },
+   {
+    "t": 8.52,
+    "matches_m5": false
+   },
+   {
+    "t": 9.4,
+    "matches_m5": false
+   }
+  ],
+  "m5_cuts": []
+ }
+}
