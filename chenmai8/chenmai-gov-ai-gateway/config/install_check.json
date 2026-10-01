@@ -1,0 +1,27 @@
+{
+  "_comment": "M0 安装自检清单：第三方库的真实导入名/发行名/版本钉子只允许出现在配置文件里，源码经本清单驱动 importlib 检查，不得硬编码库名（公开仓库卫生，见 ops/name_lint.py 说明）。pin 语义 = 版本前缀匹配（如 10.14.* 即 10.14.x）。",
+  "main": [
+    {"import": "fastapi", "dist": "fastapi"},
+    {"import": "uvicorn", "dist": "uvicorn"},
+    {"import": "httpx", "dist": "httpx"},
+    {"import": "pydantic", "dist": "pydantic", "min": "2"},
+    {"import": "yaml", "dist": "pyyaml"},
+    {"import": "jinja2", "dist": "jinja2"},
+    {"import": "multipart", "dist": "python-multipart"},
+    {"import": "docx", "dist": "python-docx"},
+    {"import": "openpyxl", "dist": "openpyxl"},
+    {"import": "pypdfium2", "dist": "pypdfium2", "pin": "5.13.*"},
+    {"import": "pikepdf", "dist": "pikepdf", "pin": "10.14.*"},
+    {"import": "pymupdf", "dist": "pymupdf", "pin": "1.28.*"},
+    {"import": "faker", "dist": "faker", "pin": "40.*"}
+  ],
+  "extras": [
+    {"import": "pytest", "dist": "pytest"},
+    {"dist": "ruff"},
+    {"import": "rapidocr", "dist": "rapidocr"},
+    {"import": "onnxruntime", "dist": "onnxruntime", "pin": "1.30.*"},
+    {"import": "transformers", "dist": "transformers"},
+    {"import": "torch", "dist": "torch"},
+    {"import": "accelerate", "dist": "accelerate"}
+  ]
+}

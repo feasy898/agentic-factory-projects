@@ -1,0 +1,35 @@
+# 主配置（字段即契约，开发指令 §8.7；字段只增不改名）
+# 密钥类值一律不入本文件：只写环境变量名（mask_key_env / api_key_env），
+# 运行时经 common.config.resolve_secret() 解析。
+# 环境变量覆盖：顶层键 K 可用 ANONGW_<K大写> 覆盖（如 ANONGW_LISTEN=9001）。
+listen: 9000
+mask_key_env: MASK_KEY
+session_ttl_h: 24
+upstreams:
+  - {name: internet_mock, base_url: "http://127.0.0.1:8901/v1", api_key_env: MOCK_KEY, models: [mock-chat], route: INTERNET}
+  - {name: govcloud_local, base_url: "http://127.0.0.1:8902/v1", api_key_env: MOCK_KEY, models: [gov-chat], route: GOVCLOUD}
+  # ── 批次6（T6.2）：本地真实大模型上游 profiles ────────────────────────
+  # GPU 机本地大模型服务（:9004，本机经 ops/tunnel_gpu.sh 隧道以 127.0.0.1:9004
+  # 访问；部署/保活见 gpu/）。internet 与 govcloud 指向同一服务实例，以不同
+  # api_key_env（不同 Authorization 头）模拟「互联网模型 / 政务云模型服务」两个
+  # 真实上游；模型名 = 服务侧对外中性名。真实模型仓库名/来源不入仓库（审查 §E）。
+  # 默认路由绑定不变（网关取每 route 首个上游 = 两个 mock）；真实链路验收
+  # （e2e U8）按名选取本组 profiles。两把 key 只存 .env（不入任何配置文件）。
+  - {name: internet_real, base_url: "http://127.0.0.1:9004/v1", api_key_env: REAL_LLM_KEY, models: [local-chat-8b], route: INTERNET}
+  - {name: govcloud_real, base_url: "http://127.0.0.1:9004/v1", api_key_env: GOVCLOUD_LLM_KEY, models: [local-chat-8b], route: GOVCLOUD}
+  # 真实互联网上游（D 期接入）：base_url / api_key_env / models 由部署方按合同
+  # 环境填写；真实上游产品名不预置在示例里（公开仓库卫生，审查 §E）。
+ai_label: "本内容由AI生成"
+# 拦截代答/拒答文案库（T2.2 outguard；相对路径按仓库根解析；缺失回落内置默认）
+outguard_texts: config/outguard_texts.yaml
+thresholds: {batch_pii_to_govcloud: 3}
+# 语义审核模型（D4 接入）：HF/魔搭路径只允许写在这里，README/代码不出现模型名
+moderation_model: ""
+# PDF 清理引擎（T3.3 文件通道；库名只允许写在这里，源码经 importlib 动态加载）。
+# 引擎适配面（filechannel/pdf_engine.py）：文本抽取 / 串检索定位 / 涂删重写；
+# 留空 = PDF 导出报「引擎未配置」明确错误（体检不受影响）。
+pdf_engine_module: pymupdf
+# 审计/会话映射库文件（T1.3；相对路径按仓库根解析）。两库必须分文件：
+# 审计库要过 bytes 级全文件零明文扫描（§9 U5），masking_map 必须存归一化原值才能还原。
+audit_db: data/audit.db
+session_db: data/session_map.db

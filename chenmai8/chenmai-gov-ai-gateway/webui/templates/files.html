@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>政务 AI 安全网关 · 文件体检</title>
+  <style>
+    body { font-family: system-ui, "Microsoft YaHei", sans-serif; margin: 2rem auto; max-width: 960px; color: #1f2937; }
+    h1 { font-size: 1.3rem; border-bottom: 2px solid #2563eb; padding-bottom: .4rem; }
+    fieldset { border: 1px solid #d1d5db; margin: 1rem 0; padding: 1rem; }
+    button { background: #2563eb; color: #fff; border: 0; border-radius: 4px; padding: .5rem 1.2rem; cursor: pointer; }
+    button:disabled { background: #9ca3af; cursor: not-allowed; }
+    #export-btn { background: #047857; }
+    .badge { display: inline-block; padding: .15rem .6rem; border-radius: 999px; color: #fff; font-weight: 600; }
+    .risk-HIGH { background: #b91c1c; } .risk-MID { background: #d97706; }
+    .risk-LOW { background: #2563eb; } .risk-NONE { background: #047857; }
+    table { border-collapse: collapse; width: 100%; margin: .6rem 0; }
+    th, td { border: 1px solid #d1d5db; padding: .35rem .6rem; text-align: left; font-size: .92rem; }
+    th { background: #f3f4f6; }
+    .muted { color: #6b7280; font-size: .9rem; }
+    #message { margin: .6rem 0; font-weight: 600; }
+    .err { color: #b91c1c; } .ok { color: #047857; }
+    code { background: #f3f4f6; padding: 0 .3rem; }
+    #report { display: none; }
+  </style>
+</head>
+<body>
+  <h1>{{ page_title }}<span class="muted">（公开前体检 → 彻底删除式导出）</span></h1>
+  <p class="muted">上传 docx / xlsx / pdf（≤50MB），自动识别身份证、手机号、银行卡、敏感属性、密级字样等；
+  导出为<b>物理删除</b>命中内容后的净化文件（隐藏列删除、PDF 涂删重写）。</p>
+
+  <fieldset>
+    <legend>① 上传体检</legend>
+    <input type="file" id="file-input" accept=".docx,.xlsx,.pdf">
+    <button id="inspect-btn" type="button">开始体检</button>
+    <span id="message"></span>
+  </fieldset>
+
+  <div id="report">
+    <fieldset>
+      <legend>② 体检报告</legend>
+      <p>
+        <span id="risk-badge" class="badge">—</span>
+        <b id="report-filename"></b>
+        <span class="muted">种类 <code id="report-kind"></code> ·
+          页数 <code id="report-pages"></code> ·
+          sha256 <code id="report-sha256"></code> ·
+          报告号 <code id="report-id"></code></span>
+      </p>
+      <table id="summary-table">
+        <thead><tr><th>类别</th><th>命中数（非白名单）</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <table id="findings-table">
+        <thead><tr><th>#</th><th>类别</th><th>层</th><th>归一化值</th><th>页</th><th>位置</th><th>坐标</th><th>处置</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <button id="export-btn" type="button">③ 导出净化文件</button>
+      <span class="muted">mode=sanitize · 响应头 X-Report-Id 关联本报告</span>
+    </fieldset>
+  </div>
+
+<script>
+"use strict";
+var currentFile = null;
+
+function setMessage(text, isError) {
+  var el = document.getElementById("message");
+  el.textContent = text;
+  el.className = isError ? "err" : "ok";
+}
+
+function renderReport(report) {
+  document.getElementById("report").style.display = "block";
+  var badge = document.getElementById("risk-badge");
+  badge.textContent = "风险 " + report.risk_level;
+  badge.className = "badge risk-" + report.risk_level;
+  document.getElementById("report-filename").textContent = report.filename;
+  document.getElementById("report-kind").textContent = report.kind;
+  document.getElementById("report-pages").textContent = report.pages;
+  document.getElementById("report-sha256").textContent = report.sha256.slice(0, 16) + "…";
+  document.getElementById("report-id").textContent = report.file_id;
+
+  var summaryBody = document.querySelector("#summary-table tbody");
+  summaryBody.innerHTML = "";
+  var keys = Object.keys(report.summary || {});
+  if (!keys.length) {
+    summaryBody.innerHTML = "<tr><td colspan='2' class='muted'>无非白名单命中</td></tr>";
+  }
+  keys.forEach(function (type) {
+    var row = summaryBody.insertRow();
+    row.insertCell().textContent = type;
+    row.insertCell().textContent = report.summary[type];
+  });
+
+  var body = document.querySelector("#findings-table tbody");
+  body.innerHTML = "";
+  (report.findings || []).forEach(function (ff, i) {
+    var row = body.insertRow();
+    row.insertCell().textContent = ff.finding.fid || (i + 1);
+    row.insertCell().textContent = ff.finding.type;
+    row.insertCell().textContent = ff.finding.layer;
+    row.insertCell().textContent = ff.finding.normalized || "";
+    row.insertCell().textContent = ff.page;
+    row.insertCell().textContent = ff.location || "—";
+    row.insertCell().textContent = ff.bbox ? ff.bbox.map(function (v) { return Math.round(v); }).join(",") : "—";
+    row.insertCell().textContent = ff.finding.whitelisted ? "白名单（保留）" : ff.finding.action_hint;
+  });
+}
+
+function doInspect() {
+  var input = document.getElementById("file-input");
+  if (!input.files || !input.files.length) { setMessage("请先选择文件", true); return; }
+  currentFile = input.files[0];
+  var form = new FormData();
+  form.append("file", currentFile, currentFile.name);
+  setMessage("体检中…", false);
+  fetch("/v1/files/inspect", { method: "POST", body: form })
+    .then(function (resp) {
+      return resp.json().then(function (payload) { return { ok: resp.ok, payload: payload }; });
+    })
+    .then(function (r) {
+      if (!r.ok) {
+        setMessage("体检失败：" + ((r.payload.error || {}).message || "未知错误"), true);
+        return;
+      }
+      renderReport(r.payload);
+      setMessage("体检完成：命中 " + (r.payload.findings || []).length + " 处", false);
+    })
+    .catch(function (exc) { setMessage("请求异常：" + exc, true); });
+}
+
+function doExport() {
+  if (!currentFile) { setMessage("请先体检一个文件", true); return; }
+  var form = new FormData();
+  form.append("file", currentFile, currentFile.name);
+  form.append("mode", "sanitize");
+  setMessage("导出中…", false);
+  fetch("/v1/files/export", { method: "POST", body: form })
+    .then(function (resp) {
+      var reportId = resp.headers.get("X-Report-Id") || "";
+      var dispo = resp.headers.get("Content-Disposition") || "";
+      var match = /filename\*=UTF-8''([^;]+)/.exec(dispo);
+      var name = match ? decodeURIComponent(match[1]) : "sanitized_file";
+      if (!resp.ok) {
+        return resp.json().then(function (payload) {
+          setMessage("导出失败：" + ((payload.error || {}).message || "未知错误"), true);
+        });
+      }
+      return resp.blob().then(function (blob) {
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.href = url; link.download = name;
+        document.body.appendChild(link); link.click(); link.remove();
+        URL.revokeObjectURL(url);
+        setMessage("已导出 " + name + "（报告 " + reportId + "），请重新体检导出物核验零残留", false);
+      });
+    })
+    .catch(function (exc) { setMessage("请求异常：" + exc, true); });
+}
+
+document.getElementById("inspect-btn").addEventListener("click", doInspect);
+document.getElementById("export-btn").addEventListener("click", doExport);
+</script>
+</body>
+</html>

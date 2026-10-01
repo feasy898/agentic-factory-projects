@@ -1,0 +1,74 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker compose 编排（可选交付物 · 文档级产物）
+#
+# ⚠ 未实测声明（如实）：本项目构建环境无 Docker，本文件未在容器环境实测。
+#   镜像 tag / 安装命令 / 服务发现方式请按实际环境调整后再用；任何 eval 均不
+#   依赖本文件（铁律 F：一切开发/验收在本机原生 Python 上执行）。
+#
+# 本地模式（全离线，mock 上游）：
+#   cp .env.example .env   # 填 MASK_KEY
+#   docker compose up
+#   → gateway :9000 + 两路 mock 上游 :8901/:8902（mock 把收到的 prompt 原样
+#     回显），全链路无外网依赖；功能语义与本机直跑一致。
+#   注：config/app.yaml 中两路 mock 的 base_url 默认 127.0.0.1:8901/:8902，
+#   容器内 127.0.0.1 指本容器——compose 下需把两处改为
+#   http://host.docker.internal:8901/v1、:8902 同理（或改用 host 网络模式）。
+#
+# 真实模式（接本地真实大模型服务 :9004）：
+#   1) .env 填 REAL_LLM_KEY / GOVCLOUD_LLM_KEY（见 .env.example）；
+#   2) 保证宿主机 127.0.0.1:9004 有 OpenAI 兼容服务（容器内经
+#      host.docker.internal 访问，Linux 需 extra_hosts host-gateway，下方已写）；
+#      端口不同则改 config/app.yaml 两 profile 的 base_url；
+#   3) config/app.yaml 把 INTERNET / GOVCLOUD 两路由的上游绑定切到
+#      internet_real / govcloud_real（默认绑 mock），docker compose up gateway。
+# ─────────────────────────────────────────────────────────────────────────────
+
+services:
+  mock-internet:
+    image: python:3.12-slim
+    working_dir: /app
+    environment:
+      PYTHONUTF8: "1"
+    volumes:
+      - ".:/app"
+    ports:
+      - "8901:8901"
+    command: >
+      sh -c "pip install --no-cache-dir -U pip setuptools &&
+             pip install --no-cache-dir -e . &&
+             python -m gateway.mock_upstream --host 0.0.0.0 --port 8901"
+
+  mock-govcloud:
+    image: python:3.12-slim
+    working_dir: /app
+    environment:
+      PYTHONUTF8: "1"
+    volumes:
+      - ".:/app"
+    ports:
+      - "8902:8902"
+    command: >
+      sh -c "pip install --no-cache-dir -U pip setuptools &&
+             pip install --no-cache-dir -e . &&
+             python -m gateway.mock_upstream --host 0.0.0.0 --port 8902"
+
+  gateway:
+    image: python:3.12-slim
+    working_dir: /app
+    depends_on:
+      - mock-internet
+      - mock-govcloud
+    env_file:
+      - .env            # MASK_KEY 必填；真实模式另填 REAL_LLM_KEY / GOVCLOUD_LLM_KEY
+    environment:
+      PYTHONUTF8: "1"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # Linux 宿主访问；Desktop 版内置
+    volumes:
+      - ".:/app"
+    ports:
+      - "9000:9000"
+    command: >
+      sh -c "pip install --no-cache-dir -U pip setuptools &&
+             pip install --no-cache-dir -e . &&
+             python -m gateway --host 0.0.0.0 --port 9000"

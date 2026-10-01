@@ -1,0 +1,308 @@
+{
+  "$comment": "资产包总表。十大逻辑模块（GATEWAY 网关主链 / RECOG 三层识别·规则层 / MASKING 可逆脱敏+会话存储 / ROUTING 策略路由 / OUTGUARD 输出侧 / FILECHAN 文件通道+OCR / SEMANTIC 语义层·注入检测 / AUDIT 审计+看板 / BENCH 生成器与测评 / GATES 六道门）+ 基础设施与支撑面（INFRA / NAMELINT / E2E / LABELS / WEBUI）。status 取值：frozen=已实现且验收全绿；partial=主体 frozen 个别子入口规划态；planned=未开工。gatePointer = 六门（gate_d0 + gate_b1..b5）中的 eval 指针，格式『门:门项号』；门结构与超时预算见 docs/assets/specs/gates.md。所有 eval 命令在仓库根以 PYTHONUTF8=1 .venv/Scripts/python.exe -m 执行；除注明规划态外均已 2026-09-29 本机实测 exit 0。",
+  "assetPack": {
+    "name": "政务AI脱敏网关 · spec+eval 资产包",
+    "version": "1.0.0",
+    "updated": "2026-09-29",
+    "contractVersion": "开发指令 §5 冻结契约（字段只增不改名）",
+    "documents": {
+      "manifest": "docs/assets/manifest.md",
+      "contracts": "docs/assets/CONTRACTS.md",
+      "regenerate": "docs/assets/REGENERATE.md",
+      "specsDir": "docs/assets/specs/"
+    },
+    "gates": [
+      {"id": "G0", "script": "ops/gate_d0.py", "items": ["name_lint", "evals.m0_infra", "evals.t0_stream", "evals.m10_e2e"], "perItemTimeoutS": 900},
+      {"id": "G-B1", "script": "ops/gate_b1.py", "items": ["name_lint", "evals.m0_infra", "evals.m8_generator", "evals.m2_recognizers", "evals.m7_audit", "evals.t0_labels", "evals.m10_e2e"], "perItemTimeoutS": 1200},
+      {"id": "G-B2", "script": "ops/gate_b2.py", "items": ["name_lint", "回归 m0_infra/m10_e2e/m8_generator/m2_recognizers/m7_audit/t0_labels", "evals.m4_routing", "evals.m5_outguard", "evals.m3_masking"], "perItemTimeoutS": 1800},
+      {"id": "G-B3", "script": "ops/gate_b3.py", "items": ["name_lint", "evals.m0_infra", "evals.m6_filesvc", "evals.m9_webui(骨架口径)", "evals.m10_e2e", "整门回归 gate_b2"], "perEvalTimeoutS": 1800, "gateRegressionTimeoutS": 3600, "extraAssertion": "m10_e2e 摘要行 DEFERRED 计数必须为 0（U6 转正）"},
+      {"id": "G-B4", "script": "ops/gate_b4.py", "items": ["name_lint", "evals.m0_infra", "evals.m6_ocr", "evals.m2_semantic", "回归 evals.m6_filesvc", "evals.m10_e2e(含U7)", "整门回归 gate_b3"], "perEvalTimeoutS": 1800, "gateRegressionTimeoutS": 3600, "extraAssertion": "DEFERRED=0 且逐用例行 PASS U7 注入拦截必须在位"},
+      {"id": "G-B5", "script": "ops/gate_b5.py", "items": ["name_lint", "evals.m0_infra", "evals.m7_audit 全量", "evals.m9_webui 全量", "evals.m10_e2e", "整门回归 gate_b4"], "perEvalTimeoutS": 1800, "gateRegressionTimeoutS": 3600}
+    ]
+  },
+  "modules": [
+    {
+      "id": "GATEWAY",
+      "name": "网关主链（M1）",
+      "status": "frozen",
+      "lang": "Python + FastAPI + httpx",
+      "responsibility": "OpenAI 兼容 /v1/chat/completions：detect→mask→route→转发→还原→outguard→audit 主链；流式 SSE 三段管线（组帧/工具缓冲/还原+标识）。",
+      "physicalLocations": [
+        "gateway/app.py（create_app：鉴权/端点装配/错误映射）",
+        "gateway/pipeline.py（GatewayService 主链 + 出站全量叶节点规则）",
+        "gateway/sse.py（SSE 三段组合管线）",
+        "gateway/provider.py（上游适配）",
+        "gateway/deps.py（部门 Key 常量时间比较/request_id/session_id）",
+        "gateway/mock_upstream.py（:8901/:8902 一等公民 mock，ring buffer 回显）"
+      ],
+      "contract": {
+        "outboundLeaves": "主面=content 文本段；辅助面=tools 定义 + 历史 tool_calls/function_call + 非 text 多模态段的字符串叶节点（递归产出、字符串值不再下探）；任一 BLOCK_FLAG 整单拦截",
+        "errorEnvelope": "{\"error\":{\"code\",\"message\",\"reasons\"}}；code ∈ content_blocked/bad_request/unauthorized/payload_too_large/internal_error/upstream_error",
+        "ports": "gateway 9000（config listen；ANONGW_LISTEN 可覆盖）/ mock 8901 / mock 8902"
+      },
+      "dependsOn": ["RECOG", "MASKING", "ROUTING", "OUTGUARD", "AUDIT"],
+      "eval": {
+        "commands": ["PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.t0_gateway", "PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.t0_stream"],
+        "passLine": "`T0 GATEWAY NONSTREAM: 13/13`；`T0 GATEWAY STREAM: 11/11`（2026-09-29 实测，t0_gateway ≈197s）"
+      },
+      "gatePointer": ["G0:③ t0_stream", "全部门: m10_e2e 回归（G0④→G-B5⑤）"],
+      "regenOrder": 1,
+      "specDoc": "docs/assets/specs/gateway-main-chain.md"
+    },
+    {
+      "id": "RECOG",
+      "name": "三层识别·规则层（M2）",
+      "status": "frozen",
+      "lang": "Python（recognizers/rule 实装；ner 适配器位 P0 恒空）",
+      "responsibility": "正则+校验位+词表+白名单全类别检测（19 类 EntityClass）；影子扫描全角对齐；span 占用防重叠；置信度 校验位过=1.0/仅格式=0.5。",
+      "physicalLocations": [
+        "recognizers/models.py（EntityClass 19 值 + label；SENSITIVE_ATTR_SUBTYPES 9 值；Finding 契约）",
+        "recognizers/rule/detect.py（detect 主入口 11 步全序 + token 压缩分类）",
+        "recognizers/rule/whitelist.py（config/whitelist.yaml 白名单）",
+        "recognizers/ner/adapter.py（接口位）",
+        "recognizers/pipeline.py（detect_full = 规则层+语义层）"
+      ],
+      "contract": {
+        "tokenOrder": "熵串(sk-/AKIA/40hex) > 证件(GB11643) > 信用代码(GB32174，前17位非全数字才判) > 卡号(Luhn,BIN 2-6) > 手机(1[3-9]/86前缀) > 座机(0+区号)",
+        "birthGate": "DATE_BIRTH 须 ±8 字符出生上下文词门控",
+        "whitelist": "whitelisted=true = 豁免脱敏、不参与路由计数；唯一例外 BLOCK_FLAG 照拦"
+      },
+      "dependsOn": [],
+      "eval": {
+        "commands": ["PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.m2_recognizers"],
+        "passLine": "`M2 RECOGNIZERS: 6/6`；ID_CARD/USCC/BANK_CARD 召回 100%、模式类 ≥99%、白名单误报 ≤1%、2000 字 <100ms（2026-09-29 实测 mean 2.29ms）"
+      },
+      "gatePointer": ["G-B1:④ 首验", "G-B2:②-4 起逐批回归"],
+      "regenOrder": 2,
+      "specDoc": "docs/assets/specs/recognizers-rule.md"
+    },
+    {
+      "id": "MASKING",
+      "name": "可逆脱敏+会话存储（M3）",
+      "status": "frozen",
+      "lang": "Python（masking 包）",
+      "responsibility": "会话稳定占位符（HMAC-SHA256 + 碰撞升位 8/10/12）、归一化等价、流式还原状态机（≤32 字符有界缓冲）、工具参数 hold-to-finish、内存 LRU+SQLite+TTL 双层存储。",
+      "physicalLocations": [
+        "masking/mapper.py（SessionMapper/SessionRegistry；占位符算法）",
+        "masking/normalize.py（§5.3.2 归一化表）",
+        "masking/session_store.py（masking_map 表 + TTL；独立 db 文件）",
+        "masking/remap.py（StreamRestorer）",
+        "masking/toolbuf.py（ToolCallBuffer/restore_arguments）",
+        "masking/models.py（MappingEntry 契约）"
+      ],
+      "contract": {
+        "placeholder": "HMAC-SHA256(key=MASK_KEY, msg=session_id\\x1f type\\x1f normalized)；placeholder=〔标签·hex8-12〕",
+        "streamRestorer": "见 〔 起缓冲；完整形状替换/未命中原样放行；超 32 字符放行首字符重扫；flush 放行残留",
+        "dbSplit": "masking_map 必须存归一化原值 → 与审计库分文件（data/session_map.db vs data/audit.db）"
+      },
+      "dependsOn": ["RECOG"],
+      "eval": {
+        "commands": ["PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.m3_masking"],
+        "passLine": "`M3 MASKING: 8/8`（稳定 1000 值/归一化等价/fuzz 500 条/工具还原/10 万值零碰撞/还原 <20ms；2026-09-29 实测 0.046ms）"
+      },
+      "gatePointer": ["G-B2:③-3 首验", "此后整门链回归；存储面由 G-B1:⑤ m7_audit C 节钉死"],
+      "regenOrder": 3,
+      "specDoc": "docs/assets/specs/masking-placeholder.md",
+      "specDoc2": "docs/assets/specs/masking-normalize.md"
+    },
+    {
+      "id": "ROUTING",
+      "name": "策略路由（M4）",
+      "status": "frozen",
+      "lang": "Python 纯函数（routing 包）",
+      "responsibility": "findings+config → RouteDecision；优先级 BLOCK>GOVCLOUD>INTERNET；理由有序、第一条决定性、低优先级不随行。",
+      "physicalLocations": [
+        "routing/engine.py（decide 纯函数 + 桶常量）",
+        "routing/models.py（RouteDecision/RouteReason 契约 + REASON_CODES 词汇表）"
+      ],
+      "contract": {
+        "matrix": "R1 密级→BLOCK / R2 注入→BLOCK(flag=injection) / R3 工作秘密·敏感属性→GOVCLOUD / R4 ID_CARD+BANK_CARD ≥阈值(默认3,钳1)→GOVCLOUD / R5 单结构化PII(12码值)→INTERNET(mask_required) / R6 白名单·无命中→INTERNET",
+        "blockUpstream": "route=BLOCK 时 upstream 必须 null（模型校验器强制）",
+        "reasonsNoRaw": "结构化 PII 原文永不进 reasons（WHITELIST_HIT 留存条只含 fid+类别标签）"
+      },
+      "dependsOn": ["RECOG"],
+      "eval": {
+        "commands": ["PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.m4_routing"],
+        "passLine": "`M4 ROUTING: 43/43 checks passed`（38 矩阵格 + matrix-scale/purity/wire/upstream-edge/threshold 5 横切；2026-09-29 实测）"
+      },
+      "gatePointer": ["G-B2:③-1 首验", "此后整门链回归"],
+      "regenOrder": 4,
+      "specDoc": "docs/assets/specs/routing-matrix.md"
+    },
+    {
+      "id": "OUTGUARD",
+      "name": "输出侧（M5）",
+      "status": "frozen",
+      "lang": "Python（outguard 包 + config/outguard_texts.yaml）",
+      "responsibility": "AI 生成标识（非流式尾注+annotations / 流式 finish 前 delta+delta.annotations / 响应头 x-anongw-ai-label:1）、BLOCK 按 reason code 拒答、关键词代答、输出复检钩子（P0 NullModerator）。",
+      "physicalLocations": [
+        "outguard/label.py（HEADER_AI_LABEL/apply_message_label，幂等）",
+        "outguard/fallback.py（文案库加载 + reason 模板回退 + 代答匹配）",
+        "outguard/moderation.py（复检协议 + NullModerator）",
+        "outguard/service.py（OutguardService 门面）",
+        "outguard/models.py（OutguardTexts/CannedEntry/ModerationVerdict）"
+      ],
+      "contract": {
+        "label": "annotations=[{\"type\":\"ai_generated\",\"text\":文案}]；幂等不叠加；仅成功回答加标识",
+        "fallback": "决定性 reason code → 模板（CLASSIFICATION_MARK/INJECTION/OUTPUT_MODERATION），未配置回落 block.default；代答输入为脱敏后 prompt",
+        "hook": "flagged → content_blocked 拦截响应，reasons code=OUTPUT_MODERATION，审计 flag=output_flagged"
+      },
+      "dependsOn": ["ROUTING"],
+      "eval": {
+        "commands": ["PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.m5_outguard"],
+        "passLine": "`M5 OUTGUARD: 13/13 checks passed`（2026-09-29 实测 20.7s）"
+      },
+      "gatePointer": ["G-B2:③-2 首验", "此后整门链回归"],
+      "regenOrder": 5,
+      "specDoc": "docs/assets/specs/outguard.md"
+    },
+    {
+      "id": "FILECHAN",
+      "name": "文件通道+OCR（M6）",
+      "status": "frozen",
+      "lang": "Python（filechannel 包；PDF/OCR 引擎名只进 config，importlib 动态加载）",
+      "responsibility": "docx/xlsx/pdf/扫描件解析（含隐藏列行/公式缓存值/批注/页眉脚）→ FileReport 体检（页码/单元格/坐标）→ 彻底删除式导出 + 导出物 re-ingest 零残留硬闸；scan_pdf 重打码渲染版。",
+      "physicalLocations": [
+        "filechannel/inspect.py（inspect_bytes 体检权威管线 + 风险分级）",
+        "filechannel/parsers.py（文本层解析 + location/bbox 语义）",
+        "filechannel/ocr.py（300dpi 渲染 + OCR 重建文本层 + OcrTextLayer）",
+        "filechannel/sanitize.py（删除式导出 + *_verified 零残留收敛 ≤3 轮）",
+        "filechannel/pdf_engine.py（引擎链：主引擎→内容流手术→栅格兜底，自动回退）",
+        "filechannel/models.py（FileReport/FileFinding 契约）",
+        "config/filechannel.yaml（引擎坐标；config/app.yaml pdf_engine_module 主引擎）"
+      ],
+      "contract": {
+        "location": "docx: para:N/table:N:r:c/header:N:para:N/footer:N:table:N:r:c；xlsx: Sheet!Cell(+ #comment/#cached)；pdf/scan_pdf 恒 null",
+        "bbox": "render 坐标系 [x0,y0,x1,y1] 原点左上 y 向下 pt；scan_pdf 来自 OCR 重建（全角1.0/半角0.5 加权插值）",
+        "riskLevel": "HIGH=非白名单敏感属性或批量号码(≥阈值)；MID=其它非白名单结构化 PII；LOW=其余命中；NONE=零命中",
+        "export": "导出物重走解析+检测 seeded PII 命中必须为 0（管线内硬闸，ExportBlockedError 宁阻不漏）"
+      },
+      "dependsOn": ["RECOG", "BENCH"],
+      "eval": {
+        "commands": ["PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.m6_filesvc", "PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.m6_ocr"],
+        "passLine": "`M6 FILESVC(text-layer+export): 12/12`；`M6 OCR(scan-pdf): 6/6`（召回 ≥0.90；2026-09-29 实测）"
+      },
+      "gatePointer": ["G-B3:③ filesvc 首验", "G-B4:③ ocr 首验 + ⑤ filesvc 栅格兜底回归", "G-B5 整门链"],
+      "regenOrder": 6,
+      "specDoc": "docs/assets/specs/filechannel-locations.md"
+    },
+    {
+      "id": "SEMANTIC",
+      "name": "语义层·注入检测（M2 D4）",
+      "status": "frozen",
+      "lang": "Python 词表引擎（recognizers/semantic）",
+      "responsibility": "STRONG/EXFIL/WEAK 三档注入词表 + 否定前缀守卫（8 字符窗）+ WEAK 位置佐证（深度≥0.5/收束语/行首标记/括注块）+ env 驱动 LLM-judge 升档位（无 key 降级、故障不抛错）。",
+      "physicalLocations": [
+        "recognizers/semantic/patterns.py（三档词表 + corroborated/is_negated）",
+        "recognizers/semantic/adapter.py（SemanticAdapter：moderate/detect）",
+        "recognizers/semantic/judge.py（LlmJudge.from_env）",
+        "config/injection_terms.txt（<class>|<regex> 行格式，缺失回退内置）",
+        "config/app.yaml moderation_model（guard 模型路径唯一允许位）"
+      ],
+      "contract": {
+        "kinds": "STRONG→INJECTION_OVERRIDE(1.0) / EXFIL→INJECTION_EXFIL(1.0) / WEAK→INJECTION_EMBEDDED(0.7，须位置佐证) / judge→INJECTION_JUDGE(0.9)",
+        "findingShape": "type=INJECTION、layer=semantic、action_hint=BLOCK_FLAG；judge 补判为整段无 span finding（raw=\"\"）",
+        "degrade": "judge 三 env 齐备才启用；词表零命中才补判一次；任何故障降级为 safe + 日志"
+      },
+      "dependsOn": ["RECOG"],
+      "eval": {
+        "commands": ["PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.m2_semantic"],
+        "passLine": "`M2 SEMANTIC: 11/11`（拦截 ≥0.90 / 误拦 ≤0.05 / 规模 34 注入+45 正常 / 2000 字 <50ms；2026-09-29 实测 0.75ms）"
+      },
+      "gatePointer": ["G-B4:④ 首验", "G-B5 整门链回归；U7 由 G-B4:⑥ 固化"],
+      "regenOrder": 7,
+      "specDoc": "docs/assets/specs/semantic-wordlist.md"
+    },
+    {
+      "id": "AUDIT",
+      "name": "审计+看板（M7 + 管理面 + 看板页）",
+      "status": "frozen",
+      "lang": "Python + SQLite WAL + Jinja2（audit 包 + gateway/admin_api + webui）",
+      "responsibility": "只存脱敏内容的审计库（后台队列批量写不阻塞请求）、零明文双闸（单事件 + 全库 bytes 级含 WAL/SHM）、部门聚合/CSV/分页查询 API、演示看板页（指标卡+SVG 柱状+明细分页）。",
+      "physicalLocations": [
+        "audit/models.py（AuditEvent/AuditPage/LatencyStats/DeptMetrics/MetricsSummary）",
+        "audit/store.py（assert_no_raw_pii + assert_db_no_raw_pii + safe_preview 截断守护）",
+        "audit/writer.py（audit_events 表 + 后台写队列）",
+        "audit/query.py（查询/聚合层）",
+        "gateway/admin_api.py（/admin/api/audit|metrics|report.csv，部门 Key 鉴权）",
+        "webui/dashboard.py + webui/templates/dashboard.html（看板页）"
+      ],
+      "contract": {
+        "auditEvent": "§5.4 形状；无 raw 字段；preview ≤500 已脱敏；密级/注入词以〔密级·已拦截〕〔注入·已拦截〕占位",
+        "zeroPlaintext": "入库前断言（归一化值+表面形式同查+截断边界守护）失败即 500 不落库；全库文件 bytes 级扫描含 -wal/-shm；扫描器有负控",
+        "adminApi": "limit 缺省 100 上限 1000（越界 400）；AuditPage.total 与分页无关；id 降序"
+      },
+      "dependsOn": ["GATEWAY"],
+      "eval": {
+        "commands": ["PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.m7_audit", "PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.m9_webui"],
+        "passLine": "`M7 AUDIT(...): 16/16`；`m9_webui: 14/14 检查通过`（2026-09-29 实测）"
+      },
+      "gatePointer": ["G-B1:⑤ / G-B2:②-5（T1.3 口径）", "G-B5:③④（T5.1/T5.2 全量口径）"],
+      "regenOrder": 8,
+      "specDoc": "docs/assets/specs/audit-schema.md"
+    },
+    {
+      "id": "BENCH",
+      "name": "生成器与测评（M8）",
+      "status": "frozen（m8_quality 已实现：evals/m8_quality.py 实测 M8 QUALITY: 6/6 ratio=1.0000 ≥0.95；m8_baselines 仍规划态，未入六门）",
+      "lang": "Python（benchmark/generator；第三方语料库模块名只进 config/synthetic_corpus.yaml）",
+      "responsibility": "seed 固定字节级可复现的合成语料/检测评测集/seeded 夹具 + manifest sha256 凭据；evals/thresholds.py 阈值单一来源。",
+      "physicalLocations": [
+        "benchmark/generator/build.py（build_all + manifest）",
+        "benchmark/generator/{cases,fixtures,materials,numbers,personas,perturb,templates,geo}.py",
+        "config/synthetic_corpus.yaml（personas/pdf_writer 引擎坐标）",
+        "evals/thresholds.py（全部 eval 阈值常量）",
+        "data/rule_cases.jsonl + data/cases/ + data/fixtures/ + data/generation_manifest.json（规范产物）"
+      ],
+      "contract": {
+        "determinism": "manifest 无时间戳无绝对路径；双跑独立构建 manifest 与全部产物字节级一致；夹具 seed = seed ^ FIXTURE_SEED_SALT",
+        "casesShape": "rule_cases.jsonl 每行 detect/whitelist/reject 三级计分；正例含 5 类扰动；白名单负例/难负例/密级/敏感属性 9 子类型全覆盖"
+      },
+      "dependsOn": [],
+      "eval": {
+        "commands": ["PYTHONUTF8=1 ./.venv/Scripts/python.exe -m evals.m8_generator"],
+        "passLine": "`M8 GENERATOR: 4/4 checks passed`（双跑复现+规模+独立校验位复核+15 夹具 sha/重抽取/隐藏列；2026-09-29 实测 11.0s）"
+      },
+      "gatePointer": ["G-B1:③ 首验", "G-B2:②-3 起回归"],
+      "regenOrder": 9,
+      "specDoc": "docs/assets/specs/benchmark-generator.md"
+    },
+    {
+      "id": "GATES",
+      "name": "六道门（ops 验收体系）",
+      "status": "frozen",
+      "lang": "标准库 Python 门脚本 ×6 + name_lint + e2e_smoke + export_public + seed_demo（ops/）",
+      "responsibility": "系统 python 任意 cwd 可跑的收工门：name_lint + 逐批 eval + 既有门整链回归；门项编号=任务单原文；DEFERRED=0 / U7 在位附加断言；超时预算 900/1200/1800/3600s。",
+      "physicalLocations": [
+        "ops/gate_d0.py（G0）",
+        "ops/gate_b1.py … ops/gate_b5.py（G-B1…G-B5；b3 起内嵌上一整门回归）",
+        "ops/name_lint.py + ops/forbidden_names.txt（每门①：公开仓名称守卫）",
+        "ops/e2e_smoke.py（U1–U8 + bytes 级零明文 + 演示数据）",
+        "ops/export_public.py（公开导出 + 严格档终检）",
+        "ops/seed_demo.py（三部门演示数据注入/一键切换）"
+      ],
+      "contract": {
+        "gateShape": "系统python入口；内部 chdir 仓库根 + PYTHONUTF8=1 + UTF-8 重配；.venv 解释器逐项执行；透传输出+摘要行抓取；任何 FAIL exit 1",
+        "timeouts": "G0 单项 900s；G-B1 单项 1200s；G-B2 单项 1800s；G-B3/4/5 单 eval 1800s + 整门回归 3600s",
+        "extraAssertions": "G-B3 起 m10_e2e 摘要 DEFERRED=0；G-B4 起 U7 逐用例行必须在位"
+      },
+      "dependsOn": ["GATEWAY", "RECOG", "MASKING", "ROUTING", "OUTGUARD", "FILECHAN", "SEMANTIC", "AUDIT", "BENCH"],
+      "eval": {
+        "commands": ["python ops/gate_b5.py"],
+        "passLine": "全项 [PASS] exit 0；gate_b5 实跑 6/6 记录见 git log 827cdbf（2026-09-29）；各 eval 单跑 2026-09-29 本会话实测全绿（m10_e2e：8 PASS / 0 FAIL / 0 DEFERRED，gate_final run5 实录 tmp/gate_final_run5.log）"
+      },
+      "gatePointer": ["自身即门"],
+      "regenOrder": 10,
+      "specDoc": "docs/assets/specs/gates.md"
+    }
+  ],
+  "supportingAssets": [
+    {"id": "INFRA", "name": "基础设施（M0）", "locations": ["common/config.py", "common/logs.py", "common/timeutil.py", "config/*.yaml|txt", "pyproject.toml", "constraints.txt"], "eval": "evals.m0_infra → M0 INFRA: 20/20", "gatePointer": ["每门 ②"]},
+    {"id": "NAMELINT", "name": "公开仓名称守卫", "locations": ["ops/name_lint.py", "ops/forbidden_names.txt"], "eval": "python -m ops.name_lint → 零命中 exit 0", "gatePointer": ["每门 ①"]},
+    {"id": "E2E", "name": "端到端冒烟（M10 主体）", "locations": ["ops/e2e_smoke.py"], "eval": "evals.m10_e2e → e2e_smoke: 8 PASS / 0 FAIL / 0 DEFERRED", "gatePointer": ["每门必回归"]},
+    {"id": "ROBUST", "name": "健壮性验收（M11）", "locations": ["evals/m11_robust.py"], "eval": "evals.m11_robust → M11 ROBUST: 7/7（gate_final run5 实测 104.6s）", "gatePointer": ["未入六门；gate_final 第⑧项"]},
+    {"id": "GATE_FINAL", "name": "收官终检门", "locations": ["ops/gate_final.py"], "eval": "python ops/gate_final.py → 九项 [PASS] exit 0（run5 实录 tmp/gate_final_run5.log，≈90min）", "gatePointer": ["自身即门（六门收口后的最终裁定）"]},
+    {"id": "LABELS", "name": "标签体系文档自验收", "locations": ["docs/contracts/labels.md", "evals/t0_labels.py"], "eval": "evals.t0_labels → T0 LABELS: 8/8", "gatePointer": ["G-B1:⑥ 首验起"]},
+    {"id": "WEBUI", "name": "演示前端五页（M9）", "locations": ["webui/pages.py", "webui/dashboard.py", "webui/demo_api.py", "webui/templates/"], "eval": "evals.m9_webui → 14/14 检查通过", "gatePointer": ["G-B3:④（骨架口径）", "G-B5:④（全量口径）"]}
+  ]
+}

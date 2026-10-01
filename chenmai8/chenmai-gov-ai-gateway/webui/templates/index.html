@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>政务 AI 安全网关 · 演示首页</title>
+  <style>
+    body { font-family: system-ui, "Microsoft YaHei", sans-serif; margin: 2rem auto; max-width: 860px; color: #1f2937; }
+    h1 { font-size: 1.4rem; border-bottom: 2px solid #2563eb; padding-bottom: .4rem; }
+    table { border-collapse: collapse; width: 100%; margin-top: 1rem; }
+    th, td { border: 1px solid #d1d5db; padding: .5rem .75rem; text-align: left; }
+    th { background: #f3f4f6; }
+    a { color: #2563eb; }
+    .muted { color: #6b7280; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <h1>政务 AI 安全网关 · 演示首页</h1>
+  <p class="muted">演示模式（无登录）。存活探针：<code>{{ healthz }}</code></p>
+  <table>
+    <thead><tr><th>页面</th><th>说明</th><th>状态</th></tr></thead>
+    <tbody>
+      {% for page in pages %}
+      <tr>
+        <td><a href="{{ page.path }}">{{ page.title }}</a></td>
+        <td>{{ page.desc }}</td>
+        <td>{{ page.status }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

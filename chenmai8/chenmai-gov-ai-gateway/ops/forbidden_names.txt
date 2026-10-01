@@ -1,0 +1,33 @@
+# 禁用词表（ops/name_lint.py 读取）：上游开源项目名 + 许可证字样。
+# 规则（构建纪律，铁律 E）：公开仓库的代码/注释/README 一律用中性名，例如——
+#   规则识别框架        → regex recognizer / rule engine
+#   模型路由框架        → provider gateway adapter
+#   内容安全审核模型    → moderation model（模型路径只写 config.app.moderation_model）
+#   PDF 清理引擎        → pdf sanitizer engine（库名只写 config/，源码 importlib 动态加载）
+#   合成语料生成库      → synthetic doc corpus generator（库经配置提供模块名动态加载）
+# 命中即违例；新禁用词直接往本表追加（每行一个；# 注释；re: 前缀 = 正则）。
+# 本文件自身被 lint 豁免（否则自指命中）。
+#
+# ── 项目名（大小写不敏感子串匹配）────────────────────────────────
+presidio
+litellm
+qwen
+pymupdf
+fitz
+pikepdf
+rapidocr
+pypdfium2
+faker
+# ── 真实上游产品名（审查 §E：真实 LLM 供应商/模型名不进公开仓库；
+#    部署环境里的真实上游只允许写 config/app.yaml，且公开导出时会替换）──
+open.bigmodel.cn
+glm-4-flash
+# ── 许可证字样（单词边界正则）────────────────────────────────────
+re:\bAGPL\b
+re:\bLGPL\b
+re:\bGPL\b
+re:\bBSD\b
+re:\bMIT\b
+re:\bMPL\b
+re:\bApache\b
+artifex

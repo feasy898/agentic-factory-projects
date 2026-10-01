@@ -1,0 +1,6 @@
+# 部门 → key 的 sha256 十六进制（小写，64 位）。库存哈希，不存明文。
+# 演示明文见 .env.example 注释；生产换真 key 时只改本文件哈希。
+departments:
+  县政府办: "40d8548f65bff9b2becdfe094b8fe30105717a3752cc8845b1f99b7cba62d0d8"
+  民政局: "64b314e44797243ce717d9e7ed55df613befea370076779988b8229cb05fa25e"
+  某镇: "1955a94c8e156d2955cd803dbb2b5e1d76205b0f653a8f92f54a88f0baaa7dc1"

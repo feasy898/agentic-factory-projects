@@ -1,0 +1,29 @@
+# 文件通道（filechannel）依赖坐标。
+# 铁律 E（公开仓库卫生）：第三方库模块名只允许出现在 config/（本文件默认档不被
+# ops/name_lint.py 扫描），源码经 importlib 按本配置动态加载、不得硬编码库名。
+pdf_text_reader:
+  module: pypdfium2     # PDF 文本层读取与逐字符坐标（坐标级文本抽取）
+# PDF 导出引擎链（T3.2；顺序即回退序，主引擎见 config/app.yaml pdf_engine_module）：
+#   涂删主引擎 → 内容流手术引擎（算子级移除文本对象）→ 栅格兜底（重渲染打码版）。
+# 各引擎模块缺失/不适用时自动回退下一引擎；三坐标全空 = PDF 导出报引擎不可用。
+pdf_content_stream_engine:
+  module: pikepdf       # 内容流解析/算子手术/重写（许可证合规备选，§11 风险 2）
+pdf_raster_engine:
+  reader_module: pypdfium2   # 逐页渲染位图
+  image_module: PIL.Image    # 位图容器与 PDF 重建
+  image_draw_module: PIL.ImageDraw  # 命中框涂黑
+# 扫描件 OCR 路线（T4.1；§6 M6「渲染 300dpi → OCR 引擎」）：页面位图渲染读取库
+# 复用上方 pdf_text_reader.module；OCR 引擎纯 CPU 推理（params 显式关闭全部硬件
+# 加速执行提供器——该引擎 API 无 enable_mkldnn 一类开关，等价强制即此）。
+ocr_engine:
+  module: rapidocr           # OCR 引擎包（onnxruntime 推理后端）
+  factory: RapidOCR          # 引擎工厂类名（源码经 getattr 动态取用，铁律 E）
+  render_dpi: 300            # 扫描页渲染 DPI（§6）
+  text_score: 0.5            # 识别置信度阈值（低于丢弃）
+  params:                    # 引擎初始化参数（原样透传给工厂类）
+    Global.log_level: warning
+    Global.max_side_len: 4200   # 不缩小输入页图（300dpi A4 全分辨率进检测/识别）
+    EngineConfig.onnxruntime.use_cuda: false
+    EngineConfig.onnxruntime.use_dml: false
+    EngineConfig.onnxruntime.use_cann: false
+    EngineConfig.onnxruntime.use_coreml: false

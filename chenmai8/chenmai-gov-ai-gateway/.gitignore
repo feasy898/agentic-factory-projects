@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+build/
+.vite/
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+*.key
+secrets/
+
+# Data & models (large artifacts)
+data/
+models/
+*.onnx
+*.pt
+*.ckpt
+*.safetensors
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local artifacts
+*.log
+tmp/
+out/
+
+# 修复工垫片：工作流相对路径误拼的转发目录（真实门在 ops/gate_b1.py）
+/政务AI脱敏网关/
+
+# 安全门禁（mimosa）hook 运行态/缓存：本地工件，不进仓库
+.mimosa/
