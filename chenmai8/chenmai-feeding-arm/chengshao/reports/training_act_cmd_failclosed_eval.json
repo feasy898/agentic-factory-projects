@@ -1,0 +1,15 @@
+{
+  "module": "training.act.build_train_cmd",
+  "date": "2026-10-02",
+  "cmd": "python -m chengshao.training.act.build_train_cmd --config chengshao/training/config/train_act.json",
+  "metrics": {
+    "exit_code": 2,
+    "cmd_line_emitted": false,
+    "injection_hint_shown": true
+  },
+  "thresholds": {
+    "fail_closed_exit": 2,
+    "no_command_without_entry": true
+  },
+  "pass": true
+}

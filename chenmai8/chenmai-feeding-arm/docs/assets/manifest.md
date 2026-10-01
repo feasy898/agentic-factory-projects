@@ -44,7 +44,7 @@
 
 | ID | 名称 | 形态 | 职责 | eval → 通过线 | 顺序位 | 状态 | spec |
 |---|---|---|---|---|---|---|---|
-| `TRAIN-assets` | 延后训练资产包 | `chengshao/training/`（脚本/配置/runbook） | 策略训练命令生成（fail-closed exit 2）、勺上分类器、拖动示教录制（CS_HW_SESSION 才可执行）、COS 传输计划；**本机零真实训练** | `pytest tests/test_training_scripts.py -q` → 22 用例绿（dry-run） | 11 | frozen-prototype（只写不跑；真实训练在 GPU 机，立项后才执行） | [training-assets](specs/training-assets.md) |
+| `TRAIN-assets` | 延后训练资产包 | `chengshao/training/`（脚本/配置/runbook） | 策略训练命令生成（fail-closed exit 2）、勺上分类器、**采数三入口（脚本示教自记录/键盘遥操/拖动示教计划；--mock 合成 dry-run 产小样本并过格式自检）**、数据集布局结构自检、COS 传输计划；**本机零真实训练** | `pytest tests/test_training_scripts.py -q` → 31 用例绿（dry-run；2026-10-02 实测，22 既有+9 采数增补） | 11 | frozen-prototype（只写不跑；真实训练在 GPU/3060 机，立项后才执行） | [training-assets](specs/training-assets.md) |
 | `HW-toolchain` | 真机工具链 | `cs_arm/feetech.py` 骨架 + bring-up 手册 | 真机串口通道（参数结构冻结、HardwareUnavailable 显式失败）+ 标定/冒烟/成功率/安全演练清单 | 骨架期：构造 FeetechArmConfig 校验（tests 覆盖）；真机 eval 全部 planned（见 spec §3 原表） | 12 | planned（T10 随硬件 bring-up） | [hw-toolchain](specs/hw-toolchain.md) |
 
 ## 重生成依赖图（顺序位即拓扑序）
