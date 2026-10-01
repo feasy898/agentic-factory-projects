@@ -31,3 +31,23 @@
 
 
 - 2026-10-01（夜班 R2 worker-A）勘误：上轮「可玩 factory 已推净（unpushed=0）」系 **@{u} 口径假 0**——factory main 无 upstream（`git rev-parse --abbrev-ref '@{upstream}'` → "fatal: no upstream configured"，stderr 被 2>/dev/null 吞掉致 wc -l=0），实际 554ac7e 未推。本轮 `git push origin main`（凭证自短剧仓 URL 同源接线，token 零打印）→ **exit 0，`33491dc..554ac7e main -> main`**。六仓统一显式 refspec（`git log origin/<br>..<br> --oneline | wc -l`，log_rc=0 非假 0）复验全部 unpushed=0。短剧仓 5 件 CRLF 假 diff 已 `git checkout --` 清零（CHECKOUT_OK，M_COUNT=0）。
+
+- 2026-10-01/02 跨夜（C3 咖啡豆夜班，三线并行，bean-eye 仓）：①**实时标注线**落地
+  `beaneye/realtime/` 四模块（sources 三源+IP 丢帧 drain_and_retrieve / engine 逐帧管线 /
+  overlay 13 类配色+中文 HUD / server MJPEG 中枢）+ app `GET /live/stream`（503/400 语义）
+  + demo.html「实时」入口 + `scripts/demo_realtime.py`；加分项四角 ArUco 周期重解单应→
+  `eq_diameter_mm` 真毫米（未标定诚实伪毫米）。合成源 720p 引擎 EMA 5.91 FPS（≥5 达标；
+  消费循环 3.64 FPS 含预合成热身，如实注明）；ArUco 标定 mm/px 偏差 <10%；新增 28 测试
+  全过（接手时 sources 1 失败系遗留测试自身两处 bug，已修复披露）。②**SO-101 分拣软件链**
+  `beaneye/sort/` 九模块（ArmProtocol 冻结六方法 / MockArm / so101 惰性 lerobot+IK v0 /
+  frame 外参 / planner 包络预检 / session 状态机+软件急停 / render / config）+
+  `configs/sort.yaml` + `scripts/demo_sort_sim.py`：55 粒→43 步 MockArm 全执行（21710mm/
+  7.3s），strict-envelope 28 skipped/15 执行；6 文件 100 用例全绿；so101 真机路径占位值
+  未实测，核对清单入 `docs/SO101联调手册.md`。③**训练脚本线**复核 7 条修复全闭环
+  （merge_ext_coco 去重 / 真实档逐盘相对误差 / 跨类 TP / 种子重叠双向拒绝 / onnxruntime
+  护栏 / 措辞 / 缺图盘剔除），新增 `tests/test_train_smoke.py` 13 项（含 ext 合并端到端
+  首次跑通在线合成路径）。终局：全量 pytest **649 passed / 0 failed**，`gate_d4` **exit 0**。
+  中性名扫描（gate_d3 23 条模式）19+13 文件零命中；未新增第三方依赖（Pillow 既有）；
+  out/ 已忽略。交接：`chenmai-bean-eye/docs/交接-实时标注与SO101联调.md`（明晨摄像头
+  USB/IP 实测操作单 + SO-101 上电联调步骤）。下一步：明晨摄像头两路实测 → SO-101 到货后
+  上电联调回填 configs/sort.yaml 占位值 → 生豆到货（WAITING_EVENT 不变）。

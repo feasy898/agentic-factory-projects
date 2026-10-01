@@ -53,6 +53,14 @@
 | C3-A4 | 演示脚本补齐 | 含可执行的一键演示命令 |
 | C3-A5 | 生豆到货→自采链 | 物理等待：WAITING_EVENT |
 
+**C3 执行记录（2026-10-01/02 跨夜，三线并行）**：
+
+- **新增实时标注模块**：`beaneye/realtime/` 四模块（sources 三源+IP 丢帧策略 / engine 逐帧管线 / overlay 13 类配色+中文 HUD / server MJPEG 推流中枢）+ app 增量 `GET /live/stream`（源失败 503/参数错 400）与 demo.html「实时」入口 + `scripts/demo_realtime.py`；加分项：画面四角 ArUco 时周期重解单应 warp 正射网格，`eq_diameter_mm` 给真毫米（未标定时诚实标注伪毫米）。实测：合成源 720p 引擎处理帧 EMA **5.91 FPS**（≥5 目标达成；消费循环 3.64 FPS，elapsed 含合成盘预合成热身）；ArUco 标定生效（mm/px 与合成真值偏差 <10%）。本线新增 28 测试全过；接手时 `test_realtime_sources` 1 失败系该线遗留测试自身两处 bug（时钟增量/`grab→retrieve` 配对语义），已修复并披露。
+- **新增 SO-101 分拣软件链**（真机延后，Mock 全链验证）：`beaneye/sort/` 九模块（arm 冻结 ArmProtocol / mock_arm / so101 惰性 import lerobot / frame 复用 ArUco 单应+三点仿射 / planner / session 状态机+软件急停 / render / config）+ `configs/sort.yaml` + `scripts/demo_sort_sim.py`。实测：合成盘检出 55 粒→规划 43 步→MockArm 43 步全执行（行程 21710mm）；`--strict-envelope` 下 28 粒超界显式 skipped、15 步执行。6 个测试文件 100 用例全绿；so101 真机路径（transport=None）舵机换算/连杆几何为占位默认值，无硬件未实测，核对清单已写入 `docs/SO101联调手册.md`。
+- **训练脚本复核 7 条修复全闭环**（high 2 / medium 2 / low 3）：merge_ext_coco 去重、真实档门槛改逐盘相对误差、跨类 TP 强制、种子重叠双向拒绝、onnxruntime 导入护栏、措辞纠正、缺图盘剔除；修复后全量 pytest **649 passed / 0 failed / exit 0**（含既有 508 基线 + 本线 13 + 并行线测试）。
+- **终局 gate_d4**：`python scripts/gate_d4.py` → 四项口径过，**exit 0**（本轮新代码态下的复跑结论）。
+- **已知问题与物理等待**：摄像头真机实测（USB 直插 / 手机 IP 推流）待做，操作单见 `docs/交接-实时标注与SO101联调.md`；SO-101 上电联调待硬件（接线→.venv-arm→自检→三点标定→空载试跑→急停，见 `docs/SO101联调手册.md`），`configs/sort.yaml` 外参与几何为「明日实测」占位值；NN 栈真实模式 API 仍待 GPU 机 `--cpu-smoke`/`--smoke-train` 核对；C3-A5 生豆到货维持 WAITING_EVENT。
+
 ### 2.4 子线 C4 政务AI脱敏网关（`chenmai-gov-ai-gateway/`）
 
 | # | 断言 | 判定 |
@@ -87,6 +95,7 @@
 - 六仓代码全量在库（全历史保留）；五仓资产化收敛一轮完成（C1–C5 反馈归零）、可玩线按模式 M 走完五步闭环。
 - 各线门禁最近基线（09-30 实跑）：C1 8/8、C4 9/9、C5 6/6、C2 4/4+差分 PASS、C3 四项口径过。
 - 支撑层五文档 + plan 五件套 + _regen/_reviews 判定基建全部在库。
+- 2026-10-01/02 跨夜（C3 夜班）：实时标注模块 / SO-101 分拣软件链（Mock 全链）/ 训练脚本 7 条修复三条线落地，终局 gate_d4 exit 0；真机增量（摄像头、SO-101 上电）与生豆到货为后续物理等待项，操作单 `chenmai-bean-eye/docs/交接-实时标注与SO101联调.md`。
 - 待解：六仓环境未重建（门禁不能开箱跑）；C4 整门新跑；C5 D1/D2；VLM 凭证；损坏素材换源。
 
 ## 4. 下一步任务清单（按优先级，分批）

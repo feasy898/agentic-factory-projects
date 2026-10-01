@@ -40,6 +40,8 @@ Thumbs.db
 *.log
 tmp/
 out/
+train/runs/
+.mimosa/
 
 # 内部文件：素材来源映射（上游原标签，不得入公开仓，见 W13 清理）
 configs/upstream_mapping.internal.yaml

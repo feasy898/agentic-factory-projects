@@ -11,6 +11,10 @@
   预览/下载；
 - ``GET  /api/v1/results/{id}/evidence/{bean_id}/{side}`` —— 逐豆证据裁剪图；
 - ``GET  /api/v1/standards`` —— 可用定级标准；
+- ``GET  /live/stream`` —— 实时逐帧着色标注 MJPEG 流（multipart/x-mixed-
+  replace；后台线程跑 beaneye.realtime.RealtimeEngine，支持
+  ``?source=synth|usb|ip`` 与 ``index/url/width/downscale/skip/max_frames``
+  等参数；源打不开时 503 并附排查提示）；
 - ``GET  /demo`` —— 单页演示（上传/结果列表/护照预览/证据卡，静态资源全部
   本地内嵌，零外链）。
 
@@ -33,12 +37,20 @@ from typing import Any, Sequence
 import cv2
 import numpy as np
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, Response
+from fastapi.responses import (
+    FileResponse,
+    HTMLResponse,
+    JSONResponse,
+    RedirectResponse,
+    Response,
+    StreamingResponse,
+)
 
-from beaneye.acquisition.base import imwrite_bgr
+from beaneye.acquisition.base import AcquisitionError, imwrite_bgr
 from beaneye.app.components import Components, build_components
 from beaneye.app.pipeline import PipelineRequest, make_offline_agent
 from beaneye.app.store import JOB_DONE, AppStore
+from beaneye.realtime.server import MJPEG_BOUNDARY, LiveParams, LiveStreamHub
 from beaneye.report import LANGS as REPORT_LANGS
 from beaneye.schemas import TrayScan
 from beaneye.standards import list_standards, load_standard
@@ -117,6 +129,7 @@ def create_app(
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         yield
+        app.state.live_hub.stop()  # 先停实时推流线程，再收作业线程池
         app.state.store.shutdown()
 
     app = FastAPI(
@@ -133,6 +146,7 @@ def create_app(
     app.state.store = store
     app.state.data_root = root
     app.state.default_langs = default_langs
+    app.state.live_hub = LiveStreamHub()
 
     # -- 页面 --------------------------------------------------------------
     @app.get("/", include_in_schema=False)
@@ -167,6 +181,53 @@ def create_app(
                 }
             )
         return {"standards": items, "default": items[0]["id"] if items else None}
+
+    # -- 实时逐帧标注（MJPEG；后台线程跑 RealtimeEngine） --------------------
+    @app.get("/live/stream")
+    async def live_stream(
+        request: Request,
+        source: str = "synth",
+        index: int = 0,
+        url: str = "",
+        width: int = 1280,
+        height: int = 720,
+        downscale: float = 1.0,
+        skip: int = 0,
+        seed: int = 20261002,
+        n_beans_max: int = 20,
+        max_frames: int = 0,
+    ) -> Response:
+        """实时标注 MJPEG 流：``multipart/x-mixed-replace``。
+
+        参数：``source=synth|usb|ip``（usb 设备号 ``index``；ip 流地址 ``url``），
+        ``width/height``（源请求分辨率 / 合成画布）、``downscale``（0.1-1.0
+        工作图缩放）、``skip``（每 skip+1 帧处理一次）、``max_frames``
+        （最多产出帧数，0=持续推流；测试/试流用）。源打不开 → 503 附排查提示。
+        """
+        hub: LiveStreamHub = request.app.state.live_hub
+        params = LiveParams(
+            source=source,
+            index=index,
+            url=url,
+            width=width,
+            height=height,
+            downscale=downscale,
+            skip=skip,
+            seed=seed,
+            n_beans_max=n_beans_max,
+        )
+        try:
+            params.validate()
+        except ValueError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=400)
+        try:
+            hub.ensure_started(params)
+        except AcquisitionError as exc:
+            return JSONResponse({"error": str(exc)}, status_code=503)
+        return StreamingResponse(
+            hub.stream(max_frames=max_frames),
+            media_type=f"multipart/x-mixed-replace; boundary={MJPEG_BOUNDARY}",
+        )
 
     # -- 提交作业 ------------------------------------------------------------
     @app.post("/api/v1/scans")
