@@ -1,0 +1,366 @@
+{
+  "version": 1,
+  "note": "bundled 帧由 seeds 确定性变体生成；jaw 标签在头部姿态无混淆的正面帧上人工核定；转头帧与俯仰帧不参与 jaw 指标（口径比受姿态混淆）。",
+  "frames": [
+    {
+      "file": "bundled/seed_closed_peake_v00.jpg",
+      "face": true,
+      "jaw": "closed",
+      "turn": false,
+      "seed": "seed_closed_peake.jpg",
+      "origin": "jsc2013e079278#identity",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_closed_peake_v01.jpg",
+      "face": true,
+      "jaw": "closed",
+      "turn": false,
+      "seed": "seed_closed_peake.jpg",
+      "origin": "jsc2013e079278#flip",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_closed_peake_v02.jpg",
+      "face": true,
+      "jaw": "closed",
+      "turn": false,
+      "seed": "seed_closed_peake.jpg",
+      "origin": "jsc2013e079278#bright",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_closed_peake_v03.jpg",
+      "face": true,
+      "jaw": "closed",
+      "turn": false,
+      "seed": "seed_closed_peake.jpg",
+      "origin": "jsc2013e079278#dark",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_closed_peake_v04.jpg",
+      "face": true,
+      "jaw": "closed",
+      "turn": false,
+      "seed": "seed_closed_peake.jpg",
+      "origin": "jsc2013e079278#gamma",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_closed_peake_v05.jpg",
+      "face": true,
+      "jaw": "closed",
+      "turn": false,
+      "seed": "seed_closed_peake.jpg",
+      "origin": "jsc2013e079278#scale075",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_closed_peake_v06.jpg",
+      "face": true,
+      "jaw": "closed",
+      "turn": false,
+      "seed": "seed_closed_peake.jpg",
+      "origin": "jsc2013e079278#scale135",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_closed_peake_v07.jpg",
+      "face": true,
+      "jaw": "closed",
+      "turn": false,
+      "seed": "seed_closed_peake.jpg",
+      "origin": "jsc2013e079278#jpeg70",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_cardman_v00.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_cardman.jpg",
+      "origin": "iss073e0658307#identity",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_cardman_v01.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_cardman.jpg",
+      "origin": "iss073e0658307#flip",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_cardman_v02.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_cardman.jpg",
+      "origin": "iss073e0658307#bright",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_cardman_v03.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_cardman.jpg",
+      "origin": "iss073e0658307#dark",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_cardman_v04.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_cardman.jpg",
+      "origin": "iss073e0658307#gamma",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_cardman_v05.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_cardman.jpg",
+      "origin": "iss073e0658307#scale075",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_cardman_v06.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_cardman.jpg",
+      "origin": "iss073e0658307#scale135",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_cardman_v07.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_cardman.jpg",
+      "origin": "iss073e0658307#jpeg70",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_williams_v00.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_williams.jpg",
+      "origin": "iss072e189112#identity",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_williams_v01.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_williams.jpg",
+      "origin": "iss072e189112#flip",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_williams_v02.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_williams.jpg",
+      "origin": "iss072e189112#bright",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_williams_v03.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_williams.jpg",
+      "origin": "iss072e189112#dark",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_williams_v04.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_williams.jpg",
+      "origin": "iss072e189112#gamma",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_williams_v05.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_williams.jpg",
+      "origin": "iss072e189112#scale075",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_williams_v06.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_williams.jpg",
+      "origin": "iss072e189112#scale135",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_open_williams_v07.jpg",
+      "face": true,
+      "jaw": "open",
+      "turn": false,
+      "seed": "seed_open_williams.jpg",
+      "origin": "iss072e189112#jpeg70",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_turn_adenot_v00.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": true,
+      "seed": "seed_turn_adenot.jpg",
+      "origin": "iss074e0604606-cropA#identity",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_turn_adenot_v01.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": true,
+      "seed": "seed_turn_adenot.jpg",
+      "origin": "iss074e0604606-cropA#flip",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_turn_adenot_v02.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": true,
+      "seed": "seed_turn_adenot.jpg",
+      "origin": "iss074e0604606-cropA#bright",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_turn_adenot_v03.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": true,
+      "seed": "seed_turn_adenot.jpg",
+      "origin": "iss074e0604606-cropA#dark",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_turn_adenot_v04.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": true,
+      "seed": "seed_turn_adenot.jpg",
+      "origin": "iss074e0604606-cropA#gamma",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_turn_adenot_v05.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": true,
+      "seed": "seed_turn_adenot.jpg",
+      "origin": "iss074e0604606-cropA#scale075",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_turn_adenot_v06.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": true,
+      "seed": "seed_turn_adenot.jpg",
+      "origin": "iss074e0604606-cropA#scale135",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_turn_adenot_v07.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": true,
+      "seed": "seed_turn_adenot.jpg",
+      "origin": "iss074e0604606-cropA#jpeg70",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_front_hathaway_v00.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": false,
+      "seed": "seed_front_hathaway.jpg",
+      "origin": "iss074e0604606-cropB#identity",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_front_hathaway_v01.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": false,
+      "seed": "seed_front_hathaway.jpg",
+      "origin": "iss074e0604606-cropB#flip",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_front_hathaway_v02.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": false,
+      "seed": "seed_front_hathaway.jpg",
+      "origin": "iss074e0604606-cropB#bright",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_front_hathaway_v03.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": false,
+      "seed": "seed_front_hathaway.jpg",
+      "origin": "iss074e0604606-cropB#dark",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_front_hathaway_v04.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": false,
+      "seed": "seed_front_hathaway.jpg",
+      "origin": "iss074e0604606-cropB#gamma",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_front_hathaway_v05.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": false,
+      "seed": "seed_front_hathaway.jpg",
+      "origin": "iss074e0604606-cropB#scale075",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_front_hathaway_v06.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": false,
+      "seed": "seed_front_hathaway.jpg",
+      "origin": "iss074e0604606-cropB#scale135",
+      "draft": false
+    },
+    {
+      "file": "bundled/seed_front_hathaway_v07.jpg",
+      "face": true,
+      "jaw": null,
+      "turn": false,
+      "seed": "seed_front_hathaway.jpg",
+      "origin": "iss074e0604606-cropB#jpeg70",
+      "draft": false
+    }
+  ]
+}

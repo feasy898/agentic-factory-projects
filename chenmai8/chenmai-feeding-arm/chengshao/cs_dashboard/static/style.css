@@ -1,0 +1,94 @@
+/* 澄勺护理看板 · 深色护理友好主题（大字号、高对比、报警高亮） */
+:root {
+  --bg: #0f1720;
+  --panel: #17222e;
+  --panel-2: #1d2b3a;
+  --line: #2a3b4d;
+  --text: #e8eef4;
+  --muted: #8fa3b5;
+  --accent: #4cc2ff;
+  --ok: #3ddc97;
+  --warn: #ffb454;
+  --alarm: #ff5d5d;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+.mono { font-family: Consolas, monospace; }
+
+.topbar {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  justify-content: space-between; align-items: center;
+  padding: 14px 24px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), #2b7cff);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; font-weight: 700; color: #06121d;
+}
+.topbar h1 { font-size: 20px; }
+.sub { font-size: 12px; color: var(--muted); }
+.session-meta { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 13px; }
+
+.badge {
+  padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+}
+.badge-idle { background: #2a3b4d; color: var(--muted); }
+.badge-live { background: rgba(61, 220, 151, .15); color: var(--ok); border: 1px solid var(--ok); }
+.badge-done { background: rgba(76, 194, 255, .12); color: var(--accent); border: 1px solid var(--accent); }
+.badge-conn { background: #22303f; color: var(--muted); }
+.badge-conn.on { color: var(--ok); }
+.badge-conn.off { color: var(--alarm); }
+
+main { flex: 1; padding: 20px 24px; display: flex; flex-direction: column; gap: 18px; }
+
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; }
+.card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  padding: 14px 16px;
+}
+.card-label { font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+.card-value { font-size: 34px; font-weight: 700; line-height: 1.1; }
+.card-value small { font-size: 14px; font-weight: 400; color: var(--muted); margin-left: 4px; }
+.card-value.ok { color: var(--ok); }
+.card-foot { font-size: 12px; margin-top: 6px; }
+#card-alarm.alarm { border-color: var(--alarm); box-shadow: 0 0 0 1px var(--alarm) inset; }
+#card-alarm.alarm .card-value { color: var(--alarm); }
+#card-alarm.alarm .card-label::after { content: " ⚠"; color: var(--alarm); }
+
+.panel {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 12px;
+  padding: 16px 18px;
+}
+.panel h2 { font-size: 15px; margin-bottom: 12px; font-weight: 600; }
+.chart-wrap { position: relative; height: 260px; }
+
+.event-list { list-style: none; display: flex; flex-direction: column; gap: 6px; max-height: 300px; overflow-y: auto; }
+.event-list li {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--panel-2); border: 1px solid var(--line);
+  border-radius: 8px; padding: 8px 12px; font-size: 13px;
+}
+.event-list li.alarm { border-color: var(--alarm); }
+.event-list .t { color: var(--muted); font-family: Consolas, monospace; font-size: 12px; min-width: 60px; }
+.tag { padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+.tag-bite-success { background: rgba(61,220,151,.15); color: var(--ok); }
+.tag-bite-retry { background: rgba(255,180,84,.15); color: var(--warn); }
+.tag-bite-rejected, .tag-bite-aborted { background: rgba(255,93,93,.15); color: var(--alarm); }
+.tag-session_started { background: rgba(76,194,255,.15); color: var(--accent); }
+.tag-session_ended { background: rgba(76,194,255,.15); color: var(--accent); }
+.event-list .empty { justify-content: center; color: var(--muted); border-style: dashed; }
+
+footer { padding: 10px 24px 16px; text-align: center; }

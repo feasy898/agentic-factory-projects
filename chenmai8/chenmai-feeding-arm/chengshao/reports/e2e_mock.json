@@ -1,0 +1,567 @@
+{
+  "module": "e2e_mock",
+  "date": "2026-09-29",
+  "cmd": "python scripts/e2e_mock_run.py trace=D:\\workspace\\澄迈8项目\\具身助餐机器人\\repo\\chengshao\\reports\\e2e_mock_trace.jsonl bites=30 seed=20260929 tts=False profile=none --report D:\\workspace\\澄迈8项目\\具身助餐机器人\\repo\\chengshao\\reports\\e2e_mock.json",
+  "mode": "mock（全 Mock 零硬件：MockArm+SafetyEnvelope+脚本用户+真实看板 HTTP）",
+  "metrics": {
+    "bites": 30,
+    "outcomes": {
+      "success": 28,
+      "aborted": 1,
+      "rejected": 1
+    },
+    "expected_outcomes_match": true,
+    "meal_sim_s": 727.0,
+    "wall_s": 113.0,
+    "ticks": 36350,
+    "median_bite_sim_s": 19.74,
+    "max_bite_sim_s": 39.32,
+    "stages": {
+      "median_s": {
+        "scoop_check_s": 6.7,
+        "deliver_s": 8.6,
+        "wait_bite_s": 1.34,
+        "retract_record_s": 0.02
+      },
+      "n_per_stage": {
+        "scoop_check_s": 30,
+        "deliver_s": 29,
+        "wait_bite_s": 28,
+        "retract_record_s": 28
+      }
+    },
+    "per_bite": [
+      {
+        "bite": 1,
+        "outcome": "success",
+        "sim_s": 22.08,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 0
+      },
+      {
+        "bite": 2,
+        "outcome": "success",
+        "sim_s": 21.24,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 0
+      },
+      {
+        "bite": 3,
+        "outcome": "success",
+        "sim_s": 35.12,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 2
+      },
+      {
+        "bite": 4,
+        "outcome": "success",
+        "sim_s": 19.06,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 0
+      },
+      {
+        "bite": 5,
+        "outcome": "success",
+        "sim_s": 19.74,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 1
+      },
+      {
+        "bite": 6,
+        "outcome": "success",
+        "sim_s": 33.72,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 2
+      },
+      {
+        "bite": 7,
+        "outcome": "success",
+        "sim_s": 20.48,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 0
+      },
+      {
+        "bite": 8,
+        "outcome": "success",
+        "sim_s": 19.74,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 1
+      },
+      {
+        "bite": 9,
+        "outcome": "success",
+        "sim_s": 39.32,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 2
+      },
+      {
+        "bite": 10,
+        "outcome": "success",
+        "sim_s": 19.06,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 0
+      },
+      {
+        "bite": 11,
+        "outcome": "success",
+        "sim_s": 19.74,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 1
+      },
+      {
+        "bite": 12,
+        "outcome": "aborted",
+        "sim_s": 13.4,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "estop_abort"
+        ],
+        "bowl": 2
+      },
+      {
+        "bite": 13,
+        "outcome": "success",
+        "sim_s": 21.24,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 0
+      },
+      {
+        "bite": 14,
+        "outcome": "success",
+        "sim_s": 19.74,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 1
+      },
+      {
+        "bite": 15,
+        "outcome": "success",
+        "sim_s": 33.72,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 2
+      },
+      {
+        "bite": 16,
+        "outcome": "success",
+        "sim_s": 19.06,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 0
+      },
+      {
+        "bite": 17,
+        "outcome": "success",
+        "sim_s": 19.74,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 1
+      },
+      {
+        "bite": 18,
+        "outcome": "success",
+        "sim_s": 33.72,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 2
+      },
+      {
+        "bite": 19,
+        "outcome": "success",
+        "sim_s": 19.06,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 0
+      },
+      {
+        "bite": 20,
+        "outcome": "success",
+        "sim_s": 19.74,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 1
+      },
+      {
+        "bite": 21,
+        "outcome": "success",
+        "sim_s": 33.72,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 2
+      },
+      {
+        "bite": 22,
+        "outcome": "success",
+        "sim_s": 19.06,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 0
+      },
+      {
+        "bite": 23,
+        "outcome": "success",
+        "sim_s": 19.74,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 1
+      },
+      {
+        "bite": 24,
+        "outcome": "success",
+        "sim_s": 33.72,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 2
+      },
+      {
+        "bite": 25,
+        "outcome": "success",
+        "sim_s": 19.06,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 0
+      },
+      {
+        "bite": 26,
+        "outcome": "success",
+        "sim_s": 19.74,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 1
+      },
+      {
+        "bite": 27,
+        "outcome": "success",
+        "sim_s": 33.72,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 2
+      },
+      {
+        "bite": 28,
+        "outcome": "success",
+        "sim_s": 19.06,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 0
+      },
+      {
+        "bite": 29,
+        "outcome": "success",
+        "sim_s": 19.74,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "retract_complete"
+        ],
+        "bowl": 1
+      },
+      {
+        "bite": 30,
+        "outcome": "rejected",
+        "sim_s": 32.32,
+        "switches": 2,
+        "switch_reasons": [
+          "delivery_entry",
+          "done_retract"
+        ],
+        "bowl": 2
+      }
+    ],
+    "dashboard": {
+      "base_url": "http://127.0.0.1:11502",
+      "http_status_current": 200,
+      "session_id": "sess-1790635975818181400-1e0ca7f7",
+      "bite_count_http": 30,
+      "bite_count_summary": 30,
+      "outcomes_http": {
+        "success": 28,
+        "aborted": 1,
+        "rejected": 1
+      },
+      "outcomes_tree": {
+        "success": 28,
+        "aborted": 1,
+        "rejected": 1
+      },
+      "session_ended": true,
+      "total_grams": null
+    },
+    "safety": {
+      "zone_latches": 0,
+      "envelope_rejected": 0,
+      "envelope_written": 1800,
+      "estop_count": 1,
+      "estop_response_sim_s": 0.02,
+      "min_point_clearance_m": 0.05,
+      "min_segment_clearance_m": 0.05,
+      "min_tcp_face_dist_m": 0.17,
+      "face_radius_m": 0.12,
+      "max_tcp_speed_mps": 0.144,
+      "tcp_samples": 36350,
+      "unexpected_failures": []
+    },
+    "delivery_margin": {
+      "stop_distance_m": 0.16999999999999998,
+      "spoon_tip_reach_m": 0.08,
+      "tracking_err_bound_m": 0.02,
+      "sense_err_bound_m": 0.05,
+      "margin_m": 0.019999999999999976,
+      "pass": true
+    },
+    "camera_role": {
+      "switches_total": 60,
+      "switches_per_delivered_bite": 2,
+      "final_role": "scene",
+      "settle_gap_min_s": 0.5
+    },
+    "voice": {
+      "utterances": [
+        {
+          "text": "我想吃芋泥",
+          "wav": "select_1.wav",
+          "intent": "select",
+          "slots": {
+            "dish": "芋泥"
+          },
+          "confidence": 0.9
+        },
+        {
+          "text": "我吃饱了",
+          "wav": "done_1.wav",
+          "intent": "done",
+          "slots": {},
+          "confidence": 0.95
+        }
+      ],
+      "operator_injections": [
+        {
+          "intent": "resume",
+          "slots": {}
+        }
+      ],
+      "announces": {
+        "turn": 1,
+        "estop": 1,
+        "done": 1
+      },
+      "tts": "quiet（静音记录）"
+    },
+    "bowl_selection": {
+      "selected": [
+        0,
+        0,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2
+      ],
+      "expected": [
+        0,
+        0,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        0,
+        1,
+        2
+      ],
+      "aruco_calls": 29,
+      "render_ms": 53.8,
+      "detect_ms": 99.7
+    },
+    "spoon_classifier": {
+      "food_frames": 30,
+      "empty_frames": 29,
+      "verdict_food": 30,
+      "verdict_empty": 29,
+      "false_positive": 0,
+      "false_negative": 0
+    },
+    "cs_mouth_smoke": {
+      "valid": true,
+      "source": "wrist",
+      "jaw_open": 0.0,
+      "pos_base_m": [
+        0.4568,
+        0.0283,
+        0.3471
+      ],
+      "wall_ms_first": 1434.2
+    },
+    "injections": {
+      "3": {
+        "first_scoop_empty": true
+      },
+      "7": {
+        "turn_s": 2.5,
+        "turn_delay_s": 0.0
+      },
+      "9": {
+        "reaction_s": 6.0
+      },
+      "12": {
+        "estop": true
+      },
+      "30": {
+        "done": true
+      }
+    }
+  },
+  "thresholds": {
+    "bites_expected": 30,
+    "median_bite_sim_s_max": 20.0,
+    "estop_response_sim_s_max": 0.1,
+    "zone_violation_latches_max": 0,
+    "envelope_rejections_max": 0,
+    "min_point_clearance_m_min": 0.0,
+    "min_segment_clearance_m_min": 0.0,
+    "delivery_margin_min_m": 0.005,
+    "camera_switches_per_delivered_bite": 2,
+    "exposure_settle_min_s": 0.5,
+    "unexpected_failures_max": 0
+  },
+  "trace": "D:\\workspace\\澄迈8项目\\具身助餐机器人\\repo\\chengshao\\reports\\e2e_mock_trace.jsonl",
+  "pass": true,
+  "failures": []
+}

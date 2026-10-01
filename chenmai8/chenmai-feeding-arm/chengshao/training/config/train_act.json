@@ -1,0 +1,42 @@
+{
+  "$comment": "策略训练基线配置（源：plan/training-plan.md §2.1，仓库外）。本文件只放结构与默认值（开发指令 §10.4）；runtime.train_cmd=null：训练框架 CLI 入口名按命名纪律不入仓库，运行期经 --train-cmd / 环境变量 CS_TRAIN_CMD / config/train.local.json 注入。超参为基线出处默认（chunk 100 / kl_weight 10 / hidden 512 / lr 1e-5 cosine），训练前须与训练入口 --help 及参考实现对读核对（runbook_act.md §4）。",
+  "policy": {
+    "type": "act",
+    "chunk_size": 100,
+    "n_action_steps": 100,
+    "kl_weight": 10,
+    "hidden_dim": 512,
+    "lr": 1e-05,
+    "lr_scheduler": "cosine",
+    "amp": "fp16",
+    "amp_note": "V100=sm_70 支持 fp16；不支持 bf16，禁止开启（plan/training-plan.md §2.1）"
+  },
+  "dataset": {
+    "repo_id": "cs/spoon_scooping_v1",
+    "fps": 30,
+    "cams": [
+      "scene",
+      "wrist"
+    ],
+    "action_dim": 6,
+    "resolution": [
+      640,
+      480
+    ],
+    "note": "action_dim=6 = 5 臂关节 + 夹爪（契约 v1.1），与 cs_schema.N_ARM_JOINTS 一致；录制规格见 runbook_act.md §2"
+  },
+  "train": {
+    "batch_size": 8,
+    "steps": 100000,
+    "save_freq": 20000,
+    "log_freq": 500,
+    "num_workers": 4,
+    "seed": 1000
+  },
+  "runtime": {
+    "output_dir": "data/runs/act_v1",
+    "wandb_enable": false,
+    "wandb_note": "离线红线：训练指标只允许本地 csv/json 输出，wandb 必须为 false（build_train_cmd 强校验）",
+    "train_cmd": null
+  }
+}

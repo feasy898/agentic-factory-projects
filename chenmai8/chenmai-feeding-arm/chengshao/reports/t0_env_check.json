@@ -1,0 +1,55 @@
+{
+  "module": "T0-env-skeleton",
+  "date": "2026-09-28",
+  "python": "3.12.10",
+  "venv": ".venv (repo root)",
+  "checks": [
+    {
+      "cmd": ".venv/Scripts/python.exe -m pip check",
+      "exit_code": 0,
+      "output": "No broken requirements found."
+    },
+    {
+      "cmd": ".venv/Scripts/python.exe -c \"import mujoco, mediapipe, py_trees\"",
+      "exit_code": 0,
+      "versions": { "mujoco": "3.14.0", "mediapipe": "1.0.1", "py_trees": "2.6.0" }
+    },
+    {
+      "cmd": ".venv/Scripts/python.exe -c \"import funasr\"",
+      "exit_code": 0,
+      "versions": { "funasr": "1.4.16" },
+      "note": "funasr 装载成功，无需回退（≥1.3.26 满足）"
+    },
+    {
+      "cmd": "extended imports: numpy/scipy/cv2/fastapi/uvicorn/pydantic/pyttsx3/serial/pyorbbecsdk/torch",
+      "exit_code": 0,
+      "versions": {
+        "numpy": "2.2.6", "scipy": "1.18.1", "opencv-python": "5.0.0.93",
+        "fastapi": "0.141.1", "uvicorn": "0.54.0", "pydantic": "2.13.5",
+        "pyttsx3": "2.99", "pyserial": "3.5", "pyorbbecsdk2": "2.0.18",
+        "robot-stack-pip-package": "0.6.1（中性代号，实名见内部台账；包名见 requirements.txt）", "torch": "2.11.0+cpu"
+      }
+    },
+    {
+      "cmd": ".venv/Scripts/python.exe chengshao/scripts/check_naming.py",
+      "exit_code": 0,
+      "detail": "forbidden=0 warnings=0；负向对照（注入上游名探针文件）exit 1 命中，删除后复跑 exit 0"
+    }
+  ],
+  "thresholds": {
+    "pip_check": "no broken requirements",
+    "core_imports": "import mujoco, mediapipe, py_trees 必须成功",
+    "naming_gate": "公开内容禁用词命中数 = 0"
+  },
+  "requirements": {
+    "file": "chengshao/requirements.txt",
+    "generation": "pip freeze（170 项，钉版本固化）",
+    "fallbacks": "无——全部目标依赖在 Windows py3.12 原生装成，无 §9 回退项"
+  },
+  "vendor_lock": {
+    "file": "chengshao/reports/upstream_lock.md",
+    "clones": 4,
+    "method": "git clone --depth 1 经境外出口中转，git rev-parse HEAD 锁定并本地核对"
+  },
+  "pass": true
+}

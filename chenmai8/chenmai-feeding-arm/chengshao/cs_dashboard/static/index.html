@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>澄勺 · 护理看板</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">勺</span>
+    <div>
+      <h1>澄勺 · 护理看板</h1>
+      <p class="sub">桌面助餐机械臂 · 进食数据实时看板</p>
+    </div>
+  </div>
+  <div class="session-meta">
+    <span id="session-state" class="badge badge-idle">未开始</span>
+    <span id="session-user" class="muted"></span>
+    <span id="session-id" class="muted mono"></span>
+    <span id="session-start" class="muted mono"></span>
+    <span id="conn-state" class="badge badge-conn">连接中…</span>
+  </div>
+</header>
+
+<main>
+  <section class="cards">
+    <div class="card">
+      <div class="card-label">口数</div>
+      <div class="card-value"><span id="m-bites">0</span><small>口</small></div>
+      <div class="card-foot muted">本餐累计</div>
+    </div>
+    <div class="card">
+      <div class="card-label">时长</div>
+      <div class="card-value"><span id="m-duration">--:--</span></div>
+      <div class="card-foot muted" id="m-duration-note">开始后计时</div>
+    </div>
+    <div class="card">
+      <div class="card-label">摄入克数</div>
+      <div class="card-value"><span id="m-grams">—</span><small id="m-grams-unit"></small></div>
+      <div class="card-foot muted" id="m-grams-note">无称重硬件，暂不统计</div>
+    </div>
+    <div class="card">
+      <div class="card-label">正常完成</div>
+      <div class="card-value ok"><span id="m-success">0</span><small>口</small></div>
+      <div class="card-foot muted">成功咬走</div>
+    </div>
+    <div class="card" id="card-alarm">
+      <div class="card-label">报警事件</div>
+      <div class="card-value"><span id="m-alarms">0</span><small>次</small></div>
+      <div class="card-foot muted" id="m-alarms-note">重试 / 拒食 / 中止</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>进食曲线（口数累计 / 克数）</h2>
+    <div class="chart-wrap"><canvas id="chart"></canvas></div>
+    <p id="chart-note" class="muted small">注：无称重硬件时克数曲线为空（契约 grams=null）。</p>
+  </section>
+
+  <section class="panel">
+    <h2>事件流 <span class="muted small">（实时推送，最新在上）</span></h2>
+    <ul id="event-list" class="event-list"></ul>
+  </section>
+</main>
+
+<footer class="muted small">
+  澄勺护理看板 · 静态资源本地化（离线可开） · 数据落 SQLite
+</footer>
+
+<script src="/static/vendor/chart.umd.js"></script>
+<script src="/static/app.js"></script>
+</body>
+</html>

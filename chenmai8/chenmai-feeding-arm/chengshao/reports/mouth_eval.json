@@ -1,0 +1,48 @@
+{
+  "module": "cs_mouth",
+  "date": "2026-09-30",
+  "cmd": "D:\\workspace\\澄迈8项目\\具身助餐机器人\\repo\\.venv\\Scripts\\python.exe -m cs_mouth.eval --input assets/face_samples --report reports/mouth_eval.json (cwd=D:\\workspace\\澄迈8项目\\具身助餐机器人\\repo\\chengshao)",
+  "metrics": {
+    "detect_rate": 1.0,
+    "detect_frames": 52,
+    "face_false_reject_rate": 1.0,
+    "reject_frames": 4,
+    "jaw_accuracy": 1.0,
+    "jaw_auc": 1.0,
+    "jaw_frames": 24,
+    "jaw_score_closed_max": 0.0,
+    "jaw_score_open_min": 0.6536021651077871,
+    "turn_trigger_rate": 1.0,
+    "turn_frames": 8,
+    "frontal_turn_false_flag_rate": 0.0,
+    "latency_ms_p50": 21.10790000006091,
+    "latency_ms_p95": 29.001100001551094,
+    "latency_frames": 56,
+    "frames_label_missing": 0
+  },
+  "thresholds": {
+    "detect_rate_min": 0.95,
+    "face_false_reject_rate_min": 0.95,
+    "jaw_accuracy_min": 0.9,
+    "jaw_auc_min": 0.9,
+    "turn_trigger_rate_min": 1.0,
+    "latency_p95_ms_max": 70.0
+  },
+  "checks": {
+    "detect": true,
+    "reject": true,
+    "jaw": true,
+    "turn": true,
+    "latency": true
+  },
+  "pass": true,
+  "backend": "mono",
+  "sample_mode": "bundled(确定性变体+人工核定标签)+synthetic(程序合成)",
+  "bootstrap": {
+    "written": 0,
+    "skipped": 1,
+    "frames": 40
+  },
+  "error_band_note": "mono 先验尺度：距离固定 0.42m，横向/纵向误差 ±3–5cm（由勺停口前 5cm、用户前倾取食、座位定位垫设计吸收）；转头判定用 |head_yaw|>25°（双向转头均停）",
+  "jaw_signal_note": "jaw_open=几何口径比（上下内唇距/眼距）线性映射；静帧上 blendshape jawOpen 实测不区分张闭嘴（张嘴 0.079–0.094 vs 闭嘴 0.093），故不采用；frown=mouthFrown 左右均值（browDown 微笑误报 0.68，弃用）"
+}

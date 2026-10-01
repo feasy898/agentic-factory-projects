@@ -1,0 +1,33 @@
+{
+  "$comment": "COS 中转结构配置（源：plan/training-plan.md §1.3，仓库外）。只放桶名/前缀/分卷结构；密钥在本机 coscmd 配置文件（--coscmd-conf / 环境变量 COSCMD_CONF / ~/.cosconf），永不入库（开发指令 §10.4）。红线：COS 写入只用 coscmd。",
+  "cos": {
+    "bucket": "everything-1476163454",
+    "root_prefix": "chengshao",
+    "coscmd_conf_default": "~/.cosconf",
+    "upload_speed_mbps_estimate": 20,
+    "note": "上行估算按 20MB/s（plan/training-plan.md §1.3），dry-run 输出预计分钟数"
+  },
+  "entries": {
+    "spoon_scooping_v1": {
+      "kind": "dataset",
+      "remote": "chengshao/datasets/spoon_scooping_v1",
+      "local_dir": "data/datasets/spoon_scooping_v1",
+      "volume_mb": 4096,
+      "note": "策略训练示教数据集（2 路 480p 视频，单集约 20-40GB）"
+    },
+    "spoon_cls_frames": {
+      "kind": "dataset",
+      "remote": "chengshao/datasets/spoon_cls_frames",
+      "local_dir": "data/spoon_cls/dataset",
+      "volume_mb": 2048,
+      "note": "勺上分类器帧数据（spoon_cls/prepare_data.py 产物目录）"
+    },
+    "runs": {
+      "kind": "runs",
+      "remote": "chengshao/runs",
+      "local_dir": "data/runs",
+      "volume_mb": 1024,
+      "note": "训练产物回传：checkpoint + metrics JSON"
+    }
+  }
+}

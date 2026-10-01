@@ -1,0 +1,84 @@
+{
+  "_comment": "编排运行参数（开发指令 §5.6；config 只放结构与默认值，缺省值与 cs_orchestra.core.OrchestraParams 一致）。速度上限受安全包络约束：接近段 0.15 m/s、近脸 0.10 m/s、关节 1.5 rad/s（config/workspace.json）。tick_s=0.02 即 50Hz。",
+  "tick_s": 0.02,
+  "cruise_speed_mps": 0.14,
+  "approach_speed_mps": 0.08,
+  "scoop_descend_speed_mps": 0.06,
+  "route_step_m": 0.03,
+  "final_step_m": 0.02,
+  "exposure_settle_s": 0.5,
+  "turn_sustain_s": 1.0,
+  "wait_bite_timeout_s": 25.0,
+  "scoop_retries_max": 2,
+  "spoon_empty_rechecks": 3,
+  "spoon_recheck_interval_s": 0.5,
+  "retreat_distance_m": 0.05,
+  "arrive_tolerance_m": 0.01,
+  "cmd_timeout_s": 30.0,
+  "max_meal_sim_s": 900.0,
+  "home_point_m": [
+    0.24,
+    -0.08,
+    0.16
+  ],
+  "stop_approach_offset_m": 0.08,
+  "bowl_hover_offset_m": 0.08,
+  "bowl_dip_offset_m": 0.015,
+  "gripper_open": 0.6,
+  "gripper_close": 0.2,
+  "user_reaction_delay_s": 0.4,
+  "user_open_dwell_s": 0.4,
+  "user_bite_close_s": 0.3,
+  "user_reach_tolerance_m": 0.012,
+  "delivery_via_points_m": [
+    [
+      0.22,
+      -0.09,
+      0.18
+    ],
+    [
+      0.2,
+      -0.05,
+      0.26
+    ]
+  ],
+  "jtrack_replay_speed_rad_s": 1.2,
+  "delivery_via_points_by_bowl": [
+    [
+      [
+        0.21,
+        -0.07,
+        0.16
+      ],
+      [
+        0.2,
+        -0.05,
+        0.26
+      ]
+    ],
+    [
+      [
+        0.22,
+        -0.1,
+        0.2
+      ],
+      [
+        0.2,
+        -0.05,
+        0.26
+      ]
+    ],
+    [
+      [
+        0.22,
+        -0.09,
+        0.18
+      ],
+      [
+        0.19,
+        -0.04,
+        0.22
+      ]
+    ]
+  ]
+}

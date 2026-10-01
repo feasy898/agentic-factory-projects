@@ -1,0 +1,6 @@
+{
+  "cam_ref": "scene_cam",
+  "dictionary": "DICT_4X4_50",
+  "marker_to_bowl": {"0": 0, "1": 1, "2": 2},
+  "min_side_px": 20
+}

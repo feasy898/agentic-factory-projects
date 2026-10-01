@@ -1,0 +1,6 @@
+{
+  "ts_ns": 1790553600500000000,
+  "intent": "select",
+  "slots": { "dish": "芋泥" },
+  "confidence": 0.95
+}
