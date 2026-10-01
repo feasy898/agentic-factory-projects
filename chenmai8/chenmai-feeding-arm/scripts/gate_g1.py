@@ -117,8 +117,14 @@ def _free_port() -> int:
 # 门禁项
 # ---------------------------------------------------------------------------
 def gate_naming(venv: Path) -> tuple[bool, str, str]:
-    """① 中性命名扫描零命中。"""
-    argv = [str(venv), str(PKG_ROOT / "scripts" / "check_naming.py")]
+    """① 中性命名扫描零命中。
+
+    显式锚定 --root 为本资产包根：扫描范围语义始终是机械臂资产包的公开内容。
+    本仓并入 monorepo 后 git toplevel 变成 monorepo 根（别的子项目与内部 plan/
+    都带上游原名，本不应计入本门禁），不锚定会把门禁误判红。见 env-rebuild.md。
+    """
+    argv = [str(venv), str(PKG_ROOT / "scripts" / "check_naming.py"),
+            "--root", str(REPO_ROOT)]
     code, secs, out = _run_checked(argv, REPO_ROOT)
     label = "check_naming 中性名扫描（零命中）"
     return code == 0, label, _fmt_cmd(argv, REPO_ROOT) + f"  [exit={code}, {secs:.1f}s]\n{out}"
