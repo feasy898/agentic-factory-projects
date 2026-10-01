@@ -1,0 +1,188 @@
+{
+ "schema_version": "1.1",
+ "clip_id": "golden_007",
+ "generated_at": "2026-10-01T18:08:08",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "manual_review",
+  "confidence": 0.75,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=True, types=['hand_anomaly'], conf=0.75)",
+   "J3@0.7 flag=False hits=[] max_channel_P=0.5865",
+   "J6 信号(仅信号不否决): garble_text@1.00"
+  ]
+ },
+ "defects": [
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 1.0,
+   "span": {
+    "start_s": 0.316,
+    "end_s": 4.113
+   },
+   "evidence": {
+    "J6": {
+     "kind": "conf_drop",
+     "drop": 0.712,
+     "frames": [
+      0,
+      6
+     ],
+     "mean_scores": [
+      0.085,
+      0.796
+     ]
+    }
+   }
+  },
+  {
+   "type": "hand_anomaly",
+   "sources": [
+    "J1"
+   ],
+   "confidence": 0.75,
+   "evidence": {
+    "J1": {
+     "confidence": 0.75,
+     "notes": "中间粗指状物直接从拳头顶部长出且无掌指关节过渡，持卡侧手指结构混乱、指根粘连渐隐，手部解剖不成立"
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.5865,
+   "flicker": 0.2284,
+   "color_shift": 0.3363,
+   "face_blur": 0.168,
+   "garble_text": 0.0538,
+   "temporal_swap": 0.3641,
+   "pixelate": 0.5258,
+   "ghosting": 0.535
+  },
+  "overall": 0.5047,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "f5d1e6512c18745e9dcdc1e0a20aab5fb29902acf57ee3956b995a42e3ff9be0"
+  }
+ },
+ "spans": [
+  {
+   "type": "garble_text",
+   "start_s": 0.316,
+   "end_s": 4.113,
+   "evidence": {
+    "kind": "conf_drop",
+    "drop": 0.712,
+    "frames": [
+     0,
+     6
+    ],
+    "mean_scores": [
+     0.085,
+     0.796
+    ]
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "全片 f01-f08（0-5.1s），双手持卡特写各帧均可见"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_007",
+   "defect_detected": true,
+   "defect_types": [
+    "hand_anomaly"
+   ],
+   "confidence": 0.75,
+   "spans": "全片 f01-f08（0-5.1s），双手持卡特写各帧均可见",
+   "notes": "中间粗指状物直接从拳头顶部长出且无掌指关节过渡，持卡侧手指结构混乱、指根粘连渐隐，手部解剖不成立"
+  },
+  "J5": {
+   "clip_id": "golden_007",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中无明显缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_007",
+   "defect_detected": true,
+   "defect_types": [
+    "frame_freeze",
+    "pixelate",
+    "ghosting"
+   ],
+   "confidence": 0.5865,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.587 flicker=0.228 color_shift=0.336 face_blur=0.168 garble_text=0.054 temporal_swap=0.364 pixelate=0.526 ghosting=0.535; overall=0.505; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_007",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text"
+   ],
+   "confidence": 1.0,
+   "spans": [
+    {
+     "type": "garble_text",
+     "start_s": 0.316,
+     "end_s": 4.113,
+     "evidence": {
+      "kind": "conf_drop",
+      "drop": 0.712,
+      "frames": [
+       0,
+       6
+      ],
+      "mean_scores": [
+       0.085,
+       0.796
+      ]
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=/opt/gpumachine/projects/video-capability/overnight/vpipe/eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_007.mp4",
+  "frames_dir": "frames/golden_007/",
+  "judge_files": {
+   "J1": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/glm8/golden_007.json",
+   "J5": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/videochat3/golden_007.json",
+   "J3": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/omnijev/run_metadata.json",
+   "J6": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/detectors/raw/golden_007.qc.json"
+  }
+ },
+ "errors": {}
+}

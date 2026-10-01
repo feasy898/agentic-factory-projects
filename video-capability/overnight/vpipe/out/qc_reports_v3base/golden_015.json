@@ -1,0 +1,221 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_015",
+ "generated_at": "2026-10-01T03:34:48",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "auto_reject",
+  "confidence": 0.9495,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=True, types=['face_blur'], conf=0.96)",
+   "J3@0.7 flag=True hits=['face_blur', 'pixelate'] max_channel_P=0.9495",
+   "J6 信号(仅信号不否决): garble_text@0.61, identity_drift@0.93"
+  ]
+ },
+ "defects": [
+  {
+   "type": "face_blur",
+   "sources": [
+    "J1",
+    "J3",
+    "J5"
+   ],
+   "confidence": 0.96,
+   "evidence": {
+    "J1": {
+     "confidence": 0.96,
+     "notes": "f03-f06女性头肩部被矩形高斯模糊块遮盖（非马赛克），前后帧清晰，判定人脸模糊注入"
+    },
+    "J3": {
+     "channel_P": 0.9495
+    },
+    "J5": {
+     "confidence": 0.8
+    }
+   }
+  },
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.6126,
+   "span": {
+    "start_s": 0.0,
+    "end_s": 5.062
+   },
+   "evidence": {
+    "J6": {
+     "kind": "uniform_low_conf",
+     "max_mean": 0.558
+    }
+   }
+  },
+  {
+   "type": "identity_drift",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.9284,
+   "span": {
+    "start_s": 0.949,
+    "end_s": 1.582
+   },
+   "evidence": {
+    "J6": {
+     "pair": 1,
+     "cos": 0.0215
+    }
+   }
+  },
+  {
+   "type": "pixelate",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.9305,
+   "evidence": {
+    "J3": {
+     "channel_P": 0.9305
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.1466,
+   "flicker": 0.2294,
+   "color_shift": 0.1867,
+   "face_blur": 0.9495,
+   "garble_text": 0.0329,
+   "temporal_swap": 0.4272,
+   "pixelate": 0.9305,
+   "ghosting": 0.3644
+  },
+  "overall": 0.662,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "garble_text",
+   "start_s": 0.0,
+   "end_s": 5.062,
+   "evidence": {
+    "kind": "uniform_low_conf",
+    "max_mean": 0.558
+   }
+  },
+  {
+   "type": "identity_drift",
+   "start_s": 0.949,
+   "end_s": 1.582,
+   "evidence": {
+    "pair": 1,
+    "cos": 0.0215
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "f03-f06（约25%-75%时长），f01-f02与f07-f08画面清晰"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_015",
+   "defect_detected": true,
+   "defect_types": [
+    "face_blur"
+   ],
+   "confidence": 0.96,
+   "spans": "f03-f06（约25%-75%时长），f01-f02与f07-f08画面清晰",
+   "notes": "f03-f06女性头肩部被矩形高斯模糊块遮盖（非马赛克），前后帧清晰，判定人脸模糊注入"
+  },
+  "J5": {
+   "clip_id": "golden_015",
+   "defect_detected": true,
+   "defect_types": [
+    "face_blur"
+   ],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[\"face_blur\"],\"other\":false,\"reason\":\"画面中人物脸部区域存在模糊\"}"
+  },
+  "J3": {
+   "clip_id": "golden_015",
+   "defect_detected": true,
+   "defect_types": [
+    "face_blur",
+    "pixelate"
+   ],
+   "confidence": 0.9495,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.147 flicker=0.229 color_shift=0.187 face_blur=0.950 garble_text=0.033 temporal_swap=0.427 pixelate=0.930 ghosting=0.364; overall=0.662; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_015",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text",
+    "identity_drift"
+   ],
+   "confidence": 0.9284,
+   "spans": [
+    {
+     "type": "garble_text",
+     "start_s": 0.0,
+     "end_s": 5.062,
+     "evidence": {
+      "kind": "uniform_low_conf",
+      "max_mean": 0.558
+     }
+    },
+    {
+     "type": "identity_drift",
+     "start_s": 0.949,
+     "end_s": 1.582,
+     "evidence": {
+      "pair": 1,
+      "cos": 0.0215
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_015.mp4",
+  "frames_dir": "frames/golden_015/",
+  "judge_files": {
+   "J1": "../数据/judges/glm8/golden_015.json",
+   "J5": "../数据/judges/videochat3/golden_015.json",
+   "J3": "../数据/judges/omnijev/run_metadata.json",
+   "J6": "../数据/judges/detectors/raw/golden_015.qc.json"
+  }
+ },
+ "errors": {}
+}

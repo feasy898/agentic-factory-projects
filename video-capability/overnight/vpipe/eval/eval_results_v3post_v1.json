@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-10-01T04:01:22",
+ "generated_at": "2026-10-01T18:08:09",
  "qc_dir": "/opt/gpumachine/projects/video-capability/overnight/vpipe/out/qc_reports_v3post_v1",
  "golden": "/opt/gpumachine/projects/video-capability/overnight/vpipe/eval/golden_manifest.json",
  "thresholds": "/opt/gpumachine/projects/video-capability/overnight/vpipe/eval/thresholds.yaml",

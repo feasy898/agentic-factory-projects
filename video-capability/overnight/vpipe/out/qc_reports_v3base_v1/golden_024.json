@@ -1,0 +1,112 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_024",
+ "generated_at": "2026-10-01T03:35:20",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": false,
+  "decision": "pass",
+  "confidence": 0.0,
+  "decided_by": "E10",
+  "reasons": [
+   "E10 未触发：J1 未检出且 J3 无通道 P>0.70"
+  ]
+ },
+ "defects": [],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.2309,
+   "flicker": 0.32,
+   "color_shift": 0.3081,
+   "face_blur": 0.0415,
+   "garble_text": 0.0356,
+   "temporal_swap": 0.2668,
+   "pixelate": 0.1014,
+   "ghosting": 0.577
+  },
+  "overall": 0.4438,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f01–f08 全程检查",
+    "source": "J1"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f01/f05/f08",
+    "source": "J2"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "full_clip:fps=1.0解码",
+    "source": "J5"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_024",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.85,
+   "spans": "f01–f08 全程检查",
+   "notes": "玻璃壶向直筒玻璃杯倒水：水位随帧连续上升，水流扭曲形态自然，气泡水花合理，光影灰白基调一致；无定格/闪烁/色偏/马赛克/拖影，无文字与人脸"
+  },
+  "J2": {
+   "clip_id": "golden_024",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "f01/f05/f08",
+   "notes": "倒水入杯三帧均锐利，水柱与气泡形态自然，无可见缺陷"
+  },
+  "J5": {
+   "clip_id": "golden_024",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面流畅，无明显缺陷\"}"
+  },
+  "J6": {
+   "clip_id": "golden_024",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "J3": {
+   "clip_id": "golden_024",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.577,
+   "spans": "16帧4x4拼图 9通道概率（run_metadata.json），阈值 0.70",
+   "notes": "frame_freeze=0.231; flicker=0.320; color_shift=0.308; face_blur=0.042; garble_text=0.036; temporal_swap=0.267; pixelate=0.101; ghosting=0.577; overall=0.444"
+  }
+ },
+ "inputs": {
+  "clip": null,
+  "frames_dir": null,
+  "judge_files": {
+   "J1": "../数据/judges/glm8/golden_024.json",
+   "J2": "../数据/judges/glm3/golden_024.json",
+   "J5": "../数据/judges/videochat3/golden_024.json",
+   "J6": "../数据/judges/detectors/golden_024.json",
+   "J3": "../数据/judges/omnijev/run_metadata.json"
+  }
+ },
+ "errors": {}
+}

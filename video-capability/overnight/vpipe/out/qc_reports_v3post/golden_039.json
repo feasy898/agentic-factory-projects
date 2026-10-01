@@ -1,0 +1,105 @@
+{
+ "schema_version": "1.1",
+ "clip_id": "golden_039",
+ "generated_at": "2026-10-01T18:08:08",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": false,
+  "decision": "pass",
+  "confidence": 0.85,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=False, types=[], conf=0.85)",
+   "J3@0.7 flag=False hits=[] max_channel_P=0.513"
+  ]
+ },
+ "defects": [],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.3087,
+   "flicker": 0.3205,
+   "color_shift": 0.3829,
+   "face_blur": 0.2026,
+   "garble_text": 0.038,
+   "temporal_swap": 0.3471,
+   "pixelate": 0.0958,
+   "ghosting": 0.358
+  },
+  "overall": 0.513,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "f5d1e6512c18745e9dcdc1e0a20aab5fb29902acf57ee3956b995a42e3ff9be0"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "全片8帧"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_039",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.85,
+   "spans": "全片8帧",
+   "notes": "红裙女子由侧脸转正面再低头微笑，8帧人脸锐利、五官/耳饰/项链一致，动作连贯无跳变，色彩稳定（区域RGB无突变），无糊脸/拖影/定格/闪烁"
+  },
+  "J5": {
+   "clip_id": "golden_039",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中人物动作自然流畅，无明显定格、闪烁、偏色、模糊、乱码、时序错乱、像素化或拖影等缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_039",
+   "defect_detected": true,
+   "defect_types": [],
+   "confidence": 0.513,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.309 flicker=0.321 color_shift=0.383 face_blur=0.203 garble_text=0.038 temporal_swap=0.347 pixelate=0.096 ghosting=0.358; overall=0.513; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_039",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": [],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=/opt/gpumachine/projects/video-capability/overnight/vpipe/eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_039.mp4",
+  "frames_dir": "frames/golden_039/",
+  "judge_files": {
+   "J1": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/glm8/golden_039.json",
+   "J5": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/videochat3/golden_039.json",
+   "J3": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/omnijev/run_metadata.json",
+   "J6": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/detectors/raw/golden_039.qc.json"
+  }
+ },
+ "errors": {}
+}

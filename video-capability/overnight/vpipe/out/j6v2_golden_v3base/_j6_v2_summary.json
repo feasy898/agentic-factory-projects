@@ -1,0 +1,579 @@
+{
+ "judge": "J6 时序规则 v2",
+ "generated_by": "qc_detectors_v2.py",
+ "params": {
+  "feat_width": 160.0,
+  "sim_width": 80.0,
+  "freeze_diff_thr": 0.8,
+  "freeze_min_s": 2.0,
+  "freeze_lap_guard": 0.75,
+  "flicker_amp_min": 6.0,
+  "flicker_sat_amp_min": 0.08,
+  "flicker_rate_min": 6.0,
+  "flicker_min_s": 1.0,
+  "cut_abs_min": 15.0,
+  "cut_rel_k": 3.5,
+  "reentry_win_s": 0.4,
+  "reentry_gap_s": 0.5,
+  "reentry_margin": 0.05,
+  "swap_multi_min_cuts": 2.0,
+  "swap_multi_back_min": 0.62,
+  "swap_single_back_min": 0.85,
+  "swap_span_s": 3.0,
+  "ghost_dip_ratio": 0.65,
+  "ghost_out_min": 1.2,
+  "ghost_min_s": 1.2,
+  "ghost_cut_free": 15.0,
+  "ghost_interior_s": 0.5,
+  "ghost_boundary_ratio": 1.3,
+  "ghost_lap_ratio": 0.85,
+  "ghost_lap_out_min": 300.0,
+  "ghost_lap_boundary": 1.15,
+  "emit_conf": 0.55,
+  "role": "signal_only",
+  "rule_params": {
+   "feat_width": 160,
+   "sim_width": 80,
+   "freeze_diff_thr": 0.8,
+   "freeze_min_s": 2.0,
+   "freeze_lap_guard": 0.75,
+   "flicker_amp_min": 6.0,
+   "flicker_sat_amp_min": 0.08,
+   "flicker_rate_min": 6.0,
+   "flicker_min_s": 1.0,
+   "cut_abs_min": 15.0,
+   "cut_rel_k": 3.5,
+   "reentry_win_s": 0.4,
+   "reentry_gap_s": 0.5,
+   "reentry_margin": 0.05,
+   "swap_multi_min_cuts": 2,
+   "swap_multi_back_min": 0.62,
+   "swap_single_back_min": 0.85,
+   "swap_span_s": 3.0,
+   "ghost_dip_ratio": 0.65,
+   "ghost_out_min": 1.2,
+   "ghost_min_s": 1.5,
+   "ghost_cut_free": 15.0,
+   "ghost_interior_s": 0.5,
+   "ghost_boundary_ratio": 1.3,
+   "ghost_lap_ratio": 0.85,
+   "ghost_lap_out_min": 300.0,
+   "ghost_lap_boundary": 1.15,
+   "emit_conf": 0.55
+  },
+  "measured_on_golden": {
+   "a_temporal_clip_recall": 0.625,
+   "a_temporal_type_macro_recall": 0.25,
+   "c_fpr": 0.0,
+   "label_validity_note": "金标时序 8 条中 5 条注入未生效（017/028 无定格、004/030 无交替、022 无混叠， 见 数据/j6_v2/audit_notes.json）；合成正片 4/4 检出（数据/j6_v2/results_syn）"
+  }
+ },
+ "per_clip": {
+  "golden_001": {
+   "clip_id": "golden_001",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_002": {
+   "clip_id": "golden_002",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_003": {
+   "clip_id": "golden_003",
+   "defect_detected": true,
+   "defect_types": [
+    "temporal_swap"
+   ],
+   "confidence": 0.723,
+   "spans": [
+    {
+     "type": "temporal_swap",
+     "start_s": 2.52,
+     "end_s": 3.52,
+     "evidence": {
+      "kind": "cuts_backward_reentry",
+      "junctions": [
+       {
+        "cut_t": 2.52,
+        "diff": 53.84,
+        "back_score": 0.783,
+        "match_t": 1.24,
+        "pre_score": 0.5951,
+        "margin": 0.1879
+       },
+       {
+        "cut_t": 3.52,
+        "diff": 51.56,
+        "back_score": 0.6697,
+        "match_t": 2.12,
+        "pre_score": 0.5284,
+        "margin": 0.1412
+       }
+      ]
+     }
+    }
+   ]
+  },
+  "golden_004": {
+   "clip_id": "golden_004",
+   "defect_detected": true,
+   "defect_types": [
+    "flicker"
+   ],
+   "confidence": 0.95,
+   "spans": [
+    {
+     "type": "flicker",
+     "start_s": 1.5,
+     "end_s": 3.542,
+     "evidence": {
+      "kind": "sign_alternation",
+      "channel": "luma",
+      "events": 48,
+      "rate_per_s": 23.51,
+      "start_s": 1.5,
+      "end_s": 3.542,
+      "dur_s": 2.042
+     }
+    }
+   ]
+  },
+  "golden_005": {
+   "clip_id": "golden_005",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_006": {
+   "clip_id": "golden_006",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_007": {
+   "clip_id": "golden_007",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_008": {
+   "clip_id": "golden_008",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_009": {
+   "clip_id": "golden_009",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_010": {
+   "clip_id": "golden_010",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_011": {
+   "clip_id": "golden_011",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_012": {
+   "clip_id": "golden_012",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_013": {
+   "clip_id": "golden_013",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_014": {
+   "clip_id": "golden_014",
+   "defect_detected": true,
+   "defect_types": [
+    "ghosting"
+   ],
+   "confidence": 0.862,
+   "spans": [
+    {
+     "type": "ghosting",
+     "start_s": 1.25,
+     "end_s": 3.542,
+     "evidence": {
+      "kind": "rect_dip_blend",
+      "start_s": 1.25,
+      "end_s": 3.542,
+      "dur_s": 2.292,
+      "dip_ratio": 0.371,
+      "out_med": 1155.937,
+      "in_med": 428.351,
+      "boundary_ratio": 2.61,
+      "branch": "lap_dip"
+     }
+    }
+   ]
+  },
+  "golden_015": {
+   "clip_id": "golden_015",
+   "defect_detected": true,
+   "defect_types": [
+    "ghosting"
+   ],
+   "confidence": 0.834,
+   "spans": [
+    {
+     "type": "ghosting",
+     "start_s": 1.25,
+     "end_s": 3.562,
+     "evidence": {
+      "kind": "rect_dip_blend",
+      "start_s": 1.25,
+      "end_s": 3.562,
+      "dur_s": 2.312,
+      "dip_ratio": 0.553,
+      "out_med": 2167.027,
+      "in_med": 1197.335,
+      "boundary_ratio": 1.81,
+      "branch": "lap_dip"
+     }
+    }
+   ]
+  },
+  "golden_016": {
+   "clip_id": "golden_016",
+   "defect_detected": true,
+   "defect_types": [
+    "frame_freeze"
+   ],
+   "confidence": 0.723,
+   "spans": [
+    {
+     "type": "frame_freeze",
+     "start_s": 2.458,
+     "end_s": 5.0,
+     "evidence": {
+      "kind": "zero_diff_run",
+      "run_pairs": 61,
+      "dur_s": 2.542,
+      "start_s": 2.458,
+      "end_s": 5.0,
+      "run_diff_med": 0.237,
+      "lap_guard": 1.046
+     }
+    }
+   ]
+  },
+  "golden_017": {
+   "clip_id": "golden_017",
+   "defect_detected": true,
+   "defect_types": [
+    "frame_freeze"
+   ],
+   "confidence": 0.698,
+   "spans": [
+    {
+     "type": "frame_freeze",
+     "start_s": 1.549,
+     "end_s": 3.531,
+     "evidence": {
+      "kind": "zero_diff_run",
+      "run_pairs": 32,
+      "dur_s": 1.982,
+      "start_s": 1.549,
+      "end_s": 3.531,
+      "run_diff_med": 0.0006,
+      "lap_guard": 0.975
+     }
+    }
+   ]
+  },
+  "golden_018": {
+   "clip_id": "golden_018",
+   "defect_detected": true,
+   "defect_types": [
+    "frame_freeze"
+   ],
+   "confidence": 0.932,
+   "spans": [
+    {
+     "type": "frame_freeze",
+     "start_s": 0.0,
+     "end_s": 5.0,
+     "evidence": {
+      "kind": "zero_diff_run",
+      "run_pairs": 80,
+      "dur_s": 5.0,
+      "start_s": 0.0,
+      "end_s": 5.0,
+      "run_diff_med": 0.0986,
+      "lap_guard": 1.0
+     }
+    }
+   ]
+  },
+  "golden_019": {
+   "clip_id": "golden_019",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_020": {
+   "clip_id": "golden_020",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_021": {
+   "clip_id": "golden_021",
+   "defect_detected": true,
+   "defect_types": [
+    "frame_freeze"
+   ],
+   "confidence": 0.669,
+   "spans": [
+    {
+     "type": "frame_freeze",
+     "start_s": 1.833,
+     "end_s": 4.458,
+     "evidence": {
+      "kind": "zero_diff_run",
+      "run_pairs": 63,
+      "dur_s": 2.625,
+      "start_s": 1.833,
+      "end_s": 4.458,
+      "run_diff_med": 0.583,
+      "lap_guard": 0.845
+     }
+    }
+   ]
+  },
+  "golden_022": {
+   "clip_id": "golden_022",
+   "defect_detected": true,
+   "defect_types": [
+    "ghosting"
+   ],
+   "confidence": 0.835,
+   "spans": [
+    {
+     "type": "ghosting",
+     "start_s": 1.24,
+     "end_s": 3.719,
+     "evidence": {
+      "kind": "rect_dip_blend",
+      "start_s": 1.24,
+      "end_s": 3.719,
+      "dur_s": 2.479,
+      "dip_ratio": 0.497,
+      "out_med": 9.595,
+      "in_med": 4.772,
+      "boundary_ratio": 1.8,
+      "branch": "diff_dip"
+     }
+    }
+   ]
+  },
+  "golden_023": {
+   "clip_id": "golden_023",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_024": {
+   "clip_id": "golden_024",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_025": {
+   "clip_id": "golden_025",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_026": {
+   "clip_id": "golden_026",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_027": {
+   "clip_id": "golden_027",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_028": {
+   "clip_id": "golden_028",
+   "defect_detected": true,
+   "defect_types": [
+    "ghosting"
+   ],
+   "confidence": 0.928,
+   "spans": [
+    {
+     "type": "ghosting",
+     "start_s": 1.239,
+     "end_s": 3.531,
+     "evidence": {
+      "kind": "rect_dip_blend",
+      "start_s": 1.239,
+      "end_s": 3.531,
+      "dur_s": 2.292,
+      "dip_ratio": 0.0,
+      "out_med": 6.061,
+      "in_med": 0.001,
+      "boundary_ratio": 4091.75,
+      "branch": "diff_dip"
+     }
+    }
+   ]
+  },
+  "golden_029": {
+   "clip_id": "golden_029",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_030": {
+   "clip_id": "golden_030",
+   "defect_detected": true,
+   "defect_types": [
+    "flicker"
+   ],
+   "confidence": 0.95,
+   "spans": [
+    {
+     "type": "flicker",
+     "start_s": 1.5,
+     "end_s": 3.542,
+     "evidence": {
+      "kind": "sign_alternation",
+      "channel": "luma",
+      "events": 48,
+      "rate_per_s": 23.51,
+      "start_s": 1.5,
+      "end_s": 3.542,
+      "dur_s": 2.042
+     }
+    }
+   ]
+  },
+  "golden_031": {
+   "clip_id": "golden_031",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_032": {
+   "clip_id": "golden_032",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_033": {
+   "clip_id": "golden_033",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_034": {
+   "clip_id": "golden_034",
+   "defect_detected": true,
+   "defect_types": [
+    "ghosting"
+   ],
+   "confidence": 0.79,
+   "spans": [
+    {
+     "type": "ghosting",
+     "start_s": 1.25,
+     "end_s": 3.5,
+     "evidence": {
+      "kind": "rect_dip_blend",
+      "start_s": 1.25,
+      "end_s": 3.5,
+      "dur_s": 2.25,
+      "dip_ratio": 0.56,
+      "out_med": 1.502,
+      "in_med": 0.841,
+      "boundary_ratio": 1.78,
+      "branch": "diff_dip"
+     }
+    }
+   ]
+  },
+  "golden_035": {
+   "clip_id": "golden_035",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_036": {
+   "clip_id": "golden_036",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_037": {
+   "clip_id": "golden_037",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_038": {
+   "clip_id": "golden_038",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_039": {
+   "clip_id": "golden_039",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  },
+  "golden_040": {
+   "clip_id": "golden_040",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": []
+  }
+ }
+}

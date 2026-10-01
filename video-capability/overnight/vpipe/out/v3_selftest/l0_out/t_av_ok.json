@@ -1,0 +1,80 @@
+{
+ "schema_version": "1.1",
+ "clip_id": "t_av_ok",
+ "generated_at": "2026-10-01T18:06:43",
+ "qc_mode": "online",
+ "verdict": {
+  "defect_detected": false,
+  "decision": "pass",
+  "confidence": 0.0,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1 缺席（弃权）",
+   "J3 概率缺席（弃权）",
+   "降级: J3; J6; verdict"
+  ]
+ },
+ "defects": [],
+ "scores": {
+  "per_type": {
+   "frame_freeze": null,
+   "flicker": null,
+   "color_shift": null,
+   "face_blur": null,
+   "garble_text": null,
+   "temporal_swap": null,
+   "pixelate": null,
+   "ghosting": null
+  },
+  "overall": null,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "f5d1e6512c18745e9dcdc1e0a20aab5fb29902acf57ee3956b995a42e3ff9be0"
+  }
+ },
+ "spans": [],
+ "judges": {},
+ "inputs": {
+  "clip": "/opt/gpumachine/projects/video-capability/overnight/vpipe/out/v3_selftest/media/dur_11s.mp4",
+  "frames_dir": null,
+  "judge_files": {}
+ },
+ "errors": {
+  "J6": "未提供 --detector-json（检测器弃权）",
+  "J3": "未提供 --judge-probs J3=...（概率通道弃权）",
+  "verdict": "confidence 无信号源（J3 未触发且 J1 缺失/无效），置 0.0"
+ },
+ "qc_context": {
+  "profile": "avatar_talk",
+  "known_cuts": [],
+  "l0_preflight": {
+   "clip": "/opt/gpumachine/projects/video-capability/overnight/vpipe/out/v3_selftest/media/dur_11s.mp4",
+   "expect_duration_s": 10.0,
+   "profile": "avatar_talk",
+   "failures": [],
+   "checks": {
+    "duration": {
+     "measured_s": 11.0,
+     "rule": "avatar_tail",
+     "allowed_s": [
+      9.8,
+      11.0
+     ],
+     "avatar_tail_max_s": 1.0
+    },
+    "black_mono_ratio": {
+     "n_samples": 64,
+     "black_luma_max": 8.0,
+     "mono_std_max": 2.0,
+     "ratio_max": 0.5,
+     "used": 64,
+     "bad_frames": 0,
+     "ratio": 0.0
+    }
+   }
+  }
+ }
+}

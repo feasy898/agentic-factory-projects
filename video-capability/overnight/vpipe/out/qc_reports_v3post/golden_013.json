@@ -1,0 +1,147 @@
+{
+ "schema_version": "1.1",
+ "clip_id": "golden_013",
+ "generated_at": "2026-10-01T18:08:08",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": false,
+  "decision": "pass",
+  "confidence": 0.8,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=False, types=[], conf=0.8)",
+   "J3@0.7 flag=False hits=[] max_channel_P=0.5943",
+   "J6 信号(仅信号不否决): face_blur@0.79"
+  ]
+ },
+ "defects": [
+  {
+   "type": "face_blur",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.7867,
+   "span": {
+    "start_s": 0.323,
+    "end_s": 0.969
+   },
+   "evidence": {
+    "J6": {
+     "pair": 0,
+     "cos": 0.3427
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.3881,
+   "flicker": 0.2778,
+   "color_shift": 0.5943,
+   "face_blur": 0.1514,
+   "garble_text": 0.04,
+   "temporal_swap": 0.3015,
+   "pixelate": 0.1632,
+   "ghosting": 0.3278
+  },
+  "overall": 0.5164,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "f5d1e6512c18745e9dcdc1e0a20aab5fb29902acf57ee3956b995a42e3ff9be0"
+  }
+ },
+ "spans": [
+  {
+   "type": "face_blur",
+   "start_s": 0.323,
+   "end_s": 0.969,
+   "evidence": {
+    "pair": 0,
+    "cos": 0.3427
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "无"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_013",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "无",
+   "notes": "新闻主播身份服装8帧一致、人脸清晰、口型手势自然；稿纸小字模糊为源素材质感，非注入乱码"
+  },
+  "J5": {
+   "clip_id": "golden_013",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中无明显缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_013",
+   "defect_detected": true,
+   "defect_types": [
+    "color_shift"
+   ],
+   "confidence": 0.5943,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.388 flicker=0.278 color_shift=0.594 face_blur=0.151 garble_text=0.040 temporal_swap=0.301 pixelate=0.163 ghosting=0.328; overall=0.516; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_013",
+   "defect_detected": true,
+   "defect_types": [
+    "face_blur"
+   ],
+   "confidence": 0.7867,
+   "spans": [
+    {
+     "type": "face_blur",
+     "start_s": 0.323,
+     "end_s": 0.969,
+     "evidence": {
+      "pair": 0,
+      "cos": 0.3427
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=/opt/gpumachine/projects/video-capability/overnight/vpipe/eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_013.mp4",
+  "frames_dir": "frames/golden_013/",
+  "judge_files": {
+   "J1": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/glm8/golden_013.json",
+   "J5": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/videochat3/golden_013.json",
+   "J3": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/omnijev/run_metadata.json",
+   "J6": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/detectors/raw/golden_013.qc.json"
+  }
+ },
+ "errors": {}
+}

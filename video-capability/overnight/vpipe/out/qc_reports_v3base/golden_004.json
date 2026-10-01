@@ -1,0 +1,248 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_004",
+ "generated_at": "2026-10-01T03:34:48",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "manual_review",
+  "confidence": 0.8342,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=True, types=['flicker'], conf=0.9)",
+   "J3@0.7 flag=True hits=['color_shift'] max_channel_P=0.8342",
+   "J6 信号(仅信号不否决): frame_freeze@0.69, garble_text@0.85, temporal_swap@0.75"
+  ]
+ },
+ "defects": [
+  {
+   "type": "color_shift",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.8342,
+   "evidence": {
+    "J3": {
+     "channel_P": 0.8342
+    }
+   }
+  },
+  {
+   "type": "flicker",
+   "sources": [
+    "J1"
+   ],
+   "confidence": 0.9,
+   "evidence": {
+    "J1": {
+     "confidence": 0.9,
+     "notes": "实测均值（PIL/HSV）：f01/f02/f07/f08 V≈62.8、S≈5.95，而f03-f06 V≈49.7、S≈10.0，中段2s窗口曝光/饱和度异常跳变（flicker族），鸽子f07-f08白色蓬羽为理羽运动非拖影"
+    }
+   }
+  },
+  {
+   "type": "frame_freeze",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.685,
+   "span": {
+    "start_s": 4.096,
+    "end_s": 4.727
+   },
+   "evidence": {
+    "J6": {
+     "pair": 6,
+     "score": 0.378,
+     "median": 1.432
+    }
+   }
+  },
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.85,
+   "span": {
+    "start_s": 0.0,
+    "end_s": 5.042
+   },
+   "evidence": {
+    "J6": {
+     "kind": "uniform_low_conf",
+     "max_mean": 0.195
+    }
+   }
+  },
+  {
+   "type": "temporal_swap",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.75,
+   "span": {
+    "start_s": 1.042,
+    "end_s": 2.042
+   },
+   "evidence": {
+    "J6": {
+     "cut_s": 1.542
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.6639,
+   "flicker": 0.6767,
+   "color_shift": 0.8342,
+   "face_blur": 0.0272,
+   "garble_text": 0.0346,
+   "temporal_swap": 0.3899,
+   "pixelate": 0.3159,
+   "ghosting": 0.2454
+  },
+  "overall": 0.6221,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "frame_freeze",
+   "start_s": 4.096,
+   "end_s": 4.727,
+   "evidence": {
+    "pair": 6,
+    "score": 0.378,
+    "median": 1.432
+   }
+  },
+  {
+   "type": "garble_text",
+   "start_s": 0.0,
+   "end_s": 5.042,
+   "evidence": {
+    "kind": "uniform_low_conf",
+    "max_mean": 0.195
+   }
+  },
+  {
+   "type": "temporal_swap",
+   "start_s": 1.042,
+   "end_s": 2.042,
+   "evidence": {
+    "cut_s": 1.542
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "f03-f06（约1.6-3.5s）全画幅"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_004",
+   "defect_detected": true,
+   "defect_types": [
+    "flicker"
+   ],
+   "confidence": 0.9,
+   "spans": "f03-f06（约1.6-3.5s）全画幅",
+   "notes": "实测均值（PIL/HSV）：f01/f02/f07/f08 V≈62.8、S≈5.95，而f03-f06 V≈49.7、S≈10.0，中段2s窗口曝光/饱和度异常跳变（flicker族），鸽子f07-f08白色蓬羽为理羽运动非拖影"
+  },
+  "J5": {
+   "clip_id": "golden_004",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中无明显缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_004",
+   "defect_detected": true,
+   "defect_types": [
+    "frame_freeze",
+    "flicker",
+    "color_shift"
+   ],
+   "confidence": 0.8342,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.664 flicker=0.677 color_shift=0.834 face_blur=0.027 garble_text=0.035 temporal_swap=0.390 pixelate=0.316 ghosting=0.245; overall=0.622; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_004",
+   "defect_detected": true,
+   "defect_types": [
+    "frame_freeze",
+    "garble_text",
+    "temporal_swap"
+   ],
+   "confidence": 0.85,
+   "spans": [
+    {
+     "type": "frame_freeze",
+     "start_s": 4.096,
+     "end_s": 4.727,
+     "evidence": {
+      "pair": 6,
+      "score": 0.378,
+      "median": 1.432
+     }
+    },
+    {
+     "type": "garble_text",
+     "start_s": 0.0,
+     "end_s": 5.042,
+     "evidence": {
+      "kind": "uniform_low_conf",
+      "max_mean": 0.195
+     }
+    },
+    {
+     "type": "temporal_swap",
+     "start_s": 1.042,
+     "end_s": 2.042,
+     "evidence": {
+      "cut_s": 1.542
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_004.mp4",
+  "frames_dir": "frames/golden_004/",
+  "judge_files": {
+   "J1": "../数据/judges/glm8/golden_004.json",
+   "J5": "../数据/judges/videochat3/golden_004.json",
+   "J3": "../数据/judges/omnijev/run_metadata.json",
+   "J6": "../数据/judges/detectors/raw/golden_004.qc.json"
+  }
+ },
+ "errors": {}
+}

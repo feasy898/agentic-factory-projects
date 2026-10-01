@@ -1,0 +1,107 @@
+{
+ "schema_version": "1.1",
+ "clip_id": "golden_001",
+ "generated_at": "2026-10-01T18:08:08",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": false,
+  "decision": "pass",
+  "confidence": 0.85,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=False, types=[], conf=0.85)",
+   "J3@0.7 flag=False hits=[] max_channel_P=0.6926"
+  ]
+ },
+ "defects": [],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.4559,
+   "flicker": 0.2966,
+   "color_shift": 0.6926,
+   "face_blur": 0.1702,
+   "garble_text": 0.0689,
+   "temporal_swap": 0.3446,
+   "pixelate": 0.1291,
+   "ghosting": 0.3501
+  },
+  "overall": 0.5957,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "f5d1e6512c18745e9dcdc1e0a20aab5fb29902acf57ee3956b995a42e3ff9be0"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "全部8帧（f01-f08）均未见异常"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_001",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.85,
+   "spans": "全部8帧（f01-f08）均未见异常",
+   "notes": "红裙女子雨中走向镜头，8帧姿势/发丝/水花连续变化无定格，亮度色彩稳定，人脸清晰，无文字、像素化或拖影"
+  },
+  "J5": {
+   "clip_id": "golden_001",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中无明显缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_001",
+   "defect_detected": true,
+   "defect_types": [
+    "color_shift"
+   ],
+   "confidence": 0.6926,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.456 flicker=0.297 color_shift=0.693 face_blur=0.170 garble_text=0.069 temporal_swap=0.345 pixelate=0.129 ghosting=0.350; overall=0.596; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_001",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": [],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=/opt/gpumachine/projects/video-capability/overnight/vpipe/eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_001.mp4",
+  "frames_dir": "frames/golden_001/",
+  "judge_files": {
+   "J1": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/glm8/golden_001.json",
+   "J5": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/videochat3/golden_001.json",
+   "J3": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/omnijev/run_metadata.json",
+   "J6": "/opt/gpumachine/projects/video-capability/overnight/数据/judges/detectors/raw/golden_001.qc.json"
+  }
+ },
+ "errors": {}
+}
