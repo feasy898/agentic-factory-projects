@@ -66,13 +66,28 @@
 
 ## 5. 模型通道与凭据（零落盘）
 
-- minimax：ZCode CLI provider 配 `https://api.minimaxi.com`（OpenAI 兼容 `/v1`）或 Anthropic 兼容端点，
-  key 走 0600 env 文件注入（owner 提供；国内直连无障碍，勿挂代理）。
-- 兜底：GLM-5.3-Flash（bigmodel coding plan，已验证通道），子代理模型切换只改 workflow 的
-  subagent_model 一处。
+- **ZCode CLI 安装**：`npm i -g zcode-app-cli`（本机同款 3.14.3-28；Ubuntu 需 node ≥18）。
+- **provider 配置**：写 `~/.zcode/cli/config.json`（0600 权限），模板：
+  ```json
+  {
+    "provider": {
+      "minimax": { "kind": "openai", "baseURL": "https://api.minimaxi.com/v1",
+                   "apiKey": "<owner 提供的 key，只写这里，勿入任何仓库文件/日志/对话>",
+                   "apiKeyRequired": true },
+      "builtin:bigmodel-coding-plan": { "kind": "anthropic",
+                   "baseURL": "https://open.bigmodel.cn/api/anthropic",
+                   "apiKey": "<GLM 兜底 key，同上只写本文件>", "apiKeyRequired": true }
+    },
+    "model": { "main": "minimax/MiniMax-M3.1-Flash-Preview" }
+  }
+  ```
+  workflow 子代理模型：`minimax/MiniMax-M3.1-Flash-Preview`（可用时）／`GLM-5.3-Flash`（兜底，
+  本机实战：minimax 在重负载长回合下两次 turn 失败，GLM-5.3-Flash 稳定——**建议 3060 直接
+  以 GLM-5.3-Flash 为主、minimax 为备用**，或两个都配、失败即切）。
+- headless 跑法：`zcode --prompt "..." --mode yolo --output-format json`（详见知识库 AGENTS.md 第七节）。
 - GitHub PAT：owner 直接交付，`~/.git-credentials` 0600。
-- tailnet：bao `secret/chengmai8/tailnet-preauth-3060`（可复用 7 天；用后让 owner 作废重建）。
-- 上游仓 URL：bao `secret/chengmai8/upstream-refs`（严禁写入公开仓任何文件——命名门禁会拦）。
+- tailnet：bao `secret/chenmai8/tailnet-preauth-3060`（可复用 7 天；用后让 owner 作废重建）。
+- 上游仓 URL：bao `secret/chenmai8/upstream-refs`（严禁写入公开仓任何文件——命名门禁会拦）。
 - COS 凭据：Vault `secret/tencentcloud`（100.100.0.2:8200，需 tailnet）。
 - **3060 机器上严禁装 mihomo 类 TUN 代理**（会弄死 tailscale 数据面，见知识库 02 篇实测）。
 
