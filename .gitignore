@@ -1,0 +1,28 @@
+# ---- secrets & credentials（默认排除；示例模板除外）----
+.env
+.env.*
+!.env.example
+.secrets/
+api_keys*
+*.pem
+*.p12
+*.pfx
+*.jks
+id_rsa*
+*_rsa
+credentials*.json
+*token*.txt
+# ---- 虚拟环境与依赖产物 ----
+.venv/
+venv/
+node_modules/
+__pycache__/
+*.pyc
+# ---- 大体积归档/运行物 ----
+*.tar
+*.tar.gz
+*.tgz
+*.zip.orig
+# ---- OS/编辑器 ----
+.DS_Store
+Thumbs.db
