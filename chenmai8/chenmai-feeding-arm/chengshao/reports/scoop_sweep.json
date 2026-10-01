@@ -1,0 +1,423 @@
+{
+  "module": "cs_sim.scoop_sweep",
+  "date": "2026-10-02",
+  "cmd": "python -m cs_sim.scoop_sweep --config scoop_params.json --report scoop_sweep.json --model auto --write-config",
+  "metrics": {
+    "grid_size": 162,
+    "grid_dims": [
+      "dip_offset_m",
+      "tilt_deg",
+      "approach_speed_mps",
+      "retract_speed_mps",
+      "bowl_rim_scrape"
+    ],
+    "grid_values_per_dim": {
+      "dip_offset_m": 3,
+      "tilt_deg": 3,
+      "approach_speed_mps": 3,
+      "retract_speed_mps": 3,
+      "bowl_rim_scrape": 2
+    },
+    "combos_kinematically_feasible": 162,
+    "combos_total": 162,
+    "trials_per_food": 200,
+    "max_attempts_per_trial": 3,
+    "scoop_retries_max": 2,
+    "foods": {
+      "芋泥": {
+        "rheology": "viscous_paste",
+        "hsv_detectable": true,
+        "variant_selected": "as_configured",
+        "recommended": {
+          "dip_offset_m": 0.052,
+          "tilt_deg": 0.0,
+          "approach_speed_mps": 0.03,
+          "retract_speed_mps": 0.06,
+          "bowl_rim_scrape": false,
+          "sim_first_attempt_rate": 0.955,
+          "sim_final_success_rate": 1.0,
+          "sim_trials": 200,
+          "sim_attempts_per_trial": 3,
+          "source_report": "reports/scoop_sweep.json",
+          "feasible_combos": 162,
+          "grid_size": 162
+        },
+        "final_success_wilson95": [
+          0.9812,
+          1.0
+        ],
+        "top5": [
+          {
+            "variant": "as_configured",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 0.0,
+            "approach_speed_mps": 0.03,
+            "retract_speed_mps": 0.06,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          },
+          {
+            "variant": "as_configured",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 12.0,
+            "approach_speed_mps": 0.03,
+            "retract_speed_mps": 0.06,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          },
+          {
+            "variant": "as_configured",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 24.0,
+            "approach_speed_mps": 0.03,
+            "retract_speed_mps": 0.06,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          },
+          {
+            "variant": "as_configured",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 0.0,
+            "approach_speed_mps": 0.06,
+            "retract_speed_mps": 0.06,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          },
+          {
+            "variant": "as_configured",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 12.0,
+            "approach_speed_mps": 0.06,
+            "retract_speed_mps": 0.06,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          }
+        ],
+        "sweep_seconds": 0.8
+      },
+      "南瓜粥": {
+        "rheology": "thin_porridge",
+        "hsv_detectable": true,
+        "variant_selected": "as_configured",
+        "recommended": {
+          "dip_offset_m": 0.052,
+          "tilt_deg": 0.0,
+          "approach_speed_mps": 0.03,
+          "retract_speed_mps": 0.03,
+          "bowl_rim_scrape": false,
+          "sim_first_attempt_rate": 0.955,
+          "sim_final_success_rate": 1.0,
+          "sim_trials": 200,
+          "sim_attempts_per_trial": 3,
+          "source_report": "reports/scoop_sweep.json",
+          "feasible_combos": 162,
+          "grid_size": 162
+        },
+        "final_success_wilson95": [
+          0.9812,
+          1.0
+        ],
+        "top5": [
+          {
+            "variant": "as_configured",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 0.0,
+            "approach_speed_mps": 0.03,
+            "retract_speed_mps": 0.03,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          },
+          {
+            "variant": "as_configured",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 12.0,
+            "approach_speed_mps": 0.03,
+            "retract_speed_mps": 0.03,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          },
+          {
+            "variant": "as_configured",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 0.0,
+            "approach_speed_mps": 0.06,
+            "retract_speed_mps": 0.03,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          },
+          {
+            "variant": "as_configured",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 0.0,
+            "approach_speed_mps": 0.03,
+            "retract_speed_mps": 0.03,
+            "bowl_rim_scrape": true,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          },
+          {
+            "variant": "as_configured",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 12.0,
+            "approach_speed_mps": 0.03,
+            "retract_speed_mps": 0.03,
+            "bowl_rim_scrape": true,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          }
+        ],
+        "sweep_seconds": 1.2
+      },
+      "椰子冻": {
+        "rheology": "solid_gel",
+        "hsv_detectable": false,
+        "variant_selected": "counterfactual_hsv_extended",
+        "recommended": {
+          "dip_offset_m": 0.052,
+          "tilt_deg": 0.0,
+          "approach_speed_mps": 0.03,
+          "retract_speed_mps": 0.09,
+          "bowl_rim_scrape": false,
+          "sim_first_attempt_rate": 0.955,
+          "sim_final_success_rate": 1.0,
+          "sim_trials": 200,
+          "sim_attempts_per_trial": 3,
+          "source_report": "reports/scoop_sweep.json",
+          "feasible_combos": 162,
+          "grid_size": 162
+        },
+        "final_success_wilson95": [
+          0.9812,
+          1.0
+        ],
+        "top5": [
+          {
+            "variant": "counterfactual_hsv_extended",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 0.0,
+            "approach_speed_mps": 0.03,
+            "retract_speed_mps": 0.09,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          },
+          {
+            "variant": "counterfactual_hsv_extended",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 12.0,
+            "approach_speed_mps": 0.03,
+            "retract_speed_mps": 0.09,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          },
+          {
+            "variant": "counterfactual_hsv_extended",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 24.0,
+            "approach_speed_mps": 0.03,
+            "retract_speed_mps": 0.09,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          },
+          {
+            "variant": "counterfactual_hsv_extended",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 0.0,
+            "approach_speed_mps": 0.06,
+            "retract_speed_mps": 0.09,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          },
+          {
+            "variant": "counterfactual_hsv_extended",
+            "dip_offset_m": 0.052,
+            "tilt_deg": 12.0,
+            "approach_speed_mps": 0.06,
+            "retract_speed_mps": 0.09,
+            "bowl_rim_scrape": false,
+            "sim_first_attempt_rate": 0.955,
+            "sim_final_success_rate": 1.0,
+            "feasible": true
+          }
+        ],
+        "sweep_seconds": 1.74
+      }
+    },
+    "static_recheck": {
+      "per_food": {
+        "芋泥": {
+          "ok": true,
+          "runs": 15,
+          "reject_reasons": [],
+          "min_zone_clearance_m": 0.0878,
+          "min_link_clearance_m": 0.0517,
+          "max_joint_speed_rad_s": 1.5,
+          "joint_speed_limit_rad_s": 1.5,
+          "max_tool_orientation_drift_deg": 46.927
+        },
+        "南瓜粥": {
+          "ok": true,
+          "runs": 15,
+          "reject_reasons": [],
+          "min_zone_clearance_m": 0.0878,
+          "min_link_clearance_m": 0.0517,
+          "max_joint_speed_rad_s": 1.5,
+          "joint_speed_limit_rad_s": 1.5,
+          "max_tool_orientation_drift_deg": 46.927
+        },
+        "椰子冻": {
+          "ok": true,
+          "runs": 15,
+          "reject_reasons": [],
+          "min_zone_clearance_m": 0.0878,
+          "min_link_clearance_m": 0.0517,
+          "max_joint_speed_rad_s": 1.5,
+          "joint_speed_limit_rad_s": 1.5,
+          "max_tool_orientation_drift_deg": 46.927
+        }
+      },
+      "jitter_corners_m": [
+        [
+          0.0,
+          0.0
+        ],
+        [
+          0.01,
+          0.0
+        ],
+        [
+          -0.01,
+          0.0
+        ],
+        [
+          0.0,
+          0.01
+        ],
+        [
+          0.0,
+          -0.01
+        ]
+      ],
+      "note": "入勺抖动 ±1cm（腕部闭环修正量级，取自 mock.MockScoop.plan_round）"
+    },
+    "exec_layer_recheck": {
+      "all_ok": true,
+      "per_food": {
+        "芋泥": {
+          "ok": true,
+          "commands_written": 21,
+          "rejected": [],
+          "sim_seconds": 6.76,
+          "envelope_stats": {
+            "written": 21,
+            "rejected": 0,
+            "cartesian_rewritten_to_joints": 12,
+            "estop_count": 0,
+            "watchdog_trips": 0,
+            "zone_latches": 0
+          },
+          "safety_state": {
+            "clear_to_move": true,
+            "estop_latched": false,
+            "violation": "none"
+          }
+        },
+        "南瓜粥": {
+          "ok": true,
+          "commands_written": 21,
+          "rejected": [],
+          "sim_seconds": 8.26,
+          "envelope_stats": {
+            "written": 21,
+            "rejected": 0,
+            "cartesian_rewritten_to_joints": 12,
+            "estop_count": 0,
+            "watchdog_trips": 0,
+            "zone_latches": 0
+          },
+          "safety_state": {
+            "clear_to_move": true,
+            "estop_latched": false,
+            "violation": "none"
+          }
+        },
+        "椰子冻": {
+          "ok": true,
+          "commands_written": 21,
+          "rejected": [],
+          "sim_seconds": 6.26,
+          "envelope_stats": {
+            "written": 21,
+            "rejected": 0,
+            "cartesian_rewritten_to_joints": 12,
+            "estop_count": 0,
+            "watchdog_trips": 0,
+            "zone_latches": 0
+          },
+          "safety_state": {
+            "clear_to_move": true,
+            "estop_latched": false,
+            "violation": "none"
+          }
+        }
+      },
+      "note": "执行层真链路（MockArm 虚拟执行 + SafetyEnvelope 包络硬闸），非物理执行、非真机"
+    },
+    "elapsed_s": 242.84
+  },
+  "thresholds": {
+    "dev_instruction_5_9_scoop": {
+      "trials_per_food": 50,
+      "final_success_rate_min": 0.9,
+      "first_attempt_rate_min": 0.7,
+      "scope": "真机 3060 硬件实测；本报告未测，不得据此宣称达标"
+    },
+    "sim_pre_sweep": {
+      "grid_values_per_dim_max": 3,
+      "trials_per_food_max": 500,
+      "recommended_must_be_kinematically_feasible": true,
+      "recommended_must_pass_static_envelope": true
+    }
+  },
+  "evidence_kind": "simulation_pre_sweep",
+  "real_machine_measured": false,
+  "success_rate_kind": "analytic_capture_model",
+  "model_provenance": {
+    "kinematics_and_envelope": "真跑 cs_sim（ArmModel FK/IK + EnvelopeValidator.check_joint_trajectory，与执行层 SafetyEnvelope同一校验器）",
+    "capture_model": "球冠勺碗几何（球冠容积/倾角留存积分/液面下行程）+ config/scoop_params.json 登记的逐食物流变先验；系数未实测（D4 需实测覆盖）",
+    "tilt_mapping": "倾角以进勺轴（悬停前一点->入勺点连线）相对铅垂线的夹角实现（笛卡尔位置层，姿态保持）；与勺面相对液面真实夹角的映射待真机实测"
+  },
+  "calibration_gaps": [
+    "spoon_tip_drop_m（TCP->勺碗最低点）与 food_fill_depth_m（液面相对 bowls_m 参考面高度）均为假设值；D4 装臂后实测覆盖，推荐入勺深度随之同向平移",
+    "进勺轴倾角与勺面倾角的映射未标定（工具姿态沿程保持，见 model_provenance）",
+    "逐食物流变系数（fill_factor/push_speed_mps/tilt_knee_deg/retention_speed_mps/scrape_extra_ml）为工程先验",
+    "碗内食物初始液面与碗位放置误差为模型噪声项，未在真机标定"
+  ],
+  "pass": true,
+  "pass_meaning": "扫参完成且每食物推荐参数通过运动学/关节限位/安全包络静态复核；**不代表**开发指令 §5.9 的舀取成功率通过线达标（那需要真机实测）"
+}
