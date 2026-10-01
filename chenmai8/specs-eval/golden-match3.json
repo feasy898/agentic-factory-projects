@@ -1,0 +1,14 @@
+{
+  "specVersion": "0.3.0",
+  "meta": { "projectId": "golden-match3" },
+  "channels": {
+    "overrides": {
+      "meta": { "maxBytes": 3145728 }
+    }
+  },
+  "flow": {
+    "endScreen": {
+      "landingUrl": "https://example.com/playable-lp"
+    }
+  }
+}

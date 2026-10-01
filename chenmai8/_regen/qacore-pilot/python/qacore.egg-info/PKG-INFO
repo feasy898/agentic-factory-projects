@@ -1,0 +1,7 @@
+Metadata-Version: 2.4
+Name: qacore
+Version: 0.1.0
+Summary: M8 质检器（重生成试点：只凭 SPEC.md + 冻结夹具从零实现）
+Requires-Python: >=3.10
+Requires-Dist: playwright==1.63.0
+Requires-Dist: pillow==12.3.0

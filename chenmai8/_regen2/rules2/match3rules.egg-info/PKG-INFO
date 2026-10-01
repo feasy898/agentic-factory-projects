@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: match3rules
+Version: 2.0.0
+Summary: 三消规则卡（回炉后 SPEC.md 冻结 v1.0.0 含 §12 数值算例）的独立 Python 复算实现（重生成试验第二轮）
+Requires-Python: >=3.8

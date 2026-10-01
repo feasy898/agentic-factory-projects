@@ -1,0 +1,239 @@
+{
+  "quiz": "C2 盲评考官 · 机器人+咖啡双项目各 10 题（quiz-rc）",
+  "verdict_at": "2026-09-30",
+  "method": "逐题对照两仓实现源码实读核真实行为；可运行断言均在本会话实跑（cv2 缺省参数、ArUco 六档合成复现、咖啡仓 3 例密排统计用例与全量 pytest）。行号引用格式 file:line。",
+  "summary": {
+    "asked": 20,
+    "consistent": 18,
+    "mismatches": 2,
+    "mismatch_ids": ["R9", "C10"]
+  },
+  "results": [
+    {
+      "id": "R1",
+      "verdict": "consistent",
+      "evidence": [
+        "张嘴 0.35 / 转头 0.4363(25°) / 皱眉 0.5 均为 schema 冻结常量：具身助餐机器人/repo/chengshao/cs_schema/constants.py:21-23",
+        "闭嘴 0.20 在编排层非 schema，注释明说『schema 只定义张嘴阈值、闭合滞后阈值属编排层』：cs_orchestra/nodes.py:74-76（引用行号与题面一致）；判定点 nodes.py:606（jaw_open < JAW_CLOSED_THRESHOLD）",
+        "几何口径比 ratio=|唇13-唇14|/|眼角33-263|（estimator.py:37-40,119-124）；jaw_open=clip((ratio-0.11)/(0.23-0.11),0,1)（estimator.py:234-240），标定常数 closed=0.11/open=0.23（cs_mouth/prior.py:64-65）；blendshape jawOpen 弃用（estimator.py:8 docstring）"
+      ]
+    },
+    {
+      "id": "R2",
+      "verdict": "consistent",
+      "evidence": [
+        "estop() 同步闩锁且 violation 置 WATCHDOG（注释『契约注释：急停复用 watchdog 类别』），estop_latched 区分：cs_arm/safety.py:206-212（引用行号与题面一致）；闩锁后 write 全拒 safety.py:128-132",
+        "reset() 清闩锁后立即 _check_zone 重查禁入区、仍侵入则如实重新闩锁：safety.py:214-226",
+        "拒绝≠violation：write 拒绝只计 stats/reason，violation 保持 none、clear_to_move 不变：safety.py:179-186 与模块 docstring safety.py:19-22"
+      ]
+    },
+    {
+      "id": "R3",
+      "verdict": "consistent",
+      "evidence": [
+        "_find_clean_home 缺省参数 min_clear_m=0.03 / tries=500 / seed=20260928：cs_arm/mock_arm.py:65-67",
+        "工作盒 x∈[0.05,0.30]、|y|≤0.25、z∈[0.02,0.35]，TCP 与全部连杆参考点间隙 ≥0.03：mock_arm.py:91-97",
+        "全零位形 TCP 落面部球域（距口部点约 0.079m < 0.12m）docstring：mock_arm.py:70-71；找不到回退全零交包络闩锁：mock_arm.py:99 与 docstring:73-74"
+      ]
+    },
+    {
+      "id": "R4",
+      "verdict": "consistent",
+      "evidence": [
+        "硬限：joints >1.5 rad/s 拒（cs_arm/kinematics.py:174-179；JOINT_SPEED_LIMIT_DEFAULT_RAD_S=1.5 cs_sim/safety_envelope.py:78）；cartesian max_speed>cfg.speed_approach(0.15) 拒：kinematics.py:181-185",
+        "软限速：近脸壳层（距 face_center ≤0.15m）0.10 m/s：cs_sim/safety_envelope.py:65-67 与 speed_limit_at:226-231；实现=取全弧最小限速拉长时长（kinematics.py:188-196），非拒绝",
+        "eval 实测 0.0952：chengshao/reports/arm_mock_eval.json:95 \"effective_mps\": 0.0952（断言 linear_bound==0.10 且 eff≤0.10 于 eval_mock.py:453-459）",
+        "cruise_speed_mps 缺省 0.14 注释『< 接近段硬限 0.15，留包络余量』：cs_orchestra/core.py:174"
+      ]
+    },
+    {
+      "id": "R5",
+      "verdict": "consistent",
+      "evidence": [
+        "进送达恰好 2 次：delivery_entry 在进送达运动前（nodes.py:517-521）+ 起算曝光稳定窗（nodes.py:521）；撤回沿 wrist_mouth→scene reason∈{retract_complete,estop_abort,zone_abort,done_retract} 且 ts≥①（core.py:322-332；estop_abort/zone_abort 组装 core.py:775；retract_complete nodes.py:660-661；done_retract nodes.py:259）",
+        "重舀耗尽未进送达 0 次切换：core.py:288 与 nodes.py:501-503（camera_role 保持 scene）",
+        "重复切换到同角色抛 ValueError：core.py:294-297",
+        "exposure_settle_s=0.5 缺省：core.py:179；窗内口部通道返回失效帧（生产 WristMouthChannel 同语义）：runtime.py:69-72、mock.py:172",
+        "eval 断言 ≥0.5s、tick 粒度余量 TICK_EPS_S=0.05：cs_orchestra/eval.py:64（camera_switches_per_delivered_bite=2）、74、150-151"
+      ]
+    },
+    {
+      "id": "R6",
+      "verdict": "consistent",
+      "evidence": [
+        "watchdog_timeout_s 缺省 0.5s：safety.py:78；超时→violation=watchdog+底层 disable：safety.py:248-252",
+        "poll() 巡检不喂心跳：心跳在取态前采样（safety.py:234-236 注释『取态不得把静默计时器清零』）；巡检用底层 snapshot_state 快照（无则只在首次 read）：safety.py:237-241；MockArm.snapshot_state 明确不喂心跳：mock_arm.py:152-161",
+        "急停闩锁中不判看门狗：safety.py:243-247（not self._estop_latched 条件）",
+        "心跳取两侧较新者、皆缺跳过：safety.py:306-313",
+        "eval 实测 0.4s 不跳/累计 0.6s 必跳：cs_arm/eval_mock.py:463-488（quiet_0p4s_no_trip / trips_at_0p6s）"
+      ]
+    },
+    {
+      "id": "R7",
+      "verdict": "consistent",
+      "evidence": [
+        "scoop_retries_max=2 / spoon_empty_rechecks=3 / spoon_recheck_interval_s=0.5 缺省：cs_orchestra/core.py:182-184",
+        "SPOON_CHECK 不过且 scoop_round-1<2 回流 SCOOP（含首次 ≤3 次行程）：nodes.py:498-500；耗尽→outcome=RETRY+直接 RETRACT+camera_role 全程 scene：nodes.py:501-507",
+        "SPOON_EMPTY 复检：按 0.5s 间隔、限 3 次后 outcome=REJECTED：nodes.py:617-639（634-637）",
+        "两条失败路径 outcome 不同（RETRY vs REJECTED）：BiteOutcome 取值见上两处"
+      ]
+    },
+    {
+      "id": "R8",
+      "verdict": "consistent",
+      "evidence": [
+        "回退链三级 mjcf→urdf_mujoco→chain_builtin（最后手段）：cs_sim/model_source.py:3-7,38-40,138-142",
+        "chain_builtin 内置名义链恰 5 关节、无夹爪（shoulder_pan/shoulder_lift/elbow_flex/wrist_flex/wrist_roll）：cs_sim/backends.py:305-323；契约 N_ARM_JOINTS=6（v1.1 修订 7→6）：cs_schema/constants.py:9-12；ArmState 关节数强制 6（pydantic min/max_length）：cs_schema/models.py:79-85",
+        "恢复三选一：_vendor 布局 _vendor/<库>/Simulation/<型号>/*.xml（model_source.py:125-128，gitignore 不入库 docstring:14-15）；工作区外 D:/upstream-refs/robot-vendor 存在才加入（model_source.py:74-78）；CS_VENDOR_ROOT 环境变量最高优先插最前（model_source.py:79-83）",
+        "commit cea83b1 在 git log：『模型发现回退链增工作区外集中参考目录 D:/upstream-refs/robot-vendor + CS_VENDOR_ROOT——修复克隆移出后 36 测试失败（现 297 passed）』；297 passed/1 skipped exit 0 证据：chengshao/reports/gate_g1.json:56（『297 passed, 1 skipped in 137.92s』[exit=0]）"
+      ]
+    },
+    {
+      "id": "R9",
+      "verdict": "mismatch",
+      "expected_vs_actual": "题面/答案称规则表优先级 done > select > pause > next > resume > greet（引 intent.py:34-43）。实现中 _RULES 规则表（intent.py:34-40）只含 done/pause/next/resume/greet 五条、无 select；select 仅在 _RULES 全部未命中后的 else 分支才做菜名匹配（intent.py:68-78）——select 实际是全表最低优先级，并非次高。反例：一句话同时含『暂停』与『芋泥』，代码判 pause（_match 先命中即返回），按题面口径应判 select。",
+      "mismatch_evidence": [
+        "具身助餐机器人/repo/chengshao/cs_voice/intent.py:34-40（_RULES 五条、无 select）",
+        "intent.py:68-78（hit=self._match(norm) 命中即用；else 才 _match_dish → select 为兜底）",
+        "intent.py:5（模块 docstring 同样写错为 done > select > pause > ...——spec 转引了与代码行为相悖的 docstring）"
+      ],
+      "consistent_subclaims": [
+        "置信度常数 0.95/0.90/0.30 与 select 带触发词 0.90、无触发词 0.75：intent.py:29-31,78",
+        "触发词（我想吃/想吃/来点/要吃/换个/换）：intent.py:43",
+        "『我不想吃芋泥了』→ select 为文档化已知局限（否定句不在关键词能力内）：intent.py:10-11",
+        "DEFAULT_DISH_REGISTRY=(芋泥,南瓜粥,椰子冻)：cs_schema/constants.py:26"
+      ]
+    },
+    {
+      "id": "R10",
+      "verdict": "consistent",
+      "evidence": [
+        "三项补救（预二值化/自适应窗口/minMarkerPerimeterRate=0.02）不在实现中：BowlSelector.detect 仅灰度化（cs_food/bowls.py:75-80），检测器全缺省参数 ArucoDetector(dictionary, DetectorParameters())：bowls.py:67-69（引用行号与题面一致），全文件无任何参数覆盖",
+        "测试场景确用 DICT_4X4_50、码贴灰底（_make_bowl_scene 灰底 90、eval.py:70-83；120px 码 eval.py:97）",
+        "assets/spoon_frames/ 仅 .gitkeep（ls 实查：chengshao/assets/spoon_frames/ 目录 0 文件+占位）",
+        "【实跑】本仓 venv cv2 5.0.0 缺省实测：minMarkerPerimeterRate=0.03、adaptiveThreshWinSizeMin/Max/Step=3/23/10",
+        "【实跑】按同构场景（DICT_4X4_50 灰底 90）缺省参数复现 60/90/120/150/180/200 六档全部 1/1 检出——合成域未复现漏检，与题面一致"
+      ]
+    },
+    {
+      "id": "C1",
+      "verdict": "consistent",
+      "evidence": [
+        "screen = floor(d/25.4×64 + 0.5) round-half-up 非 Python round：咖啡豆质检/repo/beaneye/metrology/core.py:92-103；screen_mm(n)=n×25.4/64：core.py:106-108",
+        "sieve_pass：below/n ≤ max_below_frac；min_screen=None 或空盘 → None（不判定）：core.py:229-233",
+        "模板缺省 min_screen=13、max_below_frac=0.0：metrology/config.py:52-53",
+        "sieve_hist 键=目数字符串按 int 升序：core.py:223-228；M9 引擎按 int(key) 解析、非整数字符串抛 StandardsError：standards/engine.py:74-87"
+      ]
+    },
+    {
+      "id": "C2",
+      "verdict": "consistent",
+      "evidence": [
+        "lab8↔CIE 唯一换算在 metrology：lab8_to_cie=(L×100/255,a-128,b-128)、cie_to_lab8 逆（metrology/core.py:84,116-123）；两面合并 w×top+(1-w)×bottom，w=0.7 高侧/0.5 平级/单面全占：core.py:79,135-157；ΔE76 在 CIE 标度对 reference_lab：core.py:247",
+        "构造期拒绝越界（lab8 三通道 ∈[0,255]，W13 修复含 color_lab_mean）：schemas.py:198,221-224,402-409",
+        "reference_lab 按 CIE 解析、reference_lab_scale 默认 cie 可显式 lab8、加载期归一+量程校验 L∈[0,100] a/b∈[-128,127]：metrology/config.py:51,59,102-106,156-167",
+        "三份 YAML 行内注释写『0-255 标度』而数值 [55,-12,22]/[50,-6,19]/[52,-8,20] 为 CIE（负 a/b 不可能出现在 lab8）：configs/standards/cqi_fine_robusta.yaml:64、db46_t642.yaml:61、nyt_604.yaml:59——与 loader CIE 口径矛盾属实"
+      ]
+    },
+    {
+      "id": "C3",
+      "verdict": "consistent",
+      "evidence": [
+        "DEFAULT_GATE_MM=12.0 含等号（dist <= gate 可配对）：pairing/hungarian.py:56,171,194",
+        "哑节点 λ=gate+_DUMMY_EPS(1e-6)：hungarian.py:57,167；inf 占位 BIG=λ×(n+m+1)：hungarian.py:168；哑-哑块整体置 0、注释明说『只在对角置 0 是错的』：hungarian.py:174-176",
+        "第二遍触发：粗配对 ≥_REG_MIN_PAIRS=8 且 hypot(mu) ≥_REG_MIN_SHIFT_MM=1.0；robust_shift_mm 样本<4 返回 None：hungarian.py:58-59,118-127,214-222",
+        "_second_pass_wins：两解同矫正坐标系、先比对数再比总距离（round 9 位）、严格变优才替换（含完全相等不替换）：hungarian.py:130-158,226-227",
+        "pairing_cost=配对判定坐标系距离（无残差=原始欧氏、有残差=矫正后，相差 ≤|mu|）：hungarian.py:41-42"
+      ]
+    },
+    {
+      "id": "C4",
+      "verdict": "consistent",
+      "evidence": [
+        "契约校验器三分支：单面 pairing_cost 必须 =-1（schemas.py:292-293）、双 None 占位必须 =-1（294-295）、双面齐全 <0 即 ValidationError 含 -1（297-301）——题面引 schemas.py:290-300 与实码 291-301 逐行对应",
+        "单面豆 worst_side=所在面：adjudicate.py:187-199 与 hungarian.py:238-243（单面记录 cost=-1.0）；规则#2 仅一面有观测取该面：adjudicate.py:187-199",
+        "pairing_cost 语义=配对判定坐标系距离：hungarian.py:41-42"
+      ]
+    },
+    {
+      "id": "C5",
+      "verdict": "consistent",
+      "evidence": [
+        "peaberry：kind=secondary、counts_as_defect=false、severity_order 下标 5（[normal,broken,faded,brocade,immature,peaberry,...] 第 5 位）：configs/taxonomy.yaml:29 及 severity_order 行",
+        "W13 规则#3 堵洞：存在可计面时只在可计面间裁决、皆非可计才退回全量比较：severity/adjudicate.py:200-210（与 schemas._resolve_worst 同一 defect_is_countable：schemas.py:81-90）",
+        "证据卡立卡口径 final_severity_rank>0（含 peaberry 标注豆、好豆不立卡）：report/builder.py:237",
+        "缺陷统计口径剔除 peaberry：报告缺陷粒数/缺陷率只累加 counts_as_defect=true（builder.py:189-195）；主/次分计走 effective_defect_counts（adjudicate.py:328-336,339-351）",
+        "合计 primary 5（insect/dried/sour/mold/black）+ secondary 可计 6（broken/faded/brocade/immature/shell/elephant）+ normal 1：taxonomy.yaml classes 全表"
+      ]
+    },
+    {
+      "id": "C6",
+      "verdict": "consistent",
+      "evidence": [
+        "2mm 自洽门=布局核对门：检测中心经最终 H 反投影 vs 配置中心最大偏差 >2.0mm 抛 CalibrationError『角码配对异常…核对 tray.yaml』：calibration/core.py:214-222",
+        "无单码兜底：检出缺任一期望 id 直接抛（报错列期望/检出/缺失/盘外误检 id，明文『v1 不做单码姿态兜底』）：core.py:130-153",
+        "两级求解：a) 四码中心 findHomography(src,dst,0)（core.py:160-165）；b) 角点级精化 16 对循环移位匹配+最小二乘（core.py:171-196）；不劣化守卫 rms1<=rms0 否则回退 a)：core.py:207-212",
+        "px_per_mm=盘面中心局部尺度 sqrt(|det J|)、±0.05mm 差分：core.py:120-127,215；两面组装取均值：core.py:268"
+      ]
+    },
+    {
+      "id": "C7",
+      "verdict": "consistent",
+      "evidence": [
+        "码心 (30,30)、码边 60mm（configs/tray.yaml:13,20）；静区伸出盘外约 15mm 由 _MARGIN_MM=20 画布外缘保住、注释明说『用视野外缘而非内缩码心解决』：acquisition/mock_source.py:169-171",
+        "正解 Mock：_MARGIN_MM=20.0、px_per_mm=min(w,h)/(TRAY_MM+2×margin)：mock_source.py:47,97；码心单一真源=tray.yaml：mock_source.py:167-169",
+        "静区宽度：打印板 make_aruco pad_px=max(2,side_px//8)≈1/8（scripts/make_aruco.py:66）；Mock pad=max(4,side_px//4)=1/4（mock_source.py:175）",
+        "正射网格 2048²/300mm≈0.1465 mm/px：tray.yaml:8-9 与 warp_to_tray（calibration/core.py:293-298）",
+        "分割侧对称坑：mask_markers=True、marker_margin_mm=2.0 先抑制码区再做全局阈值：segment/config.py:65-66、segment/classic.py:106,180",
+        "W13 前内缩事故（Mock 内缩 45mm vs 配置 30mm、跨距 210 配 240、+14%）为 REGENERATE 坑2 记录的历史事故；现行代码已按正解实现（码心取 tray.yaml 真源+外缘 margin），代码内留有同因实测坑注记（mock_source.py:170-171 静区被裁则检测失败）"
+      ]
+    },
+    {
+      "id": "C8",
+      "verdict": "consistent",
+      "evidence": [
+        "verified:false 阻断 passed：warnings 非空即使 chosen 非空也 passed=False，grade 仍记实际达到级别、追加 pass_blocked_unverified:warnings=N：standards/engine.py:192-197",
+        "warnings 恰 4 条稳定键路径：verified:false @ grades[i](name=…) / @ metrology.sieve_targets(min_screen) / @ metrology.reference_lab / @ weight：standards/loader.py:511-521",
+        "per_side 可加载（loader VALID_COUNT_RULES 含 per_side：loader.py:59,341-346）但 evaluate 抛 StandardsError（与 BatchResult.defect_counts 不变式冲突）：engine.py:110-115",
+        "单调放宽：primary_max/secondary_full_max 非递减、sieve_min 非递增且 null 只能在尾部（上一级 null 后不得再设数值）：loader.py:435-446",
+        "全部未达 → grade=fail_grade（缺省『未达级』loader.py:449；cqi_fine_robusta.yaml:58 设『未达 Fine』）+ no_grade_matched：engine.py:185-190",
+        "三套 YAML verified:false 计数 5/7/7（grep -c 实查）即题面『各 4-7 条非空』；进 M10 页脚『标准阈值核对中』角标：report/builder.py:15-18,91-93"
+      ]
+    },
+    {
+      "id": "C9",
+      "verdict": "consistent",
+      "evidence": [
+        "sha256=sha256(canonical_json(BatchResult))：to_json 解析后键排序+紧凑分隔符+ensure_ascii=False 重新序列化取 UTF-8 字节（report/qr.py:42-50）",
+        "QR 负载 {verify_base_url}/r/{report_id}|{sha256}、默认 https://verify.beaneye.example：qr.py:37,53-68",
+        "渲染 segno 纠错级 M、scale=6、border=2、PNG→data URI：qr.py:84-97",
+        "护照前定型：BatchResult（含 timings_s 覆盖到 agent）在护照生成前 model_copy 定型，护照耗时单列 PipelineOutcome.passport_runtime_s 不写回 timings_s：app/pipeline.py:14-15,225-247,272",
+        "管线九阶段 STAGE_ORDER=ingest→calibration→segment→classify→pairing→metrology→grading→agent→passport：app/pipeline.py:63-74"
+      ]
+    },
+    {
+      "id": "C10",
+      "verdict": "mismatch",
+      "expected_vs_actual": "题面口径（转引 manifest.md 实测注记『2026-09-29 实测基线 434=431 绿+3 已知失败、状态冻结·已知回归、根因 943d8cc、修复归属 M6 属主 spec 不代改』）在资产包落成时点（commit f247edd，2026-09-29 15:51）属实；但 40 分钟后 commit 74f020e（2026-09-29 16:31）已回退 943d8cc 的 RNG 迁移（恢复标准库 random 序列、生产代码零改动），现行 tests/test_pairing.py 又用回 stdlib random。【实跑】三例密排统计用例全部通过（pitch8mm 实测 precision=0.9316≥0.90）；【实跑】全量 pytest tests/ → 508 passed in 250.66s exit 0。即当前仓库状态是『全绿、508 用例』，题面作为『现状』口径的『非全绿/3 例确定性失败/434 用例/gate_d2 ②③ FAIL』已不成立——manifest.md:60,83-97 的冻结注记从未随 74f020e 回炉更新，题面如实转引了已失效的快照。",
+      "mismatch_evidence": [
+        "咖啡豆质检/repo/tests/test_pairing.py:23（import random——stdlib 已由回退恢复；三例用例在 574/593/615 行仍存在但现通过）",
+        "git log：74f020e『fix(test): 回退 943d8cc 的 test_pairing RNG 迁移(stdlib random.Random→numpy default_rng)……恢复与原校准阈值配套的 stdlib 序列生成(测试文件唯一改动=还原该 24 行 hunk, 生产代码零改动)……提交时点 tests/test_pairing.py 27 绿』（2026-09-29 16:31）；manifest 提交 f247edd 为同日 15:51",
+        "943d8cc（2026-09-28 23:12）diff 实查：_sample_tray_positions 等 3 处 random.Random(seed)→np.random.default_rng(seed)——机制描述（种子值未变随机流变）与历史事实相符",
+        "【实跑】python -m pytest tests/test_pairing.py::test_statistical_dense_324_beans_pitch8mm 等 3 例 → 3 passed；[M6-DENSE] pitch8mm precision=0.9316/recall=0.9565",
+        "【实跑】python -m pytest tests/ -q → 508 passed in 250.66s（exit 0）——当前全绿，非 434=431+3",
+        "docs/assets/manifest.md:60,83-97 仍记载『FAIL(2/5) ②③ 因 3 failed, 431 passed』『943d8cc 把随机源切到 numpy default_rng』且未提 74f020e 回退——spec 快照已过时（题面『本 spec/资产包只记录不代改』这一点本身与事实相符：spec 确未改，但仓库已被第三方提交修复）"
+      ],
+      "consistent_subclaims": [
+        "根因机制与历史：943d8cc 切随机源、种子未变流变、当时 P=0.8818<0.90、密排构型属配对算法 docstring 已知极限（hungarian.py:35-39、tests/test_pairing.py:574-591 通过线 P≥0.90/R≥0.85）——均与 git/源码相符",
+        "gate_d2 门项 ②③ 与『FAIL(2/5)』为冻结时点事实（manifest.md:60）；修复归属与 spec 不代改的约定属实，只是最终实际修复形态=回退 RNG 迁移（74f020e），非题面预设的『改算法或按新流重钉』"
+      ]
+    }
+  ],
+  "runs": [
+    "具身助餐机器人/repo：.venv/Scripts/python.exe -c（cv2 5.0.0 DetectorParameters 缺省值）→ minMarkerPerimeterRate=0.03, adaptiveThreshWinSize 3/23/10",
+    "具身助餐机器人/repo：.venv/Scripts/python.exe 六档灰底合成复现（DICT_4X4_50，60/90/120/150/180/200）→ 6 档全部 detected 1",
+    "咖啡豆质检/repo：python -m pytest tests/test_pairing.py::test_statistical_dense_* 3 例 → 3 passed（pitch8mm P=0.9316）",
+    "咖啡豆质检/repo：python -m pytest tests/ -q → 508 passed in 250.66s, exit 0",
+    "两仓 git log/git show 实查（cea83b1、943d8cc、74f020e、f247edd、2517095 等提交与 diff）"
+  ]
+}

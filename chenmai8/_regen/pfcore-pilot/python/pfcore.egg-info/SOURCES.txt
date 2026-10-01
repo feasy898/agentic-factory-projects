@@ -1,0 +1,11 @@
+pyproject.toml
+pfcore/__init__.py
+pfcore/__main__.py
+pfcore/invariants.py
+pfcore/spec_model.py
+pfcore/validation.py
+pfcore.egg-info/PKG-INFO
+pfcore.egg-info/SOURCES.txt
+pfcore.egg-info/dependency_links.txt
+pfcore.egg-info/requires.txt
+pfcore.egg-info/top_level.txt

@@ -1,0 +1,99 @@
+{
+  "rulesVersion": "1.0.0",
+  "defaults": {
+    "externalUrlPolicy": "forbid",
+    "allowedUrlSchemes": [
+      "data:",
+      "blob:"
+    ],
+    "muteBeforeFirstInteraction": true,
+    "allowRelativeRuntimeScripts": true,
+    "updated": "2026-09-28"
+  },
+  "channels": {
+    "applovin": {
+      "package": {
+        "format": "single-html",
+        "entry": "index.html"
+      },
+      "maxBytes": 5242880,
+      "maxFiles": 1,
+      "exit": {
+        "protocol": "mraid",
+        "call": "mraid.open(url)",
+        "waitReadyBeforeRender": true
+      },
+      "runtime": {
+        "muteBeforeFirstInteraction": true,
+        "injectRelativeScripts": [
+          "mraid.js"
+        ],
+        "forbidMraid": false
+      },
+      "allowedUrlWhitelist": []
+    },
+    "meta": {
+      "package": {
+        "format": "single-html",
+        "entry": "index.html"
+      },
+      "maxBytes": 3145728,
+      "maxFiles": 1,
+      "exit": {
+        "protocol": "fb-playable",
+        "call": "FbPlayableAd.onComplete()",
+        "waitReadyBeforeRender": false
+      },
+      "runtime": {
+        "muteBeforeFirstInteraction": true,
+        "injectRelativeScripts": [],
+        "forbidMraid": true
+      },
+      "allowedUrlWhitelist": []
+    },
+    "mintegral": {
+      "package": {
+        "format": "zip",
+        "entry": "Template.html",
+        "structure": [
+          "build.js",
+          "Template.html"
+        ]
+      },
+      "maxBytes": 5242880,
+      "maxFiles": 100,
+      "exit": {
+        "protocol": "mraid",
+        "call": "mraid.open(url)",
+        "waitReadyBeforeRender": true
+      },
+      "runtime": {
+        "muteBeforeFirstInteraction": true,
+        "injectRelativeScripts": [
+          "mraid.js"
+        ],
+        "forbidMraid": false
+      },
+      "allowedUrlWhitelist": []
+    },
+    "preview": {
+      "package": {
+        "format": "single-html",
+        "entry": "index.html"
+      },
+      "maxBytes": 5242880,
+      "maxFiles": 1,
+      "exit": {
+        "protocol": "window-open",
+        "call": "window.open(url)",
+        "waitReadyBeforeRender": false
+      },
+      "runtime": {
+        "muteBeforeFirstInteraction": true,
+        "injectRelativeScripts": [],
+        "forbidMraid": false
+      },
+      "allowedUrlWhitelist": []
+    }
+  }
+}

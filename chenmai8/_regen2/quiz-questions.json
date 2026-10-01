@@ -1,0 +1,203 @@
+{
+  "meta": {
+    "title": "C2 盲评考官盘问题 —— 可玩的小游戏广告 docs/assets 全部 spec",
+    "date": "2026-09-29",
+    "method": "考官只读 docs/assets/ 下全部 spec 文档（CONTRACTS.md、REGENERATE.md、manifest.md、_gap-closure-wave3.md、specs/ 下 10 份 md），未读任何实现源码（packages/、python/、channel-rules/、specs-eval/ 一概未打开）。全部答案仅凭 spec 文本给出，逐题附出处小节。答案中凡 spec 内部有张力或考官只能按正则语义推断处，均已如实标注。",
+    "counts": { "total": 24, "bridge": 4, "llmgw": 4, "packager": 4, "qacore": 4, "spec": 4, "rules-card": 4 },
+    "dimensions_covered": ["魔法数字的值与单位", "时序约束", "默认值", "边界行为"]
+  },
+  "questions": [
+    {
+      "id": "B1",
+      "module": "bridge",
+      "dimension": "时序约束",
+      "question": "initBridge() 返回前同步完成的动作序列（固定顺序）是什么？pf:ready 在什么时刻派发、派发时相位是什么？在 await PF.ready 之前调用 PF.start() 是否有效？",
+      "answer": "同步段顺序固定：resolveChannel → new MutePolicy → new AudioManager → 组装 bridge 对象（ready = whenChannelReady().then(() => dispatchPFEvent(\"pf:ready\"))，此刻仅登记未执行）→ window.PF = bridge（挂载）→ installFirstInteraction（document 捕获阶段，监听 pointerdown/touchstart/mousedown/keydown）→ installPlatformAudioProbe（仅 mraid 形渠道）→ return bridge。推论：不存在『桥已可取但交互监听未装』的窗口——initBridge() 返回后的任何交互必然被观测。pf:ready 派发时机 = 异步（渠道就绪 promise resolve 后才派发），可能先于或后于首次交互；派发不改变相位（派发时相位仍是 loading，由模板经 setState/start 推进）。在 ready resolve 前调用 start()/end() 仍有效（相位机立即迁移并派发事件），规范顺序仍是 await PF.ready → setState(\"tutorial\") → start() → end()。重复 initBridge() 在任何时刻返回同一实例、不重复安装监听。",
+      "source": "specs/engine-bridge.md §2.7（时序约束）、§2.1"
+    },
+    {
+      "id": "B2",
+      "module": "bridge",
+      "dimension": "默认值+告警边界",
+      "question": "渠道就绪等待的默认超时是多少（值与单位）？超时后到底会不会 console.warn？console.warn 在整个桥模块里恰有几处、触发条件与精确文案分别是什么？",
+      "answer": "默认 readyTimeoutMs = 8000（毫秒）；mraid 形渠道 getState()==='loading' 时等 mraid ready 事件，超时放行、绝不卡死游戏加载。超时是否告警存在 spec 内部张力：§2.5 与 channel-adapters §1 写『超时放行（告警）』，但 §2.8 冻结条款明确『就绪超时（readyTimeoutMs）→ 静默 resolve——源码头注释与 README 写放行（告警），实测代码无 warn，以代码为准；如需对齐注释属契约变更流程』——故权威答案为：超时静默放行、不告警。console.warn 全模块恰两处、前缀固定 '[PF] '：① mraid 形渠道（applovin/unity/mintegral）无 window.mraid 或无 getState 函数 → '[PF] channel=<id>: 未检测到 mraid 全局，按就绪处理（预览模式）'；② 非 mraid 形渠道（meta/google/tiktok）对应全局缺失 → '[PF] channel=<id>: 未检测到渠道运行时全局对象，按就绪处理（预览模式）'。除这两处外一切失败路径静默兜底、不抛错不告警（mraid.getState() 抛异常按就绪；removeEventListener 抛异常忽略）。",
+      "source": "specs/engine-bridge.md §2.5、§2.8（告警文案规范）；specs/channel-adapters.md §1（张力另一侧）"
+    },
+    {
+      "id": "B3",
+      "module": "bridge",
+      "dimension": "边界行为",
+      "question": "preview 渠道下连续调用 PF.open(url) 三次：pf:cta 派发几次？window.open 真实调用几次？换成 meta 渠道：pf:cta 派发几次、FbPlayableAd.onComplete() 真实调用几次、这次调用传 URL 吗？",
+      "answer": "pf:cta {url} 每次 PF.open(url) 都派发、与外呼单次锁无关——两种渠道均派发 3 次。渠道退出外呼仅第一次真正调用（exitCalled 单次锁，普适所有渠道）：preview 第一次 window.open(url) 后后续不再外呼；meta 第一次 FbPlayableAd.onComplete() 后不再调用。传 URL 与否按退出路由表：mraid 形（applovin/unity/mintegral）mraid.open(url) 传 URL、preview 兜底 window.open(url) 传 URL；meta onComplete()/google ExitApi.exit()/tiktok openAppStore() 均不传 URL。目标接口缺失时一律回退 window.open(url)，不抛错。",
+      "source": "specs/engine-bridge.md §2.1（open 行）、§2.2（pf:cta 行）、§2.5（退出路由表）；specs/channel-adapters.md §2"
+    },
+    {
+      "id": "B4",
+      "module": "bridge",
+      "dimension": "边界行为",
+      "question": "locale 解析的五级优先序是什么？空串如何处理？场景：options.locale 未传、window.PF_LOCALE=\"\"、URL 无 ?locale= 参数、options.defaultLocale 也 undefined——最终 locale 是什么？defaultLocale 与兜底 \"en\" 是合并的一级还是独立两级？",
+      "answer": "五级：options.locale → window.PF_LOCALE（打包器/模板注入）→ URL ?locale= → options.defaultLocale → \"en\"。语义为逐级取『非空字符串』，任何一级拿到非空串即停；undefined 或 \"\" 一律跳过该级；window.PF_LOCALE 非 string 也跳过；URL 级在无 location 环境（如 jsdom 异常）时整体 try/catch 跳过，参数缺省或空串跳过。题设场景四级全跳过 → 兜底 \"en\"。defaultLocale 与 \"en\" 是独立的两级——defaultLocale 为 undefined 只跳过它自己那级，它不会与 \"en\" 合并兜底。",
+      "source": "specs/engine-bridge.md §2.4（locale 五级优先级，冻结）"
+    },
+    {
+      "id": "L1",
+      "module": "llmgw",
+      "dimension": "魔法数字+单位",
+      "question": "PF_LLM_TIMEOUT / PF_LLM_MAX_RETRIES / PF_LLM_BACKOFF 三个环境变量的默认值与单位？退避公式、封顶值、attempt 序号基？默认配置下单模型连续 _Transient 失败的睡眠等待序列是什么？",
+      "answer": "PF_LLM_TIMEOUT 默认 30（秒，单次 HTTP 超时）；PF_LLM_MAX_RETRIES 默认 2（次，单模型最大重试次数，耗尽后降级下一模型）；PF_LLM_BACKOFF 默认 0.8（秒，指数退避基数）。退避公式 = min(backoff * 2**attempt, 8.0) 秒，封顶 8.0s。attempt 为 0 基（0..max_retries，0 = 首次尝试）；第 attempt 次 _Transient 失败后若 attempt == max_retries 则不再 sleep、直接降级。默认序列：attempt0 失败后睡 0.8s → attempt1 失败后睡 1.6s → attempt2（==max_retries）不再睡。_SkipModel(404) 首次即记录 attempt=0 并降级（不 sleep）；_Fatal 记录后立即抛出（不 sleep）。",
+      "source": "specs/llmgw.md §2（环境变量契约表）、§4（attempts 序号基与退避指数的精确关系）"
+    },
+    {
+      "id": "L2",
+      "module": "llmgw",
+      "dimension": "边界行为",
+      "question": "HTTP 404、408、429、401、以及『200 但响应体缺 choices』各归入哪类错误（_Transient/_SkipModel/_Fatal）？各自的行为是什么？全链失败时抛什么、attempts 里有什么？",
+      "answer": "404 → _SkipModel：不重试，直接降级下一模型（不 sleep）。408/429/5xx 及网络异常/超时 → _Transient：同模型指数退避重试至多 max_retries 次，耗尽后降级下一模型。401（及其余 4xx，如 400 参数/密钥问题）→ _Fatal：立即抛 LLMError，不再重试或降级。『200 但响应体非 JSON 或缺 choices』→ _Transient（视为服务端异常，可重试）。全链失败抛 LLMError(\"全部模型均失败：主 → 备...\")，属性 {status, model, attempts[]}；attempts 每项 {model, attempt, status, error}；summary() 输出人读清单。",
+      "source": "specs/llmgw.md §4（重试/降级矩阵，冻结）、§5"
+    },
+    {
+      "id": "L3",
+      "module": "llmgw",
+      "dimension": "边界/安全",
+      "question": "PF_LLM_ALLOW_LOCAL=1 时，能请求 http://169.254.169.254/、http://198.51.100.22/、http://127.0.0.1:8000/ 吗？该 SSRF 防线在哪些函数、什么时机执行？另外 PF_LLM_BASE_URL 只写主机名时会怎样？",
+      "answer": "169.254.x（链路本地/云元数据）与 198.51.100.22（私网）属于『非回环的非公网地址』——任何情况下都在发请求前 ConfigError 拒绝，无放行开关，ALLOW_LOCAL=1 也不能放行。127.0.0.1（回环）默认同样拒绝，置 1 后放行、且放行范围仅限回环（供离线 mock 自测）。校验在 chat() 与请求汇入点 _post() 双处、在发出任何网络字节前执行，DNS 解析后逐 IP 断言。PF_LLM_BASE_URL 需含版本前缀，仅主机名时自动补 /v1（endpoint_for：去尾 / → path 为空补 /v1 → 追加 /chat/completions）；scheme 必须 http(s)，否则 ConfigError。",
+      "source": "specs/llmgw.md §2（env 契约表 + SSRF 防线段）"
+    },
+    {
+      "id": "L4",
+      "module": "llmgw",
+      "dimension": "错误类型边界",
+      "question": "四个场景各抛什么错误或返回什么：① messages=[]；② 未设 PF_LLM_MODEL；③ PF_LLM_BACKOFF=\"abc\"；④ 助手返回合法 JSON 数组后调用 json_of(resp)。附：json_of 的剥围栏步骤序列？",
+      "answer": "① ValueError（参数校验，非 LLMError；messages 非空序列要求，元素缺 role/content 亦 ValueError 且带下标）；② ConfigError（chat() 时抛，模块级 chat 亦同；缺 PF_LLM_BASE_URL 同）；③ 构造 Gateway 时抛原生 ValueError——float()/int() 未捕获直传，如实记录：它不是 ConfigError/LLMError；④ 不抛错——json_of 解析成功即原样返回、不校验返回类型（合法 JSON 数组/字符串/数字会得到非 dict，dict 期望由调用方自行校验）；解析失败才抛 LLMError（含原文前 200 字）。剥围栏：strip 后以 ``` 开头 → strip(\"`\") → lstrip → 若前 4 字符小写为 \"json\" 则去掉 → json.loads。",
+      "source": "specs/llmgw.md §5（错误类型速查）、§3（json_of 容错）"
+    },
+    {
+      "id": "P1",
+      "module": "packager",
+      "dimension": "魔法数字",
+      "question": "规则库四个渠道（applovin/meta/mintegral/preview）的 maxBytes 与 maxFiles 分别是多少？有效大小上限如何合成？spec 的 channels.overrides.<channel>.maxBytes 能放宽上限吗？",
+      "answer": "applovin：maxBytes=5,242,880（5MB）、maxFiles=1；meta：3,145,728（3MB 内部从严）、1；mintegral：5,242,880、100；preview：5,242,880、1。有效大小上限 = min(渠道 maxBytes, spec.channels.overrides.<channel>.maxBytes)——override 只许收紧不许放宽。golden 夹具即验证此 min 逻辑：overrides.applovin.maxBytes=5242880（与规则相等）、overrides.meta.maxBytes=3145728。",
+      "source": "specs/packager.md §3.1.1（规则库当前内容全量表）、§3.1 尾注、§3.5（golden 夹具）"
+    },
+    {
+      "id": "P2",
+      "module": "packager",
+      "dimension": "边界/退出码",
+      "question": "四种情况的退出码：① --channel google（规则库无此渠道）；② 产物 3,200,000 字节打 meta 渠道；③ 子命令拼写错误（未知子命令）；④ --channel applvin（渠道名拼写错误）。成功时 stdout 末行输出什么？",
+      "answer": "① 1——未知或未冻结渠道属构建失败：channelRule 抛错被 main 的 catch 统一接住，stderr 输出 '[packager] 失败: <原因>' 并列出现有渠道；② 1——超上限是构建失败而非告警（宁失败不出超规包）；③ 2——仅 CLI 用法层（未知子命令、多余位置参数、参数解析错误）才是 exit 2；④ 1——渠道拼写错误不是 exit 2。成功 = 0，stdout 末行输出 JSON {ok:true, artifact, totalBytes, maxBytes}。",
+      "source": "specs/packager.md §2（CLI 契约·退出码统一裁定）"
+    },
+    {
+      "id": "P3",
+      "module": "packager",
+      "dimension": "边界+结构",
+      "question": "maxFiles 检查对 single-html 渠道生效吗？按什么计数？mintegral 的规则库 structure 数组内容与顺序是什么、zip 条目顺序由什么决定？zip 内条目数还受什么额外约束？",
+      "answer": "不生效——maxFiles 仅 zip 通道强制，且按 zip 内条目数计数（entries.length > maxFiles → 失败）；single-html 渠道的『恰 1 个包文件』由门禁/使用方对产物目录断言。mintegral：maxFiles=100；规则库 structure = [\"build.js\", \"Template.html\"]（§3.1.1 全量表）；§3.2 写明 zip 条目 = 规则 structure 顺序；实现另要求 zip 恰为 [bundle, entry] 两项、否则抛错。歧义如实标注：§5 自验收断言文字写『结构恰 [Template.html, build.js]』，与 §3.1.1 数组顺序字面相反——本考官仅凭 spec 文本无法裁定 zip 内真实条目顺序，盲实现者只能以冻结测试的实际断言为准（此为 spec 内部张力点，恰是回炉候选）。",
+      "source": "specs/packager.md §3.3（maxFiles 语义）、§3.1.1、§3.2、§5"
+    },
+    {
+      "id": "P4",
+      "module": "packager",
+      "dimension": "边界/正则语义",
+      "question": "meta 渠道（forbidMraid=true）产物中出现 'window.mraid'、'MRAID_TEST'、'Mraid' 三种写法，各命中禁用检测吗？检测正则与大小写/词边界语义？带 scheme 的 http 外链扫描正则是什么？spec.specVersion 从 spec 的哪个位置读取？",
+      "answer": "检测正则 = \\bmraid\\b[^;]{0,40}，带 gi 标志 → 大小写不敏感（MRAID/Mraid/mraid 都命中）；\\b 词边界以 [A-Za-z0-9_] 为词字符。判定：window.mraid 命中；Mraid 命中；MRAID_TEST 不命中（下划线接续的标识符无词边界）。该检测仅对 forbidMraid=true 的 meta 渠道执行，命中即构建失败（启发式）。外链扫描正则 = \\bhttps?://[^\\s\"'<>\\\\)\\]}]+（大小写不敏感），白名单 = spec flow.endScreen.landingUrl（前缀匹配）+ 规则 allowedUrlWhitelist，HTML 与 bundle 文本分别扫描，命中即构建失败。specVersion 读顶格 spec.specVersion（loadSpecFields），不在 meta 内——它连同 meta.projectId（打包器侧正则 /^[A-Za-z0-9][A-Za-z0-9._-]*$/）是打包器仅取的两个 spec 结构字段。",
+      "source": "specs/packager.md §3.3（MRAID 禁用行、外链扫描行）、§3.2（specVersion 位置）"
+    },
+    {
+      "id": "Q1",
+      "module": "qacore",
+      "dimension": "魔法数字表",
+      "question": "列出 qacore 的：竖屏/横屏视口、设备仿真参数、导航超时、首帧缓冲、空白判定（尺寸/颜色通道/阈值）、试玩轮询间隔、拖拽手势（位移与步数）、自动试玩默认预算（CLI 默认与来源）。",
+      "answer": "竖屏 390×844（VIEWPORT_PORTRAIT）、横屏 844×390（VIEWPORT_LANDSCAPE）；设备仿真 is_mobile=True + device_scale_factor=2；导航超时 15000 ms（GOTO_TIMEOUT_MS，wait_until=\"load\" 上限）；首帧缓冲 400 ms（SETTLE_MS，load 后留给首帧渲染）；空白判定 = 64×64 灰度（Pillow convert(\"L\").resize((64,64))）方差 < 30.0 判空白（VARIANCE_THRESHOLD）；试玩轮询间隔 180 ms（autoplay.py 主循环）；拖拽手势位移 44 px、分 4 步 mouse.move（DRAG_DISTANCE=44.0）；自动试玩预算 45 s（CLI 默认 --autoplay-timeout 45.0，取自 spec qc.autoplayTimeoutSec；与 durationBudgetSec.max<=30 的不一致登记于 CONTRACTS §痛点 7）。",
+      "source": "specs/qacore.md §3（魔法数字表，冻结）、§2（命令契约）"
+    },
+    {
+      "id": "Q2",
+      "module": "qacore",
+      "dimension": "边界/退出码",
+      "question": "① 给 qacore 传 .zip 产物、② 传不存在的路径，退出码各是多少？③ 报告里的 skip 项算通过吗、exit 0 的精确条件是什么？④ qacore 的质检输入物是什么形态？",
+      "answer": "① exit 2——非 .html 后缀直接 exit 2（已知缺口：zip 渠道产物暂无法质检）；② exit 2——产物不存在。③ 不算——skip 是显式声明『未测』，报告保留 skip 字样、严禁标成 pass；退出码语义：0 = 无 fail（skip 不算 fail），1 = 有 fail。④ qacore 只对单个 HTML 产物本地伺服 → 无头浏览器（手机仿真）两趟（竖屏/横屏）； CHK07 需要的三条件是 pf:end 已触发且 ≤45s、终态=end、结束页可见三者齐备。",
+      "source": "specs/qacore.md §1（职责边界）、§2（命令契约）、§6（CHK07 行、状态机取值）"
+    },
+    {
+      "id": "Q3",
+      "module": "qacore",
+      "dimension": "时序/范围",
+      "question": "autoplay 驱动哪一趟视口？横屏趟的 autoplay 参数是什么、做什么用？load_ms 取哪趟？为什么 __PF_QC__.texts() 必须在驱动试玩前先采一次？",
+      "answer": "autoplay 只驱动竖屏趟（明说，冻结）；全部试玩取证（pf:end、手势、CHK10 文案/素材采集）都发生在竖屏趟。横屏趟以 autoplay=off 运行（cli.py _run_pass 第三参传 False），只做 CHK05 方差与第二趟网络/控制台记录。加载计时只取竖屏趟 load 耗时（与 spec qc.maxLoadSec 对齐）。texts() 必须驱动前先采一次，因为教程浮层数秒即消失、必须早采；驱动到结束页后再采一次，并集为 page_texts（画布文字不进 DOM、innerText 取不到，文案取证必须走模板上报钩子）。textStates() 可见性自证同样随相位（含教程期）+ 驱动前 + 结束页各采一轮，everVisible 只置真不清零。",
+      "source": "specs/qacore.md §5（自动试玩驱动）、§3（加载计时行）"
+    },
+    {
+      "id": "Q4",
+      "module": "qacore",
+      "dimension": "判定边界",
+      "question": "四种情况各判什么状态：① CHK01 规则库无该渠道；② CHK04 页面无 window.PF 且渠道要求静音；③ CHK10 模板不提供 __PF_QC__.textStates()；④ --require-text 与 --require-sprite 都没传。附：muteBeforeFirstInteraction 的取值次序？规则库不可读时取什么？",
+      "answer": "① skip——facts.channel_max_bytes=null → CHK01 skip（不假定）；② fail——渠道要求静音时无 window.PF 或探针未装 → fail（无法证明静音合规即违规，不再 skip；只有『渠道未强制静音且无桥』才 skip）；③ CHK10 对 required_texts 从严 fail（可见性无证据）；④ skip——两者都未提供 = 无判定对象不算通过。muteBeforeFirstInteraction 取值次序：渠道 runtime > defaults > true——规则库不可读时也从严取 true（defaults 缺省即 true）。另：runtime_stubs 机制 = injectRelativeScripts 声明的相对脚本（如 mraid.js）且产物目录内无同名文件时，以空 JS 桩 200 应答、记 facts.runtime_stubs；产物自带同名文件照常透传。",
+      "source": "specs/qacore.md §6（检查项判定表）、§6.1（规则库判定输入的具体数值）"
+    },
+    {
+      "id": "S1",
+      "module": "spec",
+      "dimension": "魔法数字/确定性",
+      "question": "校验器 LCG 的公式（乘子/加子/模）与取值方式？首个随机数怎么算（先推进还是先输出）？bad02 seed=424242 的首两抽 %3 是多少？variants[].seed 参与校验器生成器吗？三个自由度分别是什么？",
+      "answer": "32 位 LCG：state = (1664525 * state + 1013904223) mod 2^32，取值 next() % n；JS 侧用 Math.imul + >>>0 复刻同余结果。先推进后取值：首抽 = (1664525*seed + 1013904223) mod 2^32（状态先更新再输出）。bad02 seed=424242 首两抽 %3 = [2, 0]（L0 rescuee=2、hazard=0，orderSolution[0]=[0,1,2] 首拔即机关针 → I1 命中）。三自由度（冻结）：① 先推进后取值；② 单流跨关卡——pullpin_level_roles(seed, levels, pins) 用一个从 meta.seed 新建的 LCG 连抽全部关卡，rescuee 与 hazard 抽取共享同一流、无逐关重播种；③ 各生成器独立建流——match3_board / sort_scramble / pullpin_level_roles 各自从 meta.seed 新建 LCG。variants[].seed 不参与校验器生成器（无消费方，CONTRACTS §痛点 3）。",
+      "source": "specs/spec-contract.md §2.3（确定性随机源·三个自由度，冻结）"
+    },
+    {
+      "id": "S2",
+      "module": "spec",
+      "dimension": "默认值与双层域",
+      "question": "qc.maxLoadSec 与 qc.autoplayTimeoutSec 的 schema 域与默认值？durationBudgetSec.max 的上限、双层校验关系，以及 bad03（max=35）实际先命中哪一层？meta.projectId 的 schema 正则与打包器正则是否相同？",
+      "answer": "qc.maxLoadSec：0.5–10、默认 2.0；qc.autoplayTimeoutSec：5–120、默认 45（两字段可选带默认）。durationBudgetSec.max ≤ 30——schema 限 maximum=30 且 I4 又判 max ≤ 30，双层同守一个域且同路径 $.game.durationBudgetSec.max；按校验次序 schema 先行，bad03 实际先命中 schema-maximum（实测输出：'$.game.durationBudgetSec.max: 35 is greater than the maximum of 30 [schema-maximum]'），I4-duration-max 是第二层兜底（schema 层被绕过/放宽时仍拦截）；报 schema-maximum 或 I4-duration-max 都满足门禁。projectId 正则两侧不同：schema = ^[a-z0-9][a-z0-9-]{0,63}$（仅小写/数字/连字符），打包器 loadSpecFields = /^[A-Za-z0-9][A-Za-z0-9._-]*$/（大小写/点/下划线）——spec 如实记录的两个面，spec 作者取交集（小写连字符）最安全。",
+      "source": "specs/spec-contract.md §2.1、§3（bad03 双层都收登记）；specs/packager.md §3.2、§4；CONTRACTS.md C1"
+    },
+    {
+      "id": "S3",
+      "module": "spec",
+      "dimension": "时序/校验次序",
+      "question": "校验的三个阶段次序？某阶段失败后还会继续并合并报告吗？缺顶层 required 字段（如 flow）时错误 path 长什么样？pydantic 阶段的稳定错误码？文件不存在与 JSON 非法的错误码？glob 无匹配怎么处理？",
+      "answer": "次序冻结：schema 结构 → 不变式 → pydantic 类型化解析（code=\"model\"，表示层）；任一阶段失败即止，不合并报告。缺字段路径补名约定（两侧一致）：schema required 错误把缺失字段名补进路径——缺顶层 flow 报 $.flow 而非停在 $。错误形状 {path, message, code}，path 为 json-path 风格。文件不存在 → io-not-found；JSON 非法 → io-parse（归一为带路径 issue，CLI 计入失败 exit 1）；glob 无匹配 → 该模式计一条失败（INVALID <pattern>: 模式无匹配文件：<pattern> [io-not-found]），防静默通过。",
+      "source": "specs/spec-contract.md §2.4（错误契约，冻结）、§3（行为规格）"
+    },
+    {
+      "id": "S4",
+      "module": "spec",
+      "dimension": "边界行为",
+      "question": "I1 pullpin：hazard 重抽至多几次？全撞时的回退公式？orderSolution 的模拟判定规则？I2 sort：sort_scramble 恰走几步、重放终局的判定形态、次级域检查清单？merge 模板现状有几条不变式、其默认值可信度如何？",
+      "answer": "I1：hazard 重抽至多 16 次（PULLPIN_REROLL_MAX）非 rescuee 的值；全撞则 (rescuee+1) % pins；orderSolution 逐关模拟：先拔到 hazard → 败，拔到 rescuee → 成，未拔到 → 败（每关恰 1 救援针 + 1 机关针，其余中性；rescuee = below(pins)）。I2：sort_scramble 恰走 rods*layersPerRod 步，候选步仅限『逆步合法』（搬回后目标柱顶同色或空、且不超容量），mv = cands[below(len(cands))]；validator 逐步重放——每步须 ∈ sort_legal_moves 且逆步合法，重放完毕后终盘必须逐柱相等 sort_solved_board（前 min(colors,rods) 柱各一色满柱 + 空柱），不等 → I2-sort-reversible；次级域检查 colors ≥ 2、colors < rods、rods ≥ 3、layersPerRod ≥ 2、solution 非空——任一不满足即短路返回对应 I2 码。merge：无规则卡、仅三条轻量结构 stub——I-merge-sprites（spawnColors ≤ len(spriteKeys)）、I-merge-spawn（spawnColors ≥ 2）、I-merge-goal（goalScore ≥ 1）；其 params 默认值（spriteKeys=[] / spawnColors=4 / goalScore=300）与 pullpin/sort 的字段清单为盲重建值、无 eval 覆盖。",
+      "source": "specs/spec-contract.md §2.2（五条不变式 + merge stub 声明）"
+    },
+    {
+      "id": "R1",
+      "module": "rules-card",
+      "dimension": "魔法数字/盐值",
+      "question": "三消三条随机流（主流/补位流/死局重排流）的派生式与盐值常量？deriveRng 公式？第 k 次玩家交换的 k 的统一表达式是什么、在哪捕获？死局重排耗步吗？哪四个环节共享同一补位流？",
+      "answer": "主流 mulberry32(meta.seed)（盘面生成、果冻摆放）；补位流（第 k 次玩家交换，k 从 1 起）deriveRng(seed, SPAWN_SALT ^ k)，SPAWN_SALT = 0x51ed270b；死局重排流（第 k 步）deriveRng(seed, 0x5117 ^ k)；deriveRng = mulberry32((seed ^ Math.imul(salt, 0x9e3779b9)) >>> 0)。k 统一 = moves − movesLeft + 1（trySwap 先捕获盐再扣步数，保证预估/结算/hint 三者同一 k；重排发生时的 k = 即将进行的玩家交换序号）；重排不耗步、同一 k 在重排后仍用于下一步补位流；simulatePlay 中第 k 步死局用 0x5117 ^ k。真实结算、nearWin 预估、hint 投影、生成期 simulatePlay 四者同流——推论：生成期 64 次重试找到 simulatePlay 可胜盘面 ⇔ QC 按 hint 引导必然可胜（64 次仍不可胜则告警并按最后盘面放行）。",
+      "source": "specs/match3-rules-card.md §7（随机流与盐值，冻结）"
+    },
+    {
+      "id": "R2",
+      "module": "rules-card",
+      "dimension": "变体边界/已知答案",
+      "question": "模板钉死的是 mulberry32 的哪个变体、判别特征是哪行代码？mulberry32(1) 首抽与 *61 变体首抽各是多少？mulberry32(42) 首 5 抽？deriveRng 的混合经过分歧线吗——deriveSeed(42, SPAWN_SALT^1) 与 deriveSeed(9, 0x5117^1) 的值？",
+      "answer": "bryc 规范公版：第二乘数是 t|61（非常数 61）——t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61)。变体风险：*61 转写与本模板是不同的流。已知答案：mulberry32(1) 首抽 = 0.6270739405881613（*61 变体 = 0.428673…）；mulberry32(1) 首 5 抽 = 0.627074, 0.002736, 0.527447, 0.981051, 0.968378；mulberry32(42) 首 5 抽 = 0.601104, 0.448291, 0.852466, 0.669734, 0.174814。deriveRng 的混合不经过 t|61 线、两变体一致：deriveSeed(42, SPAWN_SALT^1) = 0xdafaf010、deriveSeed(9, 0x5117^1) = 0x2647feef。镜像实现若转写成 *61 即偏离本模板。",
+      "source": "specs/match3-rules-card.md §7（mulberry32 函数体内联 + 变体风险实录 + 算例）"
+    },
+    {
+      "id": "R3",
+      "module": "rules-card",
+      "dimension": "时序数字",
+      "question": "非法交换动画多长、耗步吗？消除/下落/补位三类动画时长与波间 delay？死局自动重排多久 snap、多久解 busy、耗步吗？score 模式的果冻数公式与取整语义？每格 fillNoMatches 重抽上限与超限行为？波次与 guard 上限？",
+      "answer": "非法交换 animateInvalidSwap：110ms 滑过去再弹回、不消耗步数（nearWin/failBait 剧本同用它，即回弹以真实非法交换呈现）。动画：match 150ms 缩消、fall 160ms、spawn 170ms 下落、波间 delay 170/180/190ms；逻辑立即生效、动画完后 snap 对齐。死局重排：不耗步，280ms 后 snap、560ms 解 busy。score 模式果冻数 = min(cols*rows, max(6, round(cols*rows*0.25)))——round 为 JS Math.round（.5 向上）；clear-jelly 模式 = goalCount。fillNoMatches 每格至多 32 次重抽，超限后接受最后一次取值（不做更强保证）。波次循环至多 64 波（防死循环）；生成整体重来与死局重排 guard ≤200 次。计分：第 w 波每格 10*w 分（score += cells.length * 10 * w）。",
+      "source": "specs/match3-rules-card.md §2（盘面生成）、§3（交换）、§4（resolve）、§5（计分与胜负）"
+    },
+    {
+      "id": "R4",
+      "module": "rules-card",
+      "dimension": "默认值/钳制域",
+      "question": "normalizeSpec 对 cols/rows、moves、colors、goalCount 的钳制域与默认值，与 schema 范围的宽严差异？seed 归一的参数序与三个数值？qc.autoplayTimeoutSec 与 qc.maxLoadSec 的模板缺省与钳制（与 schema 的差异）？attract.nearWin 缺省？goalType 与 tutorial.gesture 的归一规则？",
+      "answer": "cols/rows：3–9、默认 6（schema 4–9，模板更宽）；moves：1–60、默认 15（schema 3–60）；colors：2–7、默认 5（schema 3–5）；goalCount：1–400、默认 30（schema 1–999）。seed = int(meta.seed, 1, 0, 0x7fffffff)——参数序 (v, default, min, max)：缺省 1、下界 0、上界 0x7fffffff；非整/非有限数取缺省，Math.round 后钳制。qc.maxLoadSec：缺省 2、钳制 1–10（schema 0.5–10/2.0）；qc.autoplayTimeoutSec：缺省 45、钳制 5–300（schema 上限 120——模板更宽，是如实记录的不一致）。attract.nearWin 缺省 false（bool(attract.nearWin, false)）。goalType：非 \"score\" 一律 clear-jelly；tutorial.gesture：非 \"tap\" 一律 \"drag\"（大小写敏感）。文案查找 makeT：当前语言 → 默认语言 → en → 键名本身。",
+      "source": "specs/match3-rules-card.md §1（参数与宽容归一表，多处 2026-09-29 钉死）"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+[project]
+name = "beaneye-regen-severity"
+version = "0.1.0"
+description = "M7 严重度裁决重生成试验（只凭 docs/assets spec + 冻结测试从零实现）"
+requires-python = ">=3.12"
+dependencies = [
+    "pydantic>=2.13,<3",
+    "PyYAML>=6.0",
+    "pytest>=8",
+]
+
+[tool.pytest.ini_options]
+# 仓库根直接 pytest：beaneye 从本目录导入（重生成实现，非任何已安装包）
+pythonpath = ["."]
+testpaths = ["tests"]

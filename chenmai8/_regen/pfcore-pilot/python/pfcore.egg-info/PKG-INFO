@@ -1,0 +1,7 @@
+Metadata-Version: 2.4
+Name: pfcore
+Version: 1.0.0
+Summary: PlayableSpec validator (regen pilot): python -m pfcore validate
+Requires-Python: >=3.10
+Requires-Dist: jsonschema==4.26.0
+Requires-Dist: pydantic==2.13.5

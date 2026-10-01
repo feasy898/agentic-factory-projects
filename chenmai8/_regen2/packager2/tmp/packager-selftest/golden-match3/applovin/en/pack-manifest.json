@@ -1,0 +1,22 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.0.0",
+  "channel": "applovin",
+  "locale": "en",
+  "project": "golden-match3",
+  "specPath": "D:\\workspace\\澄迈8项目\\_regen2\\packager2\\specs-eval\\golden-match3.json",
+  "dist": "D:\\workspace\\澄迈8项目\\_regen2\\packager2\\packages\\packager\\test\\fixture\\match3-dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "index.html"
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 2252,
+      "sha256": "4d847894f5eb8e4c9566c97972233a544b3139193cffc6cca9e12891eae85b1b",
+      "role": "package"
+    }
+  ],
+  "warnings": []
+}

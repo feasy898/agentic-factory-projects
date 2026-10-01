@@ -1,0 +1,413 @@
+{
+  "quiz": "C2 盲评考官3 · 第三轮决胜轮（quiz3）",
+  "generated": "2026-09-30",
+  "basis": "只读 D:/workspace/澄迈8项目/可玩的小游戏广告/repo/docs/assets/ 全部 17 份资产文档（CONTRACTS.md / REGENERATE.md / _gap-closure-wave3.md / manifest.md / manifest.json / specs/ 下 12 份 spec），未读任何实现源码；全部答案与出处均出自本轮实读内容。",
+  "strategy": {
+    "①_上两轮mismatch领域各1题重考": ["Q01 webui现状", "Q02 e2e_matrix 48包", "Q03 manifest frozen 状态", "Q04 PF_ASSETS 内联", "Q05 packager 断言数", "Q06 qacore 门禁描述", "Q07 requirements"],
+    "②_六核心模块+资产四件套全覆盖": "Q08-Q50：M1 spec（Q08-Q12）、M2 bridge（Q13-Q15）、M3 模板+规则卡+三新模板（Q16-Q24）、M4 packager（Q25-Q30）、M8 qacore（Q31-Q36）、llmgw（Q37-Q39）、orchestrator/webui/pipeline（Q40-Q43）、assetkit（Q44）、CONTRACTS/REGENERATE/manifest 四件套（Q45-Q50）",
+    "③_题型": "魔法数字（Q20/Q21/Q29/Q31 等）、时序（Q14/Q18/Q36）、默认值（Q13/Q21/Q37）、边界（Q10/Q12/Q26/Q30/Q34/Q48/Q49）、退出码（Q25/Q32/Q40/Q42）、现状重考（Q01-Q07）、交叉引用漂移（Q49）"
+  },
+  "question_count": 50,
+  "questions": [
+    {
+      "id": "Q01",
+      "area": "webui 现状（上轮 mismatch 重考①）",
+      "type": "现状重考",
+      "q": "webui 当前状态与 commit？实现构成（端点清单）？后台如何调流水线？上传 PNG 的防伪与 SSRF 纪律？验收命令、通过线与实测耗时？",
+      "expected": "webui frozen（2026-09-29，commit 116d9e1）。构成：webui/app.py（FastAPI：GET /api/health、GET /api/meta、POST /api/build 双入路——multipart 上传 spec JSON 或纯表单选模板+传PNG+填文案、经 webui/specgen.py 组装后再过 validate_spec_dict 双校验；GET /api/jobs[/{id}][/qr.png] 轮询；/artifacts/webui/<任务>/ StaticFiles 静态伺服）+ webui/specgen.py（match3 seed 经 pfcore.invariants 规范生成器预检、pullpin orderSolution 由 seed 实算并 simulate 复核）+ webui/static/index.html（单页零外链）+ webui/selftest.py（httpx 端到端）。后台线程串行（信号量）调 python -m pfcore make；质检是裁判——make 有 fail 即任务 failed、不产假链接；完成后按本机 LAN 地址重出二维码。纪律：防 SSRF 服务端零 HTTP 请求（landingUrl 只做格式校验从不访问，LAN 探测复用 pfcore.make._lan_ip）；上传 PNG 只收真 PNG（魔数+扩展名，≤5MB×12 个）。验收：python -m webui.selftest exit 0（httpx 端到端，实测 68.3s）。",
+      "sources": ["specs/orchestrator.md §2（L31-37）", "specs/orchestrator.md §4（L57-72）", "manifest.md ORCHESTRATOR 行（L33）", "manifest.json ORCHESTRATOR（L172-198）"]
+    },
+    {
+      "id": "Q02",
+      "area": "e2e_matrix 48 包（上轮 mismatch 重考②）",
+      "type": "现状重考+魔法数字",
+      "q": "e2e_matrix 全量矩阵展开公式？gate_phase2 读 summary.json 对账哪些字段、预算断言多少？--quick 定义与实测？全量实测耗时两个口径？首检 FAIL 重跑规则？",
+      "expected": "全量（缺省）= specs-eval 全部 golden-*.json（四模板）× {en,zh} × 六投放渠道 = 48 包（T2.5 冻结验收口径，commit 56191f2；不传 --locales/--channels 即随规则库渠道集走，包数≠48 如实 FAIL）。gate_phase2 第 4 门：e2e 全量 --budget-sec 1200 exit 0 且读 artifacts/matrix/summary.json 双重对账 totals={pass:48,fail:0,skip:0}/mode=full/wallSec≤1200。--quick = golden-match3×en×规则库全部投放渠道（T2.4 起六渠道，渠道集动态取自规则库 commit 690e51e）= 6 包，0 FAIL 且 ≤90s 硬预算（实测 74.4/78.0/84.5s）。全量实测：独立裸跑 342.0s；gate_phase2 内 422.8s（三门 33.6/61.0/135.5s + e2e，总墙钟 656.1s）。每格=模板构建→打包→qacore run --autoplay 逐包质检，0 FAIL 才 exit 0；zip 渠道（mintegral/google/unity/tiktok）先解包按规则库入口质检；首检 FAIL 格用同一 qacore 至多重跑一次、以重跑为最终判定，summary 逐格 retried/firstAttemptFails 如实留痕。",
+      "sources": ["specs/orchestrator.md §3（L44-46）", "specs/orchestrator.md §5（L84-103）", "manifest.md EVAL-gate-phase2 行（L42）", "manifest.json evalAssets gate_phase2（L279-290）"]
+    },
+    {
+      "id": "Q03",
+      "area": "manifest frozen 状态（上轮 mismatch 重考③）",
+      "type": "现状重考",
+      "q": "manifest 状态机五种取值的定义？据此说出 M8-qacore、ORCHESTRATOR、MODEL-ADAPTER、M3-templates、EVAL-gate-phase0、director/repair-loop 各自当前状态？",
+      "expected": "五种状态：frozen=已实现且验收全绿、契约冻结改动视为破坏契约；frozen-prototype=雏形已冻结可复验、全量（其余检查项/变异测试）在后续里程碑；partial=部分子命令 frozen 其余为占位（占位语义=exit 2）；planned=未开工（有 spec 草案或开工前置）；deferred=明确暂缓（只有边界说明页，不写可重生 spec）。当前：M8-qacore=frozen-prototype（正在收紧中，以 eval 为最终真源）；ORCHESTRATOR=partial（validate/make/serve frozen；build/pack/rules-check 占位；webui frozen，commit 116d9e1）；MODEL-ADAPTER=llmgw frozen（正在收紧中）、director/repair-loop deferred；M3-templates=frozen（四模板，2026-09-29 全部注册于 make.py TEMPLATE_BUILDERS 只增不改名）；EVAL-gate-phase0=frozen（正在收紧中，以实际运行为最终真源）；M1/M2/M4/M5-assetkit/DATA-channel-rules/gate_phase1/gate_phase2=frozen。",
+      "sources": ["manifest.md 状态图例（L8-16）", "manifest.md 核心模块表（L22-26）", "manifest.md 合并模块表（L32-33）", "manifest.md eval 资产表（L40-42）", "specs/templates.md 头注（L3-5）"]
+    },
+    {
+      "id": "Q04",
+      "area": "PF_ASSETS 内联（上轮 mismatch 重考④）",
+      "type": "现状重考+边界",
+      "q": "PF_ASSETS 最小素材路径：哪些键会被内联、路径解析次序、运行期替换与回退、旁车文件名与内容、与 CHK10 的关系、spec JSON 内联必须经什么处理（转义哪些字符）、哪个 commit 引入？三新模板是否同形态？",
+      "expected": "构建期 spec.assets.sprites 中文件真实存在的键（png/jpg/webp/gif，相对 spec 目录或仓库根解析，spec 目录优先、仓库根兜底，与模板构建脚本一致）以 data URI 内联进 window.PF_ASSETS（键→dataURI 映射；commit d03ac0e）；运行期解码、contain 归一 96×96 画布后注册为贴图——声明并嵌入即替换；未声明/缺失/解码失败打构建日志告警并程序化回退（不阻塞）。同写旁车 <out>.assets.json（{spec, locale, sprites:[{spriteKey,path,bytes}]} 真实嵌入清单，零嵌入也写空清单）——make 据此给 CHK10 传 --require-sprite。spec JSON 内联必须经 escapeForInlineScript：<→\\u003c、>→\\u003e、U+2028/U+2029 转义（防 </script> 提前闭合）。tmpl-merge/pullpin/sort 为同一构建形态（同参数面、同 escape、同三变量内联与 .assets.json 旁车）。",
+      "sources": ["specs/templates.md §3（L43-55）", "specs/pipeline-contract.md §3.1 路径A（L41-45）", "specs/assetkit.md §1 解析次序（L13）", "REGENERATE.md 坑7（L155）"]
+    },
+    {
+      "id": "Q05",
+      "area": "packager 断言数（上轮 mismatch 重考⑤）",
+      "type": "现状重考+边界",
+      "q": "node packages/packager/test/run.mjs 在有 venv 与无 venv 时各跑多少条断言？python zipfile 交叉验证的 SKIP 语义是什么（计不计 pass/fail、整体能否 exit 0）？",
+      "expected": "有 venv（<root>/python/.venv/Scripts/python.exe 存在）：46 条断言（2026-09-29 实跑 = 46 条 [PASS] exit 0）。venv 缺席：45 条断言 + 1 SKIP——该断言打印 `[SKIP ] mintegral: python zipfile 交叉验证（未找到 venv python）`，不注册断言（既不计 pass 也不计 fail），整体仍可 exit 0；SKIP 是显式声明，不是放行 bug。断言总数随渠道扩容增长（T2.4 六渠道 + google 3b 正向断言组后即此数）。REGENERATE §2 步 4 同口径：全断言过（46 条，venv 缺席 45+1 SKIP）。",
+      "sources": ["specs/packager.md §6（L201-209）", "REGENERATE.md §2 表步4（L49）", "manifest.json M4.physicalLocations（L107）"]
+    },
+    {
+      "id": "Q06",
+      "area": "qacore 门禁描述（上轮 mismatch 重考⑥）",
+      "type": "现状重考+边界",
+      "q": "qacore 金标层与变异样本分别固化于哪个门禁脚本的哪个门项？mini.html 命令的门禁附加断言是什么？三个已实装 mutant 各恰命中哪个 CHK、恰命中断言的定义？变异文件写哪里、夹具与哈希自检的真相？",
+      "expected": "金标层固化于 scripts/gate_phase0.py 门项 5 / gate_phase1.py 门项 4；变异样本 MUT-01/02/04 固化于 gate_phase0.py 门项 6（MUT-03 结束页不可达与 mutation-test 独立子命令仍列 M8 全量里程碑）。mini.html --autoplay → exit 0、报告含非空 checks 且 0 fail；门禁另断言已实装项（CHK01/03/04/05/07/08/09）零 skip（skip 不算过）、CHK03/08/09 必须 pass。恰命中断言 = qacore exit 1 且 fail 集合恰为 {期望 CHK}（多 fail/少 fail 都算门禁失败）：MUT-01 外链 img→恰 CHK03；MUT-02 未静音 audio→恰 CHK04；MUT-04 超体积（把 </body> 替换为 <!-- + \"x\"×pad + --></body>，pad 使总字节=渠道 maxBytes+4096）→恰 CHK01。样本来源=gate 现场对 mini.html 夹具最小变异，写 tmp/gate-phase0/mutations/（夹具只读永不被改）；门禁无夹具哈希自检（试点曾 sha256 前后比对，仓库 gate_phase0.py 无此检查），防护靠'变异一律写 tmp/、报告存在=本次真事实、先清旧产物再跑'。",
+      "sources": ["specs/qacore.md §7（L141-155）", "specs/qacore.md §8（L160-191）", "manifest.md EVAL-gate-phase0 行（L40）", "manifest.json EVAL-gate-phase0（L246-261）"]
+    },
+    {
+      "id": "Q07",
+      "area": "requirements（上轮 mismatch 重考⑦）",
+      "type": "现状重考",
+      "q": "python/requirements.txt 中 brotli 与 python-multipart 各是谁的必需依赖？曾误钉后已删的条目？单独再生 qacore 的第三方最小集？npm ci 根 devDependencies 钉版六件与版本？Node/Python 实测钉版版本？",
+      "expected": "brotli 1.2.0 = fonttools woff2 必需；python-multipart 0.0.32 = webui multipart 必需。曾误钉后删：openai（llmgw 网关仅用标准库零 LLM SDK，2026-09-28 git grep 核实已删）。qacore 最小集 = playwright 1.63.0 + pillow 12.3.0（再加 playwright install chromium 的浏览器）；requirements 其余（fastapi 0.141.1/uvicorn 0.54.0/httpx 0.28.1/pydantic 2.13.5/jsonschema 4.26.0/fonttools 4.66.0/qrcode 8.2 等）是其他模块依赖。npm ci devDeps 钉版：ajv 8.20.0 / c8 12.0.0 / esbuild 0.28.2 / jsdom 30.1.1 / sharp 0.35.5 / typescript 7.0.2。环境实测钉版：Node v22.23.2（要求 ≥22）、Python 3.12.10（venv 固定 python/.venv）。",
+      "sources": ["REGENERATE.md §1（L13-28）", "specs/qacore.md §9 依赖最小集（L195-198）", "specs/assetkit.md §1（L21-22）"]
+    },
+    {
+      "id": "Q08",
+      "area": "M1 spec-contract",
+      "type": "默认值+边界",
+      "q": "校验器规范生成器 LCG 的三个自由度是什么？给出 bad02（seed=424242）与 golden（seed=20260930）的数值算例。variants[].seed 是否参与？",
+      "expected": "32 位 LCG：state=(1664525*state+1013904223) mod 2^32，取值 next()%n。三自由度（2026-09-29 回炉冻结）：①先推进后取值——首抽=(1664525*seed+1013904223) mod 2^32；算例：bad02 seed=424242 首两抽 %3=[2,0]→L0 rescuee=2、hazard=0，其 orderSolution[0]=[0,1,2] 首拔即机关针（I1 命中）；②单流跨关卡——pullpin_level_roles(seed,levels,pins) 用一个从 meta.seed 新建的 LCG 连抽全部关卡（rescuee 与 hazard 共享同一流，无逐关重播种）；③各生成器独立建流——match3_board/sort_scramble/pullpin_level_roles 各自从 meta.seed 新建 LCG、互不共享。算例：golden seed=20260930 的 6×6×5 LCG 盘面存在可行步 (0,2)↔(1,2)（match3_find_move 返回 (0,2,1,2)）。variants[].seed 不参与校验器生成器（无消费方，CONTRACTS 痛点 3）。",
+      "sources": ["specs/spec-contract.md §2.3（L58-74）", "CONTRACTS.md 痛点3（L76）"]
+    },
+    {
+      "id": "Q09",
+      "area": "M1 不变式 I2",
+      "type": "边界",
+      "q": "I2（sort 栈可逆）的精确重放判定流程与三个错误码（I2-sort-colors/scramble/reversible）的分配？哪些域约束会/不会短路返回 I2 码？scramble 走多少步、候选步如何选？",
+      "expected": "已解盘面 = 前 min(colors,rods) 柱各一色满柱+空柱（sort_solved_board）；sort_scramble 从已解盘面出发恰走 rods*layersPerRod 步，候选步仅限'逆步合法'（搬回后目标柱顶同色或空、且不超容量），mv=cands[below(len(cands))]。validator 重放（方向钉死，2026-09-29 回炉）：从 sort_solved_board 出发正向应用 trace，逐步断言每步 ∈ sort_legal_moves（否则 I2-sort-scramble）且逆步合法（否则 I2-sort-reversible——该码只用于逆步不合法）；重放完毕与生成器盘面（sort_scramble 返回盘面）逐柱比对，不等 → I2-sort-scramble。I2 侧唯一前置域检查：colors > rods → I2-sort-colors；其余域约束（colors≥2、rods≥3、layersPerRod≥2 等）属 schema 层 schema-* 码，不短路返回 I2 码。",
+      "sources": ["specs/spec-contract.md §2.2 I2 行（L44）"]
+    },
+    {
+      "id": "Q10",
+      "area": "M1 bad03 双层都收",
+      "type": "边界+退出码",
+      "q": "bad03（max=35）实际命中的错误码与实测输出？为什么 I4 与 schema 是'双层都收'？门禁凭什么两种实现都放行？",
+      "expected": "schema 限 durationBudgetSec.maximum=30，I4 又判 max<=30——同域同路径 $.game.durationBudgetSec.max。按校验次序（schema 结构→不变式→pydantic 类型化解析 code=model；任一阶段失败即止、不合并报告），bad03 实际先命中 schema-maximum：实测输出 `$.game.durationBudgetSec.max: 35 is greater than the maximum of 30 [schema-maximum]`；I4-duration-max 是第二层兜底（schema 层被绕过/放宽时仍拦截）。门禁只断言 exit 1 + 输出含 $. 字段路径——报 schema-maximum 或报 I4-duration-max 都满足；改动任何一层前先跑 bad03 回归。",
+      "sources": ["specs/spec-contract.md §2.4 校验次序（L84-85）", "specs/spec-contract.md §3 bad03 登记（L115-121）"]
+    },
+    {
+      "id": "Q11",
+      "area": "M1 CLI stdout + ajv 归属",
+      "type": "边界",
+      "q": "pfcore validate 的 stdout 冻结格式（通过/失败/glob 无匹配/末行汇总各什么样）？门禁断言什么？ajv-check.mjs 属于哪一侧，单独重生成 Python 校验器时要不要补建它？",
+      "expected": "逐文件一行裁定：通过 `OK <file>`；失败 `INVALID <file>` + 其下逐条缩进两格 `<path>: <message> [<code>]`；glob 无匹配计 `INVALID <pattern>: 模式无匹配文件：<pattern> [io-not-found]`；末行 `validate: <passed>/<total> 通过`。门禁只断言退出码与输出含 $. 路径（正则 \\$\\.[A-Za-z_][\\w.\\[\\]]*），不解析 stdout 机器格式——pfcore 试点曾按每文件一行 JSON（{\"file\",\"ok\",\"issues\":[…]} + 末行 {\"summary\":…}）实现同样过门，仓库以人类可读格式为准。ajv-check 属 JS 镜像（packages/spec）的验收命令，不是 Python 侧 pfcore validate 的一部分；单独重生成 Python 侧时无需也不应临时补建 JS 镜像；它在完整仓库 M1 门禁（gate_phase1 门项 1 的 ajv 子断言）内执行。",
+      "sources": ["specs/spec-contract.md §2.5（L89-98）", "specs/spec-contract.md §4 归属标注（L130-135）"]
+    },
+    {
+      "id": "Q12",
+      "area": "M1/M4 projectId 双正则",
+      "type": "边界",
+      "q": "同一个 meta.projectId，M1 schema 侧与打包器侧各自的校验正则是什么？一致吗？打包器读的另一个顶格字段是什么、如何校验？",
+      "expected": "M1 schema（CONTRACTS C1 与 spec-contract §2.1）：^[a-z0-9][a-z0-9-]{0,63}$（小写字母/数字开头，仅小写、数字、连字符，最长 64）。打包器：/^[A-Za-z0-9][A-Za-z0-9._-]*$/（允许大写、点、下划线，不限长度）——两处不一致，各自文档如实记录（打包器更宽）。打包器另读顶格 spec.specVersion（loadSpecFields，不在 meta 内，仅校验存在且为 string）；连同 meta.projectId 是打包器仅取的两个 spec 结构字段（它不做完整 spec 校验，那是 M1）。",
+      "sources": ["CONTRACTS.md C1（L13-14）", "specs/spec-contract.md §2.1（L24）", "specs/packager.md §3.2/§4/§1（L99-100、L157、L14-15）"]
+    },
+    {
+      "id": "Q13",
+      "area": "M2 locale 空串边界",
+      "type": "默认值+边界",
+      "q": "桥的 locale 五级优先序？前三级与第 4 级对空串的处理差异？defaultLocale='' 时返回什么？文档把它标为什么、要改须走什么流程？",
+      "expected": "五级：options.locale → window.PF_LOCALE（打包器/模板注入）→ URL ?locale= → options.defaultLocale → \"en\"。前三级逐级取'非空字符串'（真值判定：undefined/\"\"/非 string 均跳过；URL 级无 location 环境整体 try/catch 跳过）。第 4 级语义不同：实现为 return options.defaultLocale ?? \"en\"——?? 只挡 nullish，空串 \"\" 原样返回、不回落 \"en\"（Node 实测 defaultLocale='' → ''）。源码无注释声明空串为有意设计，文档判为'已知边界（变更候选）'（2026-09-29 C2 盲评修正同步项）；如需空串同样跳过，须把 ?? 改为真值判定，走契约变更流程。",
+      "sources": ["specs/engine-bridge.md 头注（L4-5）", "specs/engine-bridge.md §2.4（L60-72）"]
+    },
+    {
+      "id": "Q14",
+      "area": "M2 initBridge 时序",
+      "type": "时序",
+      "q": "写出 initBridge() 返回前同步完成的固定动作顺序，并给出文档列出的时序推论（至少四条）。",
+      "expected": "单同步段顺序固定：resolveChannel → new MutePolicy → new AudioManager → 组装 bridge 对象（ready = whenChannelReady().then(() => dispatchPFEvent(\"pf:ready\"))，此刻仅登记未执行）→ window.PF = bridge（挂载）→ installFirstInteraction(...)（document 捕获阶段，pointerdown/touchstart/mousedown/keydown）→ installPlatformAudioProbe(...)（仅 mraid 形渠道）→ return bridge。推论（均为契约、测试冻结）：①不存在'桥已可取但交互监听未装'的窗口（返回后任何交互必被观测）；②pf:ready 派发时机=异步（渠道就绪 promise resolve 后才派发，可能先于或后于首次交互），且不改变相位（派发时仍 loading，由模板经 setState/start 推进）；③静音策略与就绪无关（首交互发生在 pf:ready 之前同样解除静音并派发 pf:first-interaction）；④在 ready resolve 前调用 start()/end() 仍有效（相位机立即迁移并派发事件），规范顺序仍是 await PF.ready → setState(\"tutorial\") → start() → end()；⑤重复 initBridge() 任何时刻返回同一实例（不重复安装监听）。",
+      "sources": ["specs/engine-bridge.md §2.7（L104-124）"]
+    },
+    {
+      "id": "Q15",
+      "area": "M2 告警与就绪超时",
+      "type": "默认值+边界",
+      "q": "桥的 console.warn 共几处、前缀与精确文案？readyTimeoutMs 默认值？就绪超时时告警吗——文档如何处理'注释与代码不一致'？其余失败路径的行为？",
+      "expected": "告警恰两处、前缀 `[PF] `：①mraid 形（applovin/unity/mintegral）无 window.mraid 或无 getState 函数 → `[PF] channel=<id>: 未检测到 mraid 全局，按就绪处理（预览模式）`；②非 mraid 形（meta/google/tiktok）对应全局缺失 → `[PF] channel=<id>: 未检测到渠道运行时全局对象，按就绪处理（预览模式）`。默认 readyTimeoutMs=8000ms：mraid 形无 mraid/无 getState → 立即放行（console.warn 预览模式）；getState()!=='loading' → 立即；否则等 mraid ready 事件，超时放行——超时是静默 resolve、不告警（源码头注释与 README 写'放行（告警）'，实测代码无 warn——以代码为准；如需对齐注释属契约变更流程）。除两处 warn 外一切失败路径静默兜底不抛错不告警：mraid.getState() 抛异常→按就绪；removeEventListener 抛异常→忽略。",
+      "sources": ["specs/engine-bridge.md §2.5（L76-79）", "specs/engine-bridge.md §2.8（L126-135）", "specs/engine-bridge.md §3（L139-142）"]
+    },
+    {
+      "id": "Q16",
+      "area": "M3 规则卡 mulberry32",
+      "type": "魔法数字+边界",
+      "q": "mulberry32 规范公版第二乘数是什么？'*61 变体'差异的实证数字？给出 mulberry32(1)、mulberry32(42) 各首 5 抽，以及 deriveSeed(42, SPAWN_SALT^1) 与 deriveSeed(9, 0x5117^1) 的值；为何派生流两变体一致？",
+      "expected": "以模板 rng.ts 原文为准的 bryc 规范公版第二乘数是 t|61（非常数 61）：t = Math.imul(t ^ (t>>>15), t|1); t ^= t + Math.imul(t ^ (t>>>7), t|61)。流传变体用常数 61（*61）——两者是不同的流，试点 oracle 转写成 *61 即偏离本模板；首个输出对比：mulberry32(1) 本模板=0.6270739405881613，*61 变体=0.428673…。算例（真源=模板 rng.ts，Node 22 实测）：mulberry32(1) 首 5 抽=0.627074, 0.002736, 0.527447, 0.981051, 0.968378；mulberry32(42) 首 5 抽=0.601104, 0.448291, 0.852466, 0.669734, 0.174814。deriveRng 的混合（seed ^ Math.imul(salt,0x9e3779b9) >>> 0）不经过 t|61 线，两变体一致：deriveSeed(42, SPAWN_SALT^1)=0xdafaf010、deriveSeed(9, 0x5117^1)=0x2647feef。",
+      "sources": ["specs/match3-rules-card.md §7（L104-129）"]
+    },
+    {
+      "id": "Q17",
+      "area": "M3 盐值与 k",
+      "type": "魔法数字+时序",
+      "q": "三消三条随机流的派生式与用途？SPAWN_SALT、重排盐、deriveRng 公式的值？'第 k 步'的统一定义？trySwap 为什么先捕获盐再扣步数？",
+      "expected": "主流 mulberry32(meta.seed)——盘面生成、果冻摆放；补位流（第 k 次玩家交换，k 从 1 起）deriveRng(seed, SPAWN_SALT ^ k)，SPAWN_SALT=0x51ed270b——真实结算、nearWin 预估、hint 投影、生成期 simulatePlay 四者同流；死局重排流（第 k 步）deriveRng(seed, 0x5117 ^ k)——doReshuffle 与 simulatePlay 重排；deriveRng = mulberry32((seed ^ Math.imul(salt, 0x9e3779b9)) >>> 0)。k 统一定义 = moves − movesLeft + 1（第 k 次玩家交换与第 k 步死局重排同一定义；重排不耗步、同一 k 在重排后仍用于下一步补位流；simulatePlay 中重排也不耗步、同 k 延续）。trySwap 先捕获盐再扣步数，保证预估/结算/hint 三者同一 k。",
+      "sources": ["specs/match3-rules-card.md §7（L96-102、L130-133）", "CONTRACTS.md C5（L56-59）"]
+    },
+    {
+      "id": "Q18",
+      "area": "M3 生成期重试",
+      "type": "时序+魔法数字",
+      "q": "生成期 64 次可玩性重试的随机流如何消耗（一次性构造？重置？）？重试次数与盘面的确定性？64 次仍失败怎么办？文档给出的'生成期可玩 ⇔ QC 必胜'推论依据？",
+      "expected": "mulberry32(meta.seed) 在 game.ts create() 只构造一次并持有于 Board——每次重试 generate() 的 fillNoMatches（含逐格重抽）+ hasAnyMove 守卫重盘（guard ≤200）+ placeJelly 顺序消耗同一主流，不重置、不换流；故各次重试盘面互异且全程确定（重试次数也确定）。64 次仍不可胜则告警并按最后盘面放行（概率上不会发生）。推论：hint 用与真实游玩完全相同的流与贪心策略，所以'生成期 64 次重试找到 simulatePlay 可胜盘面' ⇔ 'QC 按 hint 引导必然可胜'。fillNoMatches 逐格重抽上限是每格 32 次（超限接受最后一次取值）。",
+      "sources": ["specs/match3-rules-card.md §2（L38-49）", "specs/match3-rules-card.md §7 推论（L134-135）"]
+    },
+    {
+      "id": "Q19",
+      "area": "M3 hint 布局数学",
+      "type": "魔法数字+边界",
+      "q": "写出布局公式链（hudH/availW/availH/cell/originX/originY）与格中心公式；Math.round 的精确语义、与 Python round 的三个可区分算例；参数化算例 cell=40、ox=4.5 时格(0,0) 中心 x？",
+      "expected": "hudH = max(96, h×0.13)；availW = w×0.94；availH = h − hudH − h×0.05；cell = max(24, floor(min(availW/cols, availH/rows)))；originX = Math.round((w − cell×cols)/2)；originY = Math.round(hudH + (availH − cell×rows)/2)；cellCenter(x,y) = (originX + x·cell + cell/2, originY + y·cell + cell/2)，hint 出口 Math.round 取整（坐标系=视口 CSS 像素）。Math.round = floor(x+0.5)，正负数 .5 均向 +∞：Math.round(2.5)=3、Math.round(0.5)=1、Math.round(−2.5)=−2、24.5→25；Python 银行家舍入 round(2.5)=2、round(24.5)=24——镜像实现须显式 jsRound 不可直接用 Python round。参数化算例：cell=40、ox=4.5 时格(0,0) 中心 x = jsRound(4.5+20) = 25（Python round(24.5)=24，恰可区分）。另：cell=60、ox=oy=0 时格(2,1) 中心=(150,90)→hint {x:150,y:90,type:\"swap-right\"}；cell=50 时格(0,0)→{x:25,y:25,type:\"swap-down\"}。",
+      "sources": ["specs/match3-rules-card.md §8（L144-161）"]
+    },
+    {
+      "id": "Q20",
+      "area": "M3 时序魔法数字",
+      "type": "魔法数字+时序",
+      "q": "给出：非法交换回弹动画时长、波次循环上限、match/fall/spawn 动画时长与波间 delay 序列、死局重排 snap 与解 busy 时长、拖拽位移阈值公式、每波每格得分、程序化贴图尺寸、交换合法的步进模拟波上限是否与 resolve 一致。",
+      "expected": "animateInvalidSwap：110ms 滑过去再弹回（不耗步，nearWin/failBait 也复用）；波次循环至多 64 波（防死循环上限）；动画 match 150ms 缩消、fall 160ms、spawn 170ms 下落、波间 delay 170/180/190ms（逻辑立即生效，动画完后 snap 对齐）；死局自动重排不耗步、280ms 后 snap、560ms 解 busy；拖拽位移阈值 = max(18, cell*0.35) 像素、主轴定方向（另有 tap-tap 点选两相邻格）；得分第 w 波每格 10*w 分（cascades=最后一个成消波波号 w）；程序化贴图 96px（Graphics.generateTexture）。",
+      "sources": ["specs/match3-rules-card.md §3（L53-57）", "specs/match3-rules-card.md §4（L62、L76-77）", "specs/match3-rules-card.md §5（L81-85）", "specs/match3-rules-card.md §6（L92）", "specs/match3-rules-card.md §11（L181）"]
+    },
+    {
+      "id": "Q21",
+      "area": "M3 钳制与缺省表",
+      "type": "默认值",
+      "q": "模板宽容归一钳制与 schema 范围不一致的参数至少列五组（含两侧范围与缺省）；qc.maxLoadSec 与 qc.autoplayTimeoutSec 两侧范围/缺省各是多少？goalType/tutorial.gesture/spriteKeys/nearWin/seed 的归一规则？",
+      "expected": "cols/rows：schema 4–9/默认6 vs 模板 3–9/6；moves：schema 3–60/15 vs 模板 1–60/15；colors：schema 3–5/5 vs 模板 2–7/5；goalCount：schema 1–999/30 vs 模板 1–400/30；qc.maxLoadSec：schema 0.5–10 默认 2.0 vs 模板缺省 2 钳 1–10；qc.autoplayTimeoutSec：schema 5–120 默认 45 vs 模板缺省 45 钳 5–300（'模板更宽'是如实记录）。goalType：非 \"score\" 一律 clear-jelly；tutorial.gesture：非 \"tap\" 一律 \"drag\"（大小写敏感）；spriteKeys：schema 恰 5 个 vs 模板 ≥1 个即可、缺省恰为 [\"piece-0\",\"piece-1\",\"piece-2\",\"piece-3\",\"piece-4\"]（贴图按 i % spriteKeys.length 取键）；attract.nearWin 缺省 false；attract.firstClickSucceed 缺省 true（读入后无玩法消费）；seed：模板 int(meta.seed, 1, 0, 0x7fffffff)——参数序 (v, default, min, max)，缺省 1、下界 0、上界 0x7fffffff（非整/非有限取缺省，Math.round 后钳制）；difficulty.targetLevel 缺省 0.5（无玩法消费，痛点 3）。文案查找 makeT 三级回退：当前语言→默认语言→en→键名本身。",
+      "sources": ["specs/match3-rules-card.md §1（L15-31）"]
+    },
+    {
+      "id": "Q22",
+      "area": "M3 tmpl-merge 新模板页",
+      "type": "边界+时序",
+      "q": "tmpl-merge 的胜利条件、步数上限语义、死局处理、满阶棋子、生成期可玩性校验排除了什么盘面（重试上限）？hint 类型与坐标？随机流实现 sidedness 与 nearWin？",
+      "expected": "盘面 cols×rows 恒满；一步=源格向 dir 拖动，相邻同阶棋子合成升一阶（升级弹跳），源格清空→源列重力下落→列顶补出生棋子（tier ∈ 1..spawnTierMax）；出现 ≥ goalTier 即胜（pf:end {win:true}）。无 move 上限参数，软上限 = cols×rows×2（卡死兜底）；死局自动重排（保留棋子重摆，不耗步）；满阶棋子为终态不再合成；§4.1 merge params 全生效（cols/rows/maxTier/spawnTierMax/goalTier/spriteKeys 驱动程序化贴图形状配色）。生成期贪心最优线模拟做可玩性校验，排除'初始盘面已含 goalTier'的秒胜盘面（≤64 次重试）。hint()=贪心求解器当前盘面真实最优步（swap-<dir>，源格中心坐标）；随机流（SPAWN_SALT/RESHUFFLE_SALT 派生流）游戏侧=模拟侧单实现，logic-test 断言'hint 线=模拟线'；attract.nearWin=true 时最后一步（将合成出 goalTier 的一步）以真实'不可合成回弹'失败一次（不耗步），随后再成；failBait 同机制作用于第一步。commit 53bd40d。",
+      "sources": ["specs/templates.md §7.1（L94-105）"]
+    },
+    {
+      "id": "Q23",
+      "area": "M3 tmpl-pullpin 新模板页",
+      "type": "边界+默认值",
+      "q": "tmpl-pullpin 每关针的构成与两类得分？先拔机关针的后果？pf:end 触达条件与 win 取值（lose 文案有出场机会吗）？hint 返回什么、与 M1 判定关系？用户 PNG 固定替换键？",
+      "expected": "每关角色由 seed 经 32 位 LCG 确定性生成（levels.ts 与 python/pfcore/invariants.py pullpin 段逐行镜像）；每关恰一个救援针（拔掉即逃出过关）+ 一个机关针（先于救援针拔则角色遇难、本关重置重试、不终局）+ 其余中性针（引流，熔岩面下降 +20 分；救援 +100 分）。pf:end 只由全部关卡救出的真实逻辑触达，win 恒 true——可玩广告不设败局，lose 文案无出场机会。hint() 恒返回当前关救援针真实坐标（tap——直拔必过关，与 M1 pullpin_simulate 判定一致）。用户 PNG 替换固定键 pin/rescuee/hazard。§4.1 pullpin params 全生效：levels/pinsPerLevel 3-5/hazard \"lava\"|\"spike\"/rescuee/orderSolution——教程演示针取首针，坏形状运行期回退规范解。nearWin=true：最后一关首次拔救援针'险些失败'一次（针拔出一半、机关涌出逼近、红闪+震屏+角色惊跳、针弹回），随后再拔即成（不耗资源，hint 不变）。commit 75cc23d。",
+      "sources": ["specs/templates.md §7.2（L107-119）"]
+    },
+    {
+      "id": "Q24",
+      "area": "M3 tmpl-sort 新模板页",
+      "type": "边界+默认值",
+      "q": "tmpl-sort 的玩法与胜利条件？moveLimit 语义（含 0）与真实败局？发牌为何'同流深化'、BFS 验收四条件与重发上限、不收敛回退成什么？screwMode 分叉什么不分叉什么？hint 两拍节奏与 PNG 固定键？镜像涉及哪三处代码？",
+      "expected": "倾倒归类：点选柱（顶部同色段抬起）→点目标柱整段倒过去（k=min(段长,空位)，目标柱空或顶同色）；每柱'空或单色满柱'即胜。moveLimit>0 且耗尽时 pf:end {win:false} 真实败局；0=不限步为模板默认。发牌：冻结规范扰动盘面恒为已解态排列，故消费同一 LCG 流延续做确定性洗牌发牌（deal.ts 如实留档；发牌属模板内部实现，spec 无初始盘面字段）；BFS（与冻结走法同源）验收'可解+非开局即胜+最优 ≥2 步+步数 ≤moveLimit'，≤64 次重发，不收敛回退规范盘面开局即胜。screwMode（拧螺丝变体）只分叉交互与表现（金属螺栓+六角螺母+棘轮音效、旋入旋出），走法/可解性与普通模式完全同一套冻结规则。hint 两拍：未选中→最优解源柱坐标；已选中该源柱→目标柱坐标（均 tap）；BFS 最优解可逐回放至胜（logic-test 断言）；用户 PNG 固定键 rod/piece。§4.1 sort params 全生效：rods 2-8 单行/layersPerRod 2-6/colors 2-8 八色 setTint+HUD 进度点/screwMode/moveLimit。board.ts 与 python/pfcore/invariants.py sort 段及 packages/spec/src/invariants.mjs 逐行镜像（LCG/合法走法/apply/逆步/规范扰动五重同余）。commit 1a8e0e9。",
+      "sources": ["specs/templates.md §7.3（L121-137）"]
+    },
+    {
+      "id": "Q25",
+      "area": "M4 packager 退出码",
+      "type": "退出码",
+      "q": "packager CLI 退出码 0/1/2 各覆盖什么？渠道拼写错误是 exit 2 吗？构建失败 stderr 输出什么？成功时 stdout 末行输出什么？--out 与 --rules 的缺省值？",
+      "expected": "统一裁定：0=成功；1=构建失败——含超规/外链/结构违规/未知或未冻结渠道（channelRule 抛错被 main 的 catch 统一接住，stderr 输出 `[packager] 失败: <原因>` 并列出现有渠道）；2=仅限 CLI 用法层——未知子命令、多余位置参数、参数解析错误。渠道拼写错误不是 exit 2（是构建失败 exit 1，拼错渠道名不静默通过）。成功时 stdout 末行输出 JSON：{ok:true, artifact, totalBytes, maxBytes}。--out 缺省=<cwd>/artifacts；rules 缺省=仓库根 channel-rules/channel-rules.json。zip 渠道负向用例为 not-a-channel（google 自 rulesVersion 1.1.0 起已是冻结渠道、其自验收为 3b 正向断言组）。",
+      "sources": ["specs/packager.md §2（L20-31）", "specs/packager.md §5（L172-175）"]
+    },
+    {
+      "id": "Q26",
+      "area": "M4 MRAID 检测",
+      "type": "边界+魔法数字",
+      "q": "meta 渠道 MRAID 禁用检测的正则原文与 flags？window.mraid / Mraid / MRAID_TEST / mraid.getState() / src=\"mraid.js\" 各命中与否？为何不按全词出现判定？已知漏检面举例？",
+      "expected": "调用形态正则：\\bmraid(?:\\s*\\.\\s*[A-Za-z_$][\\w$]*|(?:\\.js)\\b)（gi，findMraidReferences）——命中 mraid.<方法> 的 API 调用形态、或对 mraid.js 脚本的引用即构建失败（启发式）。判定边界（实测）：window.mraid（裸引用）→ 不命中；Mraid / MRAID_TEST → 不命中（gi 大小写不敏感，但裸名/下划线接续不构成调用形态）；mraid.getState() → 命中；src=\"mraid.js\" → 命中。设计理由（有意收窄，不按全词出现判定）：含运行时桥的模板产物必然携带 mraid 探测代码（typeof x.mraid、x.mraid?\"applovin\":\"preview\" 之类），文本上无法与真依赖分开；若按全词出现（早期草案 \\bmraid\\b[^;]{0,40}）判定，一切真实游戏都打不出 meta 包。漏检面（启发式固有盲区，非回归）：别名转手后调用（var m=window.mraid;m.open()）不落调用形态；字符串拼接出的 mraid 引用同理绕过——只拦'文本可辨的真使用'。",
+      "sources": ["specs/packager.md §3.3 MRAID 段（L119-129）"]
+    },
+    {
+      "id": "Q27",
+      "area": "M4 maxFiles",
+      "type": "边界+魔法数字",
+      "q": "maxFiles 的强制范围与计数口径？七个在库渠道各自的 maxFiles？single-html 的'恰 1 个包文件'由谁负责断言？",
+      "expected": "仅 zip 通道强制，且按 zip 内条目数计数（entries.length > maxFiles → 失败）；single-html 渠道打包器不检查 maxFiles——其'恰 1 个包文件'由门禁/使用方对产物目录断言。数值：applovin=1、meta=1、preview=1；mintegral=100、tiktok=100；google=512（规划基线，内部目标 ≤200）、unity=512（暂同 google 内部线）。",
+      "sources": ["specs/packager.md §3.3 maxFiles 段（L130-131）", "specs/packager.md §3.1.1 表（L62）", "specs/channel-adapters.md §1 表（L19-20）"]
+    },
+    {
+      "id": "Q28",
+      "area": "M4 pack-manifest 形状",
+      "type": "边界",
+      "q": "pack-manifest.json 的字段清单与 role 三值？totalBytes 累计口径？single-html 与 zip 通道的 files[]/packageFiles[] 形状差异（各几项、各含什么）？gate_phase1 门项 3 如何对待 pack-manifest？",
+      "expected": "字段：packager(\"@pf/packager\"), rulesVersion, channel, locale, project, specPath, dist, maxBytes, packageFiles[], files[{path,bytes,sha256,role}], warnings[]。role ∈ package|entry-in-zip|bundle-in-zip；totalBytes 只累计 role=package。single-html：files[] 恰 1 项 [{path:\"index.html\", bytes, sha256, role:\"package\"}]，packageFiles=[\"index.html\"]；zip：files[] 恰 3 项 [{zip 本体, role:\"package\"}, {\"Template.html\", role:\"entry-in-zip\"}, {\"build.js\", role:\"bundle-in-zip\"}]，packageFiles 仅 1 项 [\"<projectId>-<locale>.zip\"]（zip 内条目不进 packageFiles）。pack-manifest.json 是旁车、元数据不随包投放；gate_phase1 门项 3 断言时不计入包内文件。",
+      "sources": ["specs/packager.md §3.2（L86-97）", "REGENERATE.md §3 gate_phase1 门项（L64-65）"]
+    },
+    {
+      "id": "Q29",
+      "area": "M4 内联规则细节",
+      "type": "魔法数字+边界",
+      "q": "打包器内联：srcset 支持吗？zip（extract）模式下多个外链脚本如何合并与替换？压缩 esbuild 的 target 与两个选项？mraid.js 已存在判定正则？<head> 缺 charset 怎么办？<link rel=stylesheet> 内联成什么？",
+      "expected": "srcset 不支持内联（告警，要求改单 src）。<script src>：inline 模式就地内联为 <script type?> data-pf=\"<原src>\">；extract 模式（zip 渠道）：第一个外链脚本位置替换为 <script src=\"<bundleName>\">，其余替换为 <!-- pf-packager: x merged into y -->，全部脚本按文档顺序 \"\\n;\\n\" 合并成 bundle。压缩：esbuild transform（minify、target es2017、legalComments:\"none\"；--no-minify 跳过）——注意与模板构建 target es2019 不一致（各自冻结）。mraid.js 注入片段 <script src=\"mraid.js\"></script> 插到 <head…> 开标签之后；已存在判定正则 src\\s*=\\s*[\"']mraid.js（已引用则不重复注入；相对引用无 scheme 不算外链）。<head> 缺 charset → 自动补 <meta charset=\"utf-8\">；<link rel=\"stylesheet\"> → 内联为 <style data-pf=\"<原href>\">（CSS 内 url() 先转 data URI 再压缩）；icon 类 link href → data URI（已是 data:/blob: 跳过）；<style> 块内 url() 相对 dist 根解析。resolveDistRef 快速失败：带 scheme、协议相对 //、根相对 /、逃逸出 dist 根的相对路径。type=module 外链脚本会告警（合并后 import/export 失效）——dist 必须自包含。",
+      "sources": ["specs/packager.md §3.3（L102-117）", "REGENERATE.md 坑12（L163-164）", "specs/templates.md §3（L40）"]
+    },
+    {
+      "id": "Q30",
+      "area": "M4 规则库全量+rulesVersion 文档张力",
+      "type": "边界+交叉引用",
+      "q": "规则库当前 rulesVersion 在 packager.md/manifest 是多少？CONTRACTS.md 的 C4 标题与版本锚写多少？以什么为准？waitReadyBeforeRender=true 的渠道集合？tiktok 的 structure 与 generated 附加文件？allowedTextUrls 三条是什么、扫描对象是什么性质？",
+      "expected": "packager.md §3.1.1 与 manifest.md/manifest.json 均记 rulesVersion 1.1.0（T2.4，2026-09-29 起六投放渠道 applovin/meta/mintegral/google/unity/tiktok + preview 共 7 渠道冻结；库级 updated 2026-09-29）；而 CONTRACTS.md C4 标题与'版本锚'仍写 rulesVersion 1.0.0（契约基线 2026-09-28，未随 T2.4 同步）——按更新更全的 packager/manifest 以 1.1.0 为准，CONTRACTS 该两处为陈旧值（文档内张力，如实记录）。waitReadyBeforeRender=true：applovin、mintegral、unity（false：meta/google/tiktok/preview）。tiktok：structure=[\"index.html\",\"config.json\",\"js-sdk.js\"]，generated={config.json: tiktok-config, js-sdk.js: js-sdk-stub}（打包器按 spec 生成的附加文件）；runtime.injectRelativeScripts=[\"js-sdk.js\"]；maxFiles=100。allowedTextUrls = [\"https://pf.io\", \"http://www.w3.org/1999/xhtml\", \"http://www.w3.org/2000/svg\"]——外链文本扫描的全局白名单，只收惰性字符串而非请求目标（引擎品牌串与 XML 命名空间标识符）。defaults 另有 externalUrlPolicy=forbid、allowedUrlSchemes=[data:, blob:]、muteBeforeFirstInteraction=true、allowRelativeRuntimeScripts=true。",
+      "sources": ["specs/packager.md §3.1.1（L44-67）", "manifest.md DATA-channel-rules 行（L39）", "manifest.json assetPack.contractVersion（L7）", "CONTRACTS.md C4 标题（L37）与版本锚（L87）"]
+    },
+    {
+      "id": "Q31",
+      "area": "M8 qacore 魔法数字表",
+      "type": "魔法数字",
+      "q": "qacore 魔法数字表全值：竖/横视口、设备仿真、导航超时、首帧缓冲、空白判定算法与阈值、自动试玩预算、轮询间隔、拖拽手势、本地放行条件、探针注入次数、加载计时取哪一趟？改动数字的纪律？",
+      "expected": "竖屏 390×844（VIEWPORT_PORTRAIT）、横屏 844×390（VIEWPORT_LANDSCAPE）；设备仿真 is_mobile=True、device_scale_factor=2；导航超时 GOTO_TIMEOUT_MS=15000ms（wait_until=\"load\" 上限）；首帧缓冲 SETTLE_MS=400ms；空白判定=截屏经 Pillow convert(\"L\").resize((64,64)) 后灰度方差 <30.0 判空白（VARIANCE_THRESHOLD=30.0）；自动试玩预算 45s（CLI 默认，取 spec qc.autoplayTimeoutSec）；试玩轮询间隔 180ms；拖拽手势 DRAG_DISTANCE=44.0 px 分 4 步 mouse.move（小于最小棋盘格边长，方向由 hint.type 决定）；本地放行 hostname ∈ {127.0.0.1, localhost} 且端口=伺服端口（其余 route.abort() 记入 external）；探针 add_init_script(PROBE_JS) 每页面一次（重复注入二次包装 AudioContext 计数失真）；加载计时只取竖屏趟（与 spec qc.maxLoadSec 对齐）。冻结表——改任何一个都要回填 qacore spec §3 并复跑 gate。",
+      "sources": ["specs/qacore.md §3（L31-47）", "REGENERATE.md §4 M8 行（L85）"]
+    },
+    {
+      "id": "Q32",
+      "area": "M8 qacore 退出码",
+      "type": "退出码+边界",
+      "q": "qacore run 的退出码语义？把 zip 渠道产物直接送检会发生什么？e2e_matrix 如何绕开这个缺口？",
+      "expected": "退出码：0=无 fail（skip 不算）；1=有 fail；2=产物不存在或非 .html。qacore 仅收 .html——非 .html 后缀直接 exit 2；zip 渠道产物当前无法质检是已知缺口。e2e_matrix 对 zip 渠道（mintegral/google/unity/tiktok）先解包、按规则库入口质检（qacore 只收单 HTML）。",
+      "sources": ["specs/qacore.md §2（L28）", "specs/qacore.md §1 不做（L17）", "REGENERATE.md 坑11（L162）", "specs/orchestrator.md §5（L103）"]
+    },
+    {
+      "id": "Q33",
+      "area": "M8 CHK10 全链",
+      "type": "边界+魔法数字",
+      "q": "CHK10 的输入与判据？缺 __PF_QC__.textStates 时判什么？两个 require 全缺时判什么？make 自动传入哪些输入、为何不含 lose？像素对账算法与阈值？阴性对照怎么做？",
+      "expected": "输入=CLI --require-text（可重复）与 --require-sprite（可重复）。判据：每条文案须在 page_texts 中子串命中，且在 text_states 中有'曾在采样时刻 active+visible'证据——模板无 __PF_QC__.textStates() 时无证据即 fail（从严：可见性无证据）；每键须 asset_audit 中 replaced=true（渲染贴图 vs 内联用户 PNG 经同一 contain-fit 管线降采样 16×16 求平均绝对差 MAD，≤ 模板侧阈值 8 判 replaced；无替换素材时 assets() 返回 []）。--require-text 与 --require-sprite 都未提供 → skip（无判定对象不算通过）。make 自动传入：首语言的 标题/教程/胜/CTA/分 五条文案（lose 不要求——自动试玩必胜，无出场机会）+ 构建旁车 <out>.assets.json 中真实嵌入的素材键。阴性对照：对无嵌入的 golden 构建 qacore run … --require-sprite piece-0 → CHK10 fail、exit 1（'替换素材 piece-0：页面未上报像素对账结果'）——检查非永绿。自动 pass ≠ 人眼复核：演示上场前须对照报告截图人眼过一遍（docs/demo-checklist.md §3）。",
+      "sources": ["specs/qacore.md §5/§5.1（L78-104）", "specs/qacore.md §6 CHK10 行（L119）", "specs/qacore.md §7（L148-152）", "specs/pipeline-contract.md §3.4/§4（L82-84、L149-152）"]
+    },
+    {
+      "id": "Q34",
+      "area": "M8 CHK03 手段",
+      "type": "边界",
+      "q": "CHK03 零外网的四条技术手段？WebSocket 为什么只记账不 close？Service Worker 与 WebRTC 各怎么处理？",
+      "expected": "两趟合并判定：①HTTP 由 route.abort() 记账（非本机请求一律 abort 并记入 external）；②WebSocket 由 route_web_socket(\"**/*\") 阻断并记账（条目前缀 websocket:）——实测处理器内 ws.close() 会挂死 load 事件，故只记账不 close（未 connect_to 的 socket 不会真实连接）；③Service Worker 整体禁注册（service_workers=\"block\"——实测 SW 无法借道发外链）；④RTCPeerConnection 构造计数 >0 → fail（WebRTC 不经过网络层拦截）。另 CHK08 的网络噪声过滤前提：route.abort 拦截后 Chromium 透传 'Failed to load resource' 类 DevTools 日志为 console error，实现按'console 消息来源 URL ∈ 本次 blocked 集合'剔除（该违规归 CHK03 不在 CHK08 重复处罚）。",
+      "sources": ["specs/qacore.md §6 CHK03 行（L112）", "specs/qacore.md §4 CHK08 前提（L55-62）"]
+    },
+    {
+      "id": "Q35",
+      "area": "M8 runtime_stubs + mute 取值",
+      "type": "默认值+边界",
+      "q": "qacore 对 injectRelativeScripts 声明的容器脚本（mraid.js）本地缺失时怎么应答（状态码/类型/桩体）、产物自带时呢、如何记账？muteBeforeFirstInteraction 的取值次序？无 window.PF 时 CHK04 判什么？",
+      "expected": "runtime_stubs 机制（2026-09-28 增）：渠道 runtime.injectRelativeScripts 声明的容器运行时相对脚本（applovin/mintegral 注 mraid.js）且产物目录内不存在同名文件时，qacore 以空 JS 桩 200 应答（route.fulfill(status=200, content_type=\"application/javascript\", body=注释 /* pf-qacore: 渠道容器运行时脚本本地桩（投放时由渠道容器提供，非包体内容） */）模拟容器注入、保产物可跑；产物自带的同名文件照常透传（不喧宾夺主）；记账：请求条目加 stub=true、URL 追加进 facts.runtime_stubs。muteBeforeFirstInteraction 缺省 true（规则库 defaults，渠道 runtime 同名键可覆盖）；qacore 取值次序：渠道 runtime > defaults > true——规则库不可读时也从严取 true（cli.py load_channel_mute_required）。CHK04：渠道要求静音时，无 window.PF 或探针未装 → fail（无法证明静音合规即违规，不再 skip）；有桥：首交互前 isMuted 必须 true、无 running AudioContext、无未静音媒体元素、无首交互前媒体 play()；autoplay 时还要求首手势后 isMuted=false；渠道未强制静音且无桥 → skip。",
+      "sources": ["specs/qacore.md §6.1（L123-137）", "specs/qacore.md §6 CHK04 行（L113）"]
+    },
+    {
+      "id": "Q36",
+      "area": "M8 autoplay 趟次与探针",
+      "type": "时序+边界",
+      "q": "autoplay 驱动哪一趟视口、横屏趟做什么？探针监听的 5 个 pf:* 事件与 first 字段的占用规则？page_texts 为什么必须走模板钩子、采集时点如何安排？",
+      "expected": "autoplay 只驱动竖屏趟（冻结、明说）：横屏趟以 autoplay=off 运行（cli.py _run_pass 第三参传 False）；全部试玩取证（pf:end、手势、CHK10 文案/素材采集）都在竖屏趟，横屏趟只做 CHK05 方差与第二趟网络/控制台记录。探针监听 5 个 pf:* 事件（各取首个时刻）：pf:ready→ready、pf:start→start、pf:first-interaction→first、pf:cta→cta、pf:end→end（记录 detail.win）；另在捕获阶段监听 pointerdown/touchstart 记首个真实指针时刻——与 pf:first-interaction 先到者占 first。画布文字不进 DOM、innerText 取不到——文案取证必须走 __PF_QC__.texts()；竖屏趟在驱动试玩前采一次（教程浮层数秒即消失，必须早采）、驱动到结束页后再采一次，并集为 page_texts。",
+      "sources": ["specs/qacore.md §5（L69-82）", "specs/qacore.md §4（L50-54）"]
+    },
+    {
+      "id": "Q37",
+      "area": "llmgw env 与退避",
+      "type": "默认值+魔法数字",
+      "q": "llmgw 三个数值 env 的默认值与封顶？第 attempt 次 _Transient 失败后的睡眠公式与默认等待序列？attempts 序号基？_SkipModel/_Fatal 是否 sleep？",
+      "expected": "PF_LLM_TIMEOUT=30 秒（单次 HTTP 超时）、PF_LLM_MAX_RETRIES=2（单模型最大重试次数，耗尽降级下一模型）、PF_LLM_BACKOFF=0.8 秒（指数退避基数，封顶 8s）。attempts 序号为 0 基（0..max_retries，0=首次尝试）。第 attempt 次 _Transient 失败后，若不是最后一次（attempt==max_retries 则不再 sleep、直接降级），睡眠 min(backoff * 2**attempt, 8.0) 秒——默认 backoff=0.8 时等待序列 0.8s(attempt0 失败后) → 1.6s(attempt1 失败后) → 3.2s… 封顶 8s。_SkipModel（HTTP 404）首次即记录 attempt=0 并降级（不 sleep）；_Fatal（400/401 等其余 4xx）记录后立即抛 LLMError（不 sleep）。",
+      "sources": ["specs/llmgw.md §2（L25-27）", "specs/llmgw.md §4（L99-113）"]
+    },
+    {
+      "id": "Q38",
+      "area": "llmgw 错误类型速查",
+      "type": "边界+退出码",
+      "q": "以下各抛/判定为什么：PF_LLM_TIMEOUT='abc'；缺 PF_LLM_BASE_URL；PF_LLM_BASE_URL='ftp://x'；200 但响应体非 JSON 或缺 choices；HTTP 404；HTTP 401？全链失败的 LLMError 形状？",
+      "expected": "数值型 env 非法（PF_LLM_TIMEOUT/PF_LLM_MAX_RETRIES/PF_LLM_BACKOFF 不是数字）→ 构造 Gateway 时抛原生 ValueError（float()/int() 未捕获直传——如实记录：不是 ConfigError/LLMError）；缺 PF_LLM_BASE_URL / PF_LLM_MODEL → ConfigError（chat() 时抛，模块级 chat 亦同）；BASE_URL 非 http(s) → ConfigError（endpoint_for 内抛）；200 但响应体非 JSON 或缺 choices → _Transient（视为服务端异常，可重试）；404 → _SkipModel 不重试直接降级下一模型；401（密钥错）→ _Fatal → 立即抛 LLMError(status=401, attempts=[...])。全链失败：LLMError(\"全部模型均失败：主 → 备...\")，属性 {status, model, attempts[]}；attempts 每项 {model, attempt, status, error}；summary() 输出人读清单；错误信息提取=响应体 JSON 的 error.message（dict 或 str）优先，否则截 200 字节原文。",
+      "sources": ["specs/llmgw.md §4（L99-107、L114）", "specs/llmgw.md §5（L119-126）"]
+    },
+    {
+      "id": "Q39",
+      "area": "llmgw SSRF 与端点",
+      "type": "边界+默认值",
+      "q": "llmgw SSRF 防线在哪两处校验、校验方式、默认拒绝谁、放行开关名与放行范围？endpoint_for(base) 拼接规则与 scheme 约束？仅主机名时自动补什么？",
+      "expected": "chat() 与请求汇入点 _post() 双处、在发出任何网络字节前校验 host（DNS 解析后逐 IP 断言）：非回环的非公网地址（私网/链路本地/保留，含云元数据 169.254.x）任何情况下 ConfigError 拒绝（无放行开关）；回环地址（127.x/::1）默认同样拒绝，allow_local=True（env PF_LLM_ALLOW_LOCAL）放行且范围仅限回环（离线 mock 自测用）。endpoint_for(base)：去尾 / → path 为空时补 /v1 → 追加 /chat/completions；scheme 必须 http(s)，否则 ConfigError——BASE_URL 仅主机名时自动补 /v1（如 https://host → https://host/v1/chat/completions）。",
+      "sources": ["specs/llmgw.md §2（L21、L28-34）"]
+    },
+    {
+      "id": "Q40",
+      "area": "orchestrator 占位与 make 裁决",
+      "type": "退出码+边界",
+      "q": "pfcore 哪三个子命令占位、行为与退出码？全流水线命令名裁决与被删除的占位名（从哪三处删除）？占位能否'顺手实现'？rules-check 的结构校验实际由谁承担？",
+      "expected": "占位三命令：build（--spec --channel --locale --out）、pack（--spec --all-channels --locale --out）、rules-check——回显'尚未实现' → exit 2（占位语义本身是当前契约的一部分，不要'顺手实现'而不改 pipeline-contract）。全流水线命令名 2026-09-28 裁决冻结为 make（与规划正文一致）；实现前占位名 run 已从 argparse、门禁常量（scripts/gate_phase0.py 的 PFCORE_SUBCOMMANDS）与本仓全部文档删除——不得再引入第三个全流水线命令名、勿复活。rules-check 的结构校验实际可复用 packager 的 loadRules/validateRules。serve 子命令（2026-09-29 反馈行动 2 新增）已实现 frozen。",
+      "sources": ["specs/orchestrator.md §2 表（L26-28）", "specs/pipeline-contract.md §1 裁决记录（L21-23）", "REGENERATE.md 坑15（L167-168）"]
+    },
+    {
+      "id": "Q41",
+      "area": "pipeline 二维码与伺服",
+      "type": "魔法数字+边界",
+      "q": "二维码内容格式与 IP 段优先级序列？'可扫'的判定方式（发不发 HTTP）？make 伺服缺省端口？复用前三重核实内容？占用者是未知进程时怎么处理？质检 FAIL 时二维码怎么办？",
+      "expected": "二维码内容 = LAN 可达预览 HTML 的 http URL（http://<局域网IP>:<port>/preview/<file>；必须局域网 IP，127.0.0.1 手机不可扫）。IP 探测按段优先级：192.168 > 10 > 172.16-31 > 100.64/10 > 其他 > 198.18/15 兜底（默认路由常落 TUN 虚拟网卡不可直接采信）；--serve-host 可显式覆盖。'可扫'判定 = qr.png 落盘 且 伺服端口 TCP 监听实测通过——本模块不向 loopback/私网发起 HTTP 请求，健康检查只做 TCP connect。缺省端口 8618，被未知进程占用时向后顺延；复用前三重核实：记录端口 TCP 可连 + 记录 PID 存在且映像名为 python（tasklist /FI，防 PID 跨重启被无关进程复用）+ 伺服根与本次一致——任一不满足即清状态文件，验明正身的旧 python 伺服器杀旧起新（spawn ~0.3s）；占用者是未知进程时绝不 taskkill 只换口。质检是裁判：任何质检 fail → exit 1，不产出二维码与 demo-prebuilt。",
+      "sources": ["specs/pipeline-contract.md §5（L157-168）", "specs/pipeline-contract.md §3.4（L85）", "specs/orchestrator.md §1（L17）"]
+    },
+    {
+      "id": "Q42",
+      "area": "pipeline serve 契约",
+      "type": "退出码+边界",
+      "q": "pfcore serve 的退出码两种取值？--root 缺省与目录缺失行为？前台/后台、端口顺延上限、写不写 .demo-serve.json？二维码指向三级优先与退化行为？复用 make 的哪两个函数、发不发 HTTP？",
+      "expected": "python -m pfcore serve [--root artifacts/demo-prebuilt] [--port 8618] [--host <ip>]：对已生成好的目录起前台局域网静态伺服（演示日兜底），启动时现场重建 index.html 汇总页与 qr.png（都落在被伺服目录内、覆盖写）。退出码：0=被正常停止（前台进程 Ctrl+C 停止、端口即释放）；2=用法/环境错误——目录不存在 → exit 2（也接受裸预览目录如 artifacts/preview/）。不写 .demo-serve.json 复用状态（区别于 make 的分离子进程）；端口被占同样向后顺延（上限 20 个）。二维码指向优先级：preview/*.html 排序第一个 > 根目录散置 *.html（排除 index.html）> 汇总页（目录内无预览 HTML 时退化指向汇总页并打印警告）。IP 探测、段优先级、TCP-only 健康检查复用 make.py 同一套函数（_lan_ip/_port_listening），本命令同样不发起任何 HTTP 请求。",
+      "sources": ["specs/pipeline-contract.md §5.1（L175-194）", "specs/orchestrator.md §2 serve 行（L25）"]
+    },
+    {
+      "id": "Q43",
+      "area": "pipeline 报告 stem 与字段来源",
+      "type": "边界",
+      "q": "qacore 报告/截屏的 stem 命名裁决内容？--out 指定报告路径时截屏如何命名？'x.report.png' 是字面文件名吗？报告 JSON 全字段的单一来源是哪份文档哪节、qacore.md §9 现在怎么处理？",
+      "expected": "stem 命名裁决（2026-09-29 回炉定死，消除 §3.2/3.4 与 §4 示例的表面矛盾）：<产物名> = 产物文件名去扩展名的 stem。例：dist 形态产物 index.html → index.report.json + index.png + index-landscape.png（make 渠道目录即此形态）；预览产物 match3.html → match3.report.json。--out 指定报告路径时：截屏随其目录且跟随报告路径的 stem（<out>.png / <out>-landscape.png）；缺省时报告 stem = 产物 stem（三者同 stem）。§4 示例中的 x.report.png 泛指'产物 stem + .report.png'，不是字面文件名。报告 JSON 全字段的单一来源 = pipeline-contract.md §4（qacore.md §9 只做显式交叉引用、不再重复列字段表，避免两处漂移——2026-09-29 前 §9 曾误写'§4 字段表'指向本页 §4 探针契约，已修正）。报告 schema 尚未 JSON Schema 化（列入 M8 后续），收紧期间以 gate 脚本断言为准。",
+      "sources": ["specs/pipeline-contract.md §3.3（L89-96）", "specs/pipeline-contract.md §4 注释（L112-114、L153）", "specs/qacore.md §9（L199-202）"]
+    },
+    {
+      "id": "Q44",
+      "area": "M5 assetkit",
+      "type": "魔法数字+默认值",
+      "q": "assetkit 四能力的关键参数与容错各是什么？selftest 8 断言覆盖点与全部实测数字？make 接线机制（环境变量/逃生口/空跑/失败语义）？--min-reduction 语义与 demo 实测数字？",
+      "expected": "压图：sharp Node 助手四候选竞标（有损 WebP/近无损 WebP/调色板量化 PNG/常规 PNG；大图自动跳 PNG 候选省时）取最小，永不增大（全部候选不小于原始则保留原图），可选 --max-edge 等比缩边（默认不缩）。音频：ffmpeg（PATH 或 PF_ASSETKIT_FFMPEG）转 AAC 48kbps .m4a（剥元数据）；ffmpeg 缺席/单文件失败保留原始、如实记录不阻塞。字体子集：fontTools 按 i18n.strings 全语言字符 ∪ 标题 ∪ 数字子集化，woff2（依赖 brotli）/woff/ttf；字体缺字形不报错、如实报告字符覆盖率。图集：自研 shelf（next-fit 递减高）装箱 + 无损合成（WebP 无损/调色板 PNG 竞标），atlas.json = pf-atlas/1 帧表。selftest 8 断言（2026-09-29 实测）：降幅 ≥30% 门 / 照片走有损 WebP 74.5% / WAV→AAC 22094→4329B / 中文与阿拉伯字体子集各 ≤40KB 且重载 cmap 全命中 / 图集帧两两不重叠在界内且图可解码 / optmap 键一一对应。接线：make 在 validate 后对声明素材跑 assetkit，构建子进程经 PF_ASSET_OPTMAP 环境变量接线（--no-assetkit 逃生口）；模板构建脚本对声明串精确命中即内联优化产物（旁车记 source=assetkit），未命中回退原素材；spec 无声明素材时零开销空跑（不发 node 子进程）；素材管线失败按流水线失败 exit 1（宁可失败不带病出包）。--min-reduction 硬门不达 exit 1；demo piece-0.png 893B→402B 降 54.98%（--min-reduction 30 exit 0）。输出 asset-optmap.json（键=spec 声明串或绝对路径）+ report.json（逐素材前后字节/候选明细/汇总降幅）。",
+      "sources": ["specs/assetkit.md 全文（L14-49）", "manifest.json M5（L200-221）"]
+    },
+    {
+      "id": "Q45",
+      "area": "CONTRACTS 变更流程",
+      "type": "边界",
+      "q": "CONTRACTS 契约变更'怎么广播'的四步全做清单？谁批准？commit 标题前缀与版本锚递增规则？三个版本锚现值？",
+      "expected": "每次契约变更必须全做：①更新 CONTRACTS 对应小节 + 受影响 specs/*（含'待统一/修正候选'的裁决回填）；②双侧实现同步改（schema/不变式/桥/规则库），golden + bad 评测集按需增补；③python scripts/gate_phase1.py（及受影响的其他 eval）全绿；④单独 commit，标题带 contract-change: 前缀；版本锚号递增（破坏性变更进大版本）。谁批准：契约（C1–C6 与痛点候选）变更由仓库 owner / PM 批准，实现者不得单方面变更。版本锚：PlayableSpec specVersion=\"1.0.0\"（schema 内 const）、桥 PF_VERSION=\"0.1.0\"、规则库 rulesVersion（CONTRACTS 写 1.0.0，packager/manifest 已更新为 1.1.0——见 Q30 张力）。",
+      "sources": ["CONTRACTS.md §版本与变更流程（L85-94）"]
+    },
+    {
+      "id": "Q46",
+      "area": "REGENERATE 环境前置 SOP",
+      "type": "边界",
+      "q": "再生试验 SOP 的环境前置硬性条款原文要点？工作流门因环境假设瞬时失败判什么、不判什么？第三波新增的数值表类 spec 硬性条款与 mulberry32 实证教训？三类回炉各自怎么 commit？",
+      "expected": "环境前置由 spec 声明（第二批试验教训，硬性条款）：冻结测试对目录形状/根路径反推/junction/venv glue/node_modules 依赖的一切假设必须事先写进该模块 spec（范例：packager.md §6 测试环境前置）；禁止实现者自创 junction/venv glue 或临时挪文件凑路径——工作流门因环境假设瞬时失败的，判 spec 缺口、回炉补 spec，而不是记实现失败。第三波通用教训（2026-09-29，SOP 硬性条款）：规则卡/数值表类 spec 必须自带'带期望输出的算例'——今后新规则卡/数值表（merge/pullpin/sort 规则卡开工时）不附算例视为 spec 缺口，回炉补齐后才许冻结；mulberry32 实证：卡只给函数名不给函数体时'规范公版'（t|61）与流传变体（*61）是不同的流，各自自洽的 gate 都拦不住——算例必须随卡内联、函数体级别常量也要成文。缺口回炉分三类各自单独 commit：实现的 bug→修原实现/包脚本；spec 歧义或缺失→补 spec；流程问题→改 SOP。",
+      "sources": ["REGENERATE.md §5（L100-108、L122-126）"]
+    },
+    {
+      "id": "Q47",
+      "area": "gate_phase2 五门",
+      "type": "魔法数字",
+      "q": "gate_phase2 的五项门内容？实测总墙钟与各门耗时拆分？全量质检首检 FAIL 的重跑规则与留痕字段？",
+      "expected": "五项门：①gate_phase0 ②gate_phase1 ③gate_mainpath 三门真实子进程回归 exit 0；④e2e_matrix 全量 --budget-sec 1200 exit 0，且读 artifacts/matrix/summary.json 双重对账 totals={pass:48,fail:0,skip:0}/mode=full/wallSec≤1200；⑤中性名扫描（复用 gate_mainpath 词表扫描器）。2026-09-29 实测 PASS 5/5，总墙钟 656.1s（三门 33.6/61.0/135.5s + e2e 全量 48 包 422.8s 0 fail；另独立全量裸跑 342.0s）。重跑规则：全量质检首检 FAIL 格用同一 qacore 至多重跑一次、以重跑为最终判定，summary 逐格 retried/firstAttemptFails 如实留痕。",
+      "sources": ["manifest.json EVAL-gate-phase2（L279-290）", "manifest.md L42", "specs/orchestrator.md §5（L96-102）"]
+    },
+    {
+      "id": "Q48",
+      "area": "demo-prebuilt 文档矛盾",
+      "type": "边界+交叉引用",
+      "q": "REGENERATE.md §6 对 artifacts/demo-prebuilt/ 现状的结论原话是什么？它与 orchestrator.md §3/§5 及 pipeline-contract.md §3.4 的描述是否一致？finalize_demo_prebuilt.py 的定稿内容与失败语义？",
+      "expected": "不一致（文档内真实张力）：REGENERATE §6 说规划要求 artifacts/demo-prebuilt/ 存最后一次全绿产物（artifacts/ 整体 gitignore 不入库）——'当前仓库无此目录（如实记录，未实现）'，落地方式待编排器里程碑定。但 orchestrator.md §3 说 make 全绿时产出 <out>/demo-prebuilt/（汇总页/qr.png/pipeline-report.json/预览拷贝/渠道包拷贝），且演示兜底定稿流程 python scripts/finalize_demo_prebuilt.py 已 2026-09-29 实装：make 整体重建六包 match3×{en,zh}×三渠道 + 逐包补齐 qacore 质检 + README 静态伺服说明，任一 fail 整体撤除兜底目录（exit 0 要求六包齐全且各自 index.report.json 零 fail、win=True）；pipeline-contract §3.4 也列出该产物树。考生应指出矛盾而非择一附和。",
+      "sources": ["REGENERATE.md §6（L128-132）", "specs/orchestrator.md §3（L52-56、L104-106）", "specs/pipeline-contract.md §3.4（L69-75）"]
+    },
+    {
+      "id": "Q49",
+      "area": "CONTRACTS 交叉引用漂移",
+      "type": "交叉引用",
+      "q": "qacore.md §3 把'durationBudgetSec≤30 vs 45s 不一致'指向 CONTRACTS §痛点 7；channel-adapters.md §4 把'退出路由两处改动'指向 CONTRACTS §痛点 6——按 CONTRACTS 痛点表原文，这两个编号各自实际是什么？正确编号应是？",
+      "expected": "CONTRACTS 痛点表原文：痛点 6 = durationBudgetSec.max≤30（校验器）vs 45s 自动试玩预算不一致、时长承诺与实测口径脱节（qacore 想引的就是它，应指痛点 6）；痛点 7 = CHK06'参数=landingUrl'与 meta/google/tiktok 真实 API 不符（onComplete/ExitApi.exit/openAppStore 不收 URL）；痛点 10 = '渠道规范变化只改配置'在退出路由上不成立、exit.call 是人读字符串新渠道要改两处（channel-adapters 想引的就是它，应指痛点 10）。即两处交叉引用编号漂移：qacore.md 错指痛点 7（实为 6）、channel-adapters.md 错指痛点 6（实为 10）；各痛点本体内容在 CONTRACTS 中均存在，仅编号错位。",
+      "sources": ["CONTRACTS.md 痛点表（L76-83）", "specs/qacore.md L41", "specs/channel-adapters.md L61"]
+    },
+    {
+      "id": "Q50",
+      "area": "素材缺失行为+痛点4",
+      "type": "边界",
+      "q": "match3 的 spec.assets 路径参与渲染吗、缺失时行为、评委改素材路径会看到什么？CONTRACTS 把它登记为哪个痛点、变更候选是什么？PF_ASSETS（d03ac0e）落地后改变了什么、什么仍不可见？",
+      "expected": "本卡 §11 原文：spec.assets 里的 background/sprites/audio 路径当前完全不参与渲染——贴图在 Boot 阶段程序化生成（96px，Graphics.generateTexture）；素材路径缺失不报错、不加载。评委按 schema 准备素材却得到与素材无关的程序化画面、改素材路径看不到画面变化是已知缺口 = CONTRACTS 痛点 4（素材路径必填但缺失不报错、构建直接忽略）；变更候选：assetkit 最小函数落地时素材存在则真实进包 + 校验存在性告警、演示 spec 提供中英文案。PF_ASSETS（commit d03ac0e）已部分落地：sprites 中真实存在的键构建期 data URI 内联、运行期替换同键棋子程序化贴图（96×96 contain 归一），并有 CHK10 像素对账（asset_audit replaced）——但 background/audio 仍不参与渲染，未声明/缺失键仍程序化回退；改标题/文案/seed 立即可见。",
+      "sources": ["specs/match3-rules-card.md §11（L180-209）", "CONTRACTS.md 痛点4（L77）", "specs/templates.md §3（L45-49）", "specs/pipeline-contract.md §3.1（L41-45）"]
+    }
+  ]
+}

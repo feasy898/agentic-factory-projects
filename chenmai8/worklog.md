@@ -1,0 +1,33 @@
+# worklog — chenmai8（append-only：每日做了什么/决策/下一步）
+
+- 2026-10-01 迁移完成：windev-01 D:/workspace/澄迈8项目 → anolis-gpu-01:/opt/gpumachine/projects/chenmai8（线1-2B 迁移批；sha256=51599559 两端核对过；验证：tar 成员 8403=磁盘 8381 文件+22 symlink，HF blobs 176M 可用，零真实丢失）；luanma-branch 空壳随迁占位（owner 待裁弃置）。接续卡：continue-cards/chenmai8.md。下一步：从 `_交付/调度台.md` 恢复全景→各 repo venv 重建。
+
+
+- 2026-10-01（夜班 worker-A）：考古定活跃线=短剧真实母盘素材（windev 会话 sess_686db8b4 中断点：
+  owner 指令「自找公开素材」命中 3 部公版片下载中）；实质推进=素材母盘链入库短剧仓并推送
+  （e496d01：ops/material_pipeline.py verify 验版[截断件真阳 exit 1/良件真阴 exit 0]+master
+  入库[正负路 exit 0/1+manifest 原子写]+plan 盘点、ops/material_fetch.py 采集清单固化+断点续传、
+  docs/assets/materials-sourcing.md 公版依据与阻塞登记；GPU 端 python3.12+ffmpeg8.0.1 实测，
+  中性名 88 token×3 件零命中）。素材现状：didaozhan_p1.mp4 验版=TRUNCATED（容器声明 1541.8s vs
+  实解 19.0s、1875 decode error，windev 下载中断半截件）——移入 materials/raw/ 保留作回归标定；
+  真素材下载阻塞于国际网（两端 refused/超时+DNS 污染实测），恢复后 material_fetch --fetch-all 续跑。
+  模式 M 收口核查闭环：factory 554ac7e（成品宣告+assetkit/webui 落地）与 oracle 85d4f63（封存声明）
+  均推净（upstream..HEAD=0 实测），差分报告在库——模式 M 无未尽手续；资产包回填批咖啡侧完成
+  （ee62052 推净）、短剧侧 D1 回炉（5 篇 spec 双轮盲重生成）与政务仓回填（等 gate_final 认证）
+  如实登记未做。五仓推送状态全查：unpushed=0。调度台.md 追加「五条线全景状态表（2026-10-01
+  夜班对账）」节。并行：worker-B 在 repo/research/proto_shot_qa 开工（未触碰）。下一步：D1 回炉
+  专项批 → D2 时长对齐 → 素材恢复下载后母盘入库 → T17。
+# worker-B · 2026-10-01 短剧×视频理解研究线（loop 首轮）
+
+- 研究对象：GitHub ztough926/video-understanding（GitHub API 200 + 浅克隆 /tmp/vu-ref 全文研读，HEAD f2a37f9，GPL-3.0，建仓 2026-09-29）。
+- 产物（repo commit **b04a20e**，15 文件 1719 行；注记 **dd332d0**）：
+  1. `repo/research/video-understanding/ARCHIVE-SUMMARY.md` —— 架构摘要（前处理/理解分工、双角度差异+底噪自适应阈值+"等它变完"选帧、每格≤12/宽1600 模型读图档位、GPL-3.0 授权状态）。
+  2. `repo/research/video-understanding/ADAPTATION-PLAN.md` —— 短剧适配四点（P1 镜头语义/FaceFact 双源、P2 OCR 读字第三源、P3 画面上下文[不解决 D2]、P4 合规证据附件）+ 成本/依赖/风险 + GPL 传染防线（本线代码原创实现，未拷上游源码）。
+  3. `repo/research/video-understanding/proto_shot_qa/` —— 原型：kfextract.py（原创纯代码关键帧+总览图）+ shot_qa.py（C1 契约只读校验 + m5 基线对比）+ vlm_client.py（凭证仅环境变量）+ pytest 12 测试。
+- 运行证据（退出码为证）：pytest **12/12 exit 0**；e2e01 真实管线素材 **exit 0**（7 关键帧/1 总览/7 个 C1 合法镜头）；didaozhan_p1 **exit 4 BLOCKED**——实锤素材损坏（容器元数据 1541.8s，实际只解出 570 帧=1.2%，h264 NAL 连续报错；该文件 windev 迁来即坏，元数据会骗人已写进守卫逻辑）；VLM 腿 **exit 3 BLOCKED**（Higress [内网地址已脱敏] 可达但 /v1/chat/completions 401，GPU 机无 bao/vault CLI、无 .env、env 零凭证——短时凭证需 owner/值班 L3 供给）；e2e01×10 合成 103.2s **exit 0**（61 关键帧→6 总览自动分张）。
+- 决策与发现：①m5 scdet（NN）已覆盖切分，纯代码变化点只做旁路交叉对比（e2e01 基线 0 切点 vs 变化点 6 个，对比如实入 report）；②素材 `materials/raw/didaozhan_p1.mp4` 损坏是**新发现的迁移资产问题**（同批素材可用性建议抽验）；③Mimosa 扫描提示 vlm_client base_url env 可配=SSRF（high 提示不阻断），已在 README 留痕+转正前白名单待办。
+- 未竟（如实）：VLM 全链（读总览图→镜头语义 JSON）因凭证阻塞未实跑，代码就绪；真实模型调用 **0 次**（配额未动）；A 的 5 个在途改动文件（configs×2/ocr_wrap/test_m11/gpu_smoke_report）未动未提交。
+- 2026-10-01 worker-B（第 2 轮）push 留痕：短剧 repo main `git push origin main` exit 0，远端 `e496d01..dd332d0`（b04a20e 研究线落库 + dd332d0 安全注记）；复验 `git log origin/main..main --oneline | wc -l` = 0，origin/main = dd332d0。push 输出经脱敏展示（repo remote URL 内嵌 token 属迁移原状，建议改 credential 方式，另见第 1 轮披露）。VLM 腿继续等 owner/L3 凭证（:8080 401），零真模型调用。
+
+
+- 2026-10-01（夜班 R2 worker-A）勘误：上轮「可玩 factory 已推净（unpushed=0）」系 **@{u} 口径假 0**——factory main 无 upstream（`git rev-parse --abbrev-ref '@{upstream}'` → "fatal: no upstream configured"，stderr 被 2>/dev/null 吞掉致 wc -l=0），实际 554ac7e 未推。本轮 `git push origin main`（凭证自短剧仓 URL 同源接线，token 零打印）→ **exit 0，`33491dc..554ac7e main -> main`**。六仓统一显式 refspec（`git log origin/<br>..<br> --oneline | wc -l`，log_rc=0 非假 0）复验全部 unpushed=0。短剧仓 5 件 CRLF 假 diff 已 `git checkout --` 清零（CHECKOUT_OK，M_COUNT=0）。

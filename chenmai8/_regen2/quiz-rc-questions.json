@@ -1,0 +1,283 @@
+{
+  "quiz": "C2 盲评考官 · 机器人+咖啡双项目各 10 题（quiz-rc）",
+  "generated": "2026-09-30",
+  "basis": "只读两仓 docs/assets/ 全部 spec：具身助餐机器人/repo/docs/assets/（specs/ 下 11 份 spec + CONTRACTS.md + manifest.md + manifest.json + REGENERATE.md）、咖啡豆质检/repo/docs/assets/（specs/ 下 7 份 spec + CONTRACTS.md + manifest.md + manifest.json + REGENERATE.md），2026-09-30 本会话逐份实读；未读任何实现源码（题面与答案引用的代码行号均转引自 spec 文本本身）。全部答案仅凭 spec 作答并附出处。",
+  "strategy": {
+    "选题口径": "每仓 10 题，覆盖魔法数字/时序/默认值/边界四类，优先挑 spec 自述为『坑/易错/已知极限/已知回归/未实现勿误信』以及『两值易混（张嘴vs闭嘴、硬限vs软限、卡vs表、retryvsrejected）』的考点",
+    "机器人R1-R10": "R1 闭嘴阈值归属层、R2 estop的violation类别、R3 缺省家位生成、R4 硬限vs软限速、R5 相机角色切换时序+曝光稳定窗、R6 看门狗与巡检不喂心跳、R7 重舀上限与两条失败路径、R8 模型回退链5≠6、R9 意图优先级+置信度+否定句、R10 ArUco报告三项补救未实现",
+    "咖啡C1-C10": "C1 筛目舍入+None不是通过、C2 lab8/CIE双标度、C3 配对魔法数字族、C4 pairing_cost两口径、C5 peaberry不计缺陷但不吞缺陷、C6 2mm自洽门语义+无单码兜底、C7 静区坑+W13内缩事故、C8 verified:false阻断passed+per_side、C9 护照校验和定型时序、C10 随机源切换3例已知回归"
+  },
+  "question_count": 20,
+  "questions": [
+    {
+      "id": "R1",
+      "project": "具身助餐机器人",
+      "area": "cs_mouth/cs_schema/cs_orchestra · 张嘴vs闭嘴阈值归属层",
+      "type": "边界+默认值",
+      "q": "张嘴判定阈值是多少、冻结在哪一层？闭嘴（咬合完成）判定阈值是多少、又定义在哪一层？为什么闭嘴阈值不在 cs_schema？张嘴信号用 blendshape 还是几何量、标定常数是多少？",
+      "expected": "张嘴：cs_schema 冻结常量 JAW_OPEN_THRESHOLD=0.35（jaw_open>0.35 判张嘴）；转头 |head_yaw|>25°（HEAD_YAW_TURN_THRESHOLD_RAD=0.4363 rad）、皱眉 FROWN_ASK_THRESHOLD=0.5 同为 schema 常量。闭嘴（咬合完成）：jaw_open<0.20，不在 cs_schema——是编排层常量 cs_orchestra.nodes.JAW_CLOSED_THRESHOLD（nodes.py:74-76），schema 只定义张嘴阈值、闭嘴滞后属编排层语义。张嘴信号是几何口径比 ratio=|唇13-唇14|/|眼角33-眼角263|，jaw_open=clip((ratio-0.11)/(0.23-0.11),0,1)（标定 closed=0.11、open=0.23）；静帧 blendshape jawOpen 不区分张闭嘴（实测张 0.079-0.094 vs 闭 0.093）已弃用。",
+      "sources": [
+        "specs/cs_mouth.md §4（L46-58）",
+        "specs/cs_schema.md §4（L52-54）",
+        "specs/cs_orchestra.md §3 WAIT_BITE 行（L48）",
+        "REGENERATE.md 坑 9（L167-168）"
+      ]
+    },
+    {
+      "id": "R2",
+      "project": "具身助餐机器人",
+      "area": "cs_arm/cs_schema · 软件急停的 violation 类别",
+      "type": "边界（易错）",
+      "q": "SafetyEnvelope.estop() 闩锁后 SafetyState.violation 置为 ViolationKind 的哪个枚举值？靠什么字段区分急停与真看门狗超时？reset() 之后若 TCP 仍在禁入区内会怎样？普通 write 拒绝会置 violation 吗？",
+      "expected": "置 violation=watchdog——软件急停复用 watchdog 类别（契约注释指定），以 estop_latched=True 区分（safety.py:206-212）。estop() 是同步闩锁（返回即已生效：halt 底层 + estop_latched=True + 后续 write 全拒）。reset() 清闩锁与 violation 后立即重查禁入区——TCP 仍在区内则如实重新闩锁（clear_to_move 不会在侵入中变真）。拒绝 ≠ violation：write 被拒（如 not_clear_to_move/disabled/超硬限/envelope_violation）不计入违规状态、violation 保持 none——拒绝是包络在正确工作；violation 只留给真实安全事件（急停/看门狗/禁入区），置位即 clear_to_move=False 直到显式 reset()。",
+      "sources": [
+        "specs/cs_arm.md §3.1 拒绝语义（L54-56）",
+        "specs/cs_arm.md §3.2（L62-63）",
+        "specs/cs_schema.md §3（L38-39）",
+        "CONTRACTS.md C2（L27-32）"
+      ]
+    },
+    {
+      "id": "R3",
+      "project": "具身助餐机器人",
+      "area": "cs_arm · MockArm 缺省家位生成",
+      "type": "魔法数字+边界",
+      "q": "MockArm 的缺省家位为什么不能取全零位形？_find_clean_home 的生成参数（种子/尝试次数/间隙要求/工作盒）是什么？找不到合适位形时回退到什么、后果如何？",
+      "expected": "全零位形 TCP 落在面部球域内（距口部点约 0.079m < 面部球域半径 0.12m），不可作缺省家位（REGENERATE 坑 11：写死零位会立即闩锁）。缺省家位 _find_clean_home：固定种子 seed=20260928、至多 500 试、要求 TCP 与全部连杆参考点间隙 ≥0.03m 且落在前向工作盒 x∈[0.05,0.30]、|y|≤0.25、z∈[0.02,0.35]。找不到时回退全零——交由禁入区监控如实闩锁（宁可误报不可漏报）。",
+      "sources": [
+        "specs/cs_arm.md §5（L104-107）",
+        "specs/cs_sim.md §6.1 面部球域（L101）",
+        "REGENERATE.md 坑 11（L170-171）"
+      ]
+    },
+    {
+      "id": "R4",
+      "project": "具身助餐机器人",
+      "area": "cs_arm/cs_sim · 笛卡尔硬限 vs 近脸软限速",
+      "type": "边界（两值易混）",
+      "q": "cartesian 指令请求 0.14 m/s 与 0.12 m/s，在接近段和近脸段（距口部点 ≤0.15m 壳层）分别会被放行、拒绝还是改写？两个限速数值各是多少、处理语义有何不同？cruise_speed_mps 缺省 0.14 是怎么定的？",
+      "expected": "速度硬限：cartesian max_speed>0.15 m/s ⇒ 拒绝（不静默放行；joints 硬限 >1.5 rad/s 同理）。近脸软限速：距口部点 ≤0.15m 壳层内限速 0.10 m/s——不拒绝，而是拉长执行时长、等效改写为更低速遵守并记录进 decision（eval 实测：请求 0.15 → 有效 0.0952 m/s）。故 0.14 与 0.12 均低于 0.15 硬限不会被拒；进入近脸壳层后都被改写为 ≤0.10 m/s（拉长时长）。cs_orchestra 缺省 cruise_speed_mps=0.14 正是取『<接近段硬限 0.15，留包络余量』。",
+      "sources": [
+        "specs/cs_arm.md §3.1 第4-5步（L46-48）",
+        "specs/cs_sim.md §6.1（L102-105）",
+        "specs/cs_arm.md §7 实测（L129-130）",
+        "specs/cs_orchestra.md §6（L93）"
+      ]
+    },
+    {
+      "id": "R5",
+      "project": "具身助餐机器人",
+      "area": "cs_orchestra/CONTRACTS · 相机角色切换时序",
+      "type": "时序",
+      "q": "一个进送达的口 camera_role 共切换几次？每次切换的时序节点与原因码是什么？重舀耗尽未进送达的口呢？曝光稳定窗多长、窗内口部通道返回什么、eval 断言口径带多少余量？重复切换到同角色会怎样？",
+      "expected": "进送达的口恰好 2 次切换：① DELIVER 入场沿 scene→wrist_mouth，reason=delivery_entry（在进送达运动之前），并起算曝光稳定窗；② 撤回完成沿 wrist_mouth→scene，reason ∈ {retract_complete, estop_abort, zone_abort, done_retract}（四者中先发生者），且 ts ≥ ①的 ts。未进送达的口（重舀耗尽 retry）0 次切换。曝光稳定窗 exposure_settle_s=0.5s：DELIVER 入场置 settle_until_ns=now+0.5s，窗口内口部通道一律返回失效帧（先等曝光稳定再采信口部帧；生产 WristMouthChannel 与 mock 同语义）；eval 断言每次 delivery_entry 后第一帧有效口部采样距切换 ≥0.5s（tick 粒度余量 0.05s）。重复切换到同角色直接抛错（台账即断言器）。",
+      "sources": [
+        "specs/cs_orchestra.md §5（L70-84）",
+        "CONTRACTS.md C4（L49-59）",
+        "specs/cs_orchestra.md §6（L96）"
+      ]
+    },
+    {
+      "id": "R6",
+      "project": "具身助餐机器人",
+      "area": "cs_arm · 看门狗与巡检心跳语义",
+      "type": "时序+边界",
+      "q": "SafetyEnvelope 看门狗缺省超时是多少秒？包络 poll() 周期巡检会喂心跳吗、它用什么状态快照？急停闩锁期间看门狗还判吗？心跳信号取哪些、如何取舍？eval 实测的跳/不跳边界是多少？",
+      "expected": "watchdog_timeout_s 缺省 0.5s：使能后 0.5s 内无任何心跳 → violation=watchdog + 底层 disable。poll() 周期巡检（看门狗+禁入区）本身不喂心跳——巡检用底层 snapshot_state 快照（无则只在首次 read），监控的是控制回路活性；MockArm 与真机 Feetech 通道同语义：串口巡检读数不计入控制心跳。急停闩锁中不判看门狗。心跳取两侧较新者：read/write/enable/disable 控制活动或底层心跳（heartbeat_ns；None=不提供则跳过看门狗）。eval 实测：0.4s 静默不跳 / 0.6s 必跳。",
+      "sources": [
+        "specs/cs_arm.md §3.2（L64-66）",
+        "specs/cs_arm.md §5 snapshot_state（L101-102）",
+        "specs/hw-toolchain.md §1（L21-23）",
+        "specs/cs_arm.md §7（L130, L136）"
+      ]
+    },
+    {
+      "id": "R7",
+      "project": "具身助餐机器人",
+      "area": "cs_orchestra · 空勺重舀与两条失败路径",
+      "type": "边界（retry vs rejected）",
+      "q": "SPOON_CHECK 不过的重舀上限是多少、含首次共几次行程？耗尽后该口 outcome 是什么、走什么路径、camera_role 切换几次？另一条失败路径『勺空复检仍见食物』的 outcome、复检参数又是什么？",
+      "expected": "scoop_retries_max=2：SPOON_CHECK 不过且 scoop_round-1 < 2 → 回流 SCOOP 重舀；耗尽 → outcome=retry，直接 RETRACT（不进送达），该口 camera_role 全程 scene、0 次切换——含首次共 ≤3 次行程。另一条：SPOON_EMPTY 阶段勺仍见食物 → 按 spoon_recheck_interval_s=0.5s 间隔复检 spoon_empty_rechecks=3 次后 → outcome=rejected + RETRACT。两条失败路径 outcome 不同（重舀耗尽=retry、勺仍见食物=rejected），勿混。",
+      "sources": [
+        "specs/cs_orchestra.md §3 SPOON_CHECK/SPOON_EMPTY 行（L45, L49）",
+        "specs/cs_orchestra.md §6（L100-101）"
+      ]
+    },
+    {
+      "id": "R8",
+      "project": "具身助餐机器人",
+      "area": "cs_sim/cs_schema · 模型回退链 5≠6 关节（spec 自述最重要坑）",
+      "type": "边界+现状",
+      "q": "公开克隆/无参考件环境里 load_arm(\"auto\") 会落到哪一级回退？该级模型几个关节、与契约常量什么关系？会引发什么失败面？恢复前提有哪几种放置方法、修复 commit 与回炉实测结果是什么？",
+      "expected": "落到 tier3 chain_builtin 内置名义链——只有 5 关节（无夹爪：shoulder_pan/shoulder_lift/elbow_flex/wrist_flex/wrist_roll），与契约 N_ARM_JOINTS=6（v1.1 修订 7→6：5 臂关节+1 夹爪）不匹配；凡经 ArmState（要求 6 元数组）的路径全部 pydantic too_short 成片失败（当日实测：全量 pytest 36 failed/260 passed/2 skipped；cs_orchestra.eval --mock 1 exit 1 同因）。恢复三选一：① 参考件放回可发现的 _vendor/<参考件>/Simulation/<型号>/*.xml 布局（gitignore 永不入库）；② 工作区外集中参考目录 D:/upstream-refs/robot-vendor（commit cea83b1 增补，存在才加入）；③ 设 CS_VENDOR_ROOT 指向任意参考根（最高优先、插最前）或显式 load_arm(path)。恢复后先跑 cs_sim.eval 确认 tier≠chain_builtin；2026-09-30 回炉实测 pytest tests/ 297 passed/1 skipped、exit 0。",
+      "sources": [
+        "specs/cs_sim.md §3 内置名义链（L59-64）",
+        "specs/cs_sim.md §8 坑 1（L168-181）",
+        "specs/cs_schema.md §4（L47）",
+        "REGENERATE.md §0（L9-33）",
+        "REGENERATE.md 坑 2（L149-152）"
+      ]
+    },
+    {
+      "id": "R9",
+      "project": "具身助餐机器人",
+      "area": "cs_voice · 意图优先级/置信度/否定句边界",
+      "type": "默认值+边界",
+      "q": "关键词意图的规则表优先级顺序是什么？各意图的置信度常数是多少？select 的置信度如何分档、触发词有哪几个？用户说『我不想吃芋泥了』会被解析成什么意图、为什么？select 槽位缺省词表？",
+      "expected": "规则表优先级（同句多命中按序取最优先）：done > select > pause > next > resume > greet（intent.py:34-43）。置信度常数（无校准信号、保守固定）：命中 0.95；select 带触发词（我想吃/想吃/来点/要吃/换个/换）0.90 / 无触发词 0.75；unknown 0.30。『我不想吃芋泥了』——否定句/复杂从句不在关键词规则能力内，菜名命中即触发，会解析为 select（文档化已知局限），由行为树确认策略兜底。select 槽位只取预注册表 DEFAULT_DISH_REGISTRY=（芋泥, 南瓜粥, 椰子冻），config 可扩展。",
+      "sources": [
+        "specs/cs_voice.md §6（L76-90）",
+        "specs/cs_schema.md §4 DEFAULT_DISH_REGISTRY（L55）"
+      ]
+    },
+    {
+      "id": "R10",
+      "project": "具身助餐机器人",
+      "area": "cs_food · 首轮试验报告 vs 实现的 ArUco 参数（勿误信项）",
+      "type": "现状+边界",
+      "q": "首轮试验报告称『灰底 120px 码漏检，需预二值化+自适应窗口+minMarkerPerimeterRate=0.02』——这三项在当前实现中的真实状态是什么？当前 BowSelector.detect 的预处理实际是什么、检测参数如何取？合成域复现结果与真实帧现状？安装版 cv2 的缺省 minMarkerPerimeterRate 实测值？",
+      "expected": "三项（预二值化/自适应窗口/minMarkerPerimeterRate=0.02）都不在实现中——代码无对应行；登记为『真实帧漏检时的候选补救路径——未实现、未验证』，若实施须连 tests/test_food_interface.py 场景用例一起改。当前实现=仅灰度化 + 全缺省检测参数：ArucoDetector(dictionary, DetectorParameters())（bowls.py:67-69），调用方无任何参数覆盖。按仓库自身场景构造（_make_bowl_scene：DICT_4X4_50 120px 码贴灰底）以缺省参数复现灰底 60/90/120/150/180/200 六档全部 1/1 检出——合成域未复现漏检；真实帧行为待 assets/spoon_frames/（当前空，.gitkeep 占位）采集后复核。安装版 cv2 5.0.0 缺省实测：minMarkerPerimeterRate=0.03、adaptiveThreshWinSizeMin/Max/Step=3/23/10。",
+      "sources": [
+        "specs/cs_food.md §3.1（L46-59）",
+        "specs/cs_food.md §3（L38-44）"
+      ]
+    },
+    {
+      "id": "C1",
+      "project": "咖啡豆质检",
+      "area": "metrology · 筛目换算舍入与 sieve_pass 三态",
+      "type": "魔法数字+边界",
+      "q": "筛目（screen）换算公式与舍入规则是什么？恰在 .5 目边界时用 Python 内建 round() 会怎样？sieve_pass 返回 None 意味着什么、什么条件下返回 None？模板缺省 min_screen 与 max_below_frac？sieve_hist 的键形态与排序？",
+      "expected": "screen = floor(d / 25.4 × 64 + 0.5)——round-half-up（.5 进位），非 Python 内建 round 的银行家舍入，仅恰在 .5 时有差（REGENERATE 坑 5）；筛号→孔径 screen_mm(n)=n×25.4/64。sieve_pass 判定：低于 min_screen 的粒数占比 ≤ max_below_frac；无筛目目标（min_screen=None）或空盘 → None（不判定）——**None 不是通过**。模板缺省：min_screen=13、max_below_frac=0.0（全部豆 ≥ min_screen 才算过）。sieve_hist 键=目数字符串（如 \"16\"）、按数值升序；M9 按 int(key) 解析，非整数字符串抛 StandardsError。",
+      "sources": [
+        "specs/metrology.md §2.1（L26-31）",
+        "specs/metrology.md §3（L65-66）",
+        "REGENERATE.md 坑 5（L143-145）",
+        "CONTRACTS.md C2.5 sieve_pass 行（L92）"
+      ]
+    },
+    {
+      "id": "C2",
+      "project": "咖啡豆质检",
+      "area": "metrology/CONTRACTS · lab8 vs CIE 双标度（计量最大坑）",
+      "type": "边界+默认值",
+      "q": "全链路 color_lab 用什么标度、三通道范围？标准 YAML 的 reference_lab 按什么标度解析、可否声明 lab8？lab8↔CIE 换算公式与两面合并权重？CIE 负 a/b 混入 color_lab 的后果？三份标准 YAML 的行内注释与 loader 口径有何已知矛盾、以谁为准？",
+      "expected": "全链路 color_lab/color_lab_mean 唯一标度=OpenCV 8-bit LAB（lab8），三通道一律 [0,255]（L×255/100，a/b 整体+128）；构造期拒绝越界——CIE 负 a/b 混入会把 ΔE 直接放大。换算：lab8_to_cie=(L×100/255, a-128, b-128)，互转唯一实现在 beaneye/metrology，逐通道仿射且加权在两标度上可交换；两面合并 w×top+(1-w)×bottom，w：severity 高侧 0.7 / 平级 0.5 / 单面全占。CIE 量纲只存在两处：标准 YAML reference_lab（loader 按 CIE 解析，reference_lab_scale 默认 cie、可显式声明 lab8 加载期归一+量程校验 L∈[0,100]、a/b∈[-128,127]）与 ΔE 计算过程（ΔE76=‖Lab_merged(CIE)-Lab_ref(CIE)‖₂）。已知瑕疵（如实记录）：三份标准 YAML 行内注释写『0-255 标度』与 loader 实际 CIE 口径矛盾——数值 [55,-12,22] 本身是 CIE（a/b 为负在 lab8 不可能），以 loader 口径为准，注释属待清理项（CONTRACTS 痛点候选#3）。",
+      "sources": [
+        "specs/metrology.md §2.2（L37-48）",
+        "CONTRACTS.md C4（L145-151）",
+        "specs/standards-yaml.md §2 已知瑕疵（L54-56）",
+        "CONTRACTS.md 痛点 3（L208）"
+      ]
+    },
+    {
+      "id": "C3",
+      "project": "咖啡豆质检",
+      "area": "pairing · 阈值/哑节点/两遍算法魔法数字族",
+      "type": "魔法数字",
+      "q": "配对门限 DEFAULT_GATE_MM 是多少、恰在门限上的对如何裁决？哑节点代价怎么构造、为什么？第二遍整体配准残差矫正的触发条件（对数/位移）？替换守卫 _second_pass_wins 的比较规则？scipy 匈牙利 inf 不可行的解法与哑-哑块的正确写法？",
+      "expected": "DEFAULT_GATE_MM=12.0，**含等号**：dist <= gate 视为可配对。哑节点代价 λ=gate+_DUMMY_EPS(1e-6)——让『恰在门限上的对』严格优于双双落单。第二遍触发条件：粗配对 ≥8 对（_REG_MIN_PAIRS=8，样本太少中位数不可信；robust_shift_mm 样本 <4 返回 None）且 |mu|=hypot(逐分量中位数位移) ≥1.0mm（_REG_MIN_SHIFT_MM，<1mm 视作噪声不触发）；corrected=_solve_assignment(top-mu, bottom)。替换守卫严格变优才替换：把第一遍配对也放到矫正坐标系重算距离，两解同坐标系按字典序比较——先比对数（多者优先）、再比总距离（小者优先，round 9 位防浮点抖动），不变优（含完全相等）即保留第一遍。scipy 代价含 inf 且无避开 inf 的完全匹配会抛 ValueError: cost matrix is infeasible——用有限 BIG=λ×(n+m+1) 占位+哑节点保证恒可行（最优解不会取到 BIG 项）；哑-哑块要**整体置 0**（只在对角置 0 是错的：多余哑行与空闲哑列未必对角对齐，碰撞会逼最优解拆散真对——实测修复过的坑）。",
+      "sources": [
+        "specs/pairing.md §2（L22-27）",
+        "specs/pairing.md §3（L35-45）",
+        "REGENERATE.md 坑 4（L140-142）"
+      ]
+    },
+    {
+      "id": "C4",
+      "project": "咖啡豆质检",
+      "area": "CONTRACTS/pairing/severity · pairing_cost 两口径",
+      "type": "边界",
+      "q": "PairedBean.pairing_cost 的合法取值口径是什么？单面豆、双 None 占位、双面齐全各必须取什么？双面记录传 -1 会怎样？单面豆的 worst_side 与裁决规则#2？pairing_cost 数值的语义（哪个坐标系下的距离）？",
+      "expected": "两口径强制（契约校验器三分支逐一强制，schemas.py:290-300）：单面（恰一面 None）与双 None 占位记录必须**恰为 -1**；双面齐全必须 **>=0**（mm 距离）——传 -1 或任何负值即 ValidationError，两口径之间没有中间地带。单面豆（遮挡/边缘漏检/丢面/伪观测）一等保留：pairing_cost=-1、worst_side=所在面；裁决规则#2 仅一面有观测 → 取该面（final_defect=该面 defect）。pairing_cost 语义=**配对判定坐标系**下的距离：无残差=原始欧氏距离；有残差=矫正后距离，两者相差 ≤|mu|。",
+      "sources": [
+        "CONTRACTS.md C2.4（L77）",
+        "specs/pairing.md §4（L56-58, L51-53）",
+        "specs/severity.md §3（L86-88）",
+        "specs/severity.md §1 规则#2（L21）"
+      ]
+    },
+    {
+      "id": "C5",
+      "project": "咖啡豆质检",
+      "area": "severity/passport · peaberry 可计性与 W13 吞缺陷坑",
+      "type": "边界（卡 vs 表口径）",
+      "q": "peaberry（花豆/胡椒粒豆）计入缺陷吗、它在 taxonomy 的 kind 与默认 severity_rank 是多少？若不把它从两面比较中剔除会发生什么（W13 坑）、哪条裁决规则堵的洞？质量护照的证据卡与缺陷统计表对 peaberry 的口径有何不同？主/次类各几类？",
+      "expected": "peaberry counts_as_defect=false（secondary 类、默认序 rank 5）——计量不计缺陷、仅标注保留。W13 语义坑：若不把它从比较中剔除，一面 peaberry（rank 5）会『吞掉』另一面 broken（rank 1）等可计缺陷——final_defect=peaberry 又不计缺陷，这粒豆就从缺陷统计里消失了。规则#3 堵洞：两面都有且存在可计缺陷面（counts_as_defect=true）时**只在可计面之间裁决**（非可计面保留在字段里但不参与最终缺陷；皆非可计/normal 才退回全量比较，标注语义不丢失）。口径分工：证据卡立卡口径=final_severity_rank>0 逐豆一卡（**含 peaberry 标注豆**，好豆不立卡）；缺陷统计表=grading.defect_counts（**peaberry 不计缺陷**）——卡是『证据』、表是『计数』，eval 断言卡集合==非好豆集合。合计：primary 5 类（insect/dried/sour/mold/black）+ secondary 可计 6 类 + normal 1 类。",
+      "sources": [
+        "specs/severity.md §1（L26-30）",
+        "specs/severity.md §2（L52-63）",
+        "specs/passport.md §5 立卡口径（L62-64）"
+      ]
+    },
+    {
+      "id": "C6",
+      "project": "咖啡豆质检",
+      "area": "markers-geometry · 2mm 自洽门语义与失败语义",
+      "type": "边界",
+      "q": "标定端到端自洽门（center_err_mm>2.0 抛 CalibrationError）是什么性质的门、能抓什么不能说明什么？检出 <4 码时有无单码姿态兜底？两级求解中角点级精化何时被采纳、何时回退？px_per_mm 取哪里？",
+      "expected": "自洽门是**布局核对门（抓『码位配错对』）**，**非精度指标**：码位配错对时 4 点单应仍可能完美拟合，只有『检测中心经最终 H 反投影 vs 配置中心』的跨布局核对能暴露——最大偏差 >2.0mm 即抛 CalibrationError。**无单码兜底**：检出 <4 码/id 不全直接抛 CalibrationError（报错列出期望/检出/缺失 id+盘外误检 id；现场摆正重拍——v1 裁决）。两级求解：a) 中心精确解（四码检测角点均值 ↔ 配置中心 mm，findHomography(src,dst,0)，只依赖 marker id、与摆放旋转无关）；b) 角点级精化（a) 的 H 反投影布局角点与检测角点做循环移位匹配 16 对，findHomography 最小二乘）——不劣化守卫：精化解 16 角点像素 RMS 不大于中心解才采用（rms1 <= rms0），反而变大则回退 a)。px_per_mm=盘面中心局部尺度：H 逆在中心处 sqrt(|det J|)（±0.05mm 差分）；两面组装取均值。",
+      "sources": [
+        "specs/markers-geometry.md §3（L39-49）",
+        "specs/markers-geometry.md §4（L53-60）",
+        "REGENERATE.md 坑 3（L137-139）"
+      ]
+    },
+    {
+      "id": "C7",
+      "project": "咖啡豆质检",
+      "area": "markers-geometry/REGENERATE · ArUco 静区坑与 W13 内缩事故",
+      "type": "边界+魔法数字",
+      "q": "四角码静区不够会怎样？码心 (30,30)、码边 60mm 时静区伸出盘外约多少、『正解』与『错误解法』各是什么？W13 前的内缩事故：Mock 内缩到多少、造成多大幅度误差（跨距多少被配到多少）？打印板与 Mock 的静区宽度各取码边几分之几？正射网格分辨率？",
+      "expected": "白色静区是检测的必要条件——静区不够检测即失败。码心 (30,30)、码边 60mm 时静区伸出盘外约 15mm。正解=画布四周留外缘（Mock _MARGIN_MM=20，px_per_mm=min(w,h)/(tray+2×margin)，静区完整落画布）；错误解法=把码心往盘内缩——内缩后码位与 tray.yaml 脱钩，『检测点对配置点』的自洽门照样放行约 **+14% 尺度误差**（W13 前真实事故：Mock 自行把码心内缩到 45mm 而配置是 30mm，跨距 210mm 被配到 240mm）。静区宽度：打印板生成器 make_aruco 取码边 **1/8**（pad_px=side_px//8）；Mock 取码边 **1/4**（pad=max(4, side_px//4)）。正射网格 2048²，mm_per_px=300/2048≈0.14648。对称坑在分割侧：码是盘面印刷暗块，经典分割须先抑制码区（mask_markers/marker_margin_mm=2.0）再做全局阈值。",
+      "sources": [
+        "specs/markers-geometry.md §6（L70-78）",
+        "specs/markers-geometry.md §2（L23-28）",
+        "REGENERATE.md 坑 2（L127-136）"
+      ]
+    },
+    {
+      "id": "C8",
+      "project": "咖啡豆质检",
+      "area": "standards-yaml · verified:false 阻断/per_side/null 尾部",
+      "type": "边界",
+      "q": "标准 YAML 阈值全部 verified:false 时，即使阈值全满足 passed 是多少、grade 记什么、追加什么 reason？warnings 按哪四条稳定键路径收集？count_rule=per_side 能通过加载吗、在哪一步报错？grades 单调放宽校验中 sieve_min=null 的位置约束？全部未达时 grade 与追加 reason？",
+      "expected": "passed 阻断（W13）：warnings 非空时即使阈值全满足 passed=False，grade 仍记实际达到的级别名（层级信息不丢），追加 grading.reason.pass_blocked_unverified:warnings=N——阈值未经原文核对不得对外宣布『通过』。warnings 按 4 条稳定键路径收集：verified:false @ grades[<i>](name=…) / @ metrology.sieve_targets(min_screen) / @ metrology.reference_lab / @ weight；三套 YAML 当前全部非空（各 4-7 条），经 GradingDecision.warnings 进 M10 页脚『标准阈值核对中』角标。per_side：可加载（加载期不拒）、**evaluate 报错**（与契约 BatchResult.defect_counts 不变式冲突，已上报规划方——契约痛点#2）。单调放宽校验（grades[i] 对 grades[i-1]）：primary_max 非递减、secondary_full_max 非递减、sieve_min 非递增且 **null 只能出现在尾部**（上一级 null 后不得再设数值）。全部未达 → grade=fail_grade（可选键，缺省『未达级』；cqi_fine_robusta 设『未达 Fine』）、passed=False、追加 grading.reason.no_grade_matched。",
+      "sources": [
+        "specs/standards-yaml.md §4（L70-87）",
+        "specs/standards-yaml.md §3（L58-68）",
+        "specs/standards-yaml.md §2（L51-56）",
+        "CONTRACTS.md 痛点 2（L207）"
+      ]
+    },
+    {
+      "id": "C9",
+      "project": "咖啡豆质检",
+      "area": "passport · 护照校验和与定型时序",
+      "type": "时序",
+      "q": "护照 QR 内嵌的 sha256 对什么计算、规范化规则是什么？QR 负载格式与默认 verify_base_url？渲染参数（库/纠错级/scale/border）？护照耗时能写回 BatchResult.timings_s 吗、为什么、正确做法是什么？管线九阶段顺序？",
+      "expected": "sha256=sha256(canonical_json(BatchResult))：BatchResult.to_json() 解析后按**键排序+紧凑分隔符+ensure_ascii=False** 重新序列化，对该 UTF-8 字节串计算（canonical_sha256）；同 BatchResult → 同 sha256 → 同 QR。QR 负载=`{verify_base_url}/r/{report_id}|{sha256}`（| 分隔；verify_base_url 默认 https://verify.beaneye.example 演示占位，部署时替换）；渲染=segno，纠错级 **M**，scale=6、border=2，PNG → data URI 内嵌。**护照前定型约束**：QR 内嵌 sha256(BatchResult)，故 BatchResult 必须在护照生成前定型——timings_s 覆盖到 agent 为止，护照耗时**单列 passport_runtime_s**（写回 timings_s 会把 QR 校验和与结果脱钩）。管线九阶段：ingest → calibration → segment → classify → pairing → metrology → grading → agent → passport。",
+      "sources": [
+        "specs/passport.md §2（L21-31）",
+        "specs/passport.md §6（L90-93）",
+        "REGENERATE.md 坑 10（L157-159）",
+        "CONTRACTS.md C3（L130-138）"
+      ]
+    },
+    {
+      "id": "C10",
+      "project": "咖啡豆质检",
+      "area": "manifest/pairing · 随机源切换 3 例已知回归（现状勿答全绿）",
+      "type": "现状+边界",
+      "q": "全套件当前是否全绿？共多少用例、哪 3 例确定性失败、各卡在什么线上？根因是哪个 commit、机制是什么（『钉种子』为什么失效）？该构型与配对算法已知极限的关系？传导到哪些门禁门项？修复归属谁、spec 为什么不代改？",
+      "expected": "**非全绿**：2026-09-29 实测基线全套件 434 用例 = 431 绿 + 3 已知失败（状态『冻结·已知回归』），全部是 tests/test_pairing.py 密排统计场景：test_statistical_dense_324_beans_pitch8mm（precision 0.8818 < 0.90 回归下限，recall 0.919 ≥0.85 达标）、test_statistical_dense_rotation_perspective_residual、test_statistical_dense_small_offset_triggers_second_pass_safely。根因：提交 943d8cc 把该文件随机源从标准库 random 切到 numpy default_rng——**种子值未变但随机流变了**（钉种子确定性只对同源成立），密排场景实例随之改变，precision 跌破下限（REGENERATE 坑 8）。该构型（间距 ≤8mm、≥300 粒）本就是配对算法 docstring 登记的已知极限高压区：规则点阵+偏移接近点阵间距整分数时中位数锁错模，劣化守卫只能阻止第二遍变差、不能修正第一遍已锁错的方向。传导 gate_d2 门项 ②③（M6 入口 FAIL）；修复归属 M6 属主（改算法或按新随机流重新钉场景/通过线，附数据依据），本 spec/资产包只记录不代改（契约痛点#4）。",
+      "sources": [
+        "manifest.md 实测注记 1/2（L82-90）",
+        "specs/pairing.md §7（L74-88）",
+        "specs/pairing.md §3 已知极限（L46-49）",
+        "REGENERATE.md 坑 8（L152-154）",
+        "CONTRACTS.md 痛点 4（L209）"
+      ]
+    }
+  ]
+}

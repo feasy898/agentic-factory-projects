@@ -1,0 +1,14 @@
+pyproject.toml
+match3rules/__init__.py
+match3rules/board.py
+match3rules/constants.py
+match3rules/game.py
+match3rules/jsnum.py
+match3rules/rng.py
+match3rules/solver.py
+match3rules/spec.py
+match3rules/textures.py
+match3rules.egg-info/PKG-INFO
+match3rules.egg-info/SOURCES.txt
+match3rules.egg-info/dependency_links.txt
+match3rules.egg-info/top_level.txt

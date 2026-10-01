@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qacore"
+version = "2.0.0"
+description = "M8 质检器：可玩广告产线唯一质检裁判（重生成第二轮，自 spec 实现）"
+requires-python = ">=3.10"
+# 依赖最小集（spec §9 回炉成文）：单独再生 qacore 只需这两个第三方包
+# （另需 `playwright install chromium` 的浏览器）
+dependencies = [
+    "playwright==1.63.0",
+    "pillow==12.3.0",
+]
+
+[tool.setuptools]
+packages = ["qacore"]

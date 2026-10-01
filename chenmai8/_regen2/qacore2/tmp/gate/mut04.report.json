@@ -1,0 +1,183 @@
+{
+  "channel": "preview",
+  "url": "http://127.0.0.1:1654/mut04.html",
+  "autoplay": true,
+  "pf": {
+    "present": true,
+    "readyMs": 145.60000002384186,
+    "endMs": 1197.800000011921,
+    "endWin": true
+  },
+  "screenshot": "mut04.png",
+  "requests": [
+    {
+      "url": "http://127.0.0.1:1654/mut04.html",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "blocked": false,
+      "failed": false
+    },
+    {
+      "url": "http://127.0.0.1:1654/mut04.html",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "blocked": false,
+      "failed": false
+    }
+  ],
+  "facts": {
+    "artifact_bytes": 5246071,
+    "channel": "preview",
+    "channel_max_bytes": 5242880,
+    "external_requests": [],
+    "runtime_stubs": [],
+    "request_count": 2,
+    "console_errors": [],
+    "load_ms": 249,
+    "max_load_sec": 2.0,
+    "autoplay_enabled": true,
+    "autoplay_timeout_sec": 45.0,
+    "pf_present": true,
+    "viewport_shots": {
+      "portrait": {
+        "viewport": "390x844",
+        "load_ms": 249,
+        "has_canvas": true,
+        "variance": 801.8053531050682,
+        "pf_present": true,
+        "probe_installed": true,
+        "probe": {
+          "ready": 145.60000002384186,
+          "start": null,
+          "end": 1197.800000011921,
+          "endWin": true,
+          "first": 748.4000000059605,
+          "cta": null,
+          "audio": {
+            "created": 0,
+            "running": 0
+          },
+          "media": {
+            "unmuted": 0,
+            "playing": 0,
+            "playsBeforeFirst": 0
+          },
+          "rtc": 0
+        },
+        "hasQcHook": true,
+        "gestures": 3,
+        "pfEndFired": true,
+        "pfEndMs": 1197.800000011921,
+        "pfEndWin": true,
+        "reachedState": "end",
+        "endScreenVisible": true,
+        "firstMutedBeforeInteraction": true,
+        "audioRunningBeforeInteraction": 0,
+        "mutedAfterFirstGesture": false,
+        "textsHook": false,
+        "page_texts": [],
+        "textStatesHook": false,
+        "text_states": [],
+        "assetsHook": false,
+        "asset_audit": []
+      },
+      "landscape": {
+        "viewport": "844x390",
+        "load_ms": 144,
+        "has_canvas": true,
+        "variance": 818.8382429480553,
+        "pf_present": true,
+        "probe_installed": true,
+        "probe": {
+          "ready": 50,
+          "start": null,
+          "end": null,
+          "endWin": null,
+          "first": null,
+          "cta": null,
+          "audio": {
+            "created": 0,
+            "running": 0
+          },
+          "media": {
+            "unmuted": 0,
+            "playing": 0,
+            "playsBeforeFirst": 0
+          },
+          "rtc": 0
+        }
+      }
+    },
+    "variance_threshold": 30.0,
+    "required_texts": [],
+    "required_sprites": [],
+    "page_texts": [],
+    "text_states": [],
+    "text_states_hook": false,
+    "asset_audit": []
+  },
+  "checks": [
+    {
+      "id": "CHK01",
+      "name": "包体大小 ≤ 渠道上限",
+      "status": "fail",
+      "detail": "5246071 字节 > 渠道上限 5242880 字节"
+    },
+    {
+      "id": "CHK02",
+      "name": "文件数",
+      "status": "skip",
+      "detail": "未实装：当前输入为单文件 HTML，无文件数可清点（spec §1/§6）"
+    },
+    {
+      "id": "CHK03",
+      "name": "零外网",
+      "status": "pass",
+      "detail": "两趟合计 2 笔请求全部本地放行，0 外网 / 0 WebSocket / 0 WebRTC（SW 已整体禁注册）"
+    },
+    {
+      "id": "CHK04",
+      "name": "首交互前静音",
+      "status": "pass",
+      "detail": "首交互前静音合规（无出声上下文/未静音媒体/提前播放）；autoplay 首手势后已解除静音"
+    },
+    {
+      "id": "CHK05",
+      "name": "横竖屏",
+      "status": "pass",
+      "detail": "两趟 64×64 灰度方差 801.8/818.8 均 ≥ 30.0"
+    },
+    {
+      "id": "CHK06",
+      "name": "退出接口",
+      "status": "skip",
+      "detail": "未实装：渠道退出 stub 注入属后续（spec §1/§6）"
+    },
+    {
+      "id": "CHK07",
+      "name": "自动试玩到结束页",
+      "status": "pass",
+      "detail": "pf:end 于 1198ms 触发（≤45000ms），终态=end，结束页可见"
+    },
+    {
+      "id": "CHK08",
+      "name": "控制台零错误",
+      "status": "pass",
+      "detail": "两趟合并 0 条页内 console.error/pageerror（网络源噪声已按 blocked 归属过滤，spec §4）"
+    },
+    {
+      "id": "CHK09",
+      "name": "本地加载",
+      "status": "pass",
+      "detail": "竖屏 load 249ms ≤ 2000ms"
+    },
+    {
+      "id": "CHK10",
+      "name": "多语言文案与素材上屏",
+      "status": "skip",
+      "detail": "未提供 --require-text/--require-sprite，无判定对象（不算通过，spec §6）"
+    }
+  ]
+}

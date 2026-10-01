@@ -1,0 +1,12 @@
+{
+  "cam_ref": "wrist_cam",
+  "min_food_ratio": 0.15,
+  "hsv_ranges": [
+    { "h_lo": 5, "h_hi": 35, "s_lo": 60, "v_lo": 60 },
+    { "h_lo": 35, "h_hi": 85, "s_lo": 50, "v_lo": 40 },
+    { "h_lo": 95, "h_hi": 130, "s_lo": 40, "v_lo": 40 },
+    { "h_lo": 130, "h_hi": 165, "s_lo": 40, "v_lo": 40 },
+    { "h_lo": 0, "h_hi": 15, "s_lo": 50, "v_lo": 30 },
+    { "h_lo": 170, "h_hi": 179, "s_lo": 50, "v_lo": 30 }
+  ]
+}

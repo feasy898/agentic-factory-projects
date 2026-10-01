@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qacore"
+version = "0.1.0"
+description = "M8 质检器（重生成试点：只凭 SPEC.md + 冻结夹具从零实现）"
+requires-python = ">=3.10"
+dependencies = [
+    "playwright==1.63.0",
+    "pillow==12.3.0",
+]
+
+[tool.setuptools]
+packages = ["qacore"]

@@ -1,0 +1,13 @@
+pyproject.toml
+qacore/__init__.py
+qacore/__main__.py
+qacore/autoplay.py
+qacore/checks.py
+qacore/cli.py
+qacore/rules.py
+qacore/server.py
+qacore.egg-info/PKG-INFO
+qacore.egg-info/SOURCES.txt
+qacore.egg-info/dependency_links.txt
+qacore.egg-info/requires.txt
+qacore.egg-info/top_level.txt

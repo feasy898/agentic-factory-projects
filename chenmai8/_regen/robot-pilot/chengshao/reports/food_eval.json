@@ -1,0 +1,23 @@
+{
+  "module": "cs_food",
+  "date": "2026-09-30",
+  "cmd": "python -m cs_food.eval --report reports/food_eval.json  (cwd=chengshao 包根)",
+  "self_check": true,
+  "metrics": {
+    "spoon_cases": 8,
+    "spoon_correct": 8,
+    "food_cases": 4,
+    "food_correct": 4,
+    "empty_cases": 4,
+    "empty_correct": 4,
+    "aruco_registered_detected": 3,
+    "aruco_registered_total": 3,
+    "select_hit": true,
+    "select_hit_expect": 1,
+    "empty_scene_none": true,
+    "unregistered_ignored": true,
+    "small_marker_filtered": true,
+    "real_frames": 0,
+    "real_frames_note": "D4 后条目：启发式基线准确率仅记录不设硬线；帧目录空 → 未评分"
+  }
+}

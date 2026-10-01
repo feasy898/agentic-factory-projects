@@ -1,0 +1,40 @@
+/* 占位工程样式：验证 CSS 内联与 url() 相对引用（../img 相对本文件解析）。 */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #1e223e url("../img/bg.png") repeat;
+  overflow: hidden;
+  touch-action: none;
+}
+
+#game {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+}
+
+#hud {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  color: #fff;
+  font-family: sans-serif;
+}
+
+.piece-icon {
+  background-image: url("../img/piece-1.png");
+}
+
+#cta {
+  padding: 10px 22px;
+  border: 0;
+  border-radius: 22px;
+  color: #fff;
+  background: #e74c3c url("../img/piece-0.png") no-repeat right 10px center;
+  font-size: 16px;
+}

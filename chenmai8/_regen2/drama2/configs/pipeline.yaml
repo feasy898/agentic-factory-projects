@@ -1,0 +1,20 @@
+# ============================================================================
+# 管线配置（M1 重生成试点自含副本；spec m1-ingest §2.1 键位冻结）
+# 路径相对本文件所在 configs/ 目录解析。
+# 编码参数（crf/preset/TP/LRA/AAC 码率）是代码常量，不是配置键——不放本文件。
+# ============================================================================
+
+schema_version: 1
+
+paths:
+  jobs_dir: ../../jobs        # 默认 jobs 根（相对 configs/ → <工程根>/jobs）
+
+media:
+  width: 1080
+  height: 1920
+  fps: 25
+  audio:
+    asr_sr: 16000             # 识别用单声道（audio_16k.wav，由 48k 产物派生）
+    mix_sr: 48000             # 混音底座立体声（audio_48k.wav，loudnorm 基础归一）
+
+loudness_lufs: -16            # 顶层键（不在 media 段内）；loudnorm 目标 integrated loudness

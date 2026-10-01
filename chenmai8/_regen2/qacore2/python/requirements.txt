@@ -1,0 +1,3 @@
+# qacore 运行依赖最小集（spec §9：单独再生 qacore 不需要仓库全量清单）
+playwright==1.63.0
+pillow==12.3.0

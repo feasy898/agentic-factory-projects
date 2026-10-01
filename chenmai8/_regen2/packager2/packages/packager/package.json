@@ -1,0 +1,13 @@
+{
+  "name": "@pf/packager",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "配置驱动的多渠道打包器（M4）：dist + channel-rules → 单 HTML 全内联 / 渠道 zip",
+  "bin": {
+    "pf-packager": "bin.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
