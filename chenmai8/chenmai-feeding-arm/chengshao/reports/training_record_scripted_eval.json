@@ -1,0 +1,56 @@
+{
+  "module": "training.record.record_scripted",
+  "date": "2026-10-02",
+  "cmd": "python -m chengshao.training.record.record_scripted --mock",
+  "metrics": {
+    "episodes": 1,
+    "frames": 60,
+    "dataset_root": "D:\\new-workspace\\澄迈项目\\机械臂\\chenmai8\\chenmai-feeding-arm\\data\\_b3_evidence_scripted",
+    "validation": {
+      "ok": true,
+      "root": "D:\\new-workspace\\澄迈项目\\机械臂\\chenmai8\\chenmai-feeding-arm\\data\\_b3_evidence_scripted",
+      "format": "robot-learning-runtime-dataset v2.1（中性名）",
+      "episodes": 1,
+      "frames": 60,
+      "cams": [
+        "scene",
+        "wrist"
+      ],
+      "fps": 30.0,
+      "checks": {
+        "info_json_exists": true,
+        "codebase_version": true,
+        "fps_positive": true,
+        "observation.state_dim": true,
+        "action_dim": true,
+        "cams_present": true,
+        "episodes_nonempty": true,
+        "tasks_nonempty": true,
+        "total_episodes_match": true,
+        "total_frames_match": true,
+        "total_videos_match": true,
+        "episode_parquet_ok": true,
+        "episode_videos_ok": true
+      },
+      "errors": [],
+      "validated_at": "2026-10-01T20:41:43Z"
+    },
+    "episode_stats": [
+      {
+        "episode_index": 0,
+        "frames": 60,
+        "events": {
+          "scoop_done": [
+            52
+          ]
+        }
+      }
+    ]
+  },
+  "thresholds": {
+    "format_validation_ok": true,
+    "state_dim": 6,
+    "fps_band": "30-50"
+  },
+  "pass": true
+}

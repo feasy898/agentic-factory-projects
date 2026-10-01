@@ -1,0 +1,50 @@
+{
+  "module": "training.record.record_keyboard",
+  "date": "2026-10-02",
+  "cmd": "python -m chengshao.training.record.record_keyboard --mock",
+  "metrics": {
+    "episodes": 1,
+    "frames": 34,
+    "dataset_root": "D:\\new-workspace\\澄迈项目\\机械臂\\chenmai8\\chenmai-feeding-arm\\data\\_b3_evidence_kb",
+    "validation": {
+      "ok": true,
+      "root": "D:\\new-workspace\\澄迈项目\\机械臂\\chenmai8\\chenmai-feeding-arm\\data\\_b3_evidence_kb",
+      "format": "robot-learning-runtime-dataset v2.1（中性名）",
+      "episodes": 1,
+      "frames": 34,
+      "cams": [
+        "scene",
+        "wrist"
+      ],
+      "fps": 30.0,
+      "checks": {
+        "info_json_exists": true,
+        "codebase_version": true,
+        "fps_positive": true,
+        "observation.state_dim": true,
+        "action_dim": true,
+        "cams_present": true,
+        "episodes_nonempty": true,
+        "tasks_nonempty": true,
+        "total_episodes_match": true,
+        "total_frames_match": true,
+        "total_videos_match": true,
+        "episode_parquet_ok": true,
+        "episode_videos_ok": true
+      },
+      "errors": [],
+      "validated_at": "2026-10-01T20:42:03Z"
+    },
+    "events": {
+      "0": [
+        33
+      ]
+    }
+  },
+  "thresholds": {
+    "format_validation_ok": true,
+    "state_dim": 6,
+    "fps_band": "30-50"
+  },
+  "pass": true
+}
