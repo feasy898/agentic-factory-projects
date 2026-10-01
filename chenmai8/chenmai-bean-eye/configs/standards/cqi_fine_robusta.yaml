@@ -1,0 +1,71 @@
+# =====================================================================
+# BeanEye 标准配置 · CQI 精品罗布斯塔（cqi_fine_robusta）
+# ---------------------------------------------------------------------
+# schema 见开发指令 §3.3；由 beaneye/standards/loader.py 加载与校验，
+# beaneye/standards/engine.py 按本文件定级——换标准 = 换本 YAML，不改代码。
+#
+# 阈值来源：Fine 级 primary_max=0 / secondary_full_max=5 / sample_g=350
+# 为开发指令 §3.3 给定基线；尚未对照标准原文人工复核 → verified: false，
+# 护照页脚将显示"标准阈值核对中"角标。核对后回填数值并置 true。
+#
+# v0 判定语义（字段语义，待原文核对）：
+#   grades 从最优到最差排列；定级取第一个满足全部条件的级别。
+#   primary_max        本级允许的主缺陷粒数上限（全样累计，每粒只计一次）
+#   secondary_full_max 本级允许的次缺陷粒数上限（全样累计；peaberry 计量
+#                      不计缺陷，见 configs/taxonomy.yaml counts_as_defect）
+#   sieve_min          本级要求的粒度下限（目数）；null = 不设筛目条件。
+#                      v0 语义：sieve_hist 中 screen < sieve_min 的粒数须为 0
+#   metrology.delta_e_max  色差全局条件（作用于所有级别）；null = 不判色差
+#   fail_grade         所有级别都未达到时 GradingDecision.grade 的取值
+#   verified:false 的键由引擎收集为 GradingDecision.warnings
+# count_rule: most_severe_per_bean —— 每粒只按最严重缺陷计一次；
+#   per_side 计数与契约 BatchResult.defect_counts 不变式冲突，v1 不支持。
+# defect_classes 的主/次归属以 configs/taxonomy.yaml 为准（加载器校验
+# kind 一致）；zh/en/vi 为展示副本，peaberry 不计入缺陷计数。
+# =====================================================================
+
+standard: cqi_fine_robusta
+display:
+  zh: CQI 精品罗布斯塔
+  en: CQI Fine Robusta
+  vi: CQI Robusta tinh khiết
+sample_g: 350                       # 抽样基量（克），开发指令 §3.3 基线
+count_rule: most_severe_per_bean
+severity_order: [normal, broken, faded, brocade, immature, peaberry, shell, elephant, insect, dried, sour, mold, black]
+
+defect_classes:
+  normal:   {kind: normal,    zh: 好豆,          en: normal,    vi: hat tot}
+  broken:   {kind: secondary, zh: 破碎,          en: broken,    vi: hat vo}
+  faded:    {kind: secondary, zh: 褪色/白化,     en: faded,     vi: hat nhat mau}
+  brocade:  {kind: secondary, zh: 花脸,          en: brocade,   vi: hat loang}
+  immature: {kind: secondary, zh: 未熟,          en: immature,  vi: hat non}
+  peaberry: {kind: secondary, zh: 花豆/胡椒粒豆, en: peaberry,  vi: peaberry}
+  shell:    {kind: secondary, zh: 贝壳豆,        en: shell,     vi: hat mai}
+  elephant: {kind: secondary, zh: 象豆,          en: elephant,  vi: hat voi}
+  insect:   {kind: primary,   zh: 虫蛀,          en: insect,    vi: hat mot}
+  dried:    {kind: primary,   zh: 干瘪/僵豆,     en: dried,     vi: hat thoc}
+  sour:     {kind: primary,   zh: 酸豆,          en: sour,      vi: hat chua}
+  mold:     {kind: primary,   zh: 霉豆,          en: mold,      vi: hat moc}
+  black:    {kind: primary,   zh: 黑豆,          en: black,     vi: hat den}
+
+grades:                             # 从最优到最差排列
+  - name: Fine
+    primary_max: 0                  # 主缺陷 0 粒（开发指令 §3.3 基线）
+    secondary_full_max: 5           # 次缺陷全样累计 ≤5 粒（同上）
+    sieve_min: null                 # v0 不设筛目条件（待原文核对）
+    verified: false                 # 待标准原文人工核对后置 true
+
+fail_grade: 未达 Fine
+
+metrology:
+  sieve_targets:
+    min_screen: 13                  # 整盘基准目数（screen = round(mm/25.4*64)）
+    verified: false                 # 待实盘标定核对
+  reference_lab: [55, -12, 22]      # 精品罗豆参考色（0-255 标度；实测后回填）
+  reference_lab_verified: false
+  delta_e_max: null                 # v0 不判色差（待原文核对）
+
+weight:
+  model: area_linear
+  g_per_mm2: 0.00042                # 到货后用蓝牙秤标定回填
+  verified: false

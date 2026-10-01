@@ -1,0 +1,13 @@
+# 相机配置（M2 采集 · UsbSource 默认值）
+# 真机到货后按实际设备号回填；无相机阶段一律走 MockSource。
+# 调整依据：开发指令 §4 M2（双相机 3840x2160，对焦/曝光可配）。
+
+top:
+  index: 0          # 上相机 DirectShow 设备号（python -m beaneye.acquisition.usb --list-cams 探测）
+bottom:
+  index: 1          # 下相机设备号
+resolution: [3840, 2160]   # 宽 x 高
+fourcc: null        # 可选 "MJPG"（高分辨率 USB2 必要时开启）
+focus: null         # CAP_PROP_FOCUS；null = 不动（手动对焦镜头）
+exposure: null      # CAP_PROP_EXPOSURE；null = 自动
+warmup_frames: 3    # 打开后丢弃的预热帧数（自动曝光收敛）

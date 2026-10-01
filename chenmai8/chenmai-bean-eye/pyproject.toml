@@ -1,0 +1,4 @@
+[tool.pytest.ini_options]
+# 让 `pytest tests/...` 在仓库根直接可 import beaneye 包
+pythonpath = ["."]
+testpaths = ["tests"]

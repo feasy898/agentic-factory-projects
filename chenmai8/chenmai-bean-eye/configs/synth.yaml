@@ -1,0 +1,81 @@
+# =====================================================================
+# M12 合成数据引擎 · 铺盘合成器标准输入（beaneye/synth/compose.py）
+# ---------------------------------------------------------------------
+# 本文件是 W12b 合成器的「标准 YAML 输入格式」：
+#   - beaneye.synth.load_compose_config() 默认读它；
+#   - 同一 schema 也是 write_batch() 落盘的 batch manifest（YAML）格式，
+#     记录实际生效参数 + 种子，反序列化后可直接再驱动一次合成（可复现）。
+# 托盘几何与四角码布局不在此配置——单一真源是 configs/tray.yaml
+# （盘面边长 / 码边长 / 四码中心），合成、打印板、标定三者同源。
+#
+# 字段语义（缺省 = 括号内默认值；未列出的键拒绝加载）：
+#   version            schema 版本，当前 1
+#   canvas.width_px/height_px   整盘画布边长 px（默认 2048×2048）
+#   canvas.margin_mm   盘面外缘画布留白 mm（默认 20；四角码静区须完整落画布）
+#   layout.n_beans     每盘豆数均匀采样闭区间 [min, max]
+#   layout.defect_rate 缺陷豆占比目标（0-1）
+#   layout.class_weights  缺陷类 → 抽样权重（键必须在 taxonomy 13 类内；
+#                      未列出的缺陷类权重 0；normal 不参与该表）
+#   layout.contact_target  每盘「接触/重叠豆」数量均匀采样闭区间 [min, max]，
+#                      通过靠近已放置豆摆放实现（重叠深度由 overlap_depth 控制）
+#   layout.overlap_depth  接触/重叠摆放的中心距系数（×两豆长半轴和），
+#                      <1 保证轮廓相交；越小叠得越深
+#   layout.free_factor 自由摆放的最小中心距系数（×两豆长半轴和），>1 不相交
+#   layout.margin_mm   豆心活动区相对盘缘的内缩 mm（默认 4mm 墙距；四角码区
+#                      恒按「码 + 1/4 边长静区」矩形避让，不受此值影响）
+#   render.scale_jitter  尺寸抖动比例（±，相对素材规格）
+#   render.angle_jitter  每粒朝向在素材朝向基础上的均匀抖动幅度（度）
+#   render.pair_jitter_mm  bottom 面逐粒位置抖动 σ（mm；模拟翻面复拍配准残差）
+#   render.mirror_bottom  bottom 面轮廓是否镜像（翻面语义，默认 true）
+#   render.shadow.{enabled,offset_mm,blur_px,strength}  投影阴影
+#   render.light.{gain,gamma}  全局光照扰动范围 [min, max]（乘增益 / gamma）
+#   render.vignette.strength  四角压暗强度（0 关闭）
+#   render.specular_streaks  亚克力反光简化（斜向白色光带，0/1）
+#   render.background_bgr  亚克力底色（BGR）
+#   render.grain_sigma  全局颗粒噪声 σ（灰阶）
+#   library.per_class  每类程序化素材变体数（≥20；W12a-lite 交付线）
+#   library.seed       素材库种子（变体参数由它确定性生成）
+# =====================================================================
+version: 1
+
+canvas:
+  width_px: 2048
+  height_px: 2048
+  margin_mm: 20.0
+
+layout:
+  n_beans: {min: 80, max: 180}
+  defect_rate: 0.08
+  class_weights:
+    black: 3.0
+    mold: 2.0
+    sour: 2.0
+    insect: 2.0
+    dried: 2.0
+    broken: 3.0
+    brocade: 2.0
+    shell: 1.0
+    elephant: 1.0
+    peaberry: 1.0
+    immature: 1.0
+    faded: 1.0
+  contact_target: {min: 2, max: 8}
+  overlap_depth: 0.82
+  free_factor: 1.06
+  # margin_mm 缺省：4mm 墙距（四角码区另按矩形避让，见文件头说明）
+
+render:
+  scale_jitter: 0.10
+  angle_jitter: 180.0
+  pair_jitter_mm: 0.6
+  mirror_bottom: true
+  shadow: {enabled: true, offset_mm: [1.0, 2.2], blur_px: 5, strength: 0.30}
+  light: {gain: [0.94, 1.06], gamma: [0.96, 1.04]}
+  vignette: {strength: 0.10}
+  specular_streaks: 1
+  background_bgr: [200, 203, 208]
+  grain_sigma: 3.0
+
+library:
+  per_class: 24
+  seed: 20260929

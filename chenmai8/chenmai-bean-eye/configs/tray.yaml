@@ -1,0 +1,23 @@
+# M3 标定配置 · 托盘几何与 ArUco 布局（规划默认值，plan/开发指令.md §4 M3 / §6）
+# 坐标系：盘面毫米坐标，原点=盘面左上角（俯视），x 向右、y 向下。
+# 与 scripts/make_aruco.py 的默认生成布局一致（四角码中心/码边长/角位序互为核对）。
+
+tray_mm: 300.0        # 盘面边长（正方形托盘）
+grid_px: 2048         # warp_to_tray() 输出正射网格边长（px）；2048/300 ≈ 6.827 px/mm ≈ 0.1465 mm/px
+
+aruco:
+  dictionary: DICT_4X4_50
+  marker_mm: 60.0     # 码边长 mm（打印实测后回填修正，见 D7 真机标定）
+  # 角位 → marker id 映射（摆放/拍摄任意旋转均可：配对按 id，不按检测顺序）
+  corner_ids: {lt: 0, rt: 1, rb: 2, lb: 3}
+  # 码中心 mm 坐标。缺省角位公式：LT=(m/2,m/2) RT=(T-m/2,m/2) RB=(T-m/2,T-m/2) LB=(m/2,T-m/2)。
+  # 显式列出以便与生成器互核对；未来异形托盘可改任意四点（须无三点共线）。
+  centers_mm:
+    0: [30.0, 30.0]
+    1: [270.0, 30.0]
+    2: [270.0, 270.0]
+    3: [30.0, 270.0]
+
+warp:
+  interp: linear      # linear | cubic | nearest
+  border_value: 235   # 盘外区域填充灰度（与浅色演示背景一致）

@@ -1,0 +1,20 @@
+{
+  "lang": "zh",
+  "causes": [
+    {
+      "defect": "black",
+      "stage": "干燥",
+      "likelihood": 0.72,
+      "evidence_summary": "3 粒黑豆且色差远超参考色，指向干燥温度过高或堆闷。"
+    }
+  ],
+  "advice": [
+    "降低干燥温度并摊薄铺晒",
+    "采收后 24h 内完成脱果脱胶"
+  ],
+  "citations": [
+    "cqi_fine_robusta#full_black",
+    "kb:chunk-012"
+  ],
+  "backend": "template"
+}

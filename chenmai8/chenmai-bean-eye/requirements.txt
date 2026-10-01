@@ -1,0 +1,35 @@
+# BeanEye 啡眼 · 核心依赖（pinned，内部版）
+# 环境：Windows 原生 Python 3.12.x venv，纯 CPU（无 GPU 依赖）。
+# 版本锚点依据 plan/开发指令.md §5；改动任何钉版必须重跑 scripts/setup_env.ps1 + scripts/doctor.py。
+# 红线（D-5）：禁用 AGPL 件 —— 不得引入 ultralytics 系与 albumentations 的 AGPL 后继版本。
+#
+# 特殊处理：albumentations==2.0.8（MIT；上游仓库已归档，冻结不升级）由 scripts/setup_env.ps1
+# 以 --no-deps 安装最小闭包 —— 其默认依赖会把 opencv-python-headless（可到 5.x）一并装入，
+# 覆盖下面的钉版 cv2 4.10.0。固定闭包（2026-09-28 pip 解析实测）：
+#   albumentations==2.0.8 + albucore==0.0.24 + simsimd==6.5.16 + stringzilla==5.1.2
+# albucore 所需 cv2 由本清单 opencv-python 提供，实测可正常跑增强。
+
+# ---- 视觉与数值 ----
+numpy==2.2.6
+opencv-python==4.10.0.84
+scipy==1.18.1
+scikit-image==0.26.0
+pillow==12.3.0
+
+# ---- 契约 / 配置 / 服务 ----
+pydantic==2.13.5
+pyyaml==6.0.3
+fastapi==0.141.1
+uvicorn==0.54.0
+python-multipart==0.0.32
+httpx==0.28.1
+
+# ---- 报告 / 二维码 ----
+jinja2==3.1.6
+matplotlib==3.11.2
+segno==1.6.6
+zxing-cpp==3.1.1
+qrcode==8.2
+
+# ---- 测试 ----
+pytest==9.1.1

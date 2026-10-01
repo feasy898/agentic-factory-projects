@@ -1,0 +1,528 @@
+{
+  "_comment": "M6 配对合成上下框对 fixture（确定性生成，见 tests/_pairing_cases.py）；pairable=门限内可配对, occlusion_single_side=遮挡单面, edge_miss=边缘漏检。",
+  "scan_id": "scan_synth_0001",
+  "gate_mm": 12.0,
+  "tray_mm": 300.0,
+  "edge_band_mm": 8.0,
+  "mid_min_mm": 50.0,
+  "cases": [
+    {
+      "case_id": "pairable_mid_tray",
+      "kind": "pairable",
+      "top": {
+        "obs_id": "top_001",
+        "side": "top",
+        "defect": "black",
+        "defect_conf": 0.92,
+        "severity_rank": 12,
+        "crop_path": "out/crops/scan_synth_0001/top_001.png",
+        "mask": {
+          "mask_id": "top_001",
+          "side": "top",
+          "polygon": [
+            [
+              103.0,
+              100.0
+            ],
+            [
+              101.5,
+              102.598
+            ],
+            [
+              98.5,
+              102.598
+            ],
+            [
+              97.0,
+              100.0
+            ],
+            [
+              98.5,
+              97.402
+            ],
+            [
+              101.5,
+              97.402
+            ]
+          ],
+          "bbox_mm": [
+            97.0,
+            97.0,
+            103.0,
+            103.0
+          ],
+          "area_mm2": 28.274,
+          "centroid_mm": [
+            100.0,
+            100.0
+          ],
+          "source": "oracle",
+          "conf": 1.0
+        },
+        "color_lab": [
+          132.6,
+          118.0,
+          148.0
+        ],
+        "eq_diameter_mm": 6.0
+      },
+      "bottom": {
+        "obs_id": "bottom_001",
+        "side": "bottom",
+        "defect": "normal",
+        "defect_conf": 0.99,
+        "severity_rank": 0,
+        "crop_path": "out/crops/scan_synth_0001/bottom_001.png",
+        "mask": {
+          "mask_id": "bottom_001",
+          "side": "bottom",
+          "polygon": [
+            [
+              103.6,
+              100.8
+            ],
+            [
+              102.1,
+              103.398
+            ],
+            [
+              99.1,
+              103.398
+            ],
+            [
+              97.6,
+              100.8
+            ],
+            [
+              99.1,
+              98.202
+            ],
+            [
+              102.1,
+              98.202
+            ]
+          ],
+          "bbox_mm": [
+            97.6,
+            97.8,
+            103.6,
+            103.8
+          ],
+          "area_mm2": 28.274,
+          "centroid_mm": [
+            100.6,
+            100.8
+          ],
+          "source": "oracle",
+          "conf": 1.0
+        },
+        "color_lab": [
+          132.6,
+          118.0,
+          148.0
+        ],
+        "eq_diameter_mm": 6.0
+      },
+      "expect": {
+        "paired": true,
+        "worst_side": "top",
+        "final_defect": "black"
+      }
+    },
+    {
+      "case_id": "pairable_near_gate",
+      "kind": "pairable",
+      "top": {
+        "obs_id": "top_002",
+        "side": "top",
+        "defect": "broken",
+        "defect_conf": 0.7,
+        "severity_rank": 1,
+        "crop_path": "out/crops/scan_synth_0001/top_002.png",
+        "mask": {
+          "mask_id": "top_002",
+          "side": "top",
+          "polygon": [
+            [
+              43.0,
+              200.0
+            ],
+            [
+              41.5,
+              202.598
+            ],
+            [
+              38.5,
+              202.598
+            ],
+            [
+              37.0,
+              200.0
+            ],
+            [
+              38.5,
+              197.402
+            ],
+            [
+              41.5,
+              197.402
+            ]
+          ],
+          "bbox_mm": [
+            37.0,
+            197.0,
+            43.0,
+            203.0
+          ],
+          "area_mm2": 28.274,
+          "centroid_mm": [
+            40.0,
+            200.0
+          ],
+          "source": "oracle",
+          "conf": 1.0
+        },
+        "color_lab": [
+          132.6,
+          118.0,
+          148.0
+        ],
+        "eq_diameter_mm": 6.0
+      },
+      "bottom": {
+        "obs_id": "bottom_002",
+        "side": "bottom",
+        "defect": "broken",
+        "defect_conf": 0.9,
+        "severity_rank": 1,
+        "crop_path": "out/crops/scan_synth_0001/bottom_002.png",
+        "mask": {
+          "mask_id": "bottom_002",
+          "side": "bottom",
+          "polygon": [
+            [
+              43.0,
+              188.5
+            ],
+            [
+              41.5,
+              191.098
+            ],
+            [
+              38.5,
+              191.098
+            ],
+            [
+              37.0,
+              188.5
+            ],
+            [
+              38.5,
+              185.902
+            ],
+            [
+              41.5,
+              185.902
+            ]
+          ],
+          "bbox_mm": [
+            37.0,
+            185.5,
+            43.0,
+            191.5
+          ],
+          "area_mm2": 28.274,
+          "centroid_mm": [
+            40.0,
+            188.5
+          ],
+          "source": "oracle",
+          "conf": 1.0
+        },
+        "color_lab": [
+          132.6,
+          118.0,
+          148.0
+        ],
+        "eq_diameter_mm": 6.0
+      },
+      "expect": {
+        "paired": true,
+        "worst_side": "both",
+        "final_defect": "broken"
+      }
+    },
+    {
+      "case_id": "occlusion_top_only_mid",
+      "kind": "occlusion_single_side",
+      "top": {
+        "obs_id": "top_003",
+        "side": "top",
+        "defect": "mold",
+        "defect_conf": 0.85,
+        "severity_rank": 11,
+        "crop_path": "out/crops/scan_synth_0001/top_003.png",
+        "mask": {
+          "mask_id": "top_003",
+          "side": "top",
+          "polygon": [
+            [
+              153.0,
+              100.0
+            ],
+            [
+              151.5,
+              102.598
+            ],
+            [
+              148.5,
+              102.598
+            ],
+            [
+              147.0,
+              100.0
+            ],
+            [
+              148.5,
+              97.402
+            ],
+            [
+              151.5,
+              97.402
+            ]
+          ],
+          "bbox_mm": [
+            147.0,
+            97.0,
+            153.0,
+            103.0
+          ],
+          "area_mm2": 28.274,
+          "centroid_mm": [
+            150.0,
+            100.0
+          ],
+          "source": "oracle",
+          "conf": 1.0
+        },
+        "color_lab": [
+          132.6,
+          118.0,
+          148.0
+        ],
+        "eq_diameter_mm": 6.0
+      },
+      "bottom": null,
+      "expect": {
+        "paired": false,
+        "kept_side": "top",
+        "worst_side": "top",
+        "final_defect": "mold"
+      }
+    },
+    {
+      "case_id": "occlusion_bottom_only_mid",
+      "kind": "occlusion_single_side",
+      "top": null,
+      "bottom": {
+        "obs_id": "bottom_004",
+        "side": "bottom",
+        "defect": "insect",
+        "defect_conf": 0.88,
+        "severity_rank": 8,
+        "crop_path": "out/crops/scan_synth_0001/bottom_004.png",
+        "mask": {
+          "mask_id": "bottom_004",
+          "side": "bottom",
+          "polygon": [
+            [
+              153.0,
+              200.0
+            ],
+            [
+              151.5,
+              202.598
+            ],
+            [
+              148.5,
+              202.598
+            ],
+            [
+              147.0,
+              200.0
+            ],
+            [
+              148.5,
+              197.402
+            ],
+            [
+              151.5,
+              197.402
+            ]
+          ],
+          "bbox_mm": [
+            147.0,
+            197.0,
+            153.0,
+            203.0
+          ],
+          "area_mm2": 28.274,
+          "centroid_mm": [
+            150.0,
+            200.0
+          ],
+          "source": "oracle",
+          "conf": 1.0
+        },
+        "color_lab": [
+          132.6,
+          118.0,
+          148.0
+        ],
+        "eq_diameter_mm": 6.0
+      },
+      "expect": {
+        "paired": false,
+        "kept_side": "bottom",
+        "worst_side": "bottom",
+        "final_defect": "insect"
+      }
+    },
+    {
+      "case_id": "edge_miss_top_only_right",
+      "kind": "edge_miss",
+      "top": {
+        "obs_id": "top_005",
+        "side": "top",
+        "defect": "sour",
+        "defect_conf": 0.81,
+        "severity_rank": 10,
+        "crop_path": "out/crops/scan_synth_0001/top_005.png",
+        "mask": {
+          "mask_id": "top_005",
+          "side": "top",
+          "polygon": [
+            [
+              299.0,
+              150.0
+            ],
+            [
+              297.5,
+              152.598
+            ],
+            [
+              294.5,
+              152.598
+            ],
+            [
+              293.0,
+              150.0
+            ],
+            [
+              294.5,
+              147.402
+            ],
+            [
+              297.5,
+              147.402
+            ]
+          ],
+          "bbox_mm": [
+            293.0,
+            147.0,
+            299.0,
+            153.0
+          ],
+          "area_mm2": 28.274,
+          "centroid_mm": [
+            296.0,
+            150.0
+          ],
+          "source": "oracle",
+          "conf": 1.0
+        },
+        "color_lab": [
+          132.6,
+          118.0,
+          148.0
+        ],
+        "eq_diameter_mm": 6.0
+      },
+      "bottom": null,
+      "expect": {
+        "paired": false,
+        "kept_side": "top",
+        "worst_side": "top",
+        "final_defect": "sour"
+      }
+    },
+    {
+      "case_id": "edge_miss_bottom_only_left",
+      "kind": "edge_miss",
+      "top": null,
+      "bottom": {
+        "obs_id": "bottom_006",
+        "side": "bottom",
+        "defect": "dried",
+        "defect_conf": 0.86,
+        "severity_rank": 9,
+        "crop_path": "out/crops/scan_synth_0001/bottom_006.png",
+        "mask": {
+          "mask_id": "bottom_006",
+          "side": "bottom",
+          "polygon": [
+            [
+              7.0,
+              250.0
+            ],
+            [
+              5.5,
+              252.598
+            ],
+            [
+              2.5,
+              252.598
+            ],
+            [
+              1.0,
+              250.0
+            ],
+            [
+              2.5,
+              247.402
+            ],
+            [
+              5.5,
+              247.402
+            ]
+          ],
+          "bbox_mm": [
+            1.0,
+            247.0,
+            7.0,
+            253.0
+          ],
+          "area_mm2": 28.274,
+          "centroid_mm": [
+            4.0,
+            250.0
+          ],
+          "source": "oracle",
+          "conf": 1.0
+        },
+        "color_lab": [
+          132.6,
+          118.0,
+          148.0
+        ],
+        "eq_diameter_mm": 6.0
+      },
+      "expect": {
+        "paired": false,
+        "kept_side": "bottom",
+        "worst_side": "bottom",
+        "final_defect": "dried"
+      }
+    }
+  ]
+}

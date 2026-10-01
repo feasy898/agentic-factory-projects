@@ -1,0 +1,53 @@
+{
+  "scan_id": "scan_synth_0001",
+  "sample_id": "sample_001",
+  "tray_id": "tray_01",
+  "top_image": "data/synth/batch_0001/top_0001.png",
+  "bottom_image": "data/synth/batch_0001/bottom_0001.png",
+  "calibration": {
+    "px_per_mm": 6.8267,
+    "H_top": [
+      [
+        6.8267,
+        0.0,
+        12.0
+      ],
+      [
+        0.0,
+        6.8267,
+        8.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "H_bottom": [
+      [
+        6.8267,
+        0.0,
+        10.0
+      ],
+      [
+        0.0,
+        6.8267,
+        9.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "marker_ids": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "reproj_err_px": 0.42
+  },
+  "captured_at": "2026-09-28T10:00:00+08:00",
+  "source": "synth"
+}

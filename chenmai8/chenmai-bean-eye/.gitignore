@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+build/
+.vite/
+
+# Env & secrets
+.env
+.env.*
+*.key
+secrets/
+
+# Data & models (large artifacts) —— data/ 全部忽略，仅数据集说明文档随 git 跟踪
+data/*
+!data/datasets/
+data/datasets/*
+!data/datasets/README.md
+models/
+*.onnx
+*.pt
+*.ckpt
+*.safetensors
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local artifacts
+*.log
+tmp/
+out/
+
+# 内部文件：素材来源映射（上游原标签，不得入公开仓，见 W13 清理）
+configs/upstream_mapping.internal.yaml

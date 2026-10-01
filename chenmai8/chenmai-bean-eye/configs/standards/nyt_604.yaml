@@ -1,0 +1,66 @@
+# =====================================================================
+# BeanEye 标准配置 · NY/T 604 生咖啡（nyt_604）
+# ---------------------------------------------------------------------
+# 对应农业行业标准《生咖啡》（NY/T 604；2006 版已被 2020 版替代，
+# 2021-04-01 实施）。D1 原文核对未取到等级表全文，本文件的级别命名
+# （一级/二级/三级）与全部阈值是**结构化占位基线**（参照 §3.3 CQI
+# 结构自定、缺陷计数按 300g 样基的公开检索线索），一律 verified: false，
+# 护照页脚显示"标准阈值核对中"角标；取得原文后回填并置 true。
+# 字段语义与判定规则见 cqi_fine_robusta.yaml 文件头（同 schema）。
+# =====================================================================
+
+standard: nyt_604
+display:
+  zh: NY/T 604 生咖啡
+  en: NY/T 604 Green Coffee
+  vi: NY/T 604 Cà phê nhân
+sample_g: 300                       # 抽样基量（克）：占位基线，待原文核对
+count_rule: most_severe_per_bean
+severity_order: [normal, broken, faded, brocade, immature, peaberry, shell, elephant, insect, dried, sour, mold, black]
+
+defect_classes:
+  normal:   {kind: normal,    zh: 好豆,          en: normal,    vi: hat tot}
+  broken:   {kind: secondary, zh: 破碎,          en: broken,    vi: hat vo}
+  faded:    {kind: secondary, zh: 褪色/白化,     en: faded,     vi: hat nhat mau}
+  brocade:  {kind: secondary, zh: 花脸,          en: brocade,   vi: hat loang}
+  immature: {kind: secondary, zh: 未熟,          en: immature,  vi: hat non}
+  peaberry: {kind: secondary, zh: 花豆/胡椒粒豆, en: peaberry,  vi: peaberry}
+  shell:    {kind: secondary, zh: 贝壳豆,        en: shell,     vi: hat mai}
+  elephant: {kind: secondary, zh: 象豆,          en: elephant,  vi: hat voi}
+  insect:   {kind: primary,   zh: 虫蛀,          en: insect,    vi: hat mot}
+  dried:    {kind: primary,   zh: 干瘪/僵豆,     en: dried,     vi: hat thoc}
+  sour:     {kind: primary,   zh: 酸豆,          en: sour,      vi: hat chua}
+  mold:     {kind: primary,   zh: 霉豆,          en: mold,      vi: hat moc}
+  black:    {kind: primary,   zh: 黑豆,          en: black,     vi: hat den}
+
+grades:                             # 从最优到最差排列（命名与阈值为占位基线）
+  - name: 一级
+    primary_max: 0                  # 主缺陷 0 粒
+    secondary_full_max: 8           # 次缺陷全样累计 ≤8 粒
+    sieve_min: 15                   # v0 语义：筛目 <15 的粒数须为 0
+    verified: false
+  - name: 二级
+    primary_max: 2
+    secondary_full_max: 16
+    sieve_min: 14
+    verified: false
+  - name: 三级
+    primary_max: 5
+    secondary_full_max: 30
+    sieve_min: 13
+    verified: false
+
+fail_grade: 等外
+
+metrology:
+  sieve_targets:
+    min_screen: 13                  # 整盘基准目数（占位基线）
+    verified: false
+  reference_lab: [52, -8, 20]       # 生豆参考色占位（0-255 标度；实测后回填）
+  reference_lab_verified: false
+  delta_e_max: null                 # 占位：不判色差（待原文核对）
+
+weight:
+  model: area_linear
+  g_per_mm2: 0.00042                # 占位系数；到货后标定回填
+  verified: false
