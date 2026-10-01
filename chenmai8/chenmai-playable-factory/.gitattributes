@@ -1,0 +1,4 @@
+# 字节忠实：本仓含与 oracle 逐字节一致的数据资产（REUSED-ASSETS.md sha256 契约），
+# 关闭一切 EOL 归一化/转换（core.autocrlf=true 全局设置被此处覆盖）。
+# 后续批次新增二进制资产（png/woff2/zip 等）无需逐个登记——`* -text` 已全覆盖。
+* -text

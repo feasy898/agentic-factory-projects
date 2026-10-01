@@ -1,0 +1,12 @@
+{
+  "name": "@pf/tmpl-pullpin",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "拔针救援玩法模板（M3）：PlayableSpec 驱动渲染，按序拔针引流救援、错序失败重试、nearWin 吸引点与 QC 钩子。可解性逻辑消费 @pf/spec 单源（决策 §2.1 P1），nearWin/failBait 行为语义对照模板资产 spec §7.2 冻结。",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --experimental-strip-types tests/logic-test.ts",
+    "typecheck": "tsc --noEmit"
+  }
+}

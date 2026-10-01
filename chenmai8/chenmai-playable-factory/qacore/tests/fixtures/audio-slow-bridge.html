@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>qacore fixture audio slow-bridge</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #2a1030; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { background: #402455; border-radius: 8px; }
+</style>
+</head>
+<body>
+  <canvas id="stage" width="320" height="240"></canvas>
+  <p>audio slow-bridge：PF 桥延迟约 1200ms 才装配（CLI-B 假阴性回归）</p>
+  <script>
+    // 画布内容（CHK05 像素方差需要非空白）
+    (function () {
+      const ctx = document.getElementById("stage").getContext("2d");
+      ctx.fillStyle = "#c1ff4d";
+      ctx.fillRect(0, 0, 320, 240);
+      ctx.fillStyle = "#4d7cff";
+      ctx.beginPath(); ctx.arc(160, 120, 60, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#2a1030";
+      ctx.font = "bold 26px sans-serif";
+      ctx.fillText("SLOW", 122, 130);
+    })();
+    // 慢桥：load 后约 1200ms 才定义 window.PF——快速质检的有界等待
+    // （waitForFunction 5s）必须等到它；即刻直读会得到 None→从严 fail（老竞态）。
+    setTimeout(function () {
+      window.PF = {
+        isMuted: function () { return true; },
+        setMuted: function (v) { /* 恒静音夹具 */ },
+      };
+      document.dispatchEvent(new Event("pf:ready"));
+    }, 1200);
+  </script>
+</body>
+</html>

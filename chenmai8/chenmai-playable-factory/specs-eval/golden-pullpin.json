@@ -1,0 +1,113 @@
+{
+  "specVersion": "1.0.0",
+  "meta": {
+    "projectId": "golden-pullpin",
+    "title": "Pin Rescue (Playable Demo)",
+    "seed": 20260930
+  },
+  "game": {
+    "template": "pullpin",
+    "params": {
+      "levels": 3,
+      "pinsPerLevel": 3,
+      "hazard": "lava",
+      "rescuee": "character",
+      "orderSolution": [[0, 2], [2, 1], [2, 1]]
+    },
+    "difficulty": { "targetLevel": 0.4 },
+    "attract": { "nearWin": true, "failBait": false, "firstClickSucceed": true },
+    "durationBudgetSec": { "target": 20, "max": 30 }
+  },
+  "flow": {
+    "tutorial": { "enabled": true, "gesture": "tap", "maxSec": 3 },
+    "endScreen": {
+      "showScore": true,
+      "ctaKey": "cta",
+      "landingUrl": "https://example.com/playable-lp"
+    }
+  },
+  "assets": {
+    "background": "assets/theme-a/bg-portrait.png",
+    "sprites": {
+      "pin": "assets/theme-a/pin.png",
+      "rescuee": "assets/theme-a/rescuee.png",
+      "hazard": "assets/theme-a/hazard.png"
+    },
+    "audio": {
+      "tap": "assets/theme-a/sfx-tap.ogg",
+      "win": "assets/theme-a/sfx-win.ogg"
+    },
+    "fontSubset": "build/theme-a/font-subset.woff2"
+  },
+  "i18n": {
+    "defaultLocale": "en",
+    "locales": ["en", "ja", "ko", "pt-BR", "de", "ar", "zh"],
+    "strings": {
+      "en": {
+        "cta": "Play Now",
+        "tutorial": "Tap the pin to pull it out!",
+        "win": "Rescued!",
+        "lose": "Try Again!",
+        "score": "Score"
+      },
+      "ja": {
+        "cta": "今すぐ遊ぶ",
+        "tutorial": "ピンをタップして引き抜こう！",
+        "win": "救出成功！",
+        "lose": "もう一度！",
+        "score": "スコア"
+      },
+      "ko": {
+        "cta": "지금 플레이",
+        "tutorial": "핀을 탭해서 뽑아요!",
+        "win": "구출 성공!",
+        "lose": "다시 도전!",
+        "score": "점수"
+      },
+      "pt-BR": {
+        "cta": "Jogue Agora",
+        "tutorial": "Toque no pino para puxar!",
+        "win": "Resgatado!",
+        "lose": "Tente de Novo!",
+        "score": "Pontos"
+      },
+      "de": {
+        "cta": "Jetzt Spielen",
+        "tutorial": "Tippe auf den Stift und zieh ihn heraus!",
+        "win": "Gerettet!",
+        "lose": "Nochmal versuchen!",
+        "score": "Punkte"
+      },
+      "ar": {
+        "cta": "العب الآن",
+        "tutorial": "انقر على الدبوس لسحبه!",
+        "win": "تم الإنقاذ!",
+        "lose": "حاول مجدداً!",
+        "score": "النقاط"
+      },
+      "zh": {
+        "cta": "立即游玩",
+        "tutorial": "点按针头，把针拔出来！",
+        "win": "救援成功！",
+        "lose": "再试一次！",
+        "score": "得分"
+      }
+    },
+    "rtl": ["ar"]
+  },
+  "channels": {
+    "targets": ["applovin", "unity", "google", "meta", "tiktok", "mintegral"],
+    "orientation": "portrait",
+    "overrides": {
+      "applovin": { "maxBytes": 5242880, "ctaStyle": "banner" },
+      "meta": { "maxBytes": 3145728, "ctaStyle": "endcard" }
+    }
+  },
+  "variants": [
+    { "id": "v1", "seed": 1, "palette": "A" }
+  ],
+  "qc": {
+    "maxLoadSec": 2.0,
+    "autoplayTimeoutSec": 45
+  }
+}

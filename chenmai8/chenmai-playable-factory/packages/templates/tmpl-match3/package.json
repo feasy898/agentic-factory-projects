@@ -1,0 +1,12 @@
+{
+  "name": "@pf/tmpl-match3",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "三消/叠叠消玩法模板（M3）：PlayableSpec 驱动渲染，含教程→游玩→结束页流程、attract 参数与 QC 钩子",
+  "scripts": {
+    "build": "node build.mjs",
+    "logic": "node tests/logic-test.ts",
+    "typecheck": "tsc --noEmit"
+  }
+}

@@ -1,0 +1,325 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:pf:spec:playable-spec:1.0.0",
+  "title": "PlayableSpec",
+  "description": "PlayableSpec v1.0.0 —— 试玩广告生产线的一条试玩广告规格（模板×素材×语言×渠道的单一事实源）。结构校验由本 schema（JSON Schema draft 2020-12）承担；跨字段语义不变式由两侧 validator 强制（同一套算法、双实现互验）：python 侧 pfcore.validation（jsonschema + invariants），node 侧 packages/spec/src/invariants.mjs（ajv + invariants）。不变式清单（冻结）：I1 pullpin 每关 orderSolution 经拔针模拟必须可解（角色布局由 seed 确定性生成）；I2 sort 初始盘面由已解状态经可逆步扰动生成（栈可逆校验，故必有解）；I3 match3 由 seed 生成的初始盘面必须存在可行步（相邻交换出 3 连）；I4 game.durationBudgetSec.max <= 30；I5 i18n.locales 内每语言 strings 键全覆盖（cta/tutorial/win/lose/score）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["specVersion", "meta", "game", "flow", "assets", "i18n", "channels", "qc"],
+  "properties": {
+    "specVersion": {
+      "const": "1.0.0",
+      "description": "spec 契约版本，v1 阶段固定 1.0.0。"
+    },
+    "meta": { "$ref": "#/$defs/meta" },
+    "game": { "$ref": "#/$defs/game" },
+    "flow": { "$ref": "#/$defs/flow" },
+    "assets": { "$ref": "#/$defs/assets" },
+    "i18n": { "$ref": "#/$defs/i18n" },
+    "channels": { "$ref": "#/$defs/channels" },
+    "variants": { "$ref": "#/$defs/variants" },
+    "qc": { "$ref": "#/$defs/qc" }
+  },
+  "$defs": {
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["projectId", "title", "seed"],
+      "properties": {
+        "projectId": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+          "description": "工程标识（目录名/产物前缀）。"
+        },
+        "title": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "seed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "确定性随机种子：关卡盘面/布局由它经规范生成器导出（算法见 validator 内的 canonical generator，模板侧同源复刻）。"
+        }
+      }
+    },
+    "game": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["template", "params", "durationBudgetSec"],
+      "properties": {
+        "template": {
+          "enum": ["match3", "merge", "pullpin", "sort"],
+          "description": "四选一；params 的形状由它经 if/then 选择对应子 schema。"
+        },
+        "params": {
+          "type": "object",
+          "description": "模板参数；具体形状见 $defs/{match3,merge,pullpin,sort}Params。全部字段带默认值，spec 只需填偏差项。"
+        },
+        "difficulty": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["targetLevel"],
+          "properties": {
+            "targetLevel": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "attract": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "吸引模式：nearWin=最后一步先失败一次再成；failBait=展示失败诱因；firstClickSucceed=首次点击必成功。",
+          "properties": {
+            "nearWin": { "type": "boolean", "default": false },
+            "failBait": { "type": "boolean", "default": false },
+            "firstClickSucceed": { "type": "boolean", "default": true }
+          }
+        },
+        "durationBudgetSec": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["target", "max"],
+          "properties": {
+            "target": { "type": "integer", "minimum": 5, "maximum": 30, "default": 20 },
+            "max": { "type": "integer", "minimum": 5, "maximum": 30, "default": 30 }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "template": { "const": "match3" } }, "required": ["template"] },
+          "then": { "properties": { "params": { "$ref": "#/$defs/match3Params" } } }
+        },
+        {
+          "if": { "properties": { "template": { "const": "merge" } }, "required": ["template"] },
+          "then": { "properties": { "params": { "$ref": "#/$defs/mergeParams" } } }
+        },
+        {
+          "if": { "properties": { "template": { "const": "pullpin" } }, "required": ["template"] },
+          "then": { "properties": { "params": { "$ref": "#/$defs/pullpinParams" } } }
+        },
+        {
+          "if": { "properties": { "template": { "const": "sort" } }, "required": ["template"] },
+          "then": { "properties": { "params": { "$ref": "#/$defs/sortParams" } } }
+        }
+      ]
+    },
+    "match3Params": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "三消/叠叠消模板参数。不变式 I3：seed 生成的盘面存在可行步；colors <= len(spriteKeys)。",
+      "properties": {
+        "cols": { "type": "integer", "minimum": 4, "maximum": 9, "default": 6 },
+        "rows": { "type": "integer", "minimum": 4, "maximum": 9, "default": 6 },
+        "moves": { "type": "integer", "minimum": 3, "maximum": 60, "default": 15 },
+        "colors": { "type": "integer", "minimum": 3, "maximum": 5, "default": 5 },
+        "goalType": { "enum": ["clear-jelly", "score"], "default": "clear-jelly" },
+        "goalCount": { "type": "integer", "minimum": 1, "maximum": 999, "default": 30 },
+        "spriteKeys": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 5,
+          "maxItems": 5,
+          "default": ["piece-0", "piece-1", "piece-2", "piece-3", "piece-4"],
+          "description": "5 个棋子精灵键（对应 assets.sprites 的键）。"
+        }
+      }
+    },
+    "mergeParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "合成模板参数。不变式：goalTier <= maxTier，spawnTierMax < maxTier，maxTier <= len(spriteKeys)。",
+      "properties": {
+        "cols": { "type": "integer", "minimum": 3, "maximum": 9, "default": 5 },
+        "rows": { "type": "integer", "minimum": 3, "maximum": 9, "default": 5 },
+        "maxTier": { "type": "integer", "minimum": 2, "maximum": 8, "default": 5 },
+        "spawnTierMax": { "type": "integer", "minimum": 1, "maximum": 8, "default": 2 },
+        "goalTier": { "type": "integer", "minimum": 2, "maximum": 8, "default": 4 },
+        "spriteKeys": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "default": ["tier-1", "tier-2", "tier-3", "tier-4", "tier-5"],
+          "description": "按 tier 顺序的精灵键，数量须覆盖到 maxTier。"
+        }
+      }
+    },
+    "pullpinParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "拔针救援模板参数。不变式 I1：每关的针角色由 seed 确定性生成（每关一个救援针、一个机关针，其余中性），orderSolution 逐关模拟必须救出角色（机关针先于救援针被拔 => 失败）。",
+      "properties": {
+        "levels": { "type": "integer", "minimum": 1, "maximum": 10, "default": 3 },
+        "pinsPerLevel": { "type": "integer", "minimum": 3, "maximum": 5, "default": 3 },
+        "hazard": { "enum": ["lava", "spike"], "default": "lava" },
+        "rescuee": { "const": "character", "default": "character" },
+        "orderSolution": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": { "type": "integer", "minimum": 0 },
+            "minItems": 1
+          },
+          "minItems": 1,
+          "description": "每关的拔针顺序（针下标数组，互不重复，值 < pinsPerLevel）；数组长度须等于 levels。"
+        }
+      }
+    },
+    "sortParams": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "排序/拧螺丝模板参数。不变式 I2：初始盘面 = 已解状态经规范生成器的可逆步扰动（栈可逆校验），模板按同源生成器重建盘面。",
+      "properties": {
+        "rods": { "type": "integer", "minimum": 3, "maximum": 8, "default": 4 },
+        "layersPerRod": { "type": "integer", "minimum": 2, "maximum": 6, "default": 4 },
+        "colors": { "type": "integer", "minimum": 2, "maximum": 6, "default": 4 },
+        "screwMode": { "type": "boolean", "default": false },
+        "moveLimit": { "type": "integer", "minimum": 1, "description": "步数上限（拧螺丝变体常用）；缺省 = 不限步。" }
+      }
+    },
+    "flow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tutorial", "endScreen"],
+      "properties": {
+        "tutorial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["enabled"],
+          "properties": {
+            "enabled": { "type": "boolean", "default": true },
+            "gesture": { "enum": ["tap", "drag"], "default": "tap" },
+            "maxSec": { "type": "number", "minimum": 0, "maximum": 10, "default": 3 }
+          }
+        },
+        "endScreen": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ctaKey", "landingUrl"],
+          "properties": {
+            "showScore": { "type": "boolean", "default": true },
+            "ctaKey": {
+              "type": "string",
+              "minLength": 1,
+              "description": "CTA 文案的 i18n 键（须存在于每语言 strings）。"
+            },
+            "landingUrl": {
+              "type": "string",
+              "pattern": "^https?://\\S+$",
+              "maxLength": 512,
+              "description": "落地页 URL；打包后它是产物内唯一允许出现的外链。"
+            }
+          }
+        }
+      }
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["background", "sprites", "audio"],
+      "properties": {
+        "background": { "type": "string", "minLength": 1 },
+        "sprites": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "type": "string", "minLength": 1 }
+        },
+        "audio": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tap": { "type": ["string", "null"] },
+            "win": { "type": ["string", "null"] }
+          }
+        },
+        "fontSubset": {
+          "type": "string",
+          "description": "素材管线生成的字体子集文件路径。"
+        }
+      }
+    },
+    "i18n": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["defaultLocale", "locales", "strings"],
+      "properties": {
+        "defaultLocale": { "type": "string", "minLength": 1 },
+        "locales": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "strings": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": { "$ref": "#/$defs/localeStrings" }
+        },
+        "rtl": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true,
+          "description": "需要 RTL 排版的语言列表（如 ar）；必须是 locales 的子集（不变式校验）。"
+        }
+      }
+    },
+    "localeStrings": {
+      "type": "object",
+      "required": ["cta", "tutorial", "win", "lose", "score"],
+      "properties": {
+        "cta": { "type": "string", "minLength": 1 },
+        "tutorial": { "type": "string", "minLength": 1 },
+        "win": { "type": "string", "minLength": 1 },
+        "lose": { "type": "string", "minLength": 1 },
+        "score": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": { "type": "string", "minLength": 1 }
+    },
+    "channels": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targets", "orientation"],
+      "properties": {
+        "targets": {
+          "type": "array",
+          "items": {
+            "enum": ["applovin", "unity", "google", "meta", "tiktok", "mintegral"]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "orientation": { "enum": ["portrait", "landscape", "both"] },
+        "overrides": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/channelOverride" }
+        }
+      }
+    },
+    "channelOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "maxBytes": { "type": "integer", "minimum": 0 },
+        "ctaStyle": { "type": "string", "minLength": 1 }
+      }
+    },
+    "variants": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "seed": { "type": "integer", "minimum": 0, "description": "变体覆盖 meta.seed（打包期生效）。" },
+          "palette": { "enum": ["A", "B", "C"] }
+        }
+      }
+    },
+    "qc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["maxLoadSec", "autoplayTimeoutSec"],
+      "properties": {
+        "maxLoadSec": { "type": "number", "minimum": 0.5, "maximum": 10, "default": 2.0 },
+        "autoplayTimeoutSec": { "type": "number", "minimum": 5, "maximum": 120, "default": 45 }
+      }
+    }
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "$comment": "渠道规则库（M12 知识资产，packager 配置驱动来源）。结构对应开发指令 §7 表列：包形态/包内结构、大小上限、文件数上限、退出接口、协议、静音要求。T2.4（2026-09-29）起六条投放渠道全部冻结：applovin/meta/mintegral/google/unity/tiktok（pangle 与 tiktok 同协议，桥归一为 tiktok，不单列）。zip 渠道包内结构由 package.structure 声明；package.generated（可选，文件名→生成器名）声明由打包器按 spec 生成的附加文件。数值为行业基线 + 内部从严，D9 官方工具实测后回填修订。defaults.allowedTextUrls 是外链文本扫描的全局白名单，只收惰性字符串而非请求目标：https://pf.io（引擎品牌串：配置默认值与版本横幅字面量）、http://www.w3.org/1999/xhtml 与 /2000/svg（XML 命名空间标识符，按规范定义即非取回目标）——留档 preview 运行实测零外网请求（CHK03 pass），故按配置放行而非改引擎。",
+  "rulesVersion": "1.1.0",
+  "updated": "2026-09-29",
+  "defaults": {
+    "externalUrlPolicy": "forbid",
+    "allowedUrlSchemes": ["data:", "blob:"],
+    "allowedTextUrls": ["https://pf.io", "http://www.w3.org/1999/xhtml", "http://www.w3.org/2000/svg"],
+    "muteBeforeFirstInteraction": true,
+    "allowRelativeRuntimeScripts": true
+  },
+  "channels": {
+    "preview": {
+      "label": "Preview",
+      "package": {
+        "format": "single-html",
+        "entry": "index.html",
+        "maxFiles": 1
+      },
+      "maxBytes": 5242880,
+      "maxFiles": 1,
+      "exit": {
+        "protocol": "window-open",
+        "call": "window.open(url)",
+        "waitReadyBeforeRender": false
+      },
+      "runtime": {
+        "injectRelativeScripts": [],
+        "muteBeforeFirstInteraction": true,
+        "forbidMraid": false
+      },
+      "allowedUrlWhitelist": [],
+      "source": "本地预览/QC 渠道（非投放渠道）：单 HTML 自包含产物，供 qacore --autoplay 与预览页使用；退出接口回退 window.open。包体上限沿用 5MB 内部从严线。"
+    },
+    "applovin": {
+      "label": "AppLovin",
+      "package": {
+        "format": "single-html",
+        "entry": "index.html",
+        "maxFiles": 1
+      },
+      "maxBytes": 5242880,
+      "maxFiles": 1,
+      "exit": {
+        "protocol": "mraid",
+        "call": "mraid.open(url)",
+        "waitReadyBeforeRender": true
+      },
+      "runtime": {
+        "injectRelativeScripts": ["mraid.js"],
+        "muteBeforeFirstInteraction": true,
+        "forbidMraid": false
+      },
+      "allowedUrlWhitelist": [],
+      "source": "单 HTML 全内联，MRAID 2.0，等 ready 再渲染，首交互前静音，禁外链（对照 oRTB 2026 版核实：5MB/单文件/MRAID/静音）。D9 用官方预览工具回填。"
+    },
+    "meta": {
+      "label": "Meta",
+      "package": {
+        "format": "single-html",
+        "entry": "index.html",
+        "maxFiles": 1
+      },
+      "maxBytes": 3145728,
+      "maxFiles": 1,
+      "exit": {
+        "protocol": "fb-playable",
+        "call": "FbPlayableAd.onComplete()",
+        "waitReadyBeforeRender": false
+      },
+      "runtime": {
+        "injectRelativeScripts": [],
+        "muteBeforeFirstInteraction": true,
+        "forbidMraid": true
+      },
+      "allowedUrlWhitelist": [],
+      "source": "单 HTML 全内联，退出用 FbPlayableAd.onComplete()，禁 MRAID。大小内部从严 3MB（官方建议 ~2MB，模板侧应再压）。D9 回填。"
+    },
+    "mintegral": {
+      "label": "Mintegral",
+      "package": {
+        "format": "zip",
+        "entry": "Template.html",
+        "structure": ["build.js", "Template.html"],
+        "maxFiles": 100
+      },
+      "maxBytes": 5242880,
+      "maxFiles": 100,
+      "exit": {
+        "protocol": "mraid",
+        "call": "mraid.open(url)",
+        "waitReadyBeforeRender": true
+      },
+      "runtime": {
+        "injectRelativeScripts": ["mraid.js"],
+        "muteBeforeFirstInteraction": true,
+        "forbidMraid": false
+      },
+      "allowedUrlWhitelist": [],
+      "source": "zip 包，包内为 build.js（游戏逻辑）+ Template.html（入口壳，资源内联）——Phase 0 实测结构。退出接口 mraid.open(url) 在 Template.html 内生效。D9 回填。如实留档（2026-09-29 复审记录，渠道审核风险）：当前模板产物是全内联单 HTML，打进 zip 时 dist 无外链 <script>，build.js 落为空占位文件（packager 出 'dist 内没有外链 <script>，build.js 为空占位' 警告，见 packages/packager/src/html.mjs）——包能过本地质检，但若渠道审核校验 build.js 内容/占比（模板包规范假设 build.js 承载游戏逻辑）存在被拒风险；待后续把游戏逻辑真实拆分进 build.js 后回填删除本条。"
+    },
+    "google": {
+      "label": "Google",
+      "package": {
+        "format": "zip",
+        "entry": "index.html",
+        "structure": ["index.html"],
+        "maxFiles": 512
+      },
+      "maxBytes": 5242880,
+      "maxFiles": 512,
+      "exit": {
+        "protocol": "exit-api",
+        "call": "ExitApi.exit()",
+        "waitReadyBeforeRender": false
+      },
+      "runtime": {
+        "injectRelativeScripts": [],
+        "muteBeforeFirstInteraction": true,
+        "forbidMraid": false
+      },
+      "allowedUrlWhitelist": [],
+      "source": "T2.4（2026-09-29）冻结：zip 包，入口 index.html（全内联自包含；Phase 0 对照实测上游 zip 内仅 index.html）。退出 ExitApi.exit()——不接收 URL（按 channel-adapters 表口径，CHK06 实装时按「是否传 URL」分型断言）；就绪条件=全局 ExitApi 存在，缺失时桥回退 window.open(url)。文件数 ≤512 为规划基线（内部目标 ≤200），D9 官方工具实测回填。"
+    },
+    "unity": {
+      "label": "Unity",
+      "package": {
+        "format": "zip",
+        "entry": "index.html",
+        "structure": ["index.html"],
+        "maxFiles": 512
+      },
+      "maxBytes": 5242880,
+      "maxFiles": 512,
+      "exit": {
+        "protocol": "mraid",
+        "call": "mraid.open(url)",
+        "waitReadyBeforeRender": true
+      },
+      "runtime": {
+        "injectRelativeScripts": ["mraid.js"],
+        "muteBeforeFirstInteraction": true,
+        "forbidMraid": false
+      },
+      "allowedUrlWhitelist": [],
+      "source": "T2.4（2026-09-29）按任务口径冻结：zip 包 + 入口 index.html（全内联）。与规划 §7/docs/assets 表的单 HTML 口径存在分歧（Phase 0 对照实测上游 unity 产物为单 HTML；本条按 T2.4 指令落 zip），D9 官方工具实测后回填统一。退出按桥 channels.ts 的 mraid 形同协议路由 mraid.open(url)（传 URL），注入 mraid.js 相对引用（容器投放时提供，本地质检由 qacore 桩应答）。文件数无公开硬线，暂同 google 内部线 512，D9 回填。"
+    },
+    "tiktok": {
+      "label": "TikTok/Pangle",
+      "package": {
+        "format": "zip",
+        "entry": "index.html",
+        "structure": ["index.html", "config.json", "js-sdk.js"],
+        "generated": {
+          "config.json": "tiktok-config",
+          "js-sdk.js": "js-sdk-stub"
+        },
+        "maxFiles": 100
+      },
+      "maxBytes": 5242880,
+      "maxFiles": 100,
+      "exit": {
+        "protocol": "js-sdk",
+        "call": "window.openAppStore()",
+        "waitReadyBeforeRender": false
+      },
+      "runtime": {
+        "injectRelativeScripts": ["js-sdk.js"],
+        "muteBeforeFirstInteraction": true,
+        "forbidMraid": false
+      },
+      "allowedUrlWhitelist": [],
+      "source": "T2.4（2026-09-29）冻结：zip + 入口 index.html + config.json（打包器按 spec 生成的附加文件，package.generated 声明）+ js-sdk.js 运行时桩（定义 window.openAppStore 兜底；容器已注入真实实现时桩让位，不覆盖）。退出 window.openAppStore()——不接收 URL（按 channel-adapters 表口径；pangle 同协议，桥归一为 tiktok）。config.json 字段（version/orientation/gameName）为内部草拟，官方规范 D9 实测回填。文件数 ≤100 规划基线。"
+    }
+  }
+}

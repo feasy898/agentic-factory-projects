@@ -1,0 +1,72 @@
+{
+  "$comment": "上游对照 spike（_vendor/spike，仅本机、gitignore 覆盖）六渠道产物的入库期望清单。门禁 gate_phase0 门项 3 按本清单校验：文件名按 pattern 通配（日期段可变，断言恰一命中）、体积 ≥ minBytes（0 字节/缺文件即 FAIL）、zip 渠道逐条目校验 zipEntries。minBytes 按实测产物（2026-09-28 windev-01，上游模板 sdk 1.2.0 / scripts 1.2.14 / 引擎 3.88.2）向下留 ~5% 余量定值；上游升级后重跑 spike 并回填本清单。本机无 _vendor/spike 时门禁标 SKIP-ENV 不算 FAIL——期望清单入库保证任何机器/CI 都能重建同一通过线。版本/命令等事实记录见 _vendor/NOTES.md（不入库）。T2.4（2026-09-29）补记：自研 packager 已按 channel-rules/channel-rules.json（rulesVersion 1.1.0）冻结同六渠道出包，实测 golden-match3×en 六渠道全出包且各过 qacore；对照轨分歧一处如实留档——上游 unity 产物为单 HTML（本清单 format=single-html），自研规则按 T2.4 任务口径为 zip+index.html，D9 官方工具实测后统一。",
+  "manifestVersion": "1.0.0",
+  "recorded": "2026-09-28",
+  "updated": "2026-09-29",
+  "sourceRoot": "_vendor/spike",
+  "channelsExpected": ["AL", "UNITY", "GOOGLE", "FB", "TIKTOK", "MINTEGRAL"],
+  "artifacts": [
+    {
+      "channel": "applovin",
+      "code": "AL",
+      "pattern": "dist/Playable_Template_v1_*_en_AL.html",
+      "format": "single-html",
+      "minBytes": 1200000,
+      "measuredBytes": 1269510,
+      "zipEntries": []
+    },
+    {
+      "channel": "unity",
+      "code": "UNITY",
+      "pattern": "dist/Playable_Template_v1_*_en_UNITY.html",
+      "format": "single-html",
+      "minBytes": 1200000,
+      "measuredBytes": 1269539,
+      "zipEntries": []
+    },
+    {
+      "channel": "google",
+      "code": "GOOGLE",
+      "pattern": "dist/Playable_Template_v1_*_en_GOOGLE.zip",
+      "format": "zip",
+      "minBytes": 340000,
+      "measuredBytes": 375381,
+      "zipEntries": [
+        { "name": "index.html", "minBytes": 1200000, "measuredBytes": 1268874 }
+      ]
+    },
+    {
+      "channel": "facebook",
+      "code": "FB",
+      "pattern": "dist/Playable_Template_v1_*_en_FB.html",
+      "format": "single-html",
+      "minBytes": 1200000,
+      "measuredBytes": 1268688,
+      "zipEntries": []
+    },
+    {
+      "channel": "tiktok",
+      "code": "TIKTOK",
+      "pattern": "dist/Playable_Template_v1_*_en_TIKTOK.zip",
+      "format": "zip",
+      "minBytes": 340000,
+      "measuredBytes": 375402,
+      "zipEntries": [
+        { "name": "index.html", "minBytes": 1200000, "measuredBytes": 1268662 },
+        { "name": "config.json", "minBytes": 10, "measuredBytes": 31 }
+      ]
+    },
+    {
+      "channel": "mintegral",
+      "code": "MINTEGRAL",
+      "pattern": "dist/Playable_Template_v1_*_en_MINTEGRAL.zip",
+      "format": "zip",
+      "minBytes": 340000,
+      "measuredBytes": 375488,
+      "zipEntries": [
+        { "name": "build.js", "minBytes": 1200000, "measuredBytes": 1268381 },
+        { "name": "Template.html", "minBytes": 500, "measuredBytes": 689 }
+      ]
+    }
+  ]
+}
