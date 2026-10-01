@@ -1,0 +1,56 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "ohos-tailscale 应用入口模块"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "ohos-tailscale 主界面"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "Ohos Tailscale"
+    },
+    {
+      "name": "vpn_ability_desc",
+      "value": "ohos-tailscale VPN 扩展服务"
+    },
+    {
+      "name": "app_title",
+      "value": "Ohos Tailscale"
+    },
+    {
+      "name": "authkey_label",
+      "value": "Auth Key"
+    },
+    {
+      "name": "authkey_hint",
+      "value": "粘贴 auth key（tskey-auth-...）"
+    },
+    {
+      "name": "btn_connect",
+      "value": "连接"
+    },
+    {
+      "name": "btn_disconnect",
+      "value": "断开"
+    },
+    {
+      "name": "status_disconnected",
+      "value": "未连接"
+    },
+    {
+      "name": "status_connecting",
+      "value": "连接中"
+    },
+    {
+      "name": "status_connected",
+      "value": "已连接"
+    },
+    {
+      "name": "toast_need_authkey",
+      "value": "请先输入 auth key"
+    }
+  ]
+}

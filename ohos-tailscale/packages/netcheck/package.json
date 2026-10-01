@@ -1,0 +1,13 @@
+{
+  "name": "@ohos-tailscale/netcheck",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "STUN wire format core for the netcheck engine (tailscale net/stun aligned): binding request/response codec with SOFTWARE+FINGERPRINT attrs, XOR-MAPPED-ADDRESS parsing, and a deterministic StunTransaction building block. Engine scheduling (endpoint enumeration / port-mapping protocols) is phase 2.",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ohos-tailscale/common": "^0.1.0"
+  }
+}

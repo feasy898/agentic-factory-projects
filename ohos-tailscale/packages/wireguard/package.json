@@ -1,0 +1,10 @@
+{
+  "name": "@ohos-tailscale/wireguard",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "WireGuard data-plane protocol core: Noise_IKpsk2 handshake (initiation/response with MAC1/MAC2 and TAI64N), transport data AEAD with 2048-bit replay window, peer index table and cookie skeleton. Pure byte in/byte out, no sockets - see docs/architecture.md §5.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

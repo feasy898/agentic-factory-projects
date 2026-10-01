@@ -1,0 +1,22 @@
+{
+  "name": "ohos-tailscale",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "description": "Tailscale-compatible mesh VPN implementation targeting OpenHarmony (ArkTS/TypeScript).",
+  "scripts": {
+    "test": "node --test packages/**/*.test.ts",
+    "typecheck": "tsc --noEmit -p .",
+    "test:bridge": "node --test app/bridge/test/*.test.ts",
+    "typecheck:bridge": "tsc --noEmit -p app/bridge",
+    "validate:shell": "node app/tools/validate-shell.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "tweetnacl": "^1.0.3",
+    "typescript": "5.9"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "@ohos-tailscale/common",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared interfaces (Clock/Rng/HttpTransport), byte codec, encodings and constants. Frozen public API - see docs/architecture.md.",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

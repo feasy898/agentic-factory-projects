@@ -1,0 +1,16 @@
+{
+  "modelVersion": "5.0.0",
+  "dependencies": {
+  },
+  "execution": {
+    // "analyze": "normal",                         // 可选：hvigor 分析模式
+    // "daemon": true                               // 可选：守护进程
+  },
+  "logging": {
+  },
+  "debugging": {
+  },
+  "nodeOptions": {
+    // "maxOldSpaceSize": 8192
+  }
+}

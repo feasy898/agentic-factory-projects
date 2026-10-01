@@ -1,0 +1,14 @@
+{
+  "name": "@ohos-tailscale/disco",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Tailscale disco discovery protocol (upstream disco.go aligned): Ping/Pong/CallMeMaybe message codecs and the sealed UDP wrapper (magic + sender disco pub + nonce + XSalsa20-Poly1305).",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ohos-tailscale/common": "^0.1.0",
+    "@ohos-tailscale/crypto": "^0.1.0"
+  }
+}
