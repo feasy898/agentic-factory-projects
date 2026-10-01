@@ -1,0 +1,76 @@
+// 模板入口：装配 engine-bridge 的 window.PF → 等渠道就绪 → 启动渲染引擎 →
+// 挂载 window.__PF_QC__（hint/state/texts/textStates/assets，契约 §4.2）。spec 由构建时
+// 内联的 window.PF_SPEC 提供（预览/单文件产物），渠道经 PF_CHANNEL / 全局探测
+// 识别；window.PF_ASSETS 为构建期内联的用户替换素材（最小素材路径，可缺省）。
+
+import { initBridge, type PFGlobal } from "@pf/engine-bridge";
+import * as engine from "./vendor/engine.js";
+import { normalizeSpec } from "./spec.ts";
+import { decodeReplacedSprites, type ReplacedSprite } from "./assets.ts";
+import { SortScene } from "./game.ts";
+
+declare global {
+  interface Window {
+    PF_SPEC?: unknown;
+    /** 构建期内联的用户替换素材（spriteKey → data URI）；无替换时为空对象。 */
+    PF_ASSETS?: Record<string, string>;
+    __PF_QC__?: {
+      hint: () => { x: number; y: number; type: string } | null;
+      state: () => string;
+      endScreenVisible?: () => boolean;
+      /** 已渲染到画布的文案集合（画布文字不进 DOM，innerText 取不到）。 */
+      texts?: () => string[];
+      /** 采样时刻逐条核验文案对象 active+visible（CHK10 上屏自证）。 */
+      textStates?: () => Array<{ text: string; active: boolean; visible: boolean }>;
+      /** 替换素材像素对账（渲染贴图 vs 内联用户 PNG），无替换素材时为 []。 */
+      assets?: () => Promise<
+        Array<{ texKey: string; spriteKey: string; mad: number | null; replaced: boolean; reason?: string }>
+      >;
+    };
+  }
+}
+
+const spec = normalizeSpec((window as any).PF_SPEC ?? {});
+const pf: PFGlobal = initBridge({ defaultLocale: spec.defaultLocale });
+
+// RTL 语言（如 ar）：文档方向标记（结束页/教程文本排版镜像在模板层处理）。
+if (spec.rtl.includes(pf.locale)) {
+  document.documentElement.setAttribute("dir", "rtl");
+}
+
+let scene: any = null;
+(window as any).__PF_QC__ = {
+  hint: () => (scene ? scene.hint() : null),
+  state: () => pf.phase(),
+  endScreenVisible: () => (scene ? scene.endScreenVisible() : false),
+  texts: () => (scene && typeof scene.textsSeen === "function" ? scene.textsSeen() : []),
+  textStates: () => (scene && typeof scene.textStates === "function" ? scene.textStates() : []),
+  assets: () => (scene && typeof scene.assetAudit === "function" ? scene.assetAudit() : Promise.resolve([])),
+};
+
+async function boot(): Promise<void> {
+  // 最小素材路径：解码构建期内联的用户 PNG（可缺省——纯程序化构建无此对象）。
+  const replaced: ReplacedSprite[] = await decodeReplacedSprites((window as any).PF_ASSETS);
+  scene = new SortScene(spec, pf, replaced); // 供 __PF_QC__ 闭包引用
+  const game = new engine.Game({
+    type: engine.AUTO,
+    parent: "app",
+    backgroundColor: "#172038",
+    banner: false,
+    scale: {
+      mode: engine.Scale.RESIZE,
+      autoCenter: engine.Scale.NO_CENTER,
+      width: window.innerWidth,
+      height: window.innerHeight,
+    },
+    fps: { target: 60 },
+    scene: [scene],
+  });
+  void game; // 场景持有全部引用，Game 实例保存在闭包防回收
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => pf.ready.then(boot));
+} else {
+  pf.ready.then(boot);
+}

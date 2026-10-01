@@ -1,0 +1,45 @@
+{
+  "specVersion": "1.0.0",
+  "meta": {
+    "projectId": "bad-pullpin-unsolvable",
+    "title": "BAD: pullpin 逐关模拟不可解（第 1 关先拔机关针）",
+    "seed": 424242
+  },
+  "game": {
+    "template": "pullpin",
+    "params": {
+      "levels": 2,
+      "pinsPerLevel": 3,
+      "hazard": "lava",
+      "rescuee": "character",
+      "orderSolution": [[0, 1, 2], [0, 1, 2]]
+    },
+    "durationBudgetSec": { "target": 15, "max": 30 }
+  },
+  "flow": {
+    "tutorial": { "enabled": true, "gesture": "tap", "maxSec": 3 },
+    "endScreen": {
+      "showScore": false,
+      "ctaKey": "cta",
+      "landingUrl": "https://example.com/playable-lp"
+    }
+  },
+  "assets": {
+    "background": "assets/theme-a/bg-portrait.png",
+    "sprites": { "pin": "assets/theme-a/pin.png" },
+    "audio": { "tap": "assets/theme-a/sfx-tap.ogg", "win": null }
+  },
+  "i18n": {
+    "defaultLocale": "en",
+    "locales": ["en"],
+    "strings": {
+      "en": { "cta": "Play Now", "tutorial": "Tap to pull!", "win": "Rescued!", "lose": "Try Again!", "score": "Score" }
+    },
+    "rtl": []
+  },
+  "channels": {
+    "targets": ["applovin"],
+    "orientation": "portrait"
+  },
+  "qc": { "maxLoadSec": 2.0, "autoplayTimeoutSec": 45 }
+}
