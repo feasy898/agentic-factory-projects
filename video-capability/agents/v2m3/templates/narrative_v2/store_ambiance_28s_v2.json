@@ -1,0 +1,90 @@
+{
+  "template_id": "store_ambiance_28s_v2",
+  "name_zh": "门店氛围·三车道v2(环境空镜主导, 10幕9镜头)",
+  "duration_range": [25, 30],
+  "orientation": "portrait",
+  "variables": {
+    "product_name": "酸梅汤",
+    "store_name": "老灶火锅"
+  },
+  "numbers": {
+    "price": "39.9",
+    "offer": "酸梅汤免费续杯"
+  },
+  "scenes": [
+    {
+      "slot": "ambiance_1",
+      "narrative_slot": "storefront_night",
+      "duration_sec": 2,
+      "role": "ambiance",
+      "narration": "灯笼一亮就想家"
+    },
+    {
+      "slot": "hook",
+      "narrative_slot": "hook_product",
+      "duration_sec": 3,
+      "role": "hook",
+      "narration": "{store_name}这锅红汤凌晨四点开熬"
+    },
+    {
+      "slot": "ambiance_2",
+      "narrative_slot": "ambiance_scene",
+      "duration_sec": 1.5,
+      "role": "ambiance",
+      "narration": "灯笼长廊全是暖光"
+    },
+    {
+      "slot": "evidence_1",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 4,
+      "role": "evidence",
+      "narration": "毛肚新鲜，涮烫刚好"
+    },
+    {
+      "slot": "ambiance_3",
+      "narrative_slot": "rain_window",
+      "duration_sec": 2,
+      "role": "ambiance",
+      "narration": "雨天更要吃这口"
+    },
+    {
+      "slot": "evidence_2",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 4,
+      "role": "evidence",
+      "narration": "铁勺扬汤，香气炸开"
+    },
+    {
+      "slot": "ambiance_4",
+      "narrative_slot": "ambiance_scene",
+      "duration_sec": 2,
+      "role": "ambiance",
+      "narration": "热气一冒胃口就开"
+    },
+    {
+      "slot": "evidence_demo",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 3,
+      "role": "evidence",
+      "narration": "新鲜看得见"
+    },
+    {
+      "slot": "offer",
+      "narrative_slot": "offer_product",
+      "duration_sec": 4,
+      "role": "offer",
+      "narration": "冰镇{product_name}，一口回甘"
+    },
+    {
+      "slot": "cta",
+      "narrative_slot": "cta_store",
+      "duration_sec": 3,
+      "role": "cta",
+      "background": {
+        "type": "solid",
+        "color": "0x5A2A18"
+      },
+      "narration": "今晚{price}一位，{offer}，老地方见"
+    }
+  ]
+}

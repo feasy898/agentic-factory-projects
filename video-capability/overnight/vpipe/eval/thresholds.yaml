@@ -1,0 +1,165 @@
+# =====================================================================
+# vpipe QC 阈值表（eval/thresholds.yaml）
+# ---------------------------------------------------------------------
+# 来源：overnight/judge基准报告.md（2026-09-30 定稿）§11「QC 体系定稿建议」，
+#       阈值扫描依据 §7，误报/漏检证据 §9/§10，E10 基线数字 §6。
+# 效力：qc_orch.py 的合议阈值只从这里读（SPEC.md 铁律：模块内不许出现第二套阈值）；
+#       eval_run.py 的准入线从 eval_admission 段读。
+# 修改规程：改本文件 = 改判定行为 → 必须重跑 eval_run.py 并在 §结论 复核，
+#       结果退化时回滚（judge基准报告 §7 的扫描表是回滚依据）。
+# =====================================================================
+version: 2                   # 2026-10-01：J6_detectors_v2 增低运动平台豁免/known_cuts；
+                             # l0_preflight 增采样与 avatar 垫尾参数（工程方案v3.1 P0-1/P0-2）。
+                             # E10 合议与全部判定阈未动，eval 回归 ACCEPT 零偏差后方可生效。
+source_report: overnight/judge基准报告.md (2026-09-30)
+
+# ---------------------------------------------------------------
+# 合议方案（eval_run.py 与 qc_orch.py 共同引用的判定定义）
+# ---------------------------------------------------------------
+ensemble:
+  recommended: E10            # 推荐主判据：J1 ∨ J3@0.70（§6 调阈组合表）
+  definitions:
+    E9:  "J3@0.70 单独"                                        # R=1.000 FPR=0.250 F1=0.914 B_flag=0.333
+    E10: "J1.detected OR J3@0.70 flag"                          # R=1.000 FPR=0.250 F1=0.914 B_flag=0.833
+  measured_baseline:            # E10 在金标 40 条上的实测（golden_scores.json），eval 时用于偏差定位
+    tp: 16
+    fp: 3
+    recall: 1.0
+    fpr: 0.25
+    precision: 0.8421
+    f1: 0.9143
+    b_flag_rate: 0.8333
+    fp_clips: [golden_010, golden_025, golden_032]
+
+# ---------------------------------------------------------------
+# 各判官角色与阈值（§11.1 分层表）
+# ---------------------------------------------------------------
+judges:
+  J1_glm8:                      # GLM-5.3-Flash 8帧 rubric
+    role: review_parallel       # L1' 复核并联：∨ 进 E10；B 类意图维度唯一有效判官（§4）
+    evidence:
+      recall: 0.750
+      fpr: 0.0
+      f1: 0.857
+      b_strict: 0.750
+    forbidden:
+      - mental_math_frame_diff  # §10.1：017/028 口算帧差数值结论失实 → 帧差/亮度一律脚本实算
+  J2_glm3:                      # GLM 首/中/尾 3 帧
+    role: backup                # R=0.688/F1=0.815，零误报；不进 E10
+  J3_omnijev:                   # OmniJev-4B 9 通道校准概率 —— L1 主判
+    role: primary
+    rule: "flag = any(per_type[p] > thr for p in 8types) or overall > thr"
+    thr: 0.70                   # §7 扫描：R=1.000 / FPR=0.250 / F1=0.914（默认工作点）
+    thr_fpr_first: 0.80         # 追求 FPR≤0.1 的工作点：R=0.875 / FPR=0.083 / F1=0.903
+    auto_reject_p: 0.90         # §5：P≥0.9 区间 8/8 全对 → 单通道达标直接 auto_reject
+    gray_zone: [0.70, 0.90]     # 灰区 → manual_review（人工复核队列，§11.1 人工抽检行）
+    ece_per_type: 0.2209        # §5 校准：两头准中间烂，0.5 默认阈恰在最不可信区（禁回 0.5）
+    known_fp_mechanism: "color_shift 通道把电影感调色当偏色（§9）；frame_freeze 通道对静态场景过信"
+  J4_visualjev:
+    role: deprecated            # §7：任意阈 F1≤0.744 无工作点 → 不进流水线
+    evidence: { max_f1: 0.744, fpr_at_0.75: 0.833 }
+  J5_videochat3:
+    role: cheap_signal          # §11.1 L2：3.3s/clip；仅并入「确认缺陷」方向，不并入「确认干净」方向
+    evidence: { recall: 0.312, fpr: 0.0 }
+  J6_detectors:
+    role: signal_only           # §11.1 L3：修复前只作信号不作否决（级联 FPR 全被它绑架，§6）
+    emit_conf: 0.55             # τ 临时上调（0.45→0.55，F1 0.722→0.743，§7 J6 扫描）
+    promote_criteria:           # 修复后达此线才可升「否决层」
+      recall_min: 0.85
+      fpr_max: 0.15
+    rule_params:                # 现行规则参数（qc_orch 规则引擎使用；§11.2 修复清单未实施，
+      face_drift_cos: 0.30      #   修复后须金标复测 promote_criteria 达标再改此处）
+      face_blur_cos: 0.50
+      freeze_diff: 1.2
+      freeze_ratio: 0.35
+      spike_k: 3.0
+      swap_sim: 0.75
+      flicker_cap: 0.85
+      garble_drop: 0.25
+      garble_low: 0.78
+      garble_ratio: 0.45
+      garble_unif: 0.70
+      hue_shift_deg: 30.0
+      sat_jump: 0.30
+    known_broken_rules:         # §11.2 修复清单摘要（证据行号见报告）
+      - "freeze: freeze_ratio=0.35 与 8 帧采样几何不匹配 → 真冻结(017/028)零触发、flicker/color 注入条(004/016)误触发"
+      - "garble: conf_drop/uniform_low 对手部纹理 7/8 误报（B 类）"
+      - "hue_shift: 绝对 30° 阈对 API 调色片误报 conf=1.00（026/032）"
+      - "scene_cut: 正常运镜被当 temporal_swap（026/028）"
+      - "ghosting/pixelate: 无检测器覆盖（golden_034 空候选）"
+  J7_kimi:
+    role: not_run               # 金标批未执行（§1.1），无阈值
+  J6_detectors_v2:              # 2026-09-30 J6 时序规则 v2（qc_detectors_v2.py，帧序列分析）
+    role: signal_only           # 角色不变：修复后作信号层；升否决层仍须金标扩样后复测 promote_criteria
+    rule_params:                # 与 src/qc_detectors_v2.py DEFAULT_PARAMS 一致（yaml 为准）
+      feat_width: 160
+      sim_width: 80
+      freeze_diff_thr: 0.8      # 帧差绝对阈（近编码噪声）
+      freeze_min_s: 2.0         # 对齐注入参数：定格 2s
+      freeze_lap_guard: 0.75    # 冻结段清晰度守卫（排除模糊伪静止）
+      flicker_amp_min: 6.0
+      flicker_sat_amp_min: 0.08
+      flicker_rate_min: 6.0
+      flicker_min_s: 1.0
+      cut_abs_min: 15.0
+      cut_rel_k: 3.5
+      reentry_win_s: 0.4
+      reentry_gap_s: 0.5
+      reentry_margin: 0.05      # 合成正片证据定值（真接缝 0.06-0.11，静态伪切点≈0）
+      swap_multi_min_cuts: 2
+      swap_multi_back_min: 0.62
+      swap_single_back_min: 0.85
+      swap_span_s: 3.0
+      ghost_dip_ratio: 0.65
+      ghost_out_min: 1.2
+      ghost_min_s: 1.5          # 对齐 2s 注入窗（R2：消除自然慢速段误报）
+      ghost_cut_free: 15.0
+      ghost_interior_s: 0.5
+      ghost_boundary_ratio: 1.3
+      ghost_lap_ratio: 0.85     # lap 支（R3）：线性运动混 blend 的清晰度矩形塌陷
+      ghost_lap_out_min: 300.0
+      ghost_lap_boundary: 1.15
+      ghost_plateau_in_max: 2.0     # 低运动平台：diff 支窗内帧差中位低于此值 ≈ 编码噪声级残余运动
+                                    # （实测 9/15 avatar 误报 in_med=0.71-1.64；真混叠 golden_034
+                                    #  in_med=0.841/028=0.001 与之交叠——不可作全局豁免阈）
+      ghost_plateau_exempt_profiles: [avatar_talk]   # 声明制豁免名单（上游 --profile 才生效）
+      known_cuts_tol_s: 0.5         # known_cuts 切点白名单容差（junction cut_t ±tol 不报 swap）
+      emit_conf: 0.55
+    measured_on_golden:         # 2026-09-30 本机实测（数据/j6_v2/results_r3b/_eval_R3b.json）
+      a_temporal_clip_recall: 0.625
+      a_temporal_type_macro_recall: 0.25
+      c_fpr: 0.0
+      label_validity_note: "金标时序 8 条中 5 条注入未生效（017/028 无定格、004/030 无交替、022 无混叠，
+        见 数据/j6_v2/audit_notes.json）；合成正片 4/4 检出（数据/j6_v2/results_syn）"
+
+# ---------------------------------------------------------------
+# eval_run.py 准入线（本资产验收标准）
+# 依据：E10 实测基线（上）定线，不是拍脑袋——
+#   recall_min 0.90：E10 实测 1.000，容 1 条漏检（16 条 15/16=0.9375 仍过）；
+#   fpr_max   0.30：E10 实测 0.250（3/12），上限压在 4 条误报（0.333 不过）；
+#   f1_min    0.85：E10 实测 0.914；
+#   b_flag_min 0.50：E10 实测 0.8333，宽松下界（B 类察觉率不得塌方）。
+# 注意：准入线回答「本次 qc_orch 实现是否复现基准」；判定阈值在 judges 段，两者勿混。
+# ---------------------------------------------------------------
+eval_admission:
+  recall_min: 0.90
+  fpr_max: 0.30
+  f1_min: 0.85
+  b_flag_min: 0.50
+  min_clips_required: 40        # 金标全量（A16/B12/C12），少于即判 eval 无效
+  class_counts: { A: 16, B: 12, C: 12 }
+
+# ---------------------------------------------------------------
+# L0 确定性预检（§11.1：拒收层。2026-10-01 挂进 qc_orch_v2 在线模式：
+#   提供 --clip 即跑，拒收 exit 4 不进 judge；回放模式不检历史片）
+# ---------------------------------------------------------------
+l0_preflight:
+  duration_dev_max: 0.02        # ffprobe 时长 vs spec 偏差 >2% 拒收（default profile）
+  black_frame_ratio_max: 0.50   # 黑屏/单色帧占比 >50% 拒收
+  sample_frames: 64             # 黑屏/单色检查的均匀采样帧数（确定性）
+  black_luma_max: 8.0           # 单帧判「黑」的灰度均值上界（0-255）
+  mono_std_max: 2.0             # 单帧判「单色」的像素标准差上界
+  avatar_tail_max_s: 1.0        # profile=avatar 时长豁免：允许窗=[expect×(1-dev), ceil(expect)+本值]
+                                # （数字人实验报告 §7-4：成片时长=ceil(音频时长)+垫尾不是缺陷；
+                                #   实测垫尾 0.4-1.0s，取 1.0 上界）
+  avatar_profiles: [avatar_talk]  # 享受垫尾豁免的 profile 声明名单（声明制，与检测器豁免同名）

@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G4-19",
+ "axis": "G4",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "一颗生鸡蛋从桌边缓缓滚落，掉在柔软的米色地毯上，轻轻弹了一下没有碎裂，镜头跟随下落轨迹",
+ "seed": 41019,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

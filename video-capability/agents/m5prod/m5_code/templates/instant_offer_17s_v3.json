@@ -1,0 +1,67 @@
+{
+  "template_id": "instant_offer_17s_v3",
+  "name_zh": "即时优惠(变体3·肥牛)",
+  "duration_range": [15, 20],
+  "orientation": "portrait",
+  "variables": {
+    "product_name": "牛油锅底",
+    "store_name": "老灶火锅"
+  },
+  "numbers": {
+    "price": "29.9",
+    "offer": "限量80份",
+    "cta_line": "点击定位，马上出发"
+  },
+  "scenes": [
+    {
+      "slot": "offer_card",
+      "narrative_slot": "offer_card",
+      "duration_sec": 2,
+      "role": "hook",
+      "background": {
+        "type": "solid",
+        "color": "0xB34619"
+      },
+      "narration": "{price}元！{offer}！"
+    },
+    {
+      "slot": "offer_shot_1",
+      "narrative_slot": "offer_product",
+      "duration_sec": 2,
+      "role": "hook",
+      "narration": "{store_name}的{product_name}，红汤翻滚牛油香"
+    },
+    {
+      "slot": "offer_shot_2",
+      "narrative_slot": "offer_product",
+      "duration_sec": 2,
+      "role": "hook",
+      "narration": "咕嘟咕嘟，越煮越香"
+    },
+    {
+      "slot": "evidence_1",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 5,
+      "role": "evidence",
+      "narration": "涮啥都香，锅底才是灵魂"
+    },
+    {
+      "slot": "evidence_2",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 3,
+      "role": "evidence",
+      "narration": "配冰镇酸梅汤，解腻又爽"
+    },
+    {
+      "slot": "cta",
+      "narrative_slot": "cta_store",
+      "duration_sec": 3,
+      "role": "cta",
+      "background": {
+        "type": "solid",
+        "color": "0x7A1F1F"
+      },
+      "narration": "{cta_line}，{offer}售完即止"
+    }
+  ]
+}

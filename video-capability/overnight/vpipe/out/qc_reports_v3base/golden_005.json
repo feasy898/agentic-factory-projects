@@ -1,0 +1,123 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_005",
+ "generated_at": "2026-10-01T03:34:48",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "manual_review",
+  "confidence": 0.8,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=True, types=['garble_text'], conf=0.8)",
+   "J3@0.7 flag=False hits=[] max_channel_P=0.5972"
+  ]
+ },
+ "defects": [
+  {
+   "type": "garble_text",
+   "sources": [
+    "J1"
+   ],
+   "confidence": 0.8,
+   "evidence": {
+    "J1": {
+     "confidence": 0.8,
+     "notes": "放大裁剪确认状态栏时间为'8:134'（非法格式乱码）；f07-f08蓝色气泡内白色字形与输入框'好'不符且不可读；'明天见'气泡及键盘QWERTY正常，手部形态正常"
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.4052,
+   "flicker": 0.3842,
+   "color_shift": 0.5972,
+   "face_blur": 0.1667,
+   "garble_text": 0.2487,
+   "temporal_swap": 0.3417,
+   "pixelate": 0.1855,
+   "ghosting": 0.3943
+  },
+  "overall": 0.5027,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "状态栏时间全8帧异常；f07-f08顶部蓝色已发送气泡文字"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_005",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text"
+   ],
+   "confidence": 0.8,
+   "spans": "状态栏时间全8帧异常；f07-f08顶部蓝色已发送气泡文字",
+   "notes": "放大裁剪确认状态栏时间为'8:134'（非法格式乱码）；f07-f08蓝色气泡内白色字形与输入框'好'不符且不可读；'明天见'气泡及键盘QWERTY正常，手部形态正常"
+  },
+  "J5": {
+   "clip_id": "golden_005",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中无明显缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_005",
+   "defect_detected": true,
+   "defect_types": [
+    "color_shift"
+   ],
+   "confidence": 0.5972,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.405 flicker=0.384 color_shift=0.597 face_blur=0.167 garble_text=0.249 temporal_swap=0.342 pixelate=0.185 ghosting=0.394; overall=0.503; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_005",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": [],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_005.mp4",
+  "frames_dir": "frames/golden_005/",
+  "judge_files": {
+   "J1": "../数据/judges/glm8/golden_005.json",
+   "J5": "../数据/judges/videochat3/golden_005.json",
+   "J3": "../数据/judges/omnijev/run_metadata.json",
+   "J6": "../数据/judges/detectors/raw/golden_005.qc.json"
+  }
+ },
+ "errors": {}
+}

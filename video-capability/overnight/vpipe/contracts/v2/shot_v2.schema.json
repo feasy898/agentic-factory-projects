@@ -1,0 +1,227 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "vpipe/contracts/v2/shot_v2.schema.json",
+  "title": "VDL Shot v2",
+  "description": "VDL v2 镜头（VDL_v2_草案.md §3）。v1 ShotSpec（contracts/shot.schema.json）的纯超集：v1 全部 14 字段语义不变、全部保留；schema_version 由 const 1.0 改 const 2.0（唯一值变更，效果 = v1 引擎对 2.0 fail-fast 拒收，保护冻结契约）。新增 10 字段的理由逐条见草案 §3.2。语义规则 R1-R6 无法在 draft-07 全量表达的部分（R1 悬空引用 / R2 api 通道禁 fix_for_iteration 与 content_fingerprint / R3 时长上限拆分声明 / R4 compiled 禁手写 prompt）由 src/vdl2/vdl2_validate.py 机判，本文件只承载结构性约束。",
+  "type": "object",
+  "required": ["schema_version", "shot_id", "duration_s", "aspect", "intent_refs", "prompt_mode"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "2.0",
+      "description": "契约版本。v2 文档必为 2.0；v1 引擎读到非 1.0 即拒收（shot.schema.json:13 fail-fast 语义）。"
+    },
+    "shot_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$",
+      "description": "镜头唯一 ID（v1 语义原样：clip 命名 <shot_id>@<model>.mp4 / manifest / QC 回链键）。"
+    },
+    "axis": {
+      "type": "string",
+      "enum": ["G1", "G2", "G3", "G4", "G5", "G6", "G7", "G8", "G9", "G9a", "OTHER"],
+      "description": "能力边界测试轴（v1 九轴 + v3.1 新增 G9a 口播主体线）。溯源双写：可由 intent_refs 推导，登记值优先（草案 §6.1）。"
+    },
+    "duration_s": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 15,
+      "description": "目标时长秒（v1 语义）。R3：>6s 且 d3_split_declared=false 编译警告；>15 即引擎单段上限外，校验器拒收（本 maximum 同时兜底）。"
+    },
+    "aspect": {
+      "type": "string",
+      "pattern": "^[0-9]+:[0-9]+$",
+      "description": "画幅比（v1 语义原样）。"
+    },
+    "resolution": {
+      "type": "string",
+      "enum": ["480P", "768P", "2K"],
+      "default": "480P",
+      "description": "分辨率档（v1 语义原样；本地引擎仅 480P，不符记 capability_mismatch 按请求方降级策略执行 = R5）。avatar 通道（api_vidu_avatar）的实际输出分辨率由客户端参数决定（540p/720p 实测档，工程方案v3.1 §2.4），本字段仅作登记档。"
+    },
+    "prompt": {
+      "type": "string",
+      "maxLength": 7000,
+      "description": "手写 prompt（v1 字段保留）。R4：prompt_mode=compiled 时必须为空（单一事实源，草案 §3.2 #2）。"
+    },
+    "negative_prompt": { "type": "string", "description": "负向 prompt（v1 语义原样；API H3 无此参数被 DTO 白名单丢弃并记录）。" },
+    "seed": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 4294967295,
+      "default": 42,
+      "description": "确定性种子（v1 语义原样）。注意 API 通道 seed 零控制力（工程方案v3 §1 实测），仅本地通道有效。"
+    },
+    "characters": {
+      "type": "array",
+      "maxItems": 9,
+      "items": {
+        "type": "object",
+        "required": ["char_id"],
+        "additionalProperties": false,
+        "properties": {
+          "char_id": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,32}$", "description": "角色 ID（v1：跨镜一致性引用键，G5/G7）。" },
+          "desc": { "type": "string", "description": "角色外貌描述（v1 语义）。" },
+          "ref_image": { "type": ["string", "null"], "description": "定妆照路径（v1：image 通道身份锚；API 走顶层 image_paths）。" }
+        }
+      },
+      "description": "出场角色列表（v1 语义原样）。"
+    },
+    "camera": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "movement": {
+          "type": "string",
+          "enum": ["static", "push_in", "pull_out", "pan", "tilt", "tracking", "handheld", "orbit", "other"],
+          "description": "运镜语义标签（v1，G6 轴）。"
+        },
+        "description": { "type": "string", "description": "运镜自由文本（v1：拼入 API prompt 的镜头语言描述）。" }
+      },
+      "description": "运镜描述（v1 语义原样；CameraIntent 经 intent_refs 引用，此处保留 v1 登记位）。"
+    },
+    "audio": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "generate": { "type": "boolean", "default": true, "description": "是否生成音轨（v1：API 映射 params.generate_audio）。" },
+        "speech": { "type": "string", "description": "台词/旁白文本（v1：登记位；G9a 口播线由 TTS→avatar 专线执行，本字段是 TTS 输入源）。" },
+        "music": { "type": "string", "description": "音乐/氛围描述（v1：登记）。" },
+        "sfx": { "type": "string", "description": "音效描述（v1：登记）。" }
+      },
+      "description": "音频意图（v1 语义原样；AudioIntent 经 intent_refs 引用）。"
+    },
+    "engine_hint": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "preferred": { "type": "string", "enum": ["api", "local"] },
+        "model": { "type": "string" }
+      },
+      "description": "【deprecated-for-v2】兼容位（草案 §3.2 #10）：投影器②从 engine.channel 自动生成写入投影产物；v2 手写文档中出现即校验警告（防双源）。"
+    },
+    "notes": { "type": "string", "description": "自由备注（v1 语义；编译器投影时追加 prompt_hash 溯源）。" },
+
+    "intent_refs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$" },
+      "description": "语义源链接（草案 §3.2 #1）。每项必须解析到包内 intents[].identity.intent_id（R1 悬空拒收）。用引用而非复制：意图修订自动生效且可追溯。"
+    },
+    "prompt_mode": {
+      "type": "string",
+      "enum": ["compiled", "handwritten", "hybrid"],
+      "description": "单一事实源裁定（草案 §3.2 #2）：compiled=编译器①从 intents 生成 prompt（禁手写，R4）；handwritten=维持现状（intents 仅登记，冲突只登记不拦截）；hybrid=手写底稿+意图补丁。缺省继承包级 default_prompt_mode。"
+    },
+    "prompt_compiled": {
+      "type": "string",
+      "maxLength": 7000,
+      "description": "编译器①产物（compiled/hybrid 模式由编译器写回；人写文档填了它 + handwritten 模式 → 双源警告）。"
+    },
+    "prompt_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "prompt_compiled 的 sha256 指纹（草案 §3.2 #3）。「同 prompt」可机判——API 层缓存键与 best-of-N 统计的指纹基础；进投影后 v1 shot notes 与 manifest provenance。"
+    },
+    "engine": {
+      "type": "object",
+      "required": ["channel"],
+      "additionalProperties": false,
+      "properties": {
+        "channel": {
+          "type": "string",
+          "pattern": "^(local|api)_[a-z0-9_]+$",
+          "description": "执行通道（草案 §3.2 #4）。已知值：local_ltx（本地草稿主力，0 积分）/ local_wan（存档）/ api_h3max（终稿默认）/ api_h3（备胎）/ api_vidu_avatar（G9a 口播专线，工程方案v3.1 §2.4 定稿）。开放扩展：未知 channel 编译时登记警告。"
+        },
+        "fallback": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^(local|api)_[a-z0-9_]+$" },
+          "description": "显式降级链；降级发生时写 errors。"
+        },
+        "route_rule": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$",
+          "description": "引用九轴分工行的路由规则名（如 G5_multi_identity→必须 api）。"
+        }
+      }
+    },
+    "continuity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "link": {
+          "type": "string",
+          "enum": ["none", "first_frame_condition", "prev_tail_frame"],
+          "description": "镜间链接方式（草案 §3.3）。prev_tail_frame=上镜真实渲染尾帧作 i2v 首帧条件（D3-3）；首镜用此值 = 跨镜引用错误（校验器拒收）。"
+        },
+        "seed_policy": {
+          "type": "string",
+          "enum": ["fix_for_iteration", "vary", "none"],
+          "description": "seed 策略词族借自 VPO L3（借词表不搬结构）。R2：api_* 通道禁 fix_for_iteration（API seed 零控制力实测，工程方案v3 §1）——仅本地通道合法。"
+        },
+        "lock_restatement": {
+          "type": "array",
+          "items": { "type": "string", "enum": ["characters", "camera_movement", "scene", "props", "lighting"] },
+          "description": "D3-5：锁定项每段重申。"
+        },
+        "d3_split_declared": {
+          "type": "boolean",
+          "default": false,
+          "description": "长镜拆分声明（D3-1 单段只承载一个意图峰值）。R3：duration_s>6 且 false → 警告。"
+        },
+        "tail_source": {
+          "type": "string",
+          "enum": ["real_rendered", "planned"],
+          "description": "D3-3：下一段生成条件 = 上段真实尾帧（real_rendered）而非计划尾帧。"
+        }
+      },
+      "description": "连续性观测声明（草案 §3.3）——观测声明而非生成指令。"
+    },
+    "cache": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": ["content_fingerprint", "submit_params", "none"],
+          "description": "缓存策略（草案 §3.2 #6，工程方案v3 §5.3 实测修订机读化）：本地层 content_fingerprint→像素级命中；API 层同指纹重提交必然新样本，只命中提交参数层（submit_params）。R2：api_* 通道填 content_fingerprint = 声明错层，拒收。"
+        },
+        "fingerprint_includes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "缓存键成分（如 [prompt_hash, duration_s, aspect, resolution, ref_shas]）。"
+        }
+      }
+    },
+    "edit_ops": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["op"],
+        "additionalProperties": false,
+        "properties": {
+          "op": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "description": "修订动作（开放词表首版 7 值）：reseed/reprompt/trim/extend/merge_ordered/subtitle_burn/color_grade。API 层 reseed 退化为强制重生成（seed 零控制力）；本地层 reseed 是 0 积分探索。未知 op 编译时登记警告。"
+          },
+          "params": { "type": "object", "description": "动作参数（自由结构）。" }
+        }
+      },
+      "description": "修订语义一等化（草案 §3.2 #7）。"
+    },
+    "acceptance_refs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$" },
+      "description": "验收绑定（草案 §3.2 #8）：本镜显式声明执行前已冻结的判据。每项必须解析到包内 acceptance[].criterion_id（R1）。"
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "credit_cap_per_shot": { "type": "integer", "minimum": 0, "description": "单镜预算（API 280 积分/5s·条实测基准）。" },
+        "max_retries": { "type": "integer", "minimum": 0, "maximum": 5, "description": "同镜修订上限（工程方案v3 §6.4：≤2 轮仍不过→人工工单）。" }
+      },
+      "description": "单镜预算与重试上限（草案 §3.2 #9）。"
+    }
+  }
+}

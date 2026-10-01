@@ -1,0 +1,55 @@
+{
+ "schema_version": "2.0",
+ "work_id": "product_loop_demo",
+ "template_id": "product_loop_9x16_v1",
+ "description": "竖屏商品循环展示模板：槽位换品即得新物料；本地草稿 + 确定性后处理",
+ "slots": [
+  {
+   "name": "product_claim",
+   "kind": "text",
+   "required": true,
+   "path": "intents[1].diegetic.verbatim",
+   "constraints": {
+    "max_len": 16
+   },
+   "intent_binding": "i-to-loop-0001.diegetic",
+   "description": "画面内商品标语（程序渲染，逐字受控）",
+   "current_value": "一秒即热 随行随饮"
+  },
+  {
+   "name": "scene_motion",
+   "kind": "text",
+   "required": true,
+   "path": "shots[0].camera.description",
+   "description": "场景运镜说明（环绕/平移等）",
+   "current_value": "商品置于转台中心，相机水平顺时针环绕一周"
+  },
+  {
+   "name": "loop_seconds",
+   "kind": "number",
+   "required": true,
+   "path": "shots[0].duration_s",
+   "constraints": {
+    "min": 4,
+    "max": 15
+   },
+   "description": "循环时长（秒）",
+   "current_value": 8
+  },
+  {
+   "name": "master_width",
+   "kind": "number",
+   "required": false,
+   "default": 1080,
+   "path": "deliverable.pixel_map.native_w",
+   "constraints": {
+    "min": 480,
+    "max": 2160
+   },
+   "description": "交付像素宽（改槽位即改交付合同）",
+   "current_value": 1080
+  }
+ ],
+ "compiler": "vdl2_compile.py@vpipe2.0-dev",
+ "compiled_at": "2026-09-30T18:07:48"
+}

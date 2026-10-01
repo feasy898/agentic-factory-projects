@@ -1,0 +1,11 @@
+{
+  "video_id": "t1_seeding_v3",
+  "template": "product_seeding_25s_v3",
+  "slots": {
+    "hook": "S04",
+    "evidence_1": "S15",
+    "evidence_2": "S01",
+    "evidence_3": "S02",
+    "ambiance": "S10"
+  }
+}

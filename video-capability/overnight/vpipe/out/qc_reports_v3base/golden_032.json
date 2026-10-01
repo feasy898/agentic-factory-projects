@@ -1,0 +1,296 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_032",
+ "generated_at": "2026-10-01T03:34:48",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "manual_review",
+  "confidence": 0.8969,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=False, types=[], conf=0.7)",
+   "J3@0.7 flag=True hits=['color_shift', 'ghosting'] max_channel_P=0.8969",
+   "J6 信号(仅信号不否决): color_shift@1.00, face_blur@0.58, garble_text@1.00, identity_drift@1.00"
+  ]
+ },
+ "defects": [
+  {
+   "type": "color_shift",
+   "sources": [
+    "J3",
+    "J6"
+   ],
+   "confidence": 1.0,
+   "span": {
+    "start_s": 0.969,
+    "end_s": 1.615
+   },
+   "evidence": {
+    "J3": {
+     "channel_P": 0.716
+    },
+    "J6": {
+     "pair": 1,
+     "hue_delta_deg": 157.4
+    }
+   }
+  },
+  {
+   "type": "face_blur",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.5807,
+   "span": {
+    "start_s": 0.323,
+    "end_s": 0.969
+   },
+   "evidence": {
+    "J6": {
+     "pair": 0,
+     "cos": 0.3839
+    }
+   }
+  },
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 1.0,
+   "span": {
+    "start_s": 1.615,
+    "end_s": 3.552
+   },
+   "evidence": {
+    "J6": {
+     "kind": "conf_drop",
+     "drop": 0.894,
+     "frames": [
+      5,
+      2
+     ],
+     "mean_scores": [
+      0.106,
+      1.0
+     ]
+    }
+   }
+  },
+  {
+   "type": "ghosting",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.8969,
+   "evidence": {
+    "J3": {
+     "channel_P": 0.8969
+    }
+   }
+  },
+  {
+   "type": "identity_drift",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 1.0,
+   "span": {
+    "start_s": 0.969,
+    "end_s": 1.615
+   },
+   "evidence": {
+    "J6": {
+     "pair": 1,
+     "cos": -0.0426
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.0437,
+   "flicker": 0.4552,
+   "color_shift": 0.716,
+   "face_blur": 0.3269,
+   "garble_text": 0.1358,
+   "temporal_swap": 0.4457,
+   "pixelate": 0.216,
+   "ghosting": 0.8969
+  },
+  "overall": 0.5938,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "color_shift",
+   "start_s": 0.969,
+   "end_s": 1.615,
+   "evidence": {
+    "pair": 1,
+    "hue_delta_deg": 157.4
+   }
+  },
+  {
+   "type": "face_blur",
+   "start_s": 0.323,
+   "end_s": 0.969,
+   "evidence": {
+    "pair": 0,
+    "cos": 0.3839
+   }
+  },
+  {
+   "type": "garble_text",
+   "start_s": 1.615,
+   "end_s": 3.552,
+   "evidence": {
+    "kind": "conf_drop",
+    "drop": 0.894,
+    "frames": [
+     5,
+     2
+    ],
+    "mean_scores": [
+     0.106,
+     1.0
+    ]
+   }
+  },
+  {
+   "type": "identity_drift",
+   "start_s": 0.969,
+   "end_s": 1.615,
+   "evidence": {
+    "pair": 1,
+    "cos": -0.0426
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "全片 f01-f08"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_032",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.7,
+   "spans": "全片 f01-f08",
+   "notes": "夜市街景：黄衣跑者f03-f08身份/服装一致、跑步姿态连贯，霓虹牌NOODLES英文正确，行人前景模糊属自然运动模糊，未见定格/闪烁/色偏/区域糊化/像素化/拖影等缺陷。"
+  },
+  "J5": {
+   "clip_id": "golden_032",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中无明显缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_032",
+   "defect_detected": true,
+   "defect_types": [
+    "color_shift",
+    "ghosting"
+   ],
+   "confidence": 0.8969,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.044 flicker=0.455 color_shift=0.716 face_blur=0.327 garble_text=0.136 temporal_swap=0.446 pixelate=0.216 ghosting=0.897; overall=0.594; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_032",
+   "defect_detected": true,
+   "defect_types": [
+    "color_shift",
+    "face_blur",
+    "garble_text",
+    "identity_drift"
+   ],
+   "confidence": 1.0,
+   "spans": [
+    {
+     "type": "color_shift",
+     "start_s": 0.969,
+     "end_s": 1.615,
+     "evidence": {
+      "pair": 1,
+      "hue_delta_deg": 157.4
+     }
+    },
+    {
+     "type": "face_blur",
+     "start_s": 0.323,
+     "end_s": 0.969,
+     "evidence": {
+      "pair": 0,
+      "cos": 0.3839
+     }
+    },
+    {
+     "type": "garble_text",
+     "start_s": 1.615,
+     "end_s": 3.552,
+     "evidence": {
+      "kind": "conf_drop",
+      "drop": 0.894,
+      "frames": [
+       5,
+       2
+      ],
+      "mean_scores": [
+       0.106,
+       1.0
+      ]
+     }
+    },
+    {
+     "type": "identity_drift",
+     "start_s": 0.969,
+     "end_s": 1.615,
+     "evidence": {
+      "pair": 1,
+      "cos": -0.0426
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_032.mp4",
+  "frames_dir": "frames/golden_032/",
+  "judge_files": {
+   "J1": "../数据/judges/glm8/golden_032.json",
+   "J5": "../数据/judges/videochat3/golden_032.json",
+   "J3": "../数据/judges/omnijev/run_metadata.json",
+   "J6": "../数据/judges/detectors/raw/golden_032.qc.json"
+  }
+ },
+ "errors": {}
+}

@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G6-26",
+ "axis": "G6",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "横摇镜头跟随一名奔跑者穿过热闹的市集，人流向两侧掠过，摇速与奔跑速度匹配",
+ "seed": 41026,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

@@ -1,0 +1,208 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "vpipe/contracts/qc_report.schema.json",
+  "title": "QCReport",
+  "description": "质检报告（冻结契约 v1.0）。qc_orch.py 的唯一输出契约 = 盲测协议六字段 JSON（{clip_id, defect_detected, defect_types, confidence, spans, notes}）的超集：六字段全部保留（原始判官输出原样嵌在 judges.*），新增 verdict/defects[]/scores/spans 结构化层。eval_run.py 只消费本契约。字段依据：judge基准报告.md §2.3 协议 + §11 定稿建议。",
+  "type": "object",
+  "required": ["schema_version", "clip_id", "generated_at", "verdict", "defects", "scores"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0", "1.1"],
+      "description": "契约版本。1.0 = 2026-09-30 冻结首版；1.1 = 2026-10-01 增量（新增可选 qc_context，记录上游声明的素材 profile / 已知拼接切点 / L0 预检结果，见 qc_context 节）。枚举同时收编 1.0：旧报告仍然合法（向后兼容，SPEC §6 回归纪律）。"
+    },
+    "clip_id": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_.@-]{0,127}$",
+      "description": "被检 clip 的 ID。金标集为 golden_NNN；生成矩阵为 <shot_id>@<model>。与 asset_manifest 的 asset_id、golden manifest 的 clip_id 对齐。"
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "报告生成时刻 ISO-8601。"
+    },
+    "qc_mode": {
+      "type": "string",
+      "enum": ["tonight_replay", "online"],
+      "description": "tonight_replay=从今晚已落盘的判官输出回放合议（本模式不重跑模型）；online=现场跑检测器管线+判官。eval_run.py 两种模式一视同仁，只看 verdict/defects/scores。"
+    },
+    "verdict": {
+      "type": "object",
+      "description": "clip 级最终判定（合议结果）。判定算法由 thresholds.yaml 的 ensemble 段定义（当前 E10: J1∨J3@0.70），qc_orch 不许内置第二套阈值。",
+      "required": ["defect_detected", "decision", "confidence", "decided_by"],
+      "additionalProperties": false,
+      "properties": {
+        "defect_detected": {
+          "type": "boolean",
+          "description": "合议检出与否 = 盲测协议的 defect_detected。eval_run.py 的召回/FPR 全部用本字段算（与 judge基准报告.md 口径一致）。"
+        },
+        "decision": {
+          "type": "string",
+          "enum": ["auto_reject", "manual_review", "pass"],
+          "description": "处置决策（基准报告 §11.1）：auto_reject=自动打回（J3 任一通道 P≥0.90，该区间实测 8/8 全对）；manual_review=灰区人工复核（检出但最大 P<0.90，即 0.70-0.90 灰区或仅 J1 检出）；pass=放行。"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "合议置信度 = 参与合议通道中的最大缺陷侧信号强度（J3 被触发通道的最大 P，无则 J1 的 confidence）。"
+        },
+        "decided_by": {
+          "type": "string",
+          "description": "判定来源标识，如 \"E10:J1∨J3@0.70\"。必须是 thresholds.yaml ensemble.recommended 的 id，保证判定可复算。"
+        },
+        "reasons": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "人读判定依据，逐条一句话（哪个 judge 哪条规则什么数值）。"
+        }
+      }
+    },
+    "defects": {
+      "type": "array",
+      "description": "结构化缺陷列表 = 所有参与 judge 报出的缺陷按类型归并（同类型多 judge 合并 source 列表，confidence 取最大）。J6 仅作信号时 source 仍如实记录，但 verdict 不因 J6 翻转（基准报告 §11.1 L3：修复前只作信号不作否决）。",
+      "items": {
+        "type": "object",
+        "required": ["type", "sources", "confidence"],
+        "additionalProperties": false,
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "缺陷类型。8 种注入缺陷为规范词表：frame_freeze/flicker/color_shift/face_blur/garble_text/temporal_swap/pixelate/ghosting；允许的扩展词：identity_drift（J6 ArcFace 跨人）/hand_anomaly/count_error/physics_error/text_error（=garble_text 别名，B 类意图映射）/other。"
+          },
+          "sources": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "pattern": "^J[1-7]$" },
+            "description": "报出该缺陷的 judge 代码列表（J1-J7，对应基准报告 §1.1）。"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1,
+            "description": "该类型缺陷的合并置信度 = 各 source 置信度最大值（J6 取规则 conf；J3 取通道 P；J1/J2/J5 取整体 confidence）。"
+          },
+          "span": {
+            "type": "object",
+            "description": "缺陷时间区间（J6 规则可给精确区间；帧级 judge 缺省全片）。",
+            "additionalProperties": false,
+            "properties": {
+              "start_s": { "type": "number", "minimum": 0 },
+              "end_s": { "type": "number", "minimum": 0 }
+            }
+          },
+          "evidence": {
+            "type": "object",
+            "description": "证据原样保留（J6 规则的 rule kind/score、J3 的通道概率、J1 的 notes 摘录等），保证可追溯、可复核。自由结构。"
+          }
+        }
+      }
+    },
+    "scores": {
+      "type": "object",
+      "description": "概率层：概率型判官（J3/J4）的 8+1 通道概率与本次判定实际使用的阈值（写进报告 = 判定完全可复算）。",
+      "required": ["per_type", "overall", "thresholds_applied"],
+      "additionalProperties": false,
+      "properties": {
+        "per_type": {
+          "type": "object",
+          "description": "8 种规范缺陷类型 → [0,1] 概率。无概率型判官参与时置 null 并在 errors 说明。",
+          "additionalProperties": false,
+          "properties": {
+            "frame_freeze": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+            "flicker": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+            "color_shift": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+            "face_blur": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+            "garble_text": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+            "temporal_swap": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+            "pixelate": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+            "ghosting": { "type": ["number", "null"], "minimum": 0, "maximum": 1 }
+          }
+        },
+        "overall": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "「存在任何缺陷」的总概率通道（J3 q_overall）。"
+        },
+        "thresholds_applied": {
+          "type": "object",
+          "description": "本次判定快照：{ensemble_id, j3_thr, auto_reject_p, j6_emit_conf, thresholds_sha256}。eval_run 用它确认报告与 thresholds.yaml 版本一致。"
+        }
+      }
+    },
+    "spans": {
+      "type": "array",
+      "description": "盲测协议 spans 字段的结构化收容：J6 规则区间（{type,start_s,end_s,evidence}）或帧级 judge 的采样描述字符串。协议要求『spans 可为任意标注』，这里冻结为对象数组或字符串数组的并集不再允许——统一为对象数组，字符串降为 {type:\"note\", evidence:{text}}。",
+      "items": {
+        "type": "object",
+        "required": ["type"],
+        "additionalProperties": false,
+        "properties": {
+          "type": { "type": "string", "description": "缺陷类型或 note。" },
+          "start_s": { "type": "number" },
+          "end_s": { "type": "number" },
+          "evidence": { "type": "object" }
+        }
+      }
+    },
+    "judges": {
+      "type": "object",
+      "description": "每个参与 judge 的原始协议输出（六字段，一字不改地嵌入）= 超集的『子集层』。eval 与追溯永远可以回到盲测协议原貌。键为 J1-J7。",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^J[1-7]$": {
+          "type": "object",
+          "description": "盲测协议原始 JSON：{clip_id, defect_detected, defect_types[], confidence, spans, notes?}。spans 在原始输出里可为字符串/数组，原样保留不做归一。",
+          "required": ["clip_id", "defect_detected", "defect_types", "confidence"],
+          "properties": {
+            "clip_id": { "type": "string" },
+            "defect_detected": { "type": "boolean" },
+            "defect_types": { "type": "array", "items": { "type": "string" } },
+            "confidence": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+            "spans": {},
+            "notes": { "type": "string" }
+          }
+        }
+      }
+    },
+    "inputs": {
+      "type": "object",
+      "description": "输入溯源：clip 与帧目录路径、各判官输出文件路径（相对 overnight/数据 或绝对）。可复现性要求字段。",
+      "additionalProperties": false,
+      "properties": {
+        "clip": { "type": ["string", "null"] },
+        "frames_dir": { "type": ["string", "null"] },
+        "judge_files": {
+          "type": "object",
+          "description": "judge 代码 → 输入文件路径。"
+        }
+      }
+    },
+    "qc_context": {
+      "type": "object",
+      "description": "契约 1.1 新增（2026-10-01）：上游声明的 QC 上下文，全部为「声明制」——检测器/编排器不自行推断，只如实记录上游给了什么，保证豁免可审计。缺省（回放模式/未声明）不落本字段。",
+      "additionalProperties": false,
+      "properties": {
+        "profile": {
+          "type": ["string", "null"],
+          "description": "素材 profile 声明（如 avatar_talk=口播数字人）。qc_detectors_v2 据此对低运动平台 ghost 候选做豁免（工程方案v3.1 §3.4 机理1）；未声明时检测器行为不变。"
+        },
+        "known_cuts": {
+          "type": "array",
+          "description": "已知拼接切点（秒）白名单（工程方案v3.1 §3.4 机理2）：来自装配 manifest 的硬切点登记，qc_detectors_v2 对落入容差的 junction 不报 temporal_swap。",
+          "items": { "type": "number", "minimum": 0 }
+        },
+        "l0_preflight": {
+          "type": ["object", "null"],
+          "description": "L0 确定性预检结果快照（qc_orch_v2 在线模式实测数字：时长/黑屏占比/所用阈值），拒收件不产 QCReport、证据在 <clip_id>.l0.json。"
+        }
+      }
+    },
+    "errors": {
+      "type": "object",
+      "description": "降级记录：缺失判官、规则失败、输入损坏等（方案 §4：失败本身如实记录，不许静默吞）。errors 非空时 verdict 必须在 reasons 里说明降级情况。"
+    }
+  }
+}

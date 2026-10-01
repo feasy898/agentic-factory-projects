@@ -1,0 +1,19 @@
+{
+  "video_id": "v2_t3_offer_v2",
+  "template": "offer_lead_28s_v2",
+  "slots": {
+    "hook": "S02",
+    "storefront": "S08",
+    "evidence_1": "S04",
+    "ambiance_1": "S16",
+    "offer_1": "S17",
+    "ambiance_2": "S10",
+    "evidence_2": "S15",
+    "evidence_demo": "S19"
+  },
+  "numbers": {
+    "price": "52.9",
+    "offer": "第二份半价",
+    "cta_line": "今晚就来"
+  }
+}

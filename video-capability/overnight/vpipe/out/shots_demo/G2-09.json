@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G2-09",
+ "axis": "G2",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "手机屏幕特写，聊天应用里显示一条新消息「明天见」，手指点击屏幕回复「好」",
+ "seed": 41009,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

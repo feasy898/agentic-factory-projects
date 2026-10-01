@@ -1,0 +1,25 @@
+{
+ "clip": "/opt/gpumachine/projects/video-capability/overnight/vpipe/out/v3_selftest/media/dur_11s.mp4",
+ "expect_duration_s": 10.0,
+ "profile": null,
+ "failures": [
+  "L0 时长超差: measured=11.000s expect=10.000s rule=dev_max"
+ ],
+ "checks": {
+  "duration": {
+   "measured_s": 11.0,
+   "rule": "dev_max",
+   "dev": 0.1,
+   "dev_max": 0.02
+  },
+  "black_mono_ratio": {
+   "n_samples": 64,
+   "black_luma_max": 8.0,
+   "mono_std_max": 2.0,
+   "ratio_max": 0.5,
+   "used": 64,
+   "bad_frames": 0,
+   "ratio": 0.0
+  }
+ }
+}

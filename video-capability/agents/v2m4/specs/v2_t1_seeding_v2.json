@@ -1,0 +1,19 @@
+{
+  "video_id": "v2_t1_seeding_v2",
+  "template": "product_seeding_30s_v2",
+  "slots": {
+    "hook": "S02",
+    "evidence_1": "S03",
+    "evidence_2": "S04",
+    "ambiance_1": "S16",
+    "ambiance_2": "S10",
+    "offer_1": "S17",
+    "ambiance_3": "S08",
+    "evidence_3": "S15",
+    "evidence_demo": "S19"
+  },
+  "numbers": {
+    "price": "45.9",
+    "offer": "第二份半价"
+  }
+}

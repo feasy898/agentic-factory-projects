@@ -1,0 +1,35 @@
+{
+ "package": "examples\\vdl2\\10_shortdrama_ep01.yaml",
+ "compiled_at": "2026-09-30T18:07:41",
+ "compiler": "vdl2_compile.py@vpipe2.0-dev",
+ "ok": true,
+ "errors": [],
+ "warnings": [],
+ "conflicts": [],
+ "outputs": {
+  "execution_plan": "execution_plan.json",
+  "shots_v1": [
+   "shots_v1/shot_ep01_0042.json",
+   "shots_v1/shot_ep01_0043.json"
+  ],
+  "acceptance_records": [
+   "acceptance_records/acc-cam-ep01-0042__shot_ep01_0042.json",
+   "acceptance_records/acc-sub-ep01-0042__shot_ep01_0042.json",
+   "acceptance_records/acc-hand-ep01-0043__shot_ep01_0043.json"
+  ],
+  "slots": null,
+  "n_v1_shots": 2,
+  "n_acceptance_records": 3
+ },
+ "stats": {
+  "n_shots": 2,
+  "n_acceptance_records": 3
+ },
+ "validation": {
+  "ok": true,
+  "gate_a_errors": 0,
+  "gate_b_errors": 0,
+  "total_errors": 0,
+  "warnings": 0
+ }
+}

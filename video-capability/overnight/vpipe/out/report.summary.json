@@ -1,0 +1,19 @@
+{
+ "generated_at": "2026-09-30T03:31:48",
+ "generation": {
+  "n_clips": 46
+ },
+ "qc": {
+  "n_reports": 40,
+  "detected": 29
+ },
+ "manifest": {
+  "items": 240,
+  "kinds": {
+   "judge_output": 200,
+   "qc_report": 40
+  },
+  "clip_hash_hit": 0,
+  "clip_hash_missing": 46
+ }
+}

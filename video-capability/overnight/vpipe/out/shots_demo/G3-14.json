@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G3-14",
+ "axis": "G3",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "城市高架桥上，同向车道行驶着三辆红色轿车，前后保持车距，航拍侧面跟移",
+ "seed": 41014,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

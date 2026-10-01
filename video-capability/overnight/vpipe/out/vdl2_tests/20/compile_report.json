@@ -1,0 +1,41 @@
+{
+ "package": "D:\\workspace\\video-capability-research\\overnight\\vpipe\\examples\\vdl2\\20_avatar_talk.yaml",
+ "compiled_at": "2026-09-30T18:07:27",
+ "compiler": "vdl2_compile.py@vpipe2.0-dev",
+ "ok": true,
+ "errors": [],
+ "warnings": [
+  "shots[0](shot_av_0001): duration_s=8>6 且 d3_split_declared=false（D3-1 单段只承载一个意图峰值，草案 R3 警告级）",
+  "shots[1](shot_av_0002): duration_s=12>6 且 d3_split_declared=false（D3-1 单段只承载一个意图峰值，草案 R3 警告级）",
+  "shots[0](shot_av_0001): axis=G9a 超出 v1 冻结枚举，投影降级为 G9（v2 原值留痕于 notes.axis_v2）",
+  "shots[1](shot_av_0002): axis=G9a 超出 v1 冻结枚举，投影降级为 G9（v2 原值留痕于 notes.axis_v2）"
+ ],
+ "conflicts": [],
+ "outputs": {
+  "execution_plan": "execution_plan.json",
+  "shots_v1": [
+   "shots_v1/shot_av_0001.json",
+   "shots_v1/shot_av_0002.json"
+  ],
+  "acceptance_records": [
+   "acceptance_records/acc-lip-sync-0001__shot_av_0001.json",
+   "acceptance_records/acc-lip-sync-0001__shot_av_0002.json",
+   "acceptance_records/acc-av-subtitle-0002__shot_av_0002.json"
+  ],
+  "slots": "slots.json",
+  "n_v1_shots": 2,
+  "n_acceptance_records": 3
+ },
+ "stats": {
+  "n_slots": 4,
+  "n_shots": 2,
+  "n_acceptance_records": 3
+ },
+ "validation": {
+  "ok": true,
+  "gate_a_errors": 0,
+  "gate_b_errors": 0,
+  "total_errors": 0,
+  "warnings": 2
+ }
+}

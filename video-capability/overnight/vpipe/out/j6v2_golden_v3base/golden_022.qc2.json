@@ -1,0 +1,127 @@
+{
+ "clip": "/opt/gpumachine/projects/video-capability/overnight/数据/golden/clips/golden_022.mp4",
+ "generated_at": "2026-10-01T03:40:02",
+ "detector": "qc_detectors_v2.py temporal rules (frame-sequence, CPU-only, no VLM)",
+ "clip_meta": {
+  "duration_sec": 4.959,
+  "fps": 24.2,
+  "n_frames": 120,
+  "width": 160
+ },
+ "temporal_candidates": {
+  "ghosting": {
+   "conf": 0.835,
+   "kind": "rect_dip_blend",
+   "start_s": 1.24,
+   "end_s": 3.719,
+   "dur_s": 2.479,
+   "dip_ratio": 0.497,
+   "out_med": 9.595,
+   "in_med": 4.772,
+   "boundary_ratio": 1.8,
+   "branch": "diff_dip",
+   "span": [
+    1.24,
+    3.719
+   ]
+  }
+ },
+ "temporal_rejected": {},
+ "temporal_protocol": {
+  "clip_id": "golden_022",
+  "defect_detected": true,
+  "defect_types": [
+   "ghosting"
+  ],
+  "confidence": 0.835,
+  "spans": [
+   {
+    "type": "ghosting",
+    "start_s": 1.24,
+    "end_s": 3.719,
+    "evidence": {
+     "kind": "rect_dip_blend",
+     "start_s": 1.24,
+     "end_s": 3.719,
+     "dur_s": 2.479,
+     "dip_ratio": 0.497,
+     "out_med": 9.595,
+     "in_med": 4.772,
+     "boundary_ratio": 1.8,
+     "branch": "diff_dip"
+    }
+   }
+  ]
+ },
+ "params": {
+  "feat_width": 160.0,
+  "sim_width": 80.0,
+  "freeze_diff_thr": 0.8,
+  "freeze_min_s": 2.0,
+  "freeze_lap_guard": 0.75,
+  "flicker_amp_min": 6.0,
+  "flicker_sat_amp_min": 0.08,
+  "flicker_rate_min": 6.0,
+  "flicker_min_s": 1.0,
+  "cut_abs_min": 15.0,
+  "cut_rel_k": 3.5,
+  "reentry_win_s": 0.4,
+  "reentry_gap_s": 0.5,
+  "reentry_margin": 0.05,
+  "swap_multi_min_cuts": 2.0,
+  "swap_multi_back_min": 0.62,
+  "swap_single_back_min": 0.85,
+  "swap_span_s": 3.0,
+  "ghost_dip_ratio": 0.65,
+  "ghost_out_min": 1.2,
+  "ghost_min_s": 1.2,
+  "ghost_cut_free": 15.0,
+  "ghost_interior_s": 0.5,
+  "ghost_boundary_ratio": 1.3,
+  "ghost_lap_ratio": 0.85,
+  "ghost_lap_out_min": 300.0,
+  "ghost_lap_boundary": 1.15,
+  "emit_conf": 0.55,
+  "role": "signal_only",
+  "rule_params": {
+   "feat_width": 160,
+   "sim_width": 80,
+   "freeze_diff_thr": 0.8,
+   "freeze_min_s": 2.0,
+   "freeze_lap_guard": 0.75,
+   "flicker_amp_min": 6.0,
+   "flicker_sat_amp_min": 0.08,
+   "flicker_rate_min": 6.0,
+   "flicker_min_s": 1.0,
+   "cut_abs_min": 15.0,
+   "cut_rel_k": 3.5,
+   "reentry_win_s": 0.4,
+   "reentry_gap_s": 0.5,
+   "reentry_margin": 0.05,
+   "swap_multi_min_cuts": 2,
+   "swap_multi_back_min": 0.62,
+   "swap_single_back_min": 0.85,
+   "swap_span_s": 3.0,
+   "ghost_dip_ratio": 0.65,
+   "ghost_out_min": 1.2,
+   "ghost_min_s": 1.5,
+   "ghost_cut_free": 15.0,
+   "ghost_interior_s": 0.5,
+   "ghost_boundary_ratio": 1.3,
+   "ghost_lap_ratio": 0.85,
+   "ghost_lap_out_min": 300.0,
+   "ghost_lap_boundary": 1.15,
+   "emit_conf": 0.55
+  },
+  "measured_on_golden": {
+   "a_temporal_clip_recall": 0.625,
+   "a_temporal_type_macro_recall": 0.25,
+   "c_fpr": 0.0,
+   "label_validity_note": "金标时序 8 条中 5 条注入未生效（017/028 无定格、004/030 无交替、022 无混叠， 见 数据/j6_v2/audit_notes.json）；合成正片 4/4 检出（数据/j6_v2/results_syn）"
+  }
+ },
+ "errors": {},
+ "meta": {
+  "analyze_sec": 0.25
+ }
+}

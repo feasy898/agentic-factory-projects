@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G1-04",
+ "axis": "G1",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "吉他手右手快速扫弦的特写，琴弦振动，手指在六根弦之间飞速移动，舞台追光",
+ "seed": 41004,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G6-25",
+ "axis": "G6",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "镜头从全景缓慢推进到人物面部特写，老人坐在长椅上望向远方，推轨平稳无抖动",
+ "seed": 41025,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

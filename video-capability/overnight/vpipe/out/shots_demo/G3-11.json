@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G3-11",
+ "axis": "G3",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "木质餐桌上摆放着三个红苹果和两个青苹果，共五个苹果，镜头缓慢横移环绕桌面，自然光",
+ "seed": 41011,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

@@ -1,0 +1,27 @@
+{
+ "clip": "vpipe\\out\\avatar_demo\\g9a_intro_60s@vidu-s1.mp4",
+ "video": {
+  "has_video": true,
+  "has_audio": true,
+  "duration_s": 61.0
+ },
+ "fps": 24.0,
+ "frames_total": 1464,
+ "roi_mode": "fixed(人工标定) (0.42, 0.3, 0.6, 0.38)",
+ "mouth_diff_mean": 4.816,
+ "mouth_diff_median": 3.958,
+ "mouth_diff_p90": 9.214,
+ "still_frame_ratio": 0.1169,
+ "longest_still_frames": 17,
+ "longest_still_seconds": 0.708,
+ "vpo_lips_window_reference": {
+  "concept": "video-Ontology/schemas/l2/limited-motion-intent.schema.json lips.max_error_frames",
+  "value_frames": 3,
+  "note": "VPO 原义=aiueo 闭集唇形分类的帧级误差上限；本检查无唇形分类器，以嘴部 ROI 帧间差<1.5 判静止，最长静止连跑仅作量级对照"
+ },
+ "availability": {
+  "stream_ok": true,
+  "av_duration_gap_s": 0.784,
+  "av_gap_within_0p5s": false
+ }
+}

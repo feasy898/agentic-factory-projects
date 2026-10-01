@@ -1,0 +1,25 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "shot_loop_0001",
+ "axis": "OTHER",
+ "duration_s": 8,
+ "aspect": "9:16",
+ "resolution": "480P",
+ "seed": 2026,
+ "characters": [],
+ "camera": {
+  "movement": "orbit",
+  "description": "商品置于转台中心，相机水平顺时针环绕一周"
+ },
+ "audio": {
+  "generate": false,
+  "speech": "",
+  "music": ""
+ },
+ "prompt": "镜头：中景，平视机位，环绕（慢速），方向：clockwise，主体占画面约50%，居中构图\n语义：商品置于转台中心，相机水平环绕一周，光洁表面高光缓慢流动\n运镜说明：商品置于转台中心，相机水平顺时针环绕一周",
+ "engine_hint": {
+  "preferred": "local",
+  "model": "ltx"
+ },
+ "notes": "vdl2:prompt_hash=af1f28824feab758d6280f4d23176df37ce58249ac6b6dc47e24c46365c6f397 | vdl2:intents=i-cam-loop-0001@1.0.0,i-to-loop-0001@1.0.0,i-loop-0001@1.0.0"
+}

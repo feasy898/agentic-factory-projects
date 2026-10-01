@@ -1,0 +1,107 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_009",
+ "generated_at": "2026-10-01T03:34:48",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": false,
+  "decision": "pass",
+  "confidence": 0.85,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=False, types=[], conf=0.85)",
+   "J3@0.7 flag=False hits=[] max_channel_P=0.547"
+  ]
+ },
+ "defects": [],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.3227,
+   "flicker": 0.2552,
+   "color_shift": 0.547,
+   "face_blur": 0.1507,
+   "garble_text": 0.0384,
+   "temporal_swap": 0.3363,
+   "pixelate": 0.0733,
+   "ghosting": 0.3722
+  },
+  "overall": 0.5125,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "全片 f01-f08（0-5.2s）"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_009",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.85,
+   "spans": "全片 f01-f08（0-5.2s）",
+   "notes": "咖啡馆女子举杯-啜饮-放下动作弧线连续，人脸清晰身份一致，握杯手指自然，色调统一，未见任何可见缺陷"
+  },
+  "J5": {
+   "clip_id": "golden_009",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面流畅，无明显缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_009",
+   "defect_detected": true,
+   "defect_types": [
+    "color_shift"
+   ],
+   "confidence": 0.547,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.323 flicker=0.255 color_shift=0.547 face_blur=0.151 garble_text=0.038 temporal_swap=0.336 pixelate=0.073 ghosting=0.372; overall=0.512; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_009",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 1.0,
+   "spans": [],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_009.mp4",
+  "frames_dir": "frames/golden_009/",
+  "judge_files": {
+   "J1": "../数据/judges/glm8/golden_009.json",
+   "J5": "../数据/judges/videochat3/golden_009.json",
+   "J3": "../数据/judges/omnijev/run_metadata.json",
+   "J6": "../数据/judges/detectors/raw/golden_009.qc.json"
+  }
+ },
+ "errors": {}
+}

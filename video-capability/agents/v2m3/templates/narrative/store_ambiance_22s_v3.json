@@ -1,0 +1,55 @@
+{
+  "template_id": "store_ambiance_22s_v3",
+  "name_zh": "到店氛围(变体3)",
+  "duration_range": [20, 25],
+  "orientation": "portrait",
+  "variables": {
+    "store_name": "老灶火锅",
+    "street": "江汉路"
+  },
+  "numbers": {
+    "price": "49.9",
+    "discount": "8折"
+  },
+  "scenes": [
+    {
+      "slot": "hook",
+      "narrative_slot": "storefront_night",
+      "duration_sec": 4,
+      "role": "hook",
+      "narration": "找{street}最亮的门头，找到就是{store_name}"
+    },
+    {
+      "slot": "ambiance_1",
+      "narrative_slot": "ambiance_scene",
+      "duration_sec": 5,
+      "role": "ambiance",
+      "narration": "背影一转就是座位，热气扑面而来"
+    },
+    {
+      "slot": "ambiance_2",
+      "narrative_slot": "rain_window",
+      "duration_sec": 4,
+      "role": "ambiance",
+      "narration": "雨点敲着玻璃，锅里翻着江湖"
+    },
+    {
+      "slot": "product",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 5,
+      "role": "evidence",
+      "narration": "毛肚七上八下，脆到耳朵都能听见"
+    },
+    {
+      "slot": "cta",
+      "narrative_slot": "cta_store",
+      "duration_sec": 4,
+      "role": "cta",
+      "background": {
+        "type": "solid",
+        "color": "0x7A1F1F"
+      },
+      "narration": "报暗号立享{discount}，人均{price}，定位要趁早"
+    }
+  ]
+}

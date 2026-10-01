@@ -1,0 +1,239 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom" xmlns="http://www.w3.org/2005/Atom">
+  <id>https://arxiv.org/api/tgrCl1z9bUKznU6RfKcGTKtEG6w</id>
+  <title>arXiv Query: search_query=ti:"VBench"&amp;id_list=&amp;start=0&amp;max_results=5</title>
+  <updated>2026-09-28T11:09:17Z</updated>
+  <link href="https://arxiv.org/api/query?search_query=ti:%22VBench%22&amp;start=0&amp;max_results=5&amp;id_list=" type="application/atom+xml"/>
+  <opensearch:itemsPerPage>5</opensearch:itemsPerPage>
+  <opensearch:totalResults>5</opensearch:totalResults>
+  <opensearch:startIndex>0</opensearch:startIndex>
+  <entry>
+    <id>http://arxiv.org/abs/2311.17982v1</id>
+    <title>VBench: Comprehensive Benchmark Suite for Video Generative Models</title>
+    <updated>2023-11-29T18:39:01Z</updated>
+    <link href="https://arxiv.org/abs/2311.17982v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2311.17982v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Video generation has witnessed significant advancements, yet evaluating these models remains a challenge. A comprehensive evaluation benchmark for video generation is indispensable for two reasons: 1) Existing metrics do not fully align with human perceptions; 2) An ideal evaluation system should provide insights to inform future developments of video generation. To this end, we present VBench, a comprehensive benchmark suite that dissects "video generation quality" into specific, hierarchical, and disentangled dimensions, each with tailored prompts and evaluation methods. VBench has three appealing properties: 1) Comprehensive Dimensions: VBench comprises 16 dimensions in video generation (e.g., subject identity inconsistency, motion smoothness, temporal flickering, and spatial relationship, etc). The evaluation metrics with fine-grained levels reveal individual models' strengths and weaknesses. 2) Human Alignment: We also provide a dataset of human preference annotations to validate our benchmarks' alignment with human perception, for each evaluation dimension respectively. 3) Valuable Insights: We look into current models' ability across various evaluation dimensions, and various content types. We also investigate the gaps between video and image generation models. We will open-source VBench, including all prompts, evaluation methods, generated videos, and human preference annotations, and also include more video generation models in VBench to drive forward the field of video generation.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2023-11-29T18:39:01Z</published>
+    <arxiv:comment>Equal contributions from first four authors. Project page: https://vchitect.github.io/VBench-project/ Code: https://github.com/Vchitect/VBench</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Ziqi Huang</name>
+    </author>
+    <author>
+      <name>Yinan He</name>
+    </author>
+    <author>
+      <name>Jiashuo Yu</name>
+    </author>
+    <author>
+      <name>Fan Zhang</name>
+    </author>
+    <author>
+      <name>Chenyang Si</name>
+    </author>
+    <author>
+      <name>Yuming Jiang</name>
+    </author>
+    <author>
+      <name>Yuanhan Zhang</name>
+    </author>
+    <author>
+      <name>Tianxing Wu</name>
+    </author>
+    <author>
+      <name>Qingyang Jin</name>
+    </author>
+    <author>
+      <name>Nattapol Chanpaisit</name>
+    </author>
+    <author>
+      <name>Yaohui Wang</name>
+    </author>
+    <author>
+      <name>Xinyuan Chen</name>
+    </author>
+    <author>
+      <name>Limin Wang</name>
+    </author>
+    <author>
+      <name>Dahua Lin</name>
+    </author>
+    <author>
+      <name>Yu Qiao</name>
+    </author>
+    <author>
+      <name>Ziwei Liu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2503.21755v2</id>
+    <title>VBench-2.0: Advancing Video Generation Benchmark Suite for Intrinsic Faithfulness</title>
+    <updated>2025-08-20T15:49:30Z</updated>
+    <link href="https://arxiv.org/abs/2503.21755v2" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2503.21755v2" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Video generation has advanced significantly, evolving from producing unrealistic outputs to generating videos that appear visually convincing and temporally coherent. To evaluate these video generative models, benchmarks such as VBench have been developed to assess their faithfulness, measuring factors like per-frame aesthetics, temporal consistency, and basic prompt adherence. However, these aspects mainly represent superficial faithfulness, which focus on whether the video appears visually convincing rather than whether it adheres to real-world principles. While recent models perform increasingly well on these metrics, they still struggle to generate videos that are not just visually plausible but fundamentally realistic. To achieve real "world models" through video generation, the next frontier lies in intrinsic faithfulness to ensure that generated videos adhere to physical laws, commonsense reasoning, anatomical correctness, and compositional integrity. Achieving this level of realism is essential for applications such as AI-assisted filmmaking and simulated world modeling. To bridge this gap, we introduce VBench-2.0, a next-generation benchmark designed to automatically evaluate video generative models for their intrinsic faithfulness. VBench-2.0 assesses five key dimensions: Human Fidelity, Controllability, Creativity, Physics, and Commonsense, each further broken down into fine-grained capabilities. Tailored to individual dimensions, our evaluation framework integrates generalists such as SOTA VLMs and LLMs, and specialists, including anomaly detection methods proposed for video generation. We conduct extensive human annotations to ensure evaluation alignment with human judgment. By pushing beyond superficial faithfulness toward intrinsic faithfulness, VBench-2.0 aims to set a new standard for the next generation of video generative models in pursuit of intrinsic faithfulness.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-03-27T17:57:01Z</published>
+    <arxiv:comment>Equal contributions from first two authors. Project page: https://vchitect.github.io/VBench-2.0-project/ Code: https://github.com/Vchitect/VBench</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Dian Zheng</name>
+    </author>
+    <author>
+      <name>Ziqi Huang</name>
+    </author>
+    <author>
+      <name>Hongbo Liu</name>
+    </author>
+    <author>
+      <name>Kai Zou</name>
+    </author>
+    <author>
+      <name>Yinan He</name>
+    </author>
+    <author>
+      <name>Fan Zhang</name>
+    </author>
+    <author>
+      <name>Lulu Gu</name>
+    </author>
+    <author>
+      <name>Yuanhan Zhang</name>
+    </author>
+    <author>
+      <name>Jingwen He</name>
+    </author>
+    <author>
+      <name>Wei-Shi Zheng</name>
+    </author>
+    <author>
+      <name>Yu Qiao</name>
+    </author>
+    <author>
+      <name>Ziwei Liu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2411.13503v1</id>
+    <title>VBench++: Comprehensive and Versatile Benchmark Suite for Video Generative Models</title>
+    <updated>2024-11-20T17:54:41Z</updated>
+    <link href="https://arxiv.org/abs/2411.13503v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2411.13503v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>Video generation has witnessed significant advancements, yet evaluating these models remains a challenge. A comprehensive evaluation benchmark for video generation is indispensable for two reasons: 1) Existing metrics do not fully align with human perceptions; 2) An ideal evaluation system should provide insights to inform future developments of video generation. To this end, we present VBench, a comprehensive benchmark suite that dissects "video generation quality" into specific, hierarchical, and disentangled dimensions, each with tailored prompts and evaluation methods. VBench has several appealing properties: 1) Comprehensive Dimensions: VBench comprises 16 dimensions in video generation (e.g., subject identity inconsistency, motion smoothness, temporal flickering, and spatial relationship, etc). The evaluation metrics with fine-grained levels reveal individual models' strengths and weaknesses. 2) Human Alignment: We also provide a dataset of human preference annotations to validate our benchmarks' alignment with human perception, for each evaluation dimension respectively. 3) Valuable Insights: We look into current models' ability across various evaluation dimensions, and various content types. We also investigate the gaps between video and image generation models. 4) Versatile Benchmarking: VBench++ supports evaluating text-to-video and image-to-video. We introduce a high-quality Image Suite with an adaptive aspect ratio to enable fair evaluations across different image-to-video generation settings. Beyond assessing technical quality, VBench++ evaluates the trustworthiness of video generative models, providing a more holistic view of model performance. 5) Full Open-Sourcing: We fully open-source VBench++ and continually add new video generation models to our leaderboard to drive forward the field of video generation.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2024-11-20T17:54:41Z</published>
+    <arxiv:comment>Leaderboard: https://huggingface.co/spaces/Vchitect/VBench_Leaderboard Code: https://github.com/Vchitect/VBench Project page: https://vchitect.github.io/VBench-project/ extension of arXiv:2311.17982. arXiv admin note: substantial text overlap with arXiv:2311.17982</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Ziqi Huang</name>
+    </author>
+    <author>
+      <name>Fan Zhang</name>
+    </author>
+    <author>
+      <name>Xiaojie Xu</name>
+    </author>
+    <author>
+      <name>Yinan He</name>
+    </author>
+    <author>
+      <name>Jiashuo Yu</name>
+    </author>
+    <author>
+      <name>Ziyue Dong</name>
+    </author>
+    <author>
+      <name>Qianli Ma</name>
+    </author>
+    <author>
+      <name>Nattapol Chanpaisit</name>
+    </author>
+    <author>
+      <name>Chenyang Si</name>
+    </author>
+    <author>
+      <name>Yuming Jiang</name>
+    </author>
+    <author>
+      <name>Yaohui Wang</name>
+    </author>
+    <author>
+      <name>Xinyuan Chen</name>
+    </author>
+    <author>
+      <name>Ying-Cong Chen</name>
+    </author>
+    <author>
+      <name>Limin Wang</name>
+    </author>
+    <author>
+      <name>Dahua Lin</name>
+    </author>
+    <author>
+      <name>Yu Qiao</name>
+    </author>
+    <author>
+      <name>Ziwei Liu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2508.07038v1</id>
+    <title>3DGS-VBench: A Comprehensive Video Quality Evaluation Benchmark for 3DGS Compression</title>
+    <updated>2025-08-09T16:47:19Z</updated>
+    <link href="https://arxiv.org/abs/2508.07038v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2508.07038v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>3D Gaussian Splatting (3DGS) enables real-time novel view synthesis with high visual fidelity, but its substantial storage requirements hinder practical deployment, prompting state-of-the-art (SOTA) 3DGS methods to incorporate compression modules. However, these 3DGS generative compression techniques introduce unique distortions lacking systematic quality assessment research. To this end, we establish 3DGS-VBench, a large-scale Video Quality Assessment (VQA) Dataset and Benchmark with 660 compressed 3DGS models and video sequences generated from 11 scenes across 6 SOTA 3DGS compression algorithms with systematically designed parameter levels. With annotations from 50 participants, we obtained MOS scores with outlier removal and validated dataset reliability. We benchmark 6 3DGS compression algorithms on storage efficiency and visual quality, and evaluate 15 quality assessment metrics across multiple paradigms. Our work enables specialized VQA model training for 3DGS, serving as a catalyst for compression and quality assessment research. The dataset is available at https://github.com/YukeXing/3DGS-VBench.</summary>
+    <category term="eess.IV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2025-08-09T16:47:19Z</published>
+    <arxiv:primary_category term="eess.IV"/>
+    <author>
+      <name>Yuke Xing</name>
+    </author>
+    <author>
+      <name>William Gordon</name>
+    </author>
+    <author>
+      <name>Qi Yang</name>
+    </author>
+    <author>
+      <name>Kaifa Yang</name>
+    </author>
+    <author>
+      <name>Jiarui Wang</name>
+    </author>
+    <author>
+      <name>Yiling Xu</name>
+    </author>
+  </entry>
+  <entry>
+    <id>http://arxiv.org/abs/2608.09873v1</id>
+    <title>Sci-VBench: Evaluating Knowledge- and Reasoning-Intensive Video Generation in Science Domains</title>
+    <updated>2026-08-10T17:27:32Z</updated>
+    <link href="https://arxiv.org/abs/2608.09873v1" rel="alternate" type="text/html"/>
+    <link href="https://arxiv.org/pdf/2608.09873v1" rel="related" type="application/pdf" title="pdf"/>
+    <summary>We introduce Sci-VBench, a comprehensive benchmark for evaluating knowledge- and reasoning-intensive video generation across scientific domains. It contains 1,253 expert-annotated examples spanning 60 subjects across four core disciplines: Natural Science, Healthcare, Humanities &amp; Social Sciences, and Engineering. Each example requires models to generate temporally rich videos that demand scientific reasoning and knowledge-grounded synthesis, going beyond surface-level visual plausibility. We further establish a rubric-based evaluation protocol. Our analysis shows that, under this protocol, both non-expert human evaluators and MLLM-as-Judge systems can achieve relatively high agreement with expert judgments, supporting reproducible evaluation at scale. We benchmark 16 frontier proprietary and open-source models and find that, while automatic perceptual-quality scores cluster tightly across systems, performance on Prompt Grounding and Scientific and Causal Correctness varies substantially, with a pronounced proprietary-open-source gap. These findings show that advances in visual realism have not yet translated into reliable modeling of scientific and causal dynamics.</summary>
+    <category term="cs.CV" scheme="http://arxiv.org/schemas/atom"/>
+    <category term="cs.AI" scheme="http://arxiv.org/schemas/atom"/>
+    <published>2026-08-10T17:27:32Z</published>
+    <arxiv:comment>COLM 2026</arxiv:comment>
+    <arxiv:primary_category term="cs.CV"/>
+    <author>
+      <name>Diandian Zhang</name>
+    </author>
+    <author>
+      <name>Tingyu Song</name>
+    </author>
+    <author>
+      <name>Lin Fu</name>
+    </author>
+    <author>
+      <name>Zheyuan Yang</name>
+    </author>
+    <author>
+      <name>Yilun Zhao</name>
+    </author>
+  </entry>
+</feed>

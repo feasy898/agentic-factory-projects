@@ -1,0 +1,50 @@
+{
+  "shot_id": "ABS11L",
+  "narrative_slot": "ambiance_scene",
+  "lane": "first_frame_i2v",
+  "orientation": "landscape",
+  "duration_sec": 5,
+  "resolution": [
+    832,
+    480
+  ],
+  "fps": 16,
+  "camera": {
+    "scale": "medium",
+    "angle": "eye_level",
+    "motion": "follow_slow",
+    "depth": "medium"
+  },
+  "subject": {
+    "type": "environment",
+    "desc_zh": "A/B 测试卡(继承 S11, landscape)"
+  },
+  "prompt_en": "a single diner silhouette seen from behind walking toward a table in a warm corridor, back view only, professional food photography, warm amber lighting, appetizing, shallow depth of field, steam rising, rich color grading, no people",
+  "first_frame_asset": "assets/scenes/back_view_01.png",
+  "negative": [
+    "human face",
+    "hands",
+    "fingers",
+    "text",
+    "watermark",
+    "logo",
+    "deformed",
+    "extra limbs"
+  ],
+  "n_best": 1,
+  "retry_max": 0,
+  "acceptance": {
+    "clip_ref_min": 0.65,
+    "clip_text_min": 0.22,
+    "temporal_clip_min": 0.85,
+    "vlm_overall_min": 0.7,
+    "vlm_defect_max": 0.2,
+    "duration_tol": 0.5
+  },
+  "fallback": {
+    "type": "ken_burns",
+    "asset": "assets/scenes/back_view_01.png",
+    "motion": "zoom_in_1.06",
+    "duration_sec": 5
+  }
+}

@@ -1,0 +1,31 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "shot_ep01_0043",
+ "axis": "G1",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "seed": 42,
+ "characters": [
+  {
+   "char_id": "heroine_a",
+   "desc": "红衣女子，齐肩发",
+   "ref_image": "assets/heroine_a_portrait.png"
+  }
+ ],
+ "camera": {
+  "movement": "static",
+  "description": "双手持杯特写"
+ },
+ "audio": {
+  "generate": true,
+  "speech": "",
+  "music": ""
+ },
+ "prompt": "竖屏近特写：一双手交叠捧着白瓷杯，红色衣袖入画，指尖完整可见，杯沿不遮挡手指，暖色调室内光，静止机位。",
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3-Max"
+ },
+ "notes": "vdl2:prompt_hash=316b7bd65f782d6c0e04dbad8c90defdc50444fd5cbed8bde491dadd41e7b945 | vdl2:intents=i-cam-0043@1.0.0,i-tr-0042-0043@1.0.0"
+}

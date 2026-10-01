@@ -1,0 +1,196 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_022",
+ "generated_at": "2026-09-30T03:57:53",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "manual_review",
+  "confidence": 0.8077,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=False, types=[], conf=0.55)",
+   "J3@0.7 flag=True hits=['frame_freeze', 'color_shift'] max_channel_P=0.8077",
+   "J6 信号(仅信号不否决): garble_text@0.71"
+  ]
+ },
+ "defects": [
+  {
+   "type": "color_shift",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.8039,
+   "evidence": {
+    "J3": {
+     "channel_P": 0.8039
+    }
+   }
+  },
+  {
+   "type": "frame_freeze",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.8077,
+   "evidence": {
+    "J3": {
+     "channel_P": 0.8077
+    }
+   }
+  },
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.7066,
+   "span": {
+    "start_s": 0.315,
+    "end_s": 1.576
+   },
+   "evidence": {
+    "J6": {
+     "kind": "conf_drop",
+     "drop": 0.353,
+     "frames": [
+      0,
+      2
+     ],
+     "mean_scores": [
+      0.421,
+      0.774
+     ]
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.8077,
+   "flicker": 0.1761,
+   "color_shift": 0.8039,
+   "face_blur": 0.0203,
+   "garble_text": 0.0407,
+   "temporal_swap": 0.2391,
+   "pixelate": 0.3574,
+   "ghosting": 0.4919
+  },
+  "overall": 0.4419,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "d39953c05717cdcdeb22b2d586c035538c64c4adf1fb13e671ea4e5a154ae0fd"
+  }
+ },
+ "spans": [
+  {
+   "type": "garble_text",
+   "start_s": 0.315,
+   "end_s": 1.576,
+   "evidence": {
+    "kind": "conf_drop",
+    "drop": 0.353,
+    "frames": [
+     0,
+     2
+    ],
+    "mean_scores": [
+     0.421,
+     0.774
+    ]
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "f01–f08 全程检查"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_022",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.55,
+   "spans": "f01–f08 全程检查",
+   "notes": "云雾山谷航拍慢速漂移：8帧亮度117.3→107.0、饱和度41.4→51.4严格单调（排除段落错乱/定格/闪烁阶跃），全局与局部Laplacian方差无中段凹陷，帧间差3.3→5.6平滑升降；目视与数值均未见拖影证据。慢速雾景下轻微tblend拖影在静帧中接近不可检，故置信度仅中等"
+  },
+  "J5": {
+   "clip_id": "golden_022",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中没有出现任何缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_022",
+   "defect_detected": true,
+   "defect_types": [
+    "frame_freeze",
+    "color_shift"
+   ],
+   "confidence": 0.8077,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.808 flicker=0.176 color_shift=0.804 face_blur=0.020 garble_text=0.041 temporal_swap=0.239 pixelate=0.357 ghosting=0.492; overall=0.442; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_022",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text"
+   ],
+   "confidence": 0.7066,
+   "spans": [
+    {
+     "type": "garble_text",
+     "start_s": 0.315,
+     "end_s": 1.576,
+     "evidence": {
+      "kind": "conf_drop",
+      "drop": 0.353,
+      "frames": [
+       0,
+       2
+      ],
+      "mean_scores": [
+       0.421,
+       0.774
+      ]
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_022.mp4",
+  "frames_dir": "frames/golden_022/",
+  "judge_files": {
+   "J1": "..\\数据\\judges\\glm8\\golden_022.json",
+   "J5": "..\\数据\\judges\\videochat3\\golden_022.json",
+   "J3": "..\\数据\\judges\\omnijev\\run_metadata.json",
+   "J6": "..\\数据\\judges\\detectors\\raw\\golden_022.qc.json"
+  }
+ },
+ "errors": {}
+}

@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G1-03",
+ "axis": "G1",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "特写：一只手用筷子夹住一颗透明玻璃珠悬在半空缓缓旋转，背景是深色木桌",
+ "seed": 41003,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

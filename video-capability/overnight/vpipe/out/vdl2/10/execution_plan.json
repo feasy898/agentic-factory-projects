@@ -1,0 +1,153 @@
+{
+ "schema_version": "2.0",
+ "work_id": "shortdrama_ep01",
+ "compiled_at": "2026-09-30T18:07:42",
+ "compiler": "vdl2_compile.py@vpipe2.0-dev",
+ "source_package": {
+  "path": "examples\\vdl2\\10_shortdrama_ep01.yaml",
+  "sha256": "319c3ade3df2f26557e146a506b2f91a638d9c8c55c26b880e0dc3249f33d2ba"
+ },
+ "validation": {
+  "ok": true,
+  "gate_a_errors": 0,
+  "gate_b_errors": 0,
+  "total_errors": 0,
+  "warnings": 0
+ },
+ "default_prompt_mode": "hybrid",
+ "budget": {
+  "credit_cap_total": 560,
+  "wallet_check_uri_note": "MiniMax /api/v1/credit/wallet（密钥只从 env 读，不入包）"
+ },
+ "deliverable": null,
+ "post_ops": [
+  {
+   "intent_ref": "i-pp-ep01-sub",
+   "run_after": [
+    "shot_ep01_0042"
+   ]
+  }
+ ],
+ "shots": [
+  {
+   "shot_id": "shot_ep01_0042",
+   "prompt_mode": "compiled",
+   "prompt_hash": "dda8783d90b9e47b1fe5ab4d65be8bb64df3b85fc22350a3706f0d666fbc273b",
+   "engine": {
+    "channel": "api_h3max",
+    "fallback": [
+     "api_h3",
+     "local_ltx"
+    ],
+    "route_rule": "G6_camera_semantic"
+   },
+   "cache": {
+    "strategy": "submit_params",
+    "fingerprint_includes": [
+     "prompt_hash",
+     "duration_s",
+     "aspect",
+     "resolution",
+     "ref_shas"
+    ]
+   },
+   "budget": {
+    "credit_cap_per_shot": 280,
+    "max_retries": 2
+   },
+   "acceptance_refs": [
+    "acc-cam-ep01-0042",
+    "acc-sub-ep01-0042"
+   ],
+   "intent_refs": [
+    "i-cam-0042@1.0.0"
+   ],
+   "continuity": {
+    "link": "none",
+    "seed_policy": "none",
+    "lock_restatement": [
+     "characters"
+    ],
+    "d3_split_declared": false,
+    "tail_source": "real_rendered"
+   },
+   "edit_ops": [],
+   "v1_shot": "shots_v1/shot_ep01_0042.json"
+  },
+  {
+   "shot_id": "shot_ep01_0043",
+   "prompt_mode": "handwritten",
+   "prompt_hash": "316b7bd65f782d6c0e04dbad8c90defdc50444fd5cbed8bde491dadd41e7b945",
+   "engine": {
+    "channel": "api_h3max",
+    "fallback": [
+     "local_ltx"
+    ],
+    "route_rule": "G1_hand_qc_routed"
+   },
+   "cache": {
+    "strategy": "submit_params",
+    "fingerprint_includes": [
+     "prompt_hash",
+     "duration_s",
+     "aspect",
+     "resolution",
+     "ref_shas"
+    ]
+   },
+   "budget": {
+    "credit_cap_per_shot": 280,
+    "max_retries": 2
+   },
+   "acceptance_refs": [
+    "acc-hand-ep01-0043"
+   ],
+   "intent_refs": [
+    "i-cam-0043@1.0.0",
+    "i-tr-0042-0043@1.0.0"
+   ],
+   "continuity": {
+    "link": "prev_tail_frame",
+    "seed_policy": "vary",
+    "lock_restatement": [
+     "characters",
+     "camera_movement"
+    ],
+    "d3_split_declared": false,
+    "tail_source": "real_rendered"
+   },
+   "edit_ops": [],
+   "v1_shot": "shots_v1/shot_ep01_0043.json"
+  }
+ ],
+ "projection_manifest": [
+  {
+   "shot_id": "shot_ep01_0042",
+   "intent_versions": [
+    "i-cam-0042@1.0.0"
+   ],
+   "prompt_mode": "compiled",
+   "prompt_hash": "dda8783d90b9e47b1fe5ab4d65be8bb64df3b85fc22350a3706f0d666fbc273b",
+   "acceptance_refs": [
+    "acc-cam-ep01-0042",
+    "acc-sub-ep01-0042"
+   ],
+   "v1_shot": "shots_v1/shot_ep01_0042.json",
+   "model_hint": "MiniMax-H3-Max"
+  },
+  {
+   "shot_id": "shot_ep01_0043",
+   "intent_versions": [
+    "i-cam-0043@1.0.0",
+    "i-tr-0042-0043@1.0.0"
+   ],
+   "prompt_mode": "handwritten",
+   "prompt_hash": "316b7bd65f782d6c0e04dbad8c90defdc50444fd5cbed8bde491dadd41e7b945",
+   "acceptance_refs": [
+    "acc-hand-ep01-0043"
+   ],
+   "v1_shot": "shots_v1/shot_ep01_0043.json",
+   "model_hint": "MiniMax-H3-Max"
+  }
+ ]
+}

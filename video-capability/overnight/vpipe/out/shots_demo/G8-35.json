@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G8-35",
+ "axis": "G8",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "中国水墨画风格：一条锦鲤在留白的宣纸上游动，墨色浓淡晕染，尾部泛起涟漪化开成山水",
+ "seed": 41035,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G1-05",
+ "axis": "G1",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "一只手先比出 OK 手势，然后流畅地切换成伸出三根手指的三的手势，白背景，教学示范风格",
+ "seed": 41005,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

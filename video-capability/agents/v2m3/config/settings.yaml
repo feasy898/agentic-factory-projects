@@ -1,0 +1,18 @@
+project: cradle
+device: cuda
+dtype: fp16          # V100: fp16 only, bf16 unsupported
+hf_endpoint: https://hf-mirror.com
+paths:
+  assets: assets
+  candidates: workdir/candidates
+  gated: workdir/gated
+  output: output
+  db: workdir/cradle.sqlite3
+budgets:
+  image_api: 300
+  vlm_api: 1500
+  tts_api: 200
+  asr_api: 200
+  wan_candidates_total: 200
+debug_model: ltx      # iteration-phase generator
+prod_model: wan_i2v_13b

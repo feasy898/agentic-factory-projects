@@ -1,0 +1,205 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_035",
+ "generated_at": "2026-10-01T03:34:48",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "auto_reject",
+  "confidence": 0.9223,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=True, types=['physics_error'], conf=0.7)",
+   "J3@0.7 flag=True hits=['ghosting'] max_channel_P=0.9223",
+   "J6 信号(仅信号不否决): garble_text@0.84"
+  ]
+ },
+ "defects": [
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.8395,
+   "span": {
+    "start_s": 0.315,
+    "end_s": 1.576
+   },
+   "evidence": {
+    "J6": {
+     "kind": "conf_drop",
+     "drop": 0.42,
+     "frames": [
+      0,
+      2
+     ],
+     "mean_scores": [
+      0.311,
+      0.731
+     ]
+    }
+   }
+  },
+  {
+   "type": "ghosting",
+   "sources": [
+    "J3",
+    "J5"
+   ],
+   "confidence": 0.9223,
+   "evidence": {
+    "J3": {
+     "channel_P": 0.9223
+    },
+    "J5": {
+     "confidence": 0.8
+    }
+   }
+  },
+  {
+   "type": "physics_error",
+   "sources": [
+    "J1"
+   ],
+   "confidence": 0.7,
+   "evidence": {
+    "J1": {
+     "confidence": 0.7,
+     "notes": "橙球下落与触桌时刚性丧失：f02横向压扁、f03/f07拉成蛋形且下缘融入桌面白雾状，f08落定时才恢复规整圆球；部分形变可能与运动模糊混淆，故置信度留有余地。"
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.1161,
+   "flicker": 0.4619,
+   "color_shift": 0.2752,
+   "face_blur": 0.0341,
+   "garble_text": 0.0322,
+   "temporal_swap": 0.5394,
+   "pixelate": 0.1883,
+   "ghosting": 0.9223
+  },
+  "overall": 0.707,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "garble_text",
+   "start_s": 0.315,
+   "end_s": 1.576,
+   "evidence": {
+    "kind": "conf_drop",
+    "drop": 0.42,
+    "frames": [
+     0,
+     2
+    ],
+    "mean_scores": [
+     0.311,
+     0.731
+    ]
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "f02-f03 与 f06-f07"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_035",
+   "defect_detected": true,
+   "defect_types": [
+    "physics_error"
+   ],
+   "confidence": 0.7,
+   "spans": "f02-f03 与 f06-f07",
+   "notes": "橙球下落与触桌时刚性丧失：f02横向压扁、f03/f07拉成蛋形且下缘融入桌面白雾状，f08落定时才恢复规整圆球；部分形变可能与运动模糊混淆，故置信度留有余地。"
+  },
+  "J5": {
+   "clip_id": "golden_035",
+   "defect_detected": true,
+   "defect_types": [
+    "ghosting"
+   ],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[\"ghosting\"],\"other\":false,\"reason\":\"橙色球体运动时存在运动拖影\"}"
+  },
+  "J3": {
+   "clip_id": "golden_035",
+   "defect_detected": true,
+   "defect_types": [
+    "temporal_swap",
+    "ghosting"
+   ],
+   "confidence": 0.9223,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.116 flicker=0.462 color_shift=0.275 face_blur=0.034 garble_text=0.032 temporal_swap=0.539 pixelate=0.188 ghosting=0.922; overall=0.707; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_035",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text"
+   ],
+   "confidence": 0.8395,
+   "spans": [
+    {
+     "type": "garble_text",
+     "start_s": 0.315,
+     "end_s": 1.576,
+     "evidence": {
+      "kind": "conf_drop",
+      "drop": 0.42,
+      "frames": [
+       0,
+       2
+      ],
+      "mean_scores": [
+       0.311,
+       0.731
+      ]
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_035.mp4",
+  "frames_dir": "frames/golden_035/",
+  "judge_files": {
+   "J1": "../数据/judges/glm8/golden_035.json",
+   "J5": "../数据/judges/videochat3/golden_035.json",
+   "J3": "../数据/judges/omnijev/run_metadata.json",
+   "J6": "../数据/judges/detectors/raw/golden_035.qc.json"
+  }
+ },
+ "errors": {}
+}

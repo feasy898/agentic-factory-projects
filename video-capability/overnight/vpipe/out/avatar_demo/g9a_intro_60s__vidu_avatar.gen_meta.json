@@ -1,0 +1,106 @@
+{
+ "module": "gen_avatar.py@vpipe-g9a-1.0",
+ "shot_id": "g9a_intro_60s",
+ "generated_at": "2026-09-30T17:57:06",
+ "status": "ok",
+ "shot_file": "D:\\workspace\\video-capability-research\\overnight\\vpipe\\out\\avatar_demo\\shot_g9a_intro_60s.json",
+ "shot_sha256": "242fc90cca8539b5db7acc6ba3690165cc807bea82601aa77ac28f105a9cc05b",
+ "ref_image": "D:\\workspace\\video-capability-research\\overnight\\数据\\references\\charA_linxia_red_dress.png",
+ "ref_image_sha256": "8881b82149dc4ce9fe5ae90990a67d9af4e210eddd4c5e8e5a70c2630142bbcd",
+ "speech_chars": 258,
+ "tts": {
+  "engine": "stepfun",
+  "model": "stepaudio-2.5-tts",
+  "voice": "voice-tone-UliNvty5Vw",
+  "voice_source": "cloned",
+  "clone": {
+   "cached": false,
+   "clone_sha256": "24e5bc3ca2284bff3892162ed83c4feca6727445df58a8c91270e63df2d2ca89",
+   "file_id": "file-UliNvty5Vw"
+  },
+  "instruction": "语速适中，口播风格，清晰亲和",
+  "chars": 258,
+  "billing_units_est": 232,
+  "price_doc": "¥5.8/万字符（估算口径，实扣以钱包差值为准）",
+  "cost_cny_est": 0.1346,
+  "out_path": "out\\avatar_demo\\g9a_intro_60s.mp3",
+  "sha256": "9e44cec704e9ae0a6945fb7124a475cfba68ac5bc758d01474f862309afbc8a5",
+  "audio_duration_s": 60.216,
+  "acodec": "mp3",
+  "elapsed_s": 21.87,
+  "total_elapsed_s": 22.0
+ },
+ "avatar": {
+  "task_id": "1002818273143713792",
+  "state": "success",
+  "credits_reported": 61,
+  "duration_s": 61,
+  "model": "vidus1",
+  "resolution": "720p",
+  "watermark": false,
+  "elapsed_s": 199.5,
+  "staging_path": "D:\\workspace\\video-capability-research\\overnight\\数据\\avatar_out\\g9a_intro_60s_vidu.mp4",
+  "url_note": "creations[].url 24h 有效，已即时落盘（工程方案v3.1 §8）",
+  "clip_path": "out\\avatar_demo\\g9a_intro_60s@vidu-s1.mp4",
+  "clip_sha256": "edf440436ca7637927d0db5b746a2af49f377a44e65ce3413f266cfb0cdb7676",
+  "clip_size_bytes": 16551983,
+  "pools_before": {
+   "endpoint": "/ent/v2/credits",
+   "general": 683,
+   "exclusive": 5000,
+   "probed_at": "2026-09-30T17:53:41"
+  },
+  "pools_after": {
+   "endpoint": "/ent/v2/credits",
+   "general": 622,
+   "exclusive": 5000,
+   "probed_at": "2026-09-30T17:57:06"
+  },
+  "pools_delta": {
+   "general": 61,
+   "exclusive": 0
+  }
+ },
+ "clip_probe": {
+  "path": "out\\avatar_demo\\g9a_intro_60s@vidu-s1.mp4",
+  "duration_s": 61.0,
+  "vcodec": "h264",
+  "acodec": "aac",
+  "width": 826,
+  "height": 1114,
+  "fps": "24/1",
+  "has_audio": true
+ },
+ "duration_check": {
+  "mode": "avatar_ceil_exemption",
+  "expected_s": 61,
+  "actual_s": 61.0,
+  "pad_tail_s": 0.784,
+  "note": "整秒取整垫尾是平台行为非缺陷（工程方案v3.1 §3.1 L0 豁免行）"
+ },
+ "cost": {
+  "vidu_credits": 61,
+  "vidu_rule": "1 积分/s × ceil(音频秒)（工程方案v3.1 §2.4①）",
+  "stepfun_cny_est": 0.1346,
+  "per_second": {
+   "vidu_credits_per_s": 1.0,
+   "cny_est_per_s": 0.002207
+  },
+  "wall_clock_s": 236.1,
+  "note": "Vidu 积分与 MiniMax/人民币不可直接换算（工程方案v3.1 §4.2）"
+ },
+ "qc_hint": {
+  "j6v2_cmd": "python src/qc_detectors_v2.py --clip g9a_intro_60s@vidu-s1.mp4 --out g9a_intro_60s@vidu-s1.mp4.qc2.json --params-yaml eval/thresholds.yaml",
+  "j6v2_protocol_extract": "qc2.json 的 temporal_protocol 字段即六字段协议，抽出后可作 --judge-file J6v2=<protocol.json> 喂 qc_orch --online",
+  "qc_orch_cmd": "python src/qc_orch.py --online --clip-id g9a_intro_60s --clip g9a_intro_60s@vidu-s1.mp4 --judge-file J6v2=g9a_intro_60s.j6v2_protocol.json --thresholds eval/thresholds.yaml",
+  "known_context": [
+   "J6 ghosting 规则在口播数字人上 2/2 误报机理（低运动平台，工程方案v3.1 §3.4-1）",
+   "单镜头直出无拼接 → 无 known_cuts 白名单需求（§3.4-2 机理仅拼接件触发）",
+   "时序结论不作自动放行依据，人工抽检是放行口径（v3.1 §2.3 红线）"
+  ],
+  "gen_meta": "g9a_intro_60s__vidu_avatar.gen_meta.json"
+ },
+ "credit_cap": 3000,
+ "spent_credits_total": 61,
+ "errors": []
+}

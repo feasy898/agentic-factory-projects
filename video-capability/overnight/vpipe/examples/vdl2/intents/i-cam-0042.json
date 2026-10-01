@@ -1,0 +1,26 @@
+{
+  "identity": { "intent_id": "i-cam-0042", "version": "1.0.0" },
+  "intent_type": "vpo:craft.intent_object.camera_intent",
+  "target": { "kind": "shot", "ref": "shot_ep01_0042" },
+  "scope": { "level": "vpo:delivery.scope.shot", "ref": "shot_ep01_0042" },
+  "temporal_extent": { "time_base": { "rate_num": 24, "rate_den": 1 }, "start_frame": 0, "end_frame": 120 },
+  "reference_context": { "prompt_mode": "vpo:delivery.prompt_mode.new" },
+  "predicate": "镜头缓慢推向红衣女子面部，情绪特写，画面稳定",
+  "value": "情绪推进镜头",
+  "strength": "vpo:delivery.strength.must",
+  "tolerance": { "evidence_status": "vpo:delivery.evidence_status.prior" },
+  "exceptions": [],
+  "acceptance_ref": "acc-cam-ep01-0042:v1.0.0",
+  "authority": "director",
+  "control_channel": ["vpo:delivery.control_channel.text"],
+  "field_channels": {
+    "characters[0].ref_image": ["vpo:delivery.control_channel.image"],
+    "duration_s": ["vpo:delivery.control_channel.api_param"]
+  },
+  "shot_scale": "vpo:cine.shot_scale_coarse.close",
+  "subject_frame_ratio": "vpo:cine.subject_frame_ratio.50pct",
+  "camera_angle": "vpo:cine.angle_coarse.eye_level",
+  "movement": "vpo:cine.movement_primary.push",
+  "movement_speed": "vpo:cine.movement_speed.slow",
+  "framing_anchor": "vpo:cine.framing_anchor.thirds_left"
+}

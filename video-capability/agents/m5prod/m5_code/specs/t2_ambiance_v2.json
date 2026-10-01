@@ -1,0 +1,10 @@
+{
+  "video_id": "t2_ambiance_v2",
+  "template": "store_ambiance_22s_v2",
+  "slots": {
+    "hook": "S08",
+    "ambiance_1": "S16",
+    "ambiance_2": "S09",
+    "product": "S15"
+  }
+}

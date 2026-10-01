@@ -1,0 +1,207 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_014",
+ "generated_at": "2026-09-30T18:07:33",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "auto_reject",
+  "confidence": 0.97,
+  "decided_by": "E10",
+  "reasons": [
+   "J3 最大通道 P=0.951 ≥ 0.90（高置信区间实测 8/8 全对，基准报告 §5）"
+  ]
+ },
+ "defects": [
+  {
+   "type": "identity_drift",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 1.0,
+   "evidence": {
+    "J6": {
+     "kind": null,
+     "conf_src": 1.0
+    }
+   },
+   "span": {
+    "start_s": 3.466,
+    "end_s": 4.097
+   }
+  },
+  {
+   "type": "face_blur",
+   "sources": [
+    "J1",
+    "J2",
+    "J5",
+    "J3"
+   ],
+   "confidence": 0.98,
+   "evidence": {
+    "J1": {
+     "notes": "f03-f06人物头面部及上胸被整块高斯模糊覆盖，与前后清晰帧形成突兀跳变，典型人脸模糊注入"
+    },
+    "J2": {
+     "notes": "中帧人面部与头发被矩形强模糊覆盖呈打码效果，首尾帧同区域完全清晰，判定人脸模糊缺陷"
+    },
+    "J5": {
+     "notes": "解析=json; 回答={\"defect_types\":[\"face_blur\"],\"other\":false,\"reason\":\"画面中人物脸部区域存在模糊\"}"
+    },
+    "J3": {
+     "channel_probs": {
+      "frame_freeze": 0.594,
+      "flicker": 0.2924,
+      "color_shift": 0.242,
+      "face_blur": 0.9511,
+      "garble_text": 0.0397,
+      "temporal_swap": 0.4,
+      "pixelate": 0.9494,
+      "ghosting": 0.1931
+     },
+     "overall": 0.6776
+    }
+   }
+  },
+  {
+   "type": "pixelate",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.9494,
+   "evidence": {
+    "J3": {
+     "channel_probs": {
+      "frame_freeze": 0.594,
+      "flicker": 0.2924,
+      "color_shift": 0.242,
+      "face_blur": 0.9511,
+      "garble_text": 0.0397,
+      "temporal_swap": 0.4,
+      "pixelate": 0.9494,
+      "ghosting": 0.1931
+     },
+     "overall": 0.6776
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.594,
+   "flicker": 0.2924,
+   "color_shift": 0.242,
+   "face_blur": 0.9511,
+   "garble_text": 0.0397,
+   "temporal_swap": 0.4,
+   "pixelate": 0.9494,
+   "ghosting": 0.1931
+  },
+  "overall": 0.6776,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f03-f06（约25%-75%时长），f01-f02与f07-f08人脸清晰",
+    "source": "J1"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f05（约片中段）：头部至肩部整块区域重度模糊",
+    "source": "J2"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "full_clip:fps=1.0解码",
+    "source": "J5"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_014",
+   "defect_detected": true,
+   "defect_types": [
+    "face_blur"
+   ],
+   "confidence": 0.97,
+   "spans": "f03-f06（约25%-75%时长），f01-f02与f07-f08人脸清晰",
+   "notes": "f03-f06人物头面部及上胸被整块高斯模糊覆盖，与前后清晰帧形成突兀跳变，典型人脸模糊注入"
+  },
+  "J2": {
+   "clip_id": "golden_014",
+   "defect_detected": true,
+   "defect_types": [
+    "face_blur"
+   ],
+   "confidence": 0.98,
+   "spans": "f05（约片中段）：头部至肩部整块区域重度模糊",
+   "notes": "中帧人面部与头发被矩形强模糊覆盖呈打码效果，首尾帧同区域完全清晰，判定人脸模糊缺陷"
+  },
+  "J5": {
+   "clip_id": "golden_014",
+   "defect_detected": true,
+   "defect_types": [
+    "face_blur"
+   ],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[\"face_blur\"],\"other\":false,\"reason\":\"画面中人物脸部区域存在模糊\"}"
+  },
+  "J6": {
+   "clip_id": "golden_014",
+   "defect_detected": true,
+   "defect_types": [
+    "identity_drift"
+   ],
+   "confidence": 1.0,
+   "spans": [
+    {
+     "type": "identity_drift",
+     "start_s": 3.466,
+     "end_s": 4.096,
+     "evidence": {
+      "pair": 5,
+      "cos": -0.0017
+     }
+    }
+   ]
+  },
+  "J3": {
+   "clip_id": "golden_014",
+   "defect_detected": true,
+   "defect_types": [
+    "face_blur",
+    "pixelate"
+   ],
+   "confidence": 0.9511,
+   "spans": "16帧4x4拼图 9通道概率（run_metadata.json），阈值 0.70",
+   "notes": "frame_freeze=0.594; flicker=0.292; color_shift=0.242; face_blur=0.951; garble_text=0.040; temporal_swap=0.400; pixelate=0.949; ghosting=0.193; overall=0.678"
+  }
+ },
+ "inputs": {
+  "clip": null,
+  "frames_dir": null,
+  "judge_files": {
+   "J1": "D:\\workspace\\video-capability-research\\overnight\\数据\\judges\\glm8\\golden_014.json",
+   "J2": "D:\\workspace\\video-capability-research\\overnight\\数据\\judges\\glm3\\golden_014.json",
+   "J5": "D:\\workspace\\video-capability-research\\overnight\\数据\\judges\\videochat3\\golden_014.json",
+   "J6": "D:\\workspace\\video-capability-research\\overnight\\数据\\judges\\detectors\\golden_014.json",
+   "J3": "D:\\workspace\\video-capability-research\\overnight\\数据\\judges\\omnijev\\run_metadata.json"
+  }
+ },
+ "errors": {}
+}

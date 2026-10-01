@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G4-17",
+ "axis": "G4",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "一个橙色篮球从一米高处自由落下，在木地板上弹跳三次，每次弹起高度递减，最后静止，侧面固定机位",
+ "seed": 41017,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

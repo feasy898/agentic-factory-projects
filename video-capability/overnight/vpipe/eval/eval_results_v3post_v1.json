@@ -1,0 +1,293 @@
+{
+ "generated_at": "2026-10-01T18:08:09",
+ "qc_dir": "/opt/gpumachine/projects/video-capability/overnight/vpipe/out/qc_reports_v3post_v1",
+ "golden": "/opt/gpumachine/projects/video-capability/overnight/vpipe/eval/golden_manifest.json",
+ "thresholds": "/opt/gpumachine/projects/video-capability/overnight/vpipe/eval/thresholds.yaml",
+ "thresholds_sha256": "f5d1e6512c18745e9dcdc1e0a20aab5fb29902acf57ee3956b995a42e3ff9be0",
+ "ensemble_recommended": "E10",
+ "measured_baseline_报告E10": {
+  "tp": 16,
+  "fp": 3,
+  "recall": 1.0,
+  "fpr": 0.25,
+  "precision": 0.8421,
+  "f1": 0.9143,
+  "b_flag_rate": 0.8333,
+  "fp_clips": [
+   "golden_010",
+   "golden_025",
+   "golden_032"
+  ]
+ },
+ "schema_check": {
+  "skipped": false,
+  "n_bad": 0,
+  "bad": []
+ },
+ "valid": true,
+ "problems": [],
+ "counts": {
+  "A": 16,
+  "B": 12,
+  "C": 12,
+  "n_reports": 40
+ },
+ "main": {
+  "tp": 16,
+  "fn": 0,
+  "fp": 3,
+  "tn": 9,
+  "recall": 1.0,
+  "fpr": 0.25,
+  "precision": 0.8421,
+  "f1": 0.9143
+ },
+ "per_type": {
+  "frame_freeze": {
+   "n": 2,
+   "recall_clip": 1.0,
+   "recall_type": 1.0,
+   "missed": []
+  },
+  "flicker": {
+   "n": 2,
+   "recall_clip": 1.0,
+   "recall_type": 1.0,
+   "missed": []
+  },
+  "color_shift": {
+   "n": 2,
+   "recall_clip": 1.0,
+   "recall_type": 1.0,
+   "missed": []
+  },
+  "face_blur": {
+   "n": 2,
+   "recall_clip": 1.0,
+   "recall_type": 1.0,
+   "missed": []
+  },
+  "garble_text": {
+   "n": 2,
+   "recall_clip": 1.0,
+   "recall_type": 1.0,
+   "missed": []
+  },
+  "temporal_swap": {
+   "n": 2,
+   "recall_clip": 1.0,
+   "recall_type": 0.5,
+   "missed": []
+  },
+  "pixelate": {
+   "n": 2,
+   "recall_clip": 1.0,
+   "recall_type": 1.0,
+   "missed": []
+  },
+  "ghosting": {
+   "n": 2,
+   "recall_clip": 1.0,
+   "recall_type": 1.0,
+   "missed": []
+  }
+ },
+ "B": {
+  "n": 12,
+  "flag_rate": 0.8333,
+  "intent_strict": 0.75,
+  "intent_lenient": 0.75,
+  "rows": [
+   {
+    "clip_id": "golden_005",
+    "expected": "text_render_garble",
+    "detected": true,
+    "types": [
+     "garble_text"
+    ],
+    "strict_hit": true,
+    "lenient_hit": true
+   },
+   {
+    "clip_id": "golden_007",
+    "expected": "hand_anatomy_distortion",
+    "detected": true,
+    "types": [
+     "garble_text",
+     "hand_anomaly"
+    ],
+    "strict_hit": true,
+    "lenient_hit": true
+   },
+   {
+    "clip_id": "golden_011",
+    "expected": "hand_anatomy_distortion",
+    "detected": false,
+    "types": [
+     "garble_text"
+    ],
+    "strict_hit": false,
+    "lenient_hit": false
+   },
+   {
+    "clip_id": "golden_019",
+    "expected": "physics_temporal_violation",
+    "detected": true,
+    "types": [
+     "identity_drift",
+     "count_error"
+    ],
+    "strict_hit": false,
+    "lenient_hit": false
+   },
+   {
+    "clip_id": "golden_020",
+    "expected": "count_error",
+    "detected": true,
+    "types": [
+     "count_error",
+     "frame_freeze"
+    ],
+    "strict_hit": true,
+    "lenient_hit": true
+   },
+   {
+    "clip_id": "golden_021",
+    "expected": "hand_anatomy_distortion",
+    "detected": true,
+    "types": [
+     "hand_anomaly",
+     "ghosting",
+     "garble_text"
+    ],
+    "strict_hit": true,
+    "lenient_hit": true
+   },
+   {
+    "clip_id": "golden_029",
+    "expected": "hand_anatomy_distortion",
+    "detected": false,
+    "types": [
+     "hand_anomaly",
+     "garble_text"
+    ],
+    "strict_hit": false,
+    "lenient_hit": false
+   },
+   {
+    "clip_id": "golden_031",
+    "expected": "count_error",
+    "detected": true,
+    "types": [
+     "count_error"
+    ],
+    "strict_hit": true,
+    "lenient_hit": true
+   },
+   {
+    "clip_id": "golden_033",
+    "expected": "hand_anatomy_distortion",
+    "detected": true,
+    "types": [
+     "hand_anomaly",
+     "garble_text"
+    ],
+    "strict_hit": true,
+    "lenient_hit": true
+   },
+   {
+    "clip_id": "golden_035",
+    "expected": "physics_temporal_violation",
+    "detected": true,
+    "types": [
+     "ghosting",
+     "garble_text",
+     "physics_error"
+    ],
+    "strict_hit": true,
+    "lenient_hit": true
+   },
+   {
+    "clip_id": "golden_038",
+    "expected": "text_render_garble",
+    "detected": true,
+    "types": [
+     "garble_text"
+    ],
+    "strict_hit": true,
+    "lenient_hit": true
+   },
+   {
+    "clip_id": "golden_040",
+    "expected": "text_render_garble",
+    "detected": true,
+    "types": [
+     "garble_text",
+     "ghosting",
+     "flicker"
+    ],
+    "strict_hit": true,
+    "lenient_hit": true
+   }
+  ]
+ },
+ "fp_clips": [
+  "golden_010",
+  "golden_025",
+  "golden_032"
+ ],
+ "fn_clips": [],
+ "decisions": {
+  "golden_002": "auto_reject",
+  "golden_003": "manual_review",
+  "golden_004": "manual_review",
+  "golden_008": "manual_review",
+  "golden_012": "auto_reject",
+  "golden_014": "auto_reject",
+  "golden_015": "auto_reject",
+  "golden_016": "manual_review",
+  "golden_017": "manual_review",
+  "golden_018": "auto_reject",
+  "golden_022": "manual_review",
+  "golden_023": "auto_reject",
+  "golden_028": "manual_review",
+  "golden_030": "manual_review",
+  "golden_034": "auto_reject",
+  "golden_036": "auto_reject",
+  "golden_001": "pass",
+  "golden_006": "pass",
+  "golden_009": "pass",
+  "golden_010": "manual_review",
+  "golden_013": "pass",
+  "golden_024": "pass",
+  "golden_025": "manual_review",
+  "golden_026": "pass",
+  "golden_027": "pass",
+  "golden_032": "manual_review",
+  "golden_037": "pass",
+  "golden_039": "pass"
+ },
+ "checks": [
+  {
+   "name": "recall_min",
+   "passed": true,
+   "detail": "recall 1.0 vs ≥0.9"
+  },
+  {
+   "name": "fpr_max",
+   "passed": true,
+   "detail": "FPR 0.25 vs ≤0.3"
+  },
+  {
+   "name": "f1_min",
+   "passed": true,
+   "detail": "F1 0.9143 vs ≥0.85"
+  },
+  {
+   "name": "b_flag_min",
+   "passed": true,
+   "detail": "B_flag 0.8333 vs ≥0.5"
+  }
+ ],
+ "all_passed": true
+}

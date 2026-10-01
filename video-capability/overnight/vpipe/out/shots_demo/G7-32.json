@@ -1,0 +1,24 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G7-32",
+ "axis": "G7",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "参考图中的红裙女子在纯色背景前缓慢转头，从左侧面转到正脸再微微颔首，光影柔和，与参考图同一人",
+ "seed": 41032,
+ "characters": [
+  {
+   "char_id": "charA",
+   "desc": "25岁亚洲女性「林夏」，齐肩黑色直发，红色连衣裙，气质温和，单人定妆照",
+   "ref_image": "..\\数据\\references_api\\charA_linxia_red_dress.png"
+  }
+ ],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

@@ -1,0 +1,27 @@
+# G7 物体恒存门禁阈值 — M2 校准定版 (V2-M2, 2026-09-08)
+# 校准依据: 47 夹具(fail 15 / pass_structural 15 / pass_candidate 17)全量运行,
+# 数据 workdir/logs/v2m1_g7_initial.json + v2m1_calibration.json, 报告 reports/G7_CALIBRATION.md
+# 不对称原则工作点: fail 拦截 15/15=100% (≥90% 达标), pass_structural 误杀 0/15=0% (≤15%),
+# pass_candidate 误杀 4/17=23.5% (≤25% 带内)。
+g7:
+  g7a_mode: full             # a 口径: bbox(规格原义)→校准改 full(检测框抖动降低可分性, D-059); 双口径序列均落盘
+  g7a_min_cos: 0.82          # a: 跨步全帧余弦最小值下限 (fail 组 max 0.8365→d/c 兜底; struct min 0.949)
+  g7d_min_cos: 0.84          # d: 首尾全帧余弦下限 (fail 组 max 0.8365; struct min 0.949, 间隔 0.11)
+  g7b_count_delta_tol: 4.0   # b: 帧间计数变化容差(>触发; GDINO 稀疏采样计数抖动大, 冷启动 2 收紧为 4)
+  g7b_count_var_max: 100.0   # b: 计数时序方差上限(>触发; 极端值安全网)
+  g7b_churn_max: 12.0        # b: track churn 上限(>触发; 冷启动 3 对 GDINO 抖动过敏感误杀夜景候选)
+  g7c_flow_p95_max_px: 30.0  # c: 静态区 RAFT 光流幅值 P95 上限(px; 0.33s 采样对口径, 灾难级安全网——
+                             #    fail 组 4 条 object_flow/count_drift ∈[30,98]px 被抓, 候选组 max 25.7px)
+  g7c_photo_diff_max: 0.08   # c: RAFT 不可用退化-光度差上限(>触发, 冷启动未校准—本轮 RAFT 全程可用)
+  g7c_ssim_min: 0.60         # c: RAFT 不可用退化-SSIM 下限(<触发, 同上)
+  g7e_min_ok: 0.6            # e: 四项中任一 <0.6 → fail(规格定死)
+  det_box_threshold: 0.30    # Grounding DINO box 置信度(运行期过滤口径; 检测器以 0.25 低门槛推理)
+  det_text_threshold: 0.25   # Grounding DINO text 置信度
+  det_high_thresh: 0.35      # 跟踪器高/低分检测分界
+meta:
+  calibrated: true
+  source: V2-M2 校准 (迭代 1/3 轮达标; 运行 JSON v2m1_g7_initial.json, 终验 v2m1_g7_final.json)
+  date: 2026-09-08
+  interception_fail: "15/15 (100%)"
+  false_kill_pass_structural: "0/15 (0%)"
+  false_kill_pass_candidate: "4/17 (23.5%, 带内; FX-C001/C002/C003/C010 列人工复核)"

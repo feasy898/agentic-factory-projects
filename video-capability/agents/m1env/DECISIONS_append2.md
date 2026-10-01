@@ -1,0 +1,3 @@
+
+- **D-009** (2026-09-08, M1-ENV): 阿里源 `diffsynth==1.1.9` wheel 是 2025-11 重打包的错配快照：`WanModel.patchify` 丢失了 flatten+返回 grid 两行（只 `return x`），而 `models/wan_video_dit.py:374` 与 `pipelines/wan_video.py:571` 都按 `x, (f, h, w) = patchify(x)` 解包 → Wan 去噪第一步即 `ValueError: not enough values to unpack`。按上游语义补丁：patchify 末尾加 `grid_size = x.shape[2:]; x = x.flatten(2).transpose(1, 2); return x, grid_size`（原文件备份 .bak；补丁脚本 `scripts/07_patch_diffsynth.sh`，验证见 `workdir/logs/07` 与 Wan 冒烟通过）。教训：镜像站重打包的 sdist/wheel 可能与上游 repo 不一致，关键路径必须先冒烟再量产。
+- **D-010** (2026-09-08, M1-ENV): openai CLIP ViT-L/14.pt 完整性确认：azureedge 下载 932,768,134 字节即完整尺寸（openai 发布格式为 fp16 TorchScript 归档），torch.load + open_clip 加载前向 norm=1.0 验证通过；非中断截断。

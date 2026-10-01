@@ -1,0 +1,62 @@
+{
+  "template_id": "product_seeding_25s",
+  "name_zh": "产品种草",
+  "duration_range": [25, 30],
+  "orientation": "portrait",
+  "variables": {
+    "product_name": "手切鲜毛肚",
+    "store_name": "老灶火锅"
+  },
+  "numbers": {
+    "price": "39.9",
+    "offer": "第二份半价"
+  },
+  "scenes": [
+    {
+      "slot": "hook",
+      "narrative_slot": "hook_product",
+      "duration_sec": 3,
+      "role": "hook",
+      "narration": "{store_name}的{product_name}，三秒锁鲜，一口上头"
+    },
+    {
+      "slot": "evidence_1",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 5,
+      "role": "evidence",
+      "narration": "七上八下十五秒，脆到耳朵都能听见"
+    },
+    {
+      "slot": "evidence_2",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 5,
+      "role": "evidence",
+      "narration": "每天凌晨到港的鲜货，只卖当天"
+    },
+    {
+      "slot": "evidence_3",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 5,
+      "role": "evidence",
+      "narration": "红汤翻滚，涮一下就是江湖味"
+    },
+    {
+      "slot": "ambiance",
+      "narrative_slot": "ambiance_scene",
+      "duration_sec": 4,
+      "role": "ambiance",
+      "narration": "暖光蒸汽一升起来，冬天就不冷了"
+    },
+    {
+      "slot": "cta",
+      "narrative_slot": "cta_store",
+      "duration_sec": 3,
+      "role": "cta",
+      "background": {
+        "type": "solid",
+        "color": "0x7A1F1F"
+      },
+      "narration": "今晚只要{price}一位，{offer}，定位要趁早"
+    }
+  ]
+}

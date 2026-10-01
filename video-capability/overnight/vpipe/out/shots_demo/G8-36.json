@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G8-36",
+ "axis": "G8",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "三维卡通渲染风格：一只毛茸茸的小机器人在工作台上好奇地打量一颗发光的螺丝，大眼睛反射高光，皮克斯级质感",
+ "seed": 41036,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

@@ -1,0 +1,195 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_003",
+ "generated_at": "2026-10-01T03:35:20",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "manual_review",
+  "confidence": 0.8449,
+  "decided_by": "E10",
+  "reasons": [
+   "E10 检出、未达 auto_reject 线：灰区人工复核（J3@0.70 触发[color_shift,face_blur] 最大P=0.845）"
+  ]
+ },
+ "defects": [
+  {
+   "type": "color_shift",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.8449,
+   "evidence": {
+    "J3": {
+     "channel_probs": {
+      "frame_freeze": 0.3992,
+      "flicker": 0.5009,
+      "color_shift": 0.8449,
+      "face_blur": 0.7889,
+      "garble_text": 0.0425,
+      "temporal_swap": 0.3276,
+      "pixelate": 0.3499,
+      "ghosting": 0.6183
+     },
+     "overall": 0.5262
+    }
+   }
+  },
+  {
+   "type": "face_blur",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.7889,
+   "evidence": {
+    "J3": {
+     "channel_probs": {
+      "frame_freeze": 0.3992,
+      "flicker": 0.5009,
+      "color_shift": 0.8449,
+      "face_blur": 0.7889,
+      "garble_text": 0.0425,
+      "temporal_swap": 0.3276,
+      "pixelate": 0.3499,
+      "ghosting": 0.6183
+     },
+     "overall": 0.5262
+    }
+   }
+  },
+  {
+   "type": "temporal_swap",
+   "sources": [
+    "J1",
+    "J6"
+   ],
+   "confidence": 0.75,
+   "evidence": {
+    "J1": {
+     "notes": "背影剪影本应单调走近，f04→f05人物变小、左侧小路重现（倒退跳变），f06→f07背景突变为密林（前跳），中段时间轴非单调；剪影限制了判读精度"
+    },
+    "J6": {
+     "kind": "scene_cut_mid",
+     "conf_src": 0.75
+    }
+   },
+   "span": {
+    "start_s": 1.02,
+    "end_s": 2.02
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.3992,
+   "flicker": 0.5009,
+   "color_shift": 0.8449,
+   "face_blur": 0.7889,
+   "garble_text": 0.0425,
+   "temporal_swap": 0.3276,
+   "pixelate": 0.3499,
+   "ghosting": 0.6183
+  },
+  "overall": 0.5262,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f04→f05 与 f06→f07 交界处（约2.2-2.8s、3.4-4.1s）",
+    "source": "J1"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f01/f05/f08",
+    "source": "J2"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "full_clip:fps=1.0解码",
+    "source": "J5"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_003",
+   "defect_detected": true,
+   "defect_types": [
+    "temporal_swap"
+   ],
+   "confidence": 0.65,
+   "spans": "f04→f05 与 f06→f07 交界处（约2.2-2.8s、3.4-4.1s）",
+   "notes": "背影剪影本应单调走近，f04→f05人物变小、左侧小路重现（倒退跳变），f06→f07背景突变为密林（前跳），中段时间轴非单调；剪影限制了判读精度"
+  },
+  "J2": {
+   "clip_id": "golden_003",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.4,
+   "spans": "f01/f05/f08",
+   "notes": "三帧均为林间行走背影剪影，画面正常；但静帧抽样无法验证段落时序类缺陷，置信度低"
+  },
+  "J5": {
+   "clip_id": "golden_003",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中人物和环境均无明显异常，无定格、闪烁、偏色、模糊、乱码、时序错乱、像素化或拖影现象\"}"
+  },
+  "J6": {
+   "clip_id": "golden_003",
+   "defect_detected": true,
+   "defect_types": [
+    "temporal_swap"
+   ],
+   "confidence": 0.75,
+   "spans": [
+    {
+     "type": "temporal_swap",
+     "start_s": 1.02,
+     "end_s": 2.02,
+     "evidence": {
+      "cut_s": 1.52,
+      "kind": "scene_cut_mid"
+     }
+    }
+   ]
+  },
+  "J3": {
+   "clip_id": "golden_003",
+   "defect_detected": true,
+   "defect_types": [
+    "color_shift",
+    "face_blur"
+   ],
+   "confidence": 0.8449,
+   "spans": "16帧4x4拼图 9通道概率（run_metadata.json），阈值 0.70",
+   "notes": "frame_freeze=0.399; flicker=0.501; color_shift=0.845; face_blur=0.789; garble_text=0.043; temporal_swap=0.328; pixelate=0.350; ghosting=0.618; overall=0.526"
+  }
+ },
+ "inputs": {
+  "clip": null,
+  "frames_dir": null,
+  "judge_files": {
+   "J1": "../数据/judges/glm8/golden_003.json",
+   "J2": "../数据/judges/glm3/golden_003.json",
+   "J5": "../数据/judges/videochat3/golden_003.json",
+   "J6": "../数据/judges/detectors/golden_003.json",
+   "J3": "../数据/judges/omnijev/run_metadata.json"
+  }
+ },
+ "errors": {}
+}

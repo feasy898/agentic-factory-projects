@@ -1,0 +1,13 @@
+{
+ "schema": "https://vpo.example/schemas/v1/l4/acceptance-record.schema.json",
+ "criterion_ref": {
+  "criterion_id": "acc-loop-motion-0001",
+  "version": "1.0.0"
+ },
+ "artifact_ref": "clip:shot_loop_0001@local_ltx",
+ "artifact_revision": "af1f28824feab758d6280f4d23176df37ce58249ac6b6dc47e24c46365c6f397",
+ "target_ref": "shot_loop_0001",
+ "status": "vpo:delivery.record_status.unknown",
+ "evaluator_id": "J6_detectors",
+ "evaluator_version": "vpipe1.0"
+}

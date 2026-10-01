@@ -1,0 +1,28 @@
+{
+ "clip": "/opt/gpumachine/projects/video-capability/overnight/vpipe/out/v3_selftest/media/dur_12p5s.mp4",
+ "expect_duration_s": 10.0,
+ "profile": "avatar_talk",
+ "failures": [
+  "L0 时长超差: measured=12.520s expect=10.000s rule=avatar_tail"
+ ],
+ "checks": {
+  "duration": {
+   "measured_s": 12.52,
+   "rule": "avatar_tail",
+   "allowed_s": [
+    9.8,
+    11.0
+   ],
+   "avatar_tail_max_s": 1.0
+  },
+  "black_mono_ratio": {
+   "n_samples": 64,
+   "black_luma_max": 8.0,
+   "mono_std_max": 2.0,
+   "ratio_max": 0.5,
+   "used": 64,
+   "bad_frames": 0,
+   "ratio": 0.0
+  }
+ }
+}

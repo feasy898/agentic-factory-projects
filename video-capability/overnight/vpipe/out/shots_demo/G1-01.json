@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G1-01",
+ "axis": "G1",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "特写镜头：一只成年人的手掌掌心正对镜头，五指完全张开，镜头缓慢推近，能清晰数出六根手指，摄影棚柔光，皮肤细节清晰",
+ "seed": 41001,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

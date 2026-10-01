@@ -1,0 +1,50 @@
+{
+  "shot_id": "S07",
+  "narrative_slot": "ambiance_scene",
+  "lane": "first_frame_i2v",
+  "orientation": "portrait",
+  "duration_sec": 5,
+  "resolution": [
+    480,
+    832
+  ],
+  "fps": 16,
+  "camera": {
+    "scale": "wide",
+    "angle": "eye_level",
+    "motion": "slow_push_in",
+    "depth": "medium"
+  },
+  "subject": {
+    "type": "environment",
+    "desc_zh": "店内暖光蒸汽环境,木桌热气氤氲,灯笼虚化"
+  },
+  "prompt_en": "cozy hotpot restaurant interior, warm lantern light, steam drifting over wooden tables, bokeh, professional food photography, warm amber lighting, appetizing, shallow depth of field, steam rising, rich color grading, no people",
+  "first_frame_asset": "assets/scenes/interior_01.png",
+  "negative": [
+    "human face",
+    "hands",
+    "fingers",
+    "text",
+    "watermark",
+    "logo",
+    "deformed",
+    "extra limbs"
+  ],
+  "n_best": 3,
+  "retry_max": 2,
+  "acceptance": {
+    "clip_ref_min": 0.65,
+    "clip_text_min": 0.22,
+    "temporal_clip_min": 0.85,
+    "vlm_overall_min": 0.7,
+    "vlm_defect_max": 0.2,
+    "duration_tol": 0.5
+  },
+  "fallback": {
+    "type": "ken_burns",
+    "asset": "assets/scenes/interior_01.png",
+    "motion": "zoom_in_1.06",
+    "duration_sec": 5
+  }
+}

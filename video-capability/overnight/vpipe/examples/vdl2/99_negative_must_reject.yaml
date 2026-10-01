@@ -1,0 +1,134 @@
+# ============================================================================
+# 负例 · 故意违规（校验必须拒绝——测试用，禁止当作可运行示例）
+# 埋雷清单（每条都必须被 vdl2_validate 拒收并命中对应错误码）：
+#   R1.dangling_intent_ref      shots[0].intent_refs 含 i-not-exist（悬空意图引用）
+#   R1.dangling_acceptance_ref  shots[0].acceptance_refs 含 acc-not-exist（悬空判据引用）
+#   R1.dangling_intent_path     acceptance[0].intent_path 首段 i-not-exist
+#   REF.dangling_shot_ref       transition 意图 outgoing_shot_ref=shot_ghost_9999（跨镜头悬空）
+#                               + post_ops run_after=shot_ghost_9999
+#   R1.dangling_postop_ref      post_ops[0].intent_ref=i-not-exist
+#   REF.dangling_slot_path      template.slots[0].path 指向不存在的字段
+#   R1.dangling_intent_binding  template.slots[0].intent_binding 首段 i-not-exist
+#   R2.api_seed_policy          shots[0] api_h3max + seed_policy=fix_for_iteration（API seed 零控制力）
+#   R2.api_cache_strategy       shots[0] api_h3max + cache.strategy=content_fingerprint（错层声明）
+#   R3.duration_over_engine_limit shots[0].duration_s=18（超引擎单段上限 15s）
+#   R4.compiled_with_handwritten shots[0] prompt_mode=compiled 却写了手写 prompt（双源）
+#   REF.head_shot_no_prev       shots[0] 是首镜却声明 link=prev_tail_frame（无上镜尾帧）
+#   GATE_A.structure            duration_s=18 同时违反 shot_v2 schema maximum 15（闸门A 兜底）
+#   GATE_B.intent_content       intents[1].predicate 含模型名 "Wan2.1"（R6 not-pattern 拒收）
+# 验证：python src/vdl2/vdl2_validate.py --pkg examples/vdl2/99_negative_must_reject.yaml  → exit 1
+# ============================================================================
+vdl_version: "2.0"
+work_id: negative_fixture
+default_prompt_mode: compiled
+
+intents:
+  - identity: { intent_id: i-cam-bad-0001, version: "1.0.0" }
+    intent_type: vpo:craft.intent_object.camera_intent
+    target: { kind: shot, ref: shot_bad_0001 }
+    scope: { level: vpo:delivery.scope.shot, ref: shot_bad_0001 }
+    temporal_extent: { time_base: { rate_num: 24, rate_den: 1 } }
+    reference_context: { prompt_mode: vpo:delivery.prompt_mode.new }
+    predicate: "违规占位：合法谓词"
+    value: "负例镜头"
+    strength: vpo:delivery.strength.must
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    exceptions: []
+    acceptance_ref: "acc-bad-0001:v1.0.0"
+    authority: director
+    control_channel: [vpo:delivery.control_channel.text]
+    shot_scale: vpo:cine.shot_scale_coarse.medium
+    subject_frame_ratio: vpo:cine.subject_frame_ratio.50pct
+    camera_angle: vpo:cine.angle_coarse.eye_level
+    movement: vpo:cine.movement_primary.static
+    movement_speed: vpo:cine.movement_speed.slow
+    framing_anchor: vpo:cine.framing_anchor.center
+
+  - identity: { intent_id: i-cam-bad-0002, version: "1.0.0" }
+    intent_type: vpo:craft.intent_object.camera_intent
+    target: { kind: shot, ref: shot_bad_0001 }
+    scope: { level: vpo:delivery.scope.shot, ref: shot_bad_0001 }
+    temporal_extent: { time_base: { rate_num: 24, rate_den: 1 } }
+    reference_context: {}
+    predicate: "违规：用 Wan2.1 生成这个镜头"        # R6：L2 禁模型名（intent-common not-pattern）
+    value: "模型名负例"
+    strength: vpo:delivery.strength.must
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    exceptions: []
+    acceptance_ref: "acc-bad-0001:v1.0.0"
+    authority: director
+    control_channel: [vpo:delivery.control_channel.text]
+    shot_scale: vpo:cine.shot_scale_coarse.wide
+    subject_frame_ratio: vpo:cine.subject_frame_ratio.30pct
+    camera_angle: vpo:cine.angle_coarse.high
+    movement: vpo:cine.movement_primary.pan
+    movement_speed: vpo:cine.movement_speed.medium
+    framing_anchor: vpo:cine.framing_anchor.center
+
+  - identity: { intent_id: i-tr-bad-0001, version: "1.0.0" }
+    intent_type: vpo:craft.intent_object.transition_intent
+    target: { kind: shot, ref: shot_bad_0001 }
+    scope: { level: vpo:delivery.scope.shot, ref: shot_bad_0001 }
+    temporal_extent: { time_base: { rate_num: 24, rate_den: 1 } }
+    reference_context: {}
+    predicate: "违规：转场引用不存在的镜头"
+    value: "悬空转场"
+    strength: vpo:delivery.strength.must
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    exceptions: []
+    acceptance_ref: "acc-bad-0001:v1.0.0"
+    authority: director
+    control_channel: [vpo:delivery.control_channel.image]
+    transition_type: vpo:craft.montage.shot_transition.hard_cut
+    incoming_shot_ref: shot_bad_0001
+    outgoing_shot_ref: shot_ghost_9999             # 悬空 shot 引用
+    boundary_constraints:
+      outgoing_tail: { state_assertion: "负例占位" }
+      incoming_head: { state_assertion: "负例占位" }
+
+shots:
+  - schema_version: "2.0"
+    shot_id: shot_bad_0001
+    axis: G6
+    duration_s: 18                                  # R3 拒收：超引擎单段上限 15s
+    aspect: "9:16"
+    resolution: 768P
+    prompt: "违规：compiled 模式下的手写 prompt（R4 双源）"
+    intent_refs: [i-cam-bad-0001, i-not-exist]      # R1：i-not-exist 悬空
+    prompt_mode: compiled                           # R4：compiled 禁手写
+    engine: { channel: api_h3max, fallback: [] }
+    continuity:
+      link: prev_tail_frame                         # 首镜无上镜（跨镜引用错误）
+      seed_policy: fix_for_iteration                # R2：api 通道非法
+      lock_restatement: [characters]
+      d3_split_declared: false
+      tail_source: real_rendered
+    cache:
+      strategy: content_fingerprint                 # R2：api 通道错层声明
+      fingerprint_includes: [prompt_hash]
+    acceptance_refs: [acc-bad-0001, acc-not-exist]  # R1：acc-not-exist 悬空
+    budget: { credit_cap_per_shot: 280, max_retries: 2 }
+
+post_ops:
+  - intent_ref: i-not-exist                         # R1：悬空 post_ops 引用
+    run_after: [shot_ghost_9999]                    # 悬空 shot 引用
+
+acceptance:
+  - schema: "https://vpo.example/schemas/v1/l4/acceptance-spec.schema.json"
+    criterion_id: acc-bad-0001
+    version: "1.0.0"
+    intent_path: "i-not-exist.movement"             # R1：intent_path 首段悬空
+    metric: "negative_fixture_metric"
+    tolerance: { evidence_status: vpo:delivery.evidence_status.prior }
+    gate: vpo:delivery.gate.block
+    detector_id: J1_glm8
+    detector_version: "vpipe1.0"
+
+template:
+  template_id: negative_tpl
+  slots:
+    - name: bad_slot
+      kind: text
+      required: true
+      path: shots[0].not_exist_field                # 悬空槽位路径
+      intent_binding: i-not-exist.predicate         # 悬空意图绑定

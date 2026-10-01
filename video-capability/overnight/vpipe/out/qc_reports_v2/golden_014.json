@@ -1,0 +1,186 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_014",
+ "generated_at": "2026-09-30T03:57:53",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "auto_reject",
+  "confidence": 0.9511,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=True, types=['face_blur'], conf=0.97)",
+   "J3@0.7 flag=True hits=['face_blur', 'pixelate'] max_channel_P=0.9511",
+   "J6 信号(仅信号不否决): identity_drift@1.00"
+  ]
+ },
+ "defects": [
+  {
+   "type": "face_blur",
+   "sources": [
+    "J1",
+    "J3",
+    "J5"
+   ],
+   "confidence": 0.97,
+   "evidence": {
+    "J1": {
+     "confidence": 0.97,
+     "notes": "f03-f06人物头面部及上胸被整块高斯模糊覆盖，与前后清晰帧形成突兀跳变，典型人脸模糊注入"
+    },
+    "J3": {
+     "channel_P": 0.9511
+    },
+    "J5": {
+     "confidence": 0.8
+    }
+   }
+  },
+  {
+   "type": "identity_drift",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 1.0,
+   "span": {
+    "start_s": 3.466,
+    "end_s": 4.096
+   },
+   "evidence": {
+    "J6": {
+     "pair": 5,
+     "cos": -0.0017
+    }
+   }
+  },
+  {
+   "type": "pixelate",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.9494,
+   "evidence": {
+    "J3": {
+     "channel_P": 0.9494
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.594,
+   "flicker": 0.2924,
+   "color_shift": 0.242,
+   "face_blur": 0.9511,
+   "garble_text": 0.0397,
+   "temporal_swap": 0.4,
+   "pixelate": 0.9494,
+   "ghosting": 0.1931
+  },
+  "overall": 0.6776,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "d39953c05717cdcdeb22b2d586c035538c64c4adf1fb13e671ea4e5a154ae0fd"
+  }
+ },
+ "spans": [
+  {
+   "type": "identity_drift",
+   "start_s": 3.466,
+   "end_s": 4.096,
+   "evidence": {
+    "pair": 5,
+    "cos": -0.0017
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "f03-f06（约25%-75%时长），f01-f02与f07-f08人脸清晰"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_014",
+   "defect_detected": true,
+   "defect_types": [
+    "face_blur"
+   ],
+   "confidence": 0.97,
+   "spans": "f03-f06（约25%-75%时长），f01-f02与f07-f08人脸清晰",
+   "notes": "f03-f06人物头面部及上胸被整块高斯模糊覆盖，与前后清晰帧形成突兀跳变，典型人脸模糊注入"
+  },
+  "J5": {
+   "clip_id": "golden_014",
+   "defect_detected": true,
+   "defect_types": [
+    "face_blur"
+   ],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[\"face_blur\"],\"other\":false,\"reason\":\"画面中人物脸部区域存在模糊\"}"
+  },
+  "J3": {
+   "clip_id": "golden_014",
+   "defect_detected": true,
+   "defect_types": [
+    "frame_freeze",
+    "face_blur",
+    "pixelate"
+   ],
+   "confidence": 0.9511,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.594 flicker=0.292 color_shift=0.242 face_blur=0.951 garble_text=0.040 temporal_swap=0.400 pixelate=0.949 ghosting=0.193; overall=0.678; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_014",
+   "defect_detected": true,
+   "defect_types": [
+    "identity_drift"
+   ],
+   "confidence": 1.0,
+   "spans": [
+    {
+     "type": "identity_drift",
+     "start_s": 3.466,
+     "end_s": 4.096,
+     "evidence": {
+      "pair": 5,
+      "cos": -0.0017
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_014.mp4",
+  "frames_dir": "frames/golden_014/",
+  "judge_files": {
+   "J1": "..\\数据\\judges\\glm8\\golden_014.json",
+   "J5": "..\\数据\\judges\\videochat3\\golden_014.json",
+   "J3": "..\\数据\\judges\\omnijev\\run_metadata.json",
+   "J6": "..\\数据\\judges\\detectors\\raw\\golden_014.qc.json"
+  }
+ },
+ "errors": {}
+}

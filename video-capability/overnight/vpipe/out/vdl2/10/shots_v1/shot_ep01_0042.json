@@ -1,0 +1,31 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "shot_ep01_0042",
+ "axis": "G6",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "seed": 42,
+ "characters": [
+  {
+   "char_id": "heroine_a",
+   "desc": "红衣女子，齐肩发",
+   "ref_image": "assets/heroine_a_portrait.png"
+  }
+ ],
+ "camera": {
+  "movement": "push_in",
+  "description": "缓慢推进到面部"
+ },
+ "audio": {
+  "generate": true,
+  "speech": "你终于回来了。",
+  "music": ""
+ },
+ "prompt": "镜头：近景特写，平视机位，推近（慢速），主体占画面约50%，三分法左锚点\n主体：红衣女子，齐肩发\n语义：镜头缓慢推向红衣女子面部，情绪特写，画面稳定\n运镜说明：缓慢推进到面部\n台词（配音提示）：你终于回来了。",
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3-Max"
+ },
+ "notes": "vdl2:prompt_hash=dda8783d90b9e47b1fe5ab4d65be8bb64df3b85fc22350a3706f0d666fbc273b | vdl2:intents=i-cam-0042@1.0.0"
+}

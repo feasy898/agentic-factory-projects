@@ -1,0 +1,164 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_033",
+ "generated_at": "2026-10-01T03:34:48",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "manual_review",
+  "confidence": 0.95,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=True, types=['hand_anomaly'], conf=0.95)",
+   "J3@0.7 flag=False hits=[] max_channel_P=0.5557",
+   "J6 信号(仅信号不否决): garble_text@0.85"
+  ]
+ },
+ "defects": [
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.85,
+   "span": {
+    "start_s": 0.0,
+    "end_s": 5.042
+   },
+   "evidence": {
+    "J6": {
+     "kind": "uniform_low_conf",
+     "max_mean": 0.368
+    }
+   }
+  },
+  {
+   "type": "hand_anomaly",
+   "sources": [
+    "J1"
+   ],
+   "confidence": 0.95,
+   "evidence": {
+    "J1": {
+     "confidence": 0.95,
+     "notes": "十指交扣特写中手指融合为无指甲无指节的肉团，多个指状凸起无法分离计数，部分指体弯折方向异常，8帧均如此，属典型手部结构崩坏。"
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.504,
+   "flicker": 0.2814,
+   "color_shift": 0.5243,
+   "face_blur": 0.0565,
+   "garble_text": 0.0357,
+   "temporal_swap": 0.3682,
+   "pixelate": 0.1712,
+   "ghosting": 0.5557
+  },
+  "overall": 0.4716,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "garble_text",
+   "start_s": 0.0,
+   "end_s": 5.042,
+   "evidence": {
+    "kind": "uniform_low_conf",
+    "max_mean": 0.368
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "全片 f01-f08"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_033",
+   "defect_detected": true,
+   "defect_types": [
+    "hand_anomaly"
+   ],
+   "confidence": 0.95,
+   "spans": "全片 f01-f08",
+   "notes": "十指交扣特写中手指融合为无指甲无指节的肉团，多个指状凸起无法分离计数，部分指体弯折方向异常，8帧均如此，属典型手部结构崩坏。"
+  },
+  "J5": {
+   "clip_id": "golden_033",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中没有出现任何缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_033",
+   "defect_detected": true,
+   "defect_types": [
+    "frame_freeze",
+    "color_shift",
+    "ghosting"
+   ],
+   "confidence": 0.5557,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.504 flicker=0.281 color_shift=0.524 face_blur=0.057 garble_text=0.036 temporal_swap=0.368 pixelate=0.171 ghosting=0.556; overall=0.472; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_033",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text"
+   ],
+   "confidence": 0.85,
+   "spans": [
+    {
+     "type": "garble_text",
+     "start_s": 0.0,
+     "end_s": 5.042,
+     "evidence": {
+      "kind": "uniform_low_conf",
+      "max_mean": 0.368
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_033.mp4",
+  "frames_dir": "frames/golden_033/",
+  "judge_files": {
+   "J1": "../数据/judges/glm8/golden_033.json",
+   "J5": "../数据/judges/videochat3/golden_033.json",
+   "J3": "../数据/judges/omnijev/run_metadata.json",
+   "J6": "../数据/judges/detectors/raw/golden_033.qc.json"
+  }
+ },
+ "errors": {}
+}

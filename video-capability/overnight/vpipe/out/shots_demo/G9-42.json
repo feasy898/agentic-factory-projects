@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G9-42",
+ "axis": "G9",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "数字人会议场景：西装男子推门走入会议室走向主位坐下，拿起遥控笔点开屏幕上的图表，抬头面向镜头汇报",
+ "seed": 41042,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

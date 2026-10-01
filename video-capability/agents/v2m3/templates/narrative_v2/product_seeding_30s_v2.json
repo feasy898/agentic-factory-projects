@@ -1,0 +1,90 @@
+{
+  "template_id": "product_seeding_30s_v2",
+  "name_zh": "产品种草·三车道v2(虾滑主线, 10幕9镜头)",
+  "duration_range": [25, 30],
+  "orientation": "portrait",
+  "variables": {
+    "product_name": "手打虾滑",
+    "store_name": "老灶火锅"
+  },
+  "numbers": {
+    "price": "42.8",
+    "offer": "锅底免费续"
+  },
+  "scenes": [
+    {
+      "slot": "hook",
+      "narrative_slot": "hook_product",
+      "duration_sec": 3,
+      "role": "hook",
+      "narration": "{store_name}的{product_name}，红汤里翻滚"
+    },
+    {
+      "slot": "ambiance_1",
+      "narrative_slot": "rain_window",
+      "duration_sec": 2,
+      "role": "ambiance",
+      "narration": "窗外的雨刚好"
+    },
+    {
+      "slot": "evidence_1",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 4,
+      "role": "evidence",
+      "narration": "手作{product_name}，胶质拉丝"
+    },
+    {
+      "slot": "ambiance_2",
+      "narrative_slot": "ambiance_scene",
+      "duration_sec": 2,
+      "role": "ambiance",
+      "narration": "店里的热气升起来了"
+    },
+    {
+      "slot": "evidence_2",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 4,
+      "role": "evidence",
+      "narration": "雪花肥牛，纹理漂亮"
+    },
+    {
+      "slot": "offer_1",
+      "narrative_slot": "offer_product",
+      "duration_sec": 3,
+      "role": "offer",
+      "narration": "灯下晶莹饱满"
+    },
+    {
+      "slot": "ambiance_3",
+      "narrative_slot": "storefront_night",
+      "duration_sec": 2,
+      "role": "ambiance",
+      "narration": "灯笼亮起来了"
+    },
+    {
+      "slot": "evidence_3",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 4,
+      "role": "evidence",
+      "narration": "滑入红汤，翻滚定形"
+    },
+    {
+      "slot": "evidence_demo",
+      "narrative_slot": "evidence_product",
+      "duration_sec": 3,
+      "role": "evidence",
+      "narration": "每日到港，绝不隔夜"
+    },
+    {
+      "slot": "cta",
+      "narrative_slot": "cta_store",
+      "duration_sec": 3,
+      "role": "cta",
+      "background": {
+        "type": "solid",
+        "color": "0x7A1F1F"
+      },
+      "narration": "今晚{price}一位，{offer}，约起来"
+    }
+  ]
+}

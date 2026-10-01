@@ -1,0 +1,18 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G2-10",
+ "axis": "G2",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "教室黑板特写，粉笔手写着公式 E=mc² 和勾股定理 a²+b²=c²，一只手拿着板擦擦过角落，镜头缓慢横移",
+ "seed": 41010,
+ "characters": [],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

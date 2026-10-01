@@ -1,0 +1,110 @@
+{
+ "source": "/opt/gpumachine/projects/video-capability/overnight/数据/golden/clips/golden_028.mp4",
+ "probe": {
+  "width": 832,
+  "height": 480,
+  "fps": 16.0,
+  "nb_frames": 113,
+  "duration": 7.0
+ },
+ "threshold": 0.08,
+ "keyframe_indices": [
+  0,
+  5,
+  16,
+  26,
+  59,
+  77,
+  87,
+  95,
+  106,
+  111
+ ],
+ "keyframe_count": 10,
+ "keyframes": [
+  {
+   "n": 0,
+   "time": 0.0,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_028/frames/kf_001_0.000s.jpg"
+  },
+  {
+   "n": 5,
+   "time": 0.312,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_028/frames/kf_006_0.312s.jpg"
+  },
+  {
+   "n": 16,
+   "time": 1.0,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_028/frames/kf_017_1.000s.jpg"
+  },
+  {
+   "n": 26,
+   "time": 1.625,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_028/frames/kf_027_1.625s.jpg"
+  },
+  {
+   "n": 59,
+   "time": 3.688,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_028/frames/kf_060_3.688s.jpg"
+  },
+  {
+   "n": 77,
+   "time": 4.812,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_028/frames/kf_078_4.812s.jpg"
+  },
+  {
+   "n": 87,
+   "time": 5.438,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_028/frames/kf_088_5.438s.jpg"
+  },
+  {
+   "n": 95,
+   "time": 5.938,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_028/frames/kf_096_5.938s.jpg"
+  },
+  {
+   "n": 106,
+   "time": 6.625,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_028/frames/kf_107_6.625s.jpg"
+  },
+  {
+   "n": 111,
+   "time": 6.938,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_028/frames/kf_112_6.938s.jpg"
+  }
+ ],
+ "overviews": [
+  {
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_028/overview.jpg",
+   "width": 1600,
+   "height": 1412,
+   "cells": 10
+  }
+ ],
+ "freeze": {
+  "eps": 0.004,
+  "runs": [
+   {
+    "start_s": 1.562,
+    "end_s": 3.5,
+    "duration_s": 1.938,
+    "interior": true,
+    "max_score_in_run": 0.000613
+   }
+  ],
+  "outside_motion": true,
+  "freeze_detected": true,
+  "spans": [
+   {
+    "start_s": 1.562,
+    "end_s": 3.5,
+    "duration_s": 1.938
+   }
+  ]
+ },
+ "score_stats": {
+  "max": 0.181066,
+  "median": 0.092218,
+  "p95": 0.162316
+ }
+}

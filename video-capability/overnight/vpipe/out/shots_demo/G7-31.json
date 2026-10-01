@@ -1,0 +1,24 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "G7-31",
+ "axis": "G7",
+ "duration_s": 5,
+ "aspect": "9:16",
+ "resolution": "768P",
+ "prompt": "参考图中的红裙女子坐在窗边咖啡馆里端起咖啡杯轻抿一口并微笑，人物长相与参考图完全一致",
+ "seed": 41031,
+ "characters": [
+  {
+   "char_id": "charA",
+   "desc": "25岁亚洲女性「林夏」，齐肩黑色直发，红色连衣裙，气质温和，单人定妆照",
+   "ref_image": "..\\数据\\references_api\\charA_linxia_red_dress.png"
+  }
+ ],
+ "audio": {
+  "generate": true
+ },
+ "engine_hint": {
+  "preferred": "api",
+  "model": "MiniMax-H3"
+ }
+}

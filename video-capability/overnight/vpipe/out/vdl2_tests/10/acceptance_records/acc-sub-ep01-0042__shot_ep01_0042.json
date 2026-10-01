@@ -1,0 +1,13 @@
+{
+ "schema": "https://vpo.example/schemas/v1/l4/acceptance-record.schema.json",
+ "criterion_ref": {
+  "criterion_id": "acc-sub-ep01-0042",
+  "version": "1.0.0"
+ },
+ "artifact_ref": "clip:shot_ep01_0042@api_h3max",
+ "artifact_revision": "dda8783d90b9e47b1fe5ab4d65be8bb64df3b85fc22350a3706f0d666fbc273b",
+ "target_ref": "shot_ep01_0042",
+ "status": "vpo:delivery.record_status.unknown",
+ "evaluator_id": "J6_detectors",
+ "evaluator_version": "vpipe1.0"
+}

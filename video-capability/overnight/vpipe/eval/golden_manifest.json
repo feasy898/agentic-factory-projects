@@ -1,0 +1,1218 @@
+{
+ "name": "video-capability-research 金标缺陷集（QC judge 基准 ground truth）",
+ "generated_at": "2026-09-29 19:48:58",
+ "generated_on": "anolis-gpu-01 /data/night（ffmpeg 8.0.1 注入 + 统一抽帧）",
+ "source_spec": "D:/workspace/video-capability-research/边界测试方案.md §2.2",
+ "shuffle_seed": 20260929,
+ "id_note": "clip_id 为洗牌中性序号（seed=20260929），与类别/缺陷无编码关系，供盲测",
+ "encoding": {
+  "video": "libx264 crf18 preset medium yuv420p（B/C 统一转码，A 注入后同参编码）",
+  "audio": "removed (-an)",
+  "frames": "每条均匀抽 8 帧 fps=8/duration, jpg q=2, f01..f08"
+ },
+ "counts": {
+  "A": 16,
+  "B": 12,
+  "C": 12,
+  "total": 40
+ },
+ "failures": [],
+ "items": [
+  {
+   "clip_id": "golden_028",
+   "class": "A",
+   "defect_type": "frame_freeze",
+   "expected_defect": "frame_freeze",
+   "probable": false,
+   "inject_pos": {
+    "mode": "freeze_last_frame",
+    "start_s": 1.531,
+    "end_s": 3.531,
+    "duration_s": 2.0
+   },
+   "source_clip": "clips_local/G6-27__wan.mp4",
+   "source_prompt_id": "G6-26",
+   "axis": "G6",
+   "model": "Wan2.1-T2V-1.3B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_028.mp4",
+    "frames": "frames/golden_028/"
+   },
+   "verify": {
+    "dur_s": 6.56,
+    "wh": [
+     832,
+     480
+    ],
+    "fps": 25.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_017",
+   "class": "A",
+   "defect_type": "frame_freeze",
+   "expected_defect": "frame_freeze",
+   "probable": false,
+   "inject_pos": {
+    "mode": "freeze_last_frame",
+    "start_s": 1.531,
+    "end_s": 3.531,
+    "duration_s": 2.0
+   },
+   "source_clip": "clips_local/G6-29__wan.mp4",
+   "source_prompt_id": "G6-29",
+   "axis": "G6",
+   "model": "Wan2.1-T2V-1.3B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_017.mp4",
+    "frames": "frames/golden_017/"
+   },
+   "verify": {
+    "dur_s": 6.56,
+    "wh": [
+     832,
+     480
+    ],
+    "fps": 25.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_030",
+   "class": "A",
+   "defect_type": "flicker",
+   "expected_defect": "flicker",
+   "probable": false,
+   "inject_pos": {
+    "mode": "per_frame_exposure_alternation",
+    "start_s": 1.521,
+    "end_s": 3.521,
+    "delta_brightness": 0.09,
+    "sat_alt": [
+     1.35,
+     0.7
+    ]
+   },
+   "source_clip": "clips_local/G6-27__ltx.mp4",
+   "source_prompt_id": "G6-27",
+   "axis": "G6",
+   "model": "LTX-Video-2B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_030.mp4",
+    "frames": "frames/golden_030/"
+   },
+   "verify": {
+    "dur_s": 5.042,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_004",
+   "class": "A",
+   "defect_type": "flicker",
+   "expected_defect": "flicker",
+   "probable": false,
+   "inject_pos": {
+    "mode": "per_frame_exposure_alternation",
+    "start_s": 1.521,
+    "end_s": 3.521,
+    "delta_brightness": 0.09,
+    "sat_alt": [
+     1.35,
+     0.7
+    ]
+   },
+   "source_clip": "clips_local/G3-15__ltx.mp4",
+   "source_prompt_id": "G3-15",
+   "axis": "G3",
+   "model": "LTX-Video-2B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_004.mp4",
+    "frames": "frames/golden_004/"
+   },
+   "verify": {
+    "dur_s": 5.042,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_018",
+   "class": "A",
+   "defect_type": "color_shift",
+   "expected_defect": "color_shift",
+   "probable": false,
+   "inject_pos": {
+    "mode": "hue_rotation",
+    "hue_deg": 130,
+    "sat_mult": 1.6,
+    "start_s": 1.531,
+    "end_s": 3.531
+   },
+   "source_clip": "clips_local/G4-19__wan.mp4",
+   "source_prompt_id": "G4-19",
+   "axis": "G4",
+   "model": "Wan2.1-T2V-1.3B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_018.mp4",
+    "frames": "frames/golden_018/"
+   },
+   "verify": {
+    "dur_s": 5.062,
+    "wh": [
+     832,
+     480
+    ],
+    "fps": 16.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_016",
+   "class": "A",
+   "defect_type": "color_shift",
+   "expected_defect": "color_shift",
+   "probable": false,
+   "inject_pos": {
+    "mode": "hue_rotation",
+    "hue_deg": 130,
+    "sat_mult": 1.6,
+    "start_s": 1.521,
+    "end_s": 3.521
+   },
+   "source_clip": "clips_local/G1-03__ltx.mp4",
+   "source_prompt_id": "G1-03",
+   "axis": "G1",
+   "model": "LTX-Video-2B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_016.mp4",
+    "frames": "frames/golden_016/"
+   },
+   "verify": {
+    "dur_s": 5.042,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_014",
+   "class": "A",
+   "defect_type": "face_blur",
+   "expected_defect": "face_blur",
+   "probable": false,
+   "inject_pos": {
+    "mode": "region_boxblur",
+    "box_px": [
+     154,
+     24,
+     394,
+     296
+    ],
+    "box_norm": [
+     0.22,
+     0.05,
+     0.56,
+     0.62
+    ],
+    "start_s": 1.521,
+    "end_s": 3.521
+   },
+   "source_clip": "clips_local/G7-33__ltx.mp4",
+   "source_prompt_id": "G7-33",
+   "axis": "G7",
+   "model": "LTX-Video-2B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_014.mp4",
+    "frames": "frames/golden_014/"
+   },
+   "verify": {
+    "dur_s": 5.042,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_015",
+   "class": "A",
+   "defect_type": "face_blur",
+   "expected_defect": "face_blur",
+   "probable": false,
+   "inject_pos": {
+    "mode": "region_boxblur",
+    "box_px": [
+     183,
+     24,
+     464,
+     296
+    ],
+    "box_norm": [
+     0.22,
+     0.05,
+     0.56,
+     0.62
+    ],
+    "start_s": 1.531,
+    "end_s": 3.531
+   },
+   "source_clip": "clips_local/G9-40__wan.mp4",
+   "source_prompt_id": "G9-40",
+   "axis": "G9",
+   "model": "Wan2.1-T2V-1.3B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_015.mp4",
+    "frames": "frames/golden_015/"
+   },
+   "verify": {
+    "dur_s": 5.062,
+    "wh": [
+     832,
+     480
+    ],
+    "fps": 16.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_002",
+   "class": "A",
+   "defect_type": "garble_text",
+   "expected_defect": "garble_text",
+   "probable": false,
+   "inject_pos": {
+    "mode": "overlay_garble_text_block_png",
+    "lines": [
+     "yMBeabypd5bkVqZ_T+e@Nf",
+     "sF33uVA_<k2=PZ95B&q8iP"
+    ],
+    "png": "refs/golden_002_garble_overlay.png",
+    "png_wh": [
+     715,
+     119
+    ],
+    "overlay_y_px": 288,
+    "font": "/usr/share/fonts/google-noto-vf/NotoSans-VF.ttf",
+    "start_s": 1.531,
+    "end_s": 3.531
+   },
+   "source_clip": "clips_local/G6-25__wan.mp4",
+   "source_prompt_id": "G6-25",
+   "axis": "G6",
+   "model": "Wan2.1-T2V-1.3B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_002.mp4",
+    "frames": "frames/golden_002/"
+   },
+   "verify": {
+    "dur_s": 5.062,
+    "wh": [
+     832,
+     480
+    ],
+    "fps": 16.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_036",
+   "class": "A",
+   "defect_type": "garble_text",
+   "expected_defect": "garble_text",
+   "probable": false,
+   "inject_pos": {
+    "mode": "overlay_garble_text_block_png",
+    "lines": [
+     "+M9pNx_ttDAvrj86vYt@Df",
+     "6B@br<pYaf9b/r6@7HH<nv"
+    ],
+    "png": "refs/golden_036_garble_overlay.png",
+    "png_wh": [
+     605,
+     119
+    ],
+    "overlay_y_px": 288,
+    "font": "/usr/share/fonts/google-noto-vf/NotoSans-VF.ttf",
+    "start_s": 1.521,
+    "end_s": 3.521
+   },
+   "source_clip": "clips_local/G8-34__ltx.mp4",
+   "source_prompt_id": "G8-34",
+   "axis": "G8",
+   "model": "LTX-Video-2B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_036.mp4",
+    "frames": "frames/golden_036/"
+   },
+   "verify": {
+    "dur_s": 5.042,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_003",
+   "class": "A",
+   "defect_type": "temporal_swap",
+   "expected_defect": "temporal_swap",
+   "probable": false,
+   "inject_pos": {
+    "mode": "swap_two_1s_segments",
+    "segment_A_s": [
+     1.521,
+     2.521
+    ],
+    "segment_B_s": [
+     2.521,
+     3.521
+    ],
+    "note": "A 放到 B 后：播放顺序变为 pre,B,A,post"
+   },
+   "source_clip": "clips_local/G6-28__ltx.mp4",
+   "source_prompt_id": "G6-28",
+   "axis": "G6",
+   "model": "LTX-Video-2B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_003.mp4",
+    "frames": "frames/golden_003/"
+   },
+   "verify": {
+    "dur_s": 5.0,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 25.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_008",
+   "class": "A",
+   "defect_type": "temporal_swap",
+   "expected_defect": "temporal_swap",
+   "probable": false,
+   "inject_pos": {
+    "mode": "swap_two_1s_segments",
+    "segment_A_s": [
+     1.531,
+     2.531
+    ],
+    "segment_B_s": [
+     2.531,
+     3.531
+    ],
+    "note": "A 放到 B 后：播放顺序变为 pre,B,A,post"
+   },
+   "source_clip": "clips_local/G8-36__wan.mp4",
+   "source_prompt_id": "G8-36",
+   "axis": "G8",
+   "model": "Wan2.1-T2V-1.3B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_008.mp4",
+    "frames": "frames/golden_008/"
+   },
+   "verify": {
+    "dur_s": 5.04,
+    "wh": [
+     832,
+     480
+    ],
+    "fps": 25.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_012",
+   "class": "A",
+   "defect_type": "pixelate",
+   "expected_defect": "pixelate",
+   "probable": false,
+   "inject_pos": {
+    "mode": "center_pixelate",
+    "box_px": [
+     278,
+     160,
+     276,
+     160
+    ],
+    "downscale": 12,
+    "start_s": 1.531,
+    "end_s": 3.531
+   },
+   "source_clip": "clips_local/G1-03__wan.mp4",
+   "source_prompt_id": "G1-03",
+   "axis": "G1",
+   "model": "Wan2.1-T2V-1.3B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_012.mp4",
+    "frames": "frames/golden_012/"
+   },
+   "verify": {
+    "dur_s": 5.062,
+    "wh": [
+     832,
+     480
+    ],
+    "fps": 16.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_023",
+   "class": "A",
+   "defect_type": "pixelate",
+   "expected_defect": "pixelate",
+   "probable": false,
+   "inject_pos": {
+    "mode": "center_pixelate",
+    "box_px": [
+     235,
+     160,
+     234,
+     160
+    ],
+    "downscale": 12,
+    "start_s": 1.521,
+    "end_s": 3.521
+   },
+   "source_clip": "clips_local/G3-14__ltx.mp4",
+   "source_prompt_id": "G3-14",
+   "axis": "G3",
+   "model": "LTX-Video-2B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_023.mp4",
+    "frames": "frames/golden_023/"
+   },
+   "verify": {
+    "dur_s": 5.042,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_022",
+   "class": "A",
+   "defect_type": "ghosting",
+   "expected_defect": "ghosting",
+   "probable": false,
+   "inject_pos": {
+    "mode": "frame_blend_trail",
+    "blend": "tblend average(相邻帧各50%)",
+    "start_s": 1.521,
+    "end_s": 3.521
+   },
+   "source_clip": "clips_local/G6-29__ltx.mp4",
+   "source_prompt_id": "G6-29",
+   "axis": "G6",
+   "model": "LTX-Video-2B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_022.mp4",
+    "frames": "frames/golden_022/"
+   },
+   "verify": {
+    "dur_s": 5.042,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_034",
+   "class": "A",
+   "defect_type": "ghosting",
+   "expected_defect": "ghosting",
+   "probable": false,
+   "inject_pos": {
+    "mode": "frame_blend_trail",
+    "blend": "tblend average(相邻帧各50%)",
+    "start_s": 1.521,
+    "end_s": 3.521
+   },
+   "source_clip": "clips_local/G8-37__ltx.mp4",
+   "source_prompt_id": "G8-37",
+   "axis": "G8",
+   "model": "LTX-Video-2B",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_034.mp4",
+    "frames": "frames/golden_034/"
+   },
+   "verify": {
+    "dur_s": 5.042,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_029",
+   "class": "B",
+   "defect_type": null,
+   "expected_defect": "hand_anatomy_distortion",
+   "probable": true,
+   "inject_pos": null,
+   "source_clip": "G1-02@MiniMax-H3.mp4",
+   "source_prompt_id": "G1-02",
+   "axis": "G1",
+   "model": "MiniMax-H3",
+   "observed_evidence": "十指交扣呈现多层融合指团，指节无法分离计数",
+   "paths": {
+    "clip": "clips/golden_029.mp4",
+    "frames": "frames/golden_029/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_011",
+   "class": "B",
+   "defect_type": null,
+   "expected_defect": "hand_anatomy_distortion",
+   "probable": true,
+   "inject_pos": null,
+   "source_clip": "G1-04@MiniMax-H3.mp4",
+   "source_prompt_id": "G1-04",
+   "axis": "G1",
+   "model": "MiniMax-H3",
+   "observed_evidence": "扫弦手呈拳状指团，无独立手指分工",
+   "paths": {
+    "clip": "clips/golden_011.mp4",
+    "frames": "frames/golden_011/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_038",
+   "class": "B",
+   "defect_type": null,
+   "expected_defect": "text_render_garble",
+   "probable": true,
+   "inject_pos": null,
+   "source_clip": "G2-07@MiniMax-H3.mp4",
+   "source_prompt_id": "G2-07",
+   "axis": "G2",
+   "model": "MiniMax-H3",
+   "observed_evidence": "报纸副标题为伪汉字、正文小字为伪文字（大标题号外正确）",
+   "paths": {
+    "clip": "clips/golden_038.mp4",
+    "frames": "frames/golden_038/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_005",
+   "class": "B",
+   "defect_type": null,
+   "expected_defect": "text_render_garble",
+   "probable": true,
+   "inject_pos": null,
+   "source_clip": "G2-09@MiniMax-H3.mp4",
+   "source_prompt_id": "G2-09",
+   "axis": "G2",
+   "model": "MiniMax-H3",
+   "observed_evidence": "键盘键位乱字混排，消息气泡字符可疑",
+   "paths": {
+    "clip": "clips/golden_005.mp4",
+    "frames": "frames/golden_005/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_019",
+   "class": "B",
+   "defect_type": null,
+   "expected_defect": "physics_temporal_violation",
+   "probable": true,
+   "inject_pos": null,
+   "source_clip": "G4-20@MiniMax-H3.mp4",
+   "source_prompt_id": "G4-20",
+   "axis": "G4",
+   "model": "MiniMax-H3",
+   "observed_evidence": "骨牌仅约6张（prompt要求20张）且连锁倒下未走完即终止",
+   "paths": {
+    "clip": "clips/golden_019.mp4",
+    "frames": "frames/golden_019/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_021",
+   "class": "B",
+   "defect_type": null,
+   "expected_defect": "hand_anatomy_distortion",
+   "probable": true,
+   "inject_pos": null,
+   "source_clip": "G1-01__ltx.mp4",
+   "source_prompt_id": "G1-01",
+   "axis": "G1",
+   "model": "LTX-Video-2B",
+   "observed_evidence": "掌指末端融合、指缝粘连无法计数",
+   "paths": {
+    "clip": "clips/golden_021.mp4",
+    "frames": "frames/golden_021/"
+   },
+   "verify": {
+    "dur_s": 5.042,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_007",
+   "class": "B",
+   "defect_type": null,
+   "expected_defect": "hand_anatomy_distortion",
+   "probable": true,
+   "inject_pos": null,
+   "source_clip": "G1-01__wan.mp4",
+   "source_prompt_id": "G1-01",
+   "axis": "G1",
+   "model": "Wan2.1-T2V-1.3B",
+   "observed_evidence": "手指断裂/融合并与黑色物体粘连",
+   "paths": {
+    "clip": "clips/golden_007.mp4",
+    "frames": "frames/golden_007/"
+   },
+   "verify": {
+    "dur_s": 5.062,
+    "wh": [
+     832,
+     480
+    ],
+    "fps": 16.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_033",
+   "class": "B",
+   "defect_type": null,
+   "expected_defect": "hand_anatomy_distortion",
+   "probable": true,
+   "inject_pos": null,
+   "source_clip": "G1-02__ltx.mp4",
+   "source_prompt_id": "G1-02",
+   "axis": "G1",
+   "model": "LTX-Video-2B",
+   "observed_evidence": "双手融合为多指团，指结构崩坏",
+   "paths": {
+    "clip": "clips/golden_033.mp4",
+    "frames": "frames/golden_033/"
+   },
+   "verify": {
+    "dur_s": 5.042,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_040",
+   "class": "B",
+   "defect_type": null,
+   "expected_defect": "text_render_garble",
+   "probable": true,
+   "inject_pos": null,
+   "source_clip": "G2-06__wan.mp4",
+   "source_prompt_id": "G2-06",
+   "axis": "G2",
+   "model": "Wan2.1-T2V-1.3B",
+   "observed_evidence": "霓虹灯牌文字为中日英混杂乱码",
+   "paths": {
+    "clip": "clips/golden_040.mp4",
+    "frames": "frames/golden_040/"
+   },
+   "verify": {
+    "dur_s": 5.062,
+    "wh": [
+     832,
+     480
+    ],
+    "fps": 16.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_020",
+   "class": "B",
+   "defect_type": null,
+   "expected_defect": "count_error",
+   "probable": true,
+   "inject_pos": null,
+   "source_clip": "G3-11__ltx.mp4",
+   "source_prompt_id": "G3-11",
+   "axis": "G3",
+   "model": "LTX-Video-2B",
+   "observed_evidence": "苹果8个以上（prompt要求3红2绿共5个）",
+   "paths": {
+    "clip": "clips/golden_020.mp4",
+    "frames": "frames/golden_020/"
+   },
+   "verify": {
+    "dur_s": 5.042,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_031",
+   "class": "B",
+   "defect_type": null,
+   "expected_defect": "count_error",
+   "probable": true,
+   "inject_pos": null,
+   "source_clip": "G3-12__wan.mp4",
+   "source_prompt_id": "G3-12",
+   "axis": "G3",
+   "model": "Wan2.1-T2V-1.3B",
+   "observed_evidence": "数十个蓝色方块瓷砖状排布（prompt要求5只马克杯一排）",
+   "paths": {
+    "clip": "clips/golden_031.mp4",
+    "frames": "frames/golden_031/"
+   },
+   "verify": {
+    "dur_s": 5.062,
+    "wh": [
+     832,
+     480
+    ],
+    "fps": 16.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_035",
+   "class": "B",
+   "defect_type": null,
+   "expected_defect": "physics_temporal_violation",
+   "probable": true,
+   "inject_pos": null,
+   "source_clip": "G4-17__ltx.mp4",
+   "source_prompt_id": "G4-17",
+   "axis": "G4",
+   "model": "LTX-Video-2B",
+   "observed_evidence": "篮球下落过程刚性丧失、形变融化",
+   "paths": {
+    "clip": "clips/golden_035.mp4",
+    "frames": "frames/golden_035/"
+   },
+   "verify": {
+    "dur_s": 5.042,
+    "wh": [
+     704,
+     480
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_026",
+   "class": "C",
+   "defect_type": null,
+   "expected_defect": null,
+   "probable": false,
+   "inject_pos": null,
+   "source_clip": "G5-21@MiniMax-H3.mp4",
+   "source_prompt_id": "G5-21",
+   "axis": "G5",
+   "model": "MiniMax-H3",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_026.mp4",
+    "frames": "frames/golden_026/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_037",
+   "class": "C",
+   "defect_type": null,
+   "expected_defect": null,
+   "probable": false,
+   "inject_pos": null,
+   "source_clip": "G6-25@MiniMax-H3.mp4",
+   "source_prompt_id": "G6-25",
+   "axis": "G6",
+   "model": "MiniMax-H3",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_037.mp4",
+    "frames": "frames/golden_037/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_032",
+   "class": "C",
+   "defect_type": null,
+   "expected_defect": null,
+   "probable": false,
+   "inject_pos": null,
+   "source_clip": "G6-26@MiniMax-H3.mp4",
+   "source_prompt_id": "G6-26",
+   "axis": "G6",
+   "model": "MiniMax-H3",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_032.mp4",
+    "frames": "frames/golden_032/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_001",
+   "class": "C",
+   "defect_type": null,
+   "expected_defect": null,
+   "probable": false,
+   "inject_pos": null,
+   "source_clip": "G7-30@MiniMax-H3.mp4",
+   "source_prompt_id": "G7-30",
+   "axis": "G7",
+   "model": "MiniMax-H3",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_001.mp4",
+    "frames": "frames/golden_001/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_009",
+   "class": "C",
+   "defect_type": null,
+   "expected_defect": null,
+   "probable": false,
+   "inject_pos": null,
+   "source_clip": "G7-31@MiniMax-H3.mp4",
+   "source_prompt_id": "G7-31",
+   "axis": "G7",
+   "model": "MiniMax-H3",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_009.mp4",
+    "frames": "frames/golden_009/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_039",
+   "class": "C",
+   "defect_type": null,
+   "expected_defect": null,
+   "probable": false,
+   "inject_pos": null,
+   "source_clip": "G7-32@MiniMax-H3.mp4",
+   "source_prompt_id": "G7-32",
+   "axis": "G7",
+   "model": "MiniMax-H3",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_039.mp4",
+    "frames": "frames/golden_039/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_006",
+   "class": "C",
+   "defect_type": null,
+   "expected_defect": null,
+   "probable": false,
+   "inject_pos": null,
+   "source_clip": "G7-33@MiniMax-H3.mp4",
+   "source_prompt_id": "G7-33",
+   "axis": "G7",
+   "model": "MiniMax-H3",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_006.mp4",
+    "frames": "frames/golden_006/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_027",
+   "class": "C",
+   "defect_type": null,
+   "expected_defect": null,
+   "probable": false,
+   "inject_pos": null,
+   "source_clip": "G8-35@MiniMax-H3.mp4",
+   "source_prompt_id": "G8-35",
+   "axis": "G8",
+   "model": "MiniMax-H3",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_027.mp4",
+    "frames": "frames/golden_027/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_013",
+   "class": "C",
+   "defect_type": null,
+   "expected_defect": null,
+   "probable": false,
+   "inject_pos": null,
+   "source_clip": "G9-39@MiniMax-H3.mp4",
+   "source_prompt_id": "G9-39",
+   "axis": "G9",
+   "model": "MiniMax-H3",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_013.mp4",
+    "frames": "frames/golden_013/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_025",
+   "class": "C",
+   "defect_type": null,
+   "expected_defect": null,
+   "probable": false,
+   "inject_pos": null,
+   "source_clip": "G2-08@MiniMax-H3.mp4",
+   "source_prompt_id": "G2-08",
+   "axis": "G2",
+   "model": "MiniMax-H3",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_025.mp4",
+    "frames": "frames/golden_025/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_010",
+   "class": "C",
+   "defect_type": null,
+   "expected_defect": null,
+   "probable": false,
+   "inject_pos": null,
+   "source_clip": "G3-13@MiniMax-H3.mp4",
+   "source_prompt_id": "G3-13",
+   "axis": "G3",
+   "model": "MiniMax-H3",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_010.mp4",
+    "frames": "frames/golden_010/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  },
+  {
+   "clip_id": "golden_024",
+   "class": "C",
+   "defect_type": null,
+   "expected_defect": null,
+   "probable": false,
+   "inject_pos": null,
+   "source_clip": "G4-16@MiniMax-H3.mp4",
+   "source_prompt_id": "G4-16",
+   "axis": "G4",
+   "model": "MiniMax-H3",
+   "observed_evidence": null,
+   "paths": {
+    "clip": "clips/golden_024.mp4",
+    "frames": "frames/golden_024/"
+   },
+   "verify": {
+    "dur_s": 5.167,
+    "wh": [
+     768,
+     1344
+    ],
+    "fps": 24.0,
+    "n_frames": 8
+   }
+  }
+ ]
+}

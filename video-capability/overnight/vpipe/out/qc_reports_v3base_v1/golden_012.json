@@ -1,0 +1,184 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_012",
+ "generated_at": "2026-10-01T03:35:20",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "auto_reject",
+  "confidence": 0.95,
+  "decided_by": "E10",
+  "reasons": [
+   "J3 最大通道 P=0.950 ≥ 0.90（高置信区间实测 8/8 全对，基准报告 §5）"
+  ]
+ },
+ "defects": [
+  {
+   "type": "pixelate",
+   "sources": [
+    "J1",
+    "J2",
+    "J5",
+    "J3"
+   ],
+   "confidence": 0.98,
+   "evidence": {
+    "J1": {
+     "notes": "f03-f06玻璃杯上部被大块马赛克像素块覆盖，前后帧清晰，明显像素化注入"
+    },
+    "J2": {
+     "notes": "中帧玻璃杯中心区域出现明显低分辨率像素化斑块，首尾帧同一区域清晰正常，判定像素化缺陷"
+    },
+    "J5": {
+     "notes": "解析=json; 回答={\"defect_types\":[\"pixelate\"],\"other\":false,\"reason\":\"画面中出现马赛克块\"}"
+    },
+    "J3": {
+     "channel_probs": {
+      "frame_freeze": 0.6684,
+      "flicker": 0.265,
+      "color_shift": 0.1364,
+      "face_blur": 0.2259,
+      "garble_text": 0.6189,
+      "temporal_swap": 0.5093,
+      "pixelate": 0.9495,
+      "ghosting": 0.281
+     },
+     "overall": 0.7769
+    }
+   }
+  },
+  {
+   "type": "garble_text",
+   "sources": [
+    "J6"
+   ],
+   "confidence": 0.7779896080493927,
+   "evidence": {
+    "J6": {
+     "kind": "uniform_low_conf",
+     "conf_src": 0.778
+    }
+   },
+   "span": {
+    "start_s": 0.0,
+    "end_s": 5.062
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.6684,
+   "flicker": 0.265,
+   "color_shift": 0.1364,
+   "face_blur": 0.2259,
+   "garble_text": 0.6189,
+   "temporal_swap": 0.5093,
+   "pixelate": 0.9495,
+   "ghosting": 0.281
+  },
+  "overall": 0.7769,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f03-f06（约37.5%-75%时长），f01-f02与f07-f08画面正常",
+    "source": "J1"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "f05（约片中段）：玻璃杯上半部被大块马赛克像素覆盖",
+    "source": "J2"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "text": "full_clip:fps=1.0解码",
+    "source": "J5"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_012",
+   "defect_detected": true,
+   "defect_types": [
+    "pixelate"
+   ],
+   "confidence": 0.95,
+   "spans": "f03-f06（约37.5%-75%时长），f01-f02与f07-f08画面正常",
+   "notes": "f03-f06玻璃杯上部被大块马赛克像素块覆盖，前后帧清晰，明显像素化注入"
+  },
+  "J2": {
+   "clip_id": "golden_012",
+   "defect_detected": true,
+   "defect_types": [
+    "pixelate"
+   ],
+   "confidence": 0.98,
+   "spans": "f05（约片中段）：玻璃杯上半部被大块马赛克像素覆盖",
+   "notes": "中帧玻璃杯中心区域出现明显低分辨率像素化斑块，首尾帧同一区域清晰正常，判定像素化缺陷"
+  },
+  "J5": {
+   "clip_id": "golden_012",
+   "defect_detected": true,
+   "defect_types": [
+    "pixelate"
+   ],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[\"pixelate\"],\"other\":false,\"reason\":\"画面中出现马赛克块\"}"
+  },
+  "J6": {
+   "clip_id": "golden_012",
+   "defect_detected": true,
+   "defect_types": [
+    "garble_text"
+   ],
+   "confidence": 0.778,
+   "spans": [
+    {
+     "type": "garble_text",
+     "start_s": 0.0,
+     "end_s": 5.062,
+     "evidence": {
+      "kind": "uniform_low_conf",
+      "max_mean": 0.448
+     }
+    }
+   ]
+  },
+  "J3": {
+   "clip_id": "golden_012",
+   "defect_detected": true,
+   "defect_types": [
+    "pixelate"
+   ],
+   "confidence": 0.9495,
+   "spans": "16帧4x4拼图 9通道概率（run_metadata.json），阈值 0.70",
+   "notes": "frame_freeze=0.668; flicker=0.265; color_shift=0.136; face_blur=0.226; garble_text=0.619; temporal_swap=0.509; pixelate=0.950; ghosting=0.281; overall=0.777"
+  }
+ },
+ "inputs": {
+  "clip": null,
+  "frames_dir": null,
+  "judge_files": {
+   "J1": "../数据/judges/glm8/golden_012.json",
+   "J2": "../数据/judges/glm3/golden_012.json",
+   "J5": "../数据/judges/videochat3/golden_012.json",
+   "J6": "../数据/judges/detectors/golden_012.json",
+   "J3": "../数据/judges/omnijev/run_metadata.json"
+  }
+ },
+ "errors": {}
+}

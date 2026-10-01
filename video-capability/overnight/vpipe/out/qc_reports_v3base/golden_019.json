@@ -1,0 +1,137 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_019",
+ "generated_at": "2026-10-01T03:34:48",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "manual_review",
+  "confidence": 0.85,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=True, types=['identity_drift', 'count_error'], conf=0.85)",
+   "J3@0.7 flag=False hits=[] max_channel_P=0.5555"
+  ]
+ },
+ "defects": [
+  {
+   "type": "count_error",
+   "sources": [
+    "J1"
+   ],
+   "confidence": 0.85,
+   "evidence": {
+    "J1": {
+     "confidence": 0.85,
+     "notes": "放大比对证实尚未倒下的后排骨牌颜色顺序逐帧突变（f03 G,B,R→f04 G,R,Y→f05 G,R,B→f06 Y,G），静态物体颜色/身份跨帧不一致；倒下运动本身方向一致、链式走完。对照源prompt（G4-20：二十张骨牌）：首张与末张均在片中出现、可见骨牌总数仅约8张，数量严重不足。"
+    }
+   }
+  },
+  {
+   "type": "identity_drift",
+   "sources": [
+    "J1"
+   ],
+   "confidence": 0.85,
+   "evidence": {
+    "J1": {
+     "confidence": 0.85,
+     "notes": "放大比对证实尚未倒下的后排骨牌颜色顺序逐帧突变（f03 G,B,R→f04 G,R,Y→f05 G,R,B→f06 Y,G），静态物体颜色/身份跨帧不一致；倒下运动本身方向一致、链式走完。对照源prompt（G4-20：二十张骨牌）：首张与末张均在片中出现、可见骨牌总数仅约8张，数量严重不足。"
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.5555,
+   "flicker": 0.3557,
+   "color_shift": 0.2391,
+   "face_blur": 0.1385,
+   "garble_text": 0.0389,
+   "temporal_swap": 0.2474,
+   "pixelate": 0.1109,
+   "ghosting": 0.3201
+  },
+  "overall": 0.4169,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "28f192cae0562f89f46a419b768d965aaf1d9298f6678eedfd93d63d2bb06f00"
+  }
+ },
+ "spans": [
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "identity_drift：f03-f06（约1.9s-3.8s）后排未倒骨牌区；count_error：全片"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_019",
+   "defect_detected": true,
+   "defect_types": [
+    "identity_drift",
+    "count_error"
+   ],
+   "confidence": 0.85,
+   "spans": "identity_drift：f03-f06（约1.9s-3.8s）后排未倒骨牌区；count_error：全片",
+   "notes": "放大比对证实尚未倒下的后排骨牌颜色顺序逐帧突变（f03 G,B,R→f04 G,R,Y→f05 G,R,B→f06 Y,G），静态物体颜色/身份跨帧不一致；倒下运动本身方向一致、链式走完。对照源prompt（G4-20：二十张骨牌）：首张与末张均在片中出现、可见骨牌总数仅约8张，数量严重不足。"
+  },
+  "J5": {
+   "clip_id": "golden_019",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中没有出现任何缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_019",
+   "defect_detected": true,
+   "defect_types": [
+    "frame_freeze"
+   ],
+   "confidence": 0.5555,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.555 flicker=0.356 color_shift=0.239 face_blur=0.139 garble_text=0.039 temporal_swap=0.247 pixelate=0.111 ghosting=0.320; overall=0.417; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_019",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.452,
+   "spans": [],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_019.mp4",
+  "frames_dir": "frames/golden_019/",
+  "judge_files": {
+   "J1": "../数据/judges/glm8/golden_019.json",
+   "J5": "../数据/judges/videochat3/golden_019.json",
+   "J3": "../数据/judges/omnijev/run_metadata.json",
+   "J6": "../数据/judges/detectors/raw/golden_019.qc.json"
+  }
+ },
+ "errors": {}
+}

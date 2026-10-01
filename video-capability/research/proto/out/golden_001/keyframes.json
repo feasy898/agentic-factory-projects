@@ -1,0 +1,66 @@
+{
+ "source": "/opt/gpumachine/projects/video-capability/overnight/数据/golden/clips/golden_001.mp4",
+ "probe": {
+  "width": 768,
+  "height": 1344,
+  "fps": 24.0,
+  "nb_frames": 124,
+  "duration": 5.166667
+ },
+ "threshold": 0.08,
+ "keyframe_indices": [
+  0,
+  36,
+  72,
+  108,
+  123
+ ],
+ "keyframe_count": 5,
+ "keyframes": [
+  {
+   "n": 0,
+   "time": 0.0,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_001/frames/kf_001_0.000s.jpg"
+  },
+  {
+   "n": 36,
+   "time": 1.5,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_001/frames/kf_037_1.500s.jpg"
+  },
+  {
+   "n": 72,
+   "time": 3.0,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_001/frames/kf_073_3.000s.jpg"
+  },
+  {
+   "n": 108,
+   "time": 4.5,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_001/frames/kf_109_4.500s.jpg"
+  },
+  {
+   "n": 123,
+   "time": 5.125,
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_001/frames/kf_124_5.125s.jpg"
+  }
+ ],
+ "overviews": [
+  {
+   "path": "/opt/gpumachine/projects/video-capability/research/proto/out/golden_001/overview.jpg",
+   "width": 1600,
+   "height": 2114,
+   "cells": 5
+  }
+ ],
+ "freeze": {
+  "eps": 0.004,
+  "runs": [],
+  "outside_motion": true,
+  "freeze_detected": false,
+  "spans": []
+ },
+ "score_stats": {
+  "max": 0.607721,
+  "median": 0.40337,
+  "p95": 0.566495
+ }
+}

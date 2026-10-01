@@ -1,0 +1,72 @@
+{
+ "source": "/opt/gpumachine/projects/video-capability/overnight/数据/golden/clips/golden_002.mp4",
+ "probe": {
+  "width": 832,
+  "height": 480,
+  "fps": 16.0,
+  "nb_frames": 81,
+  "duration": 5.0625
+ },
+ "threshold": 0.08,
+ "keyframe_indices": [
+  0,
+  5,
+  22,
+  54,
+  74,
+  80
+ ],
+ "keyframe_count": 6,
+ "keyframes": [
+  {
+   "n": 0,
+   "time": 0.0,
+   "path": "out/golden_002/frames/kf_001_0.000s.jpg"
+  },
+  {
+   "n": 5,
+   "time": 0.312,
+   "path": "out/golden_002/frames/kf_006_0.312s.jpg"
+  },
+  {
+   "n": 22,
+   "time": 1.375,
+   "path": "out/golden_002/frames/kf_023_1.375s.jpg"
+  },
+  {
+   "n": 54,
+   "time": 3.375,
+   "path": "out/golden_002/frames/kf_055_3.375s.jpg"
+  },
+  {
+   "n": 74,
+   "time": 4.625,
+   "path": "out/golden_002/frames/kf_075_4.625s.jpg"
+  },
+  {
+   "n": 80,
+   "time": 5.0,
+   "path": "out/golden_002/frames/kf_081_5.000s.jpg"
+  }
+ ],
+ "overviews": [
+  {
+   "path": "out/golden_002/overview.jpg",
+   "width": 1600,
+   "height": 702,
+   "cells": 6
+  }
+ ],
+ "freeze": {
+  "eps": 0.004,
+  "runs": [],
+  "outside_motion": true,
+  "freeze_detected": false,
+  "spans": []
+ },
+ "score_stats": {
+  "max": 0.554779,
+  "median": 0.08413,
+  "p95": 0.170218
+ }
+}

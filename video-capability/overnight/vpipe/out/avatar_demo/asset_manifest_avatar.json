@@ -1,0 +1,58 @@
+{
+ "schema_version": "1.0",
+ "name": "asset_manifest_avatar",
+ "generated_at": "2026-09-30T17:57:06",
+ "generator": "gen_avatar.py@vpipe-g9a-1.0",
+ "items": [
+  {
+   "asset_id": "shot:g9a_intro_60s",
+   "kind": "spec",
+   "path": "D:\\workspace\\video-capability-research\\overnight\\vpipe\\out\\avatar_demo\\shot_g9a_intro_60s.json",
+   "sha256": "242fc90cca8539b5db7acc6ba3690165cc807bea82601aa77ac28f105a9cc05b",
+   "size_bytes": 0,
+   "registered_at": "2026-09-30T17:57:06"
+  },
+  {
+   "asset_id": "gen_meta:g9a_intro_60s",
+   "kind": "gen_meta",
+   "path": "out\\avatar_demo\\g9a_intro_60s__vidu_avatar.gen_meta.json",
+   "sha256": "c63f4c8222a1398efc6c8cd59528f4981262c4bfd367362741ac8d12430eaaac",
+   "size_bytes": 4083,
+   "registered_at": "2026-09-30T17:57:06"
+  },
+  {
+   "asset_id": "audio:g9a_intro_60s",
+   "kind": "audio",
+   "path": "out\\avatar_demo\\g9a_intro_60s.mp3",
+   "sha256": "9e44cec704e9ae0a6945fb7124a475cfba68ac5bc758d01474f862309afbc8a5",
+   "size_bytes": 964902,
+   "registered_at": "2026-09-30T17:57:06",
+   "provenance": {
+    "tts_engine": "stepfun"
+   }
+  },
+  {
+   "asset_id": "g9a_intro_60s@vidu-s1",
+   "kind": "clip",
+   "path": "out\\avatar_demo\\g9a_intro_60s@vidu-s1.mp4",
+   "sha256": "edf440436ca7637927d0db5b746a2af49f377a44e65ce3413f266cfb0cdb7676",
+   "size_bytes": 16551983,
+   "registered_at": "2026-09-30T17:57:06",
+   "provenance": {
+    "module": "gen_avatar.py@vpipe-g9a-1.0",
+    "task_id": "1002818273143713792",
+    "model": "vidus1"
+   },
+   "probe": {
+    "path": "out\\avatar_demo\\g9a_intro_60s@vidu-s1.mp4",
+    "duration_s": 61.0,
+    "vcodec": "h264",
+    "acodec": "aac",
+    "width": 826,
+    "height": 1114,
+    "fps": "24/1",
+    "has_audio": true
+   }
+  }
+ ]
+}

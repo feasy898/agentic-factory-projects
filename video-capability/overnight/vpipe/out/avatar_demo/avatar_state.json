@@ -1,0 +1,36 @@
+{
+ "voice_clones": {
+  "24e5bc3ca2284bff3892162ed83c4feca6727445df58a8c91270e63df2d2ca89": {
+   "voice_id": "voice-tone-UliNvty5Vw",
+   "created_at": "2026-09-30T17:53:15",
+   "file_id": "file-UliNvty5Vw"
+  }
+ },
+ "tasks": [
+  {
+   "shot_id": "g9a_intro_60s",
+   "task_id": "1002818273143713792",
+   "credits": 61,
+   "credits_source": "task_field",
+   "at": "2026-09-30T17:57:06"
+  }
+ ],
+ "spent_credits_total": 61,
+ "credit_cap": 3000,
+ "pools_before": {
+  "endpoint": "/ent/v2/credits",
+  "general": 683,
+  "exclusive": 5000,
+  "probed_at": "2026-09-30T17:53:41"
+ },
+ "pools_after": {
+  "endpoint": "/ent/v2/credits",
+  "general": 622,
+  "exclusive": 5000,
+  "probed_at": "2026-09-30T17:57:06"
+ },
+ "pools_delta": {
+  "general": 61,
+  "exclusive": 0
+ }
+}

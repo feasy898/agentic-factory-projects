@@ -1,0 +1,41 @@
+{
+ "endpoint_host": "100.100.0.6:8080",
+ "model": "glm-plan",
+ "call_count": 2,
+ "results": [
+  {
+   "clip_id": "golden_002",
+   "http": 200,
+   "content": "{\"cells_with_text\": [\"#055\"], \"text_readout\": \"#055: yMBeabypd5bkVqZ_T+e@Nf sF33uVA_<k2=PZ95B&q8iP\", \"garble_detected\": 1, \"defect_types\": [\"乱码文字\"], \"evidence\": \"格#055（3.38s）左下角黑色字幕条内显示一串大小写字母、数字与特殊符号混杂的无意义随机字符\", \"main_issue\": \"第3.38秒画面出现乱码字幕，内容为随机无意义字符组合\"}",
+   "usage": {
+    "completion_tokens": 487,
+    "completion_tokens_details": {
+     "reasoning_tokens": 352
+    },
+    "prompt_tokens": 1705,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    },
+    "total_tokens": 2192
+   },
+   "model": "glm-5.3-flash"
+  },
+  {
+   "clip_id": "golden_001",
+   "http": 200,
+   "content": "{\"cells_with_text\": [\"#001\", \"#037\", \"#073\", \"#109\", \"#124\"], \"text_readout\": \"#001: 画面下方标注 '#001 0.00s'，场景中路牌与店招文字太小/虚化看不清；#037: 画面下方标注 '#037 1.50s'，场景中蓝色路牌文字模糊看不清；#073: 画面下方标注 '#073 3.00s'，场景中店招文字虚化看不清；#109: 画面下方标注 '#109 4.50s'，场景中路牌与店招文字模糊看不清；#124: 画面下方标注 '#124 5.12s'，场景中店招文字虚化看不清\", \"garble_detected\": 0, \"defect_types\": [], \"evidence\": \"五格中仅帧号标注文字（#001 0.00s 等）清晰可读，无乱码；场景内的路牌与店铺招牌均因虚化/距离过远而无法辨认，属模糊而非乱码\", \"main_issue\": \"无\"}",
+   "usage": {
+    "completion_tokens": 623,
+    "completion_tokens_details": {
+     "reasoning_tokens": 376
+    },
+    "prompt_tokens": 4605,
+    "prompt_tokens_details": {
+     "cached_tokens": 0
+    },
+    "total_tokens": 5228
+   },
+   "model": "glm-5.3-flash"
+  }
+ ]
+}

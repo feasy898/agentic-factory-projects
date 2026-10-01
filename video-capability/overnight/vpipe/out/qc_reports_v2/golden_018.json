@@ -1,0 +1,210 @@
+{
+ "schema_version": "1.0",
+ "clip_id": "golden_018",
+ "generated_at": "2026-09-30T03:57:53",
+ "qc_mode": "tonight_replay",
+ "verdict": {
+  "defect_detected": true,
+  "decision": "auto_reject",
+  "confidence": 0.9651,
+  "decided_by": "E10:J1.detected OR J3@0.70 flag",
+  "reasons": [
+   "J1(detected=True, types=['color_shift'], conf=0.98)",
+   "J3@0.7 flag=True hits=['flicker', 'color_shift', 'temporal_swap'] max_channel_P=0.9651",
+   "J6 信号(仅信号不否决): color_shift@1.00, temporal_swap@0.75"
+  ]
+ },
+ "defects": [
+  {
+   "type": "color_shift",
+   "sources": [
+    "J1",
+    "J3",
+    "J6"
+   ],
+   "confidence": 1.0,
+   "span": {
+    "start_s": 0.949,
+    "end_s": 1.582
+   },
+   "evidence": {
+    "J1": {
+     "confidence": 0.98,
+     "notes": "中段4帧整场景色相旋转为薄荷绿（蛋与地毯同时变色），前后帧为正常暖米色；蛋的倾倒动作跨色变前后姿态连续，证明仅颜色被注入突变而非内容跳变。"
+    },
+    "J3": {
+     "channel_P": 0.9651
+    },
+    "J6": {
+     "pair": 1,
+     "hue_delta_deg": 128.5
+    }
+   }
+  },
+  {
+   "type": "flicker",
+   "sources": [
+    "J3"
+   ],
+   "confidence": 0.835,
+   "evidence": {
+    "J3": {
+     "channel_P": 0.835
+    }
+   }
+  },
+  {
+   "type": "temporal_swap",
+   "sources": [
+    "J3",
+    "J6"
+   ],
+   "confidence": 0.7565,
+   "span": {
+    "start_s": 1.062,
+    "end_s": 2.062
+   },
+   "evidence": {
+    "J3": {
+     "channel_P": 0.7565
+    },
+    "J6": {
+     "cut_s": 1.562
+    }
+   }
+  }
+ ],
+ "scores": {
+  "per_type": {
+   "frame_freeze": 0.5995,
+   "flicker": 0.835,
+   "color_shift": 0.9651,
+   "face_blur": 0.0188,
+   "garble_text": 0.0361,
+   "temporal_swap": 0.7565,
+   "pixelate": 0.1308,
+   "ghosting": 0.3426
+  },
+  "overall": 0.5767,
+  "thresholds_applied": {
+   "ensemble_id": "E10",
+   "j3_thr": 0.7,
+   "auto_reject_p": 0.9,
+   "j6_emit_conf": 0.55,
+   "thresholds_sha256": "d39953c05717cdcdeb22b2d586c035538c64c4adf1fb13e671ea4e5a154ae0fd"
+  }
+ },
+ "spans": [
+  {
+   "type": "color_shift",
+   "start_s": 0.949,
+   "end_s": 1.582,
+   "evidence": {
+    "pair": 1,
+    "hue_delta_deg": 128.5
+   }
+  },
+  {
+   "type": "temporal_swap",
+   "start_s": 1.062,
+   "end_s": 2.062,
+   "evidence": {
+    "cut_s": 1.562
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J1",
+    "text": "f03-f06（约1.9s-3.8s，中段）；f01-f02与f07-f08正常"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J3",
+    "text": "full_clip:16帧均匀采样4x4拼图"
+   }
+  },
+  {
+   "type": "note",
+   "evidence": {
+    "judge": "J5",
+    "text": "full_clip:fps=1.0解码"
+   }
+  }
+ ],
+ "judges": {
+  "J1": {
+   "clip_id": "golden_018",
+   "defect_detected": true,
+   "defect_types": [
+    "color_shift"
+   ],
+   "confidence": 0.98,
+   "spans": "f03-f06（约1.9s-3.8s，中段）；f01-f02与f07-f08正常",
+   "notes": "中段4帧整场景色相旋转为薄荷绿（蛋与地毯同时变色），前后帧为正常暖米色；蛋的倾倒动作跨色变前后姿态连续，证明仅颜色被注入突变而非内容跳变。"
+  },
+  "J5": {
+   "clip_id": "golden_018",
+   "defect_detected": false,
+   "defect_types": [],
+   "confidence": 0.8,
+   "spans": "full_clip:fps=1.0解码",
+   "notes": "解析=json; 回答={\"defect_types\":[],\"other\":false,\"reason\":\"画面中鸡蛋移动过程流畅，无定格、闪烁、偏色、模糊、乱码、时序错乱、像素化或拖影等缺陷\"}"
+  },
+  "J3": {
+   "clip_id": "golden_018",
+   "defect_detected": true,
+   "defect_types": [
+    "frame_freeze",
+    "flicker",
+    "color_shift",
+    "temporal_swap"
+   ],
+   "confidence": 0.9651,
+   "spans": "full_clip:16帧均匀采样4x4拼图",
+   "notes": "noul概率 frame_freeze=0.600 flicker=0.835 color_shift=0.965 face_blur=0.019 garble_text=0.036 temporal_swap=0.756 pixelate=0.131 ghosting=0.343; overall=0.577; 阈值0.5; 16帧4x4时间戳拼图整体判定"
+  },
+  "J6": {
+   "clip_id": "golden_018",
+   "defect_detected": true,
+   "defect_types": [
+    "color_shift",
+    "temporal_swap"
+   ],
+   "confidence": 1.0,
+   "spans": [
+    {
+     "type": "color_shift",
+     "start_s": 0.949,
+     "end_s": 1.582,
+     "evidence": {
+      "pair": 1,
+      "hue_delta_deg": 128.5
+     }
+    },
+    {
+     "type": "temporal_swap",
+     "start_s": 1.062,
+     "end_s": 2.062,
+     "evidence": {
+      "cut_s": 1.562
+     }
+    }
+   ],
+   "notes": "qc_orch_v2 规则引擎重建（阈值=eval/thresholds.yaml emit@0.55）"
+  }
+ },
+ "inputs": {
+  "clip": "clips/golden_018.mp4",
+  "frames_dir": "frames/golden_018/",
+  "judge_files": {
+   "J1": "..\\数据\\judges\\glm8\\golden_018.json",
+   "J5": "..\\数据\\judges\\videochat3\\golden_018.json",
+   "J3": "..\\数据\\judges\\omnijev\\run_metadata.json",
+   "J6": "..\\数据\\judges\\detectors\\raw\\golden_018.qc.json"
+  }
+ },
+ "errors": {}
+}

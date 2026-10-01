@@ -1,0 +1,37 @@
+{
+  "schema_version": "2.0",
+  "shot_id": "g9a_intro_60s",
+  "axis": "G9",
+  "duration_s": 60,
+  "aspect": "9:16",
+  "prompt": "（登记位：avatar 通道不消费 prompt，画面=参考图+音频驱动）数字人口播：林夏正面半身播报，口型随语音，自然手势",
+  "characters": [
+    {
+      "char_id": "charA",
+      "desc": "25岁亚洲女性「林夏」，齐肩黑色直发，红色连衣裙，气质温和，单人定妆照",
+      "ref_image": "..\\..\\..\\数据\\references\\charA_linxia_red_dress.png"
+    }
+  ],
+  "audio": {
+    "generate": true,
+    "speech": "大家好，我是这条AI视频流水线的数字人主播。接下来用一分钟，讲清楚这套系统的全貌。整条流水线分为五层。最上面是意图层，用统一的描述语言，说清楚每个镜头到底要什么。往下是编排层，把意图编译成可执行的镜头规格。再往下是生成层，本地开源模型负责快速出草稿，云端大模型负责精修终稿，而口播镜头由数字人通道生成，先合成语音，再用语音驱动口型出片。生成之后进入质检层，八类缺陷规则加多判官合议，时序问题用程序化检测兜底，不达标就打回重做。最后，所有成片按内容哈希登记入册，积分成本按秒记账。你正在看的这条视频，就出自这条流水线。"
+  },
+  "tts": {
+    "engine": "stepfun",
+    "model": "stepaudio-2.5-tts",
+    "voice": "cixingnansheng",
+    "clone_audio": "..\\..\\..\\数据\\digital_human\\tts_design.wav",
+    "clone_text": "大家好，我是林夏。今天带你看看一条 AI 视频是怎么诞生的：从一句话脚本，到画面、配音，再到自动质检。机器负责效率，人负责品味。",
+    "instruction": "语速适中，口播风格，清晰亲和"
+  },
+  "avatar": {
+    "resolution": "720p",
+    "watermark": false,
+    "timeline": null
+  },
+  "notes": "G9a 口播专线演示：克隆音色取自既有 Design 温柔女声产物（避免 StepFun 默认男声×女性角色性别错配教训，数字人实验报告 §5.4）；克隆转写=digital_human/line.txt 原文",
+  "engine_hint": {
+    "preferred": "api",
+    "model": "vidu-s1-avatar"
+  }
+}

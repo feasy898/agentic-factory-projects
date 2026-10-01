@@ -1,0 +1,31 @@
+{
+ "schema_version": "1.0",
+ "shot_id": "shot_av_0001",
+ "axis": "G9",
+ "duration_s": 8,
+ "aspect": "9:16",
+ "resolution": "480P",
+ "seed": 42,
+ "characters": [
+  {
+   "char_id": "avatar_host_01",
+   "desc": "30 岁左右女性主播，米色针织衫，暖光棚拍背景",
+   "ref_image": "avatar_assets/host_a_portrait.png"
+  }
+ ],
+ "camera": {
+  "movement": "static",
+  "description": "胸上景口播机位，固定"
+ },
+ "audio": {
+  "generate": true,
+  "speech": "三步教你挑到不踩坑的入门相机，第三点最容易被忽略。",
+  "music": "轻快节奏的合成器流行乐，低音量垫底"
+ },
+ "prompt": "镜头：static，胸上景口播机位，固定\n主体：30 岁左右女性主播，米色针织衫，暖光棚拍背景\n语义：口播数字人：真口型随台词，躯干稳定，仅头部微动与自然眨眼\n运镜说明：胸上景口播机位，固定\n氛围音乐：轻快节奏的合成器流行乐，低音量垫底",
+ "engine_hint": {
+  "preferred": "api",
+  "model": "Vidu-avatar-offline"
+ },
+ "notes": "vdl2:axis_v2=G9a | vdl2:prompt_hash=79c3fefad16bfb65a94580e933f85c6e928bf2b3cdd9d4ad3de0376a49ff47ee | vdl2:intents=i-lm-avatar-0001@1.0.0,i-au-avatar-0001@1.0.0"
+}

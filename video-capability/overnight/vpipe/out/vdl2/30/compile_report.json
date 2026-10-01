@@ -1,0 +1,36 @@
+{
+ "package": "examples\\vdl2\\30_programmatic_loop.yaml",
+ "compiled_at": "2026-09-30T18:07:47",
+ "compiler": "vdl2_compile.py@vpipe2.0-dev",
+ "ok": true,
+ "errors": [],
+ "warnings": [
+  "shots[0](shot_loop_0001): duration_s=8>6 且 d3_split_declared=false（D3-1 单段只承载一个意图峰值，草案 R3 警告级）"
+ ],
+ "conflicts": [],
+ "outputs": {
+  "execution_plan": "execution_plan.json",
+  "shots_v1": [
+   "shots_v1/shot_loop_0001.json"
+  ],
+  "acceptance_records": [
+   "acceptance_records/acc-loop-motion-0001__shot_loop_0001.json",
+   "acceptance_records/acc-overlay-verbatim-0001__shot_loop_0001.json"
+  ],
+  "slots": "slots.json",
+  "n_v1_shots": 1,
+  "n_acceptance_records": 2
+ },
+ "stats": {
+  "n_slots": 4,
+  "n_shots": 1,
+  "n_acceptance_records": 2
+ },
+ "validation": {
+  "ok": true,
+  "gate_a_errors": 0,
+  "gate_b_errors": 0,
+  "total_errors": 0,
+  "warnings": 1
+ }
+}
