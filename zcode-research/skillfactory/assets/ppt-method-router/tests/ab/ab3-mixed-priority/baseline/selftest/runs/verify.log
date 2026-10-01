@@ -1,0 +1,14 @@
+[PASS] stdout 恰为一行 | 行数=1
+[PASS] stdout 可解析为 JSON | keys=['confidence', 'method', 'reasons']
+[PASS] 退出码为 0 | EXIT_CODE=0
+[PASS] method == template_fill（与参照一致） | method='template_fill'
+[PASS] confidence 为 0..1 数值 | confidence=0.65
+[PASS] confidence ≤ 0.75（冲突压低） | confidence=0.65
+[PASS] 低于同类别无冲突清晰情形(0.85) | conflict=0.65 < clear=0.85
+[PASS] 与参照置信度 0.65 一致 | confidence=0.65
+[PASS] reasons 非空 | len=6
+[PASS] 披露 template_fill 命中「品牌」 | ['命中 template_fill 信号关键词: 品牌、品牌部']
+[PASS] 披露 visual_report 命中「海报」「一页」 | ['命中 visual_report 信号关键词: 海报、一页']
+[PASS] 说明优先级 template_fill > editable_pptx > visual_report | ['检测到多类信号冲突（template_fill 与 visual_report 同时命中），按优先级表 template_fill > editable_pptx > visual_report 裁定为 template_fill']
+[PASS] 含冲突提示或人工复核建议 | ['检测到多类信号冲突（template_fill 与 visual_report 同时命中），按优先级表 template_fill > editable_pptx > visual_report 裁定为 template_fill', '冲突已压低置信度至 0.65（同类别无冲突的清晰情形为 0.85）']
+TOTAL=13 FAILED=0

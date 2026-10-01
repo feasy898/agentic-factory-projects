@@ -1,0 +1,33 @@
+{
+  "slug": "lark-cli",
+  "name": "larksuite/cli（飞书官方 CLI + 26 个 agent skills）",
+  "tasks": 3,
+  "baselineMean": 7.666666666666667,
+  "treatmentMean": 9,
+  "delta": 1.3333333333333333,
+  "winRate": 1,
+  "accepted": true,
+  "verdicts": [
+    {
+      "task": "lark-cli-t1",
+      "baseline": 8,
+      "treatment": 9,
+      "winner": "treatment",
+      "note": "读取了两份产物全文与 ASSET-DOC.md（rubric 指定语法准绳），并实际抓取 larksuite/cli 官"
+    },
+    {
+      "task": "lark-cli-t2",
+      "baseline": 8,
+      "treatment": 9,
+      "winner": "treatment",
+      "note": "读取两份产物全文，并实际核实语法：抓取官方 lark-base SKILL.md 与 lark-base-field-s"
+    },
+    {
+      "task": "lark-cli-t3",
+      "baseline": 7,
+      "treatment": 9,
+      "winner": "treatment",
+      "note": "读取两份产物全文，实际抓取官方 skills/lark-drive/SKILL.md 与 references/lark"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v5/assets/hotwords/eval",
+  "candidate": "C:/Users/ADMINI~1/AppData/Local/Temp/1/hw-cases/empty",
+  "reference": "skillfactory/v5/assets/hotwords/oracle/out",
+  "candidate_resolved": null,
+  "candidate_resolved_via": "none",
+  "reference_resolved": "D:\\workspace\\zcode研究\\skillfactory\\v5\\assets\\hotwords\\oracle\\out",
+  "reference_resolved_via": "direct",
+  "self_eval": false,
+  "ok": false,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 0,
+      "failed": 4
+    },
+    "steps": {
+      "total": 10,
+      "ok": 0
+    },
+    "files": {
+      "files_universe": null,
+      "files_matched": null,
+      "files_mismatched": null,
+      "files_missing": null,
+      "files_extra": null
+    },
+    "consistency_rate": null
+  },
+  "checks": [
+    {
+      "name": "script_sequence_consistent",
+      "passed": false,
+      "detail": "前置失败：被测产物根未解析出 out/manifest.json（已尝试 C:/Users/ADMINI~1/AppData/Local/Temp/1/hw-cases/empty/manifest.json 与 C:/Users/ADMINI~1/AppData/Local/Temp/1/hw-cases/empty/out/manifest.json）",
+      "candidate_resolved_via": "none",
+      "steps_total": 10,
+      "steps_ok": 0
+    },
+    {
+      "name": "duplicate_add_rejected",
+      "passed": false,
+      "detail": "前置失败：被测产物根未解析（见第 1 项）",
+      "fail_steps": []
+    },
+    {
+      "name": "funasr_export_format",
+      "passed": false,
+      "detail": "前置失败：被测产物根未解析（见第 1 项）",
+      "funasr_lines_ok": false
+    },
+    {
+      "name": "consistency_with_reference_100",
+      "passed": false,
+      "detail": "前置失败：被测产物根未解析（见第 1 项）",
+      "consistency_rate": null
+    }
+  ]
+}

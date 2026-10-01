@@ -1,0 +1,33 @@
+{
+  "slug": "redbook-creator",
+  "name": "redbook-creator（小红书创作助手 skill）",
+  "tasks": 3,
+  "baselineMean": 9,
+  "treatmentMean": 9.333333333333334,
+  "delta": 0.3333333333333333,
+  "winRate": 0.6666666666666666,
+  "accepted": false,
+  "verdicts": [
+    {
+      "task": "redbook-creator-t1",
+      "baseline": 8,
+      "treatment": 9,
+      "winner": "treatment",
+      "note": "实测核对（python 统计字符/汉字/emoji/标签）：甲正文 373 字符/316 汉字、乙 397 字符/339"
+    },
+    {
+      "task": "redbook-creator-t2",
+      "baseline": 9,
+      "treatment": 10,
+      "winner": "treatment",
+      "note": "双方硬约束经我独立运行 python 校验全部通过：甲 8 种/乙 9 种模式（≥3）；前 4 汉字两两不同（甲：一杯咖"
+    },
+    {
+      "task": "redbook-creator-t3",
+      "baseline": 10,
+      "treatment": 9,
+      "winner": "baseline",
+      "note": "实测校验（python）：六条回复汉字数甲 45/49/49、乙 57/60/59，均 ≤80"
+    }
+  ]
+}

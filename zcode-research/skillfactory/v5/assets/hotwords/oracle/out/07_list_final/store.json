@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "words": [
+    {
+      "word": "悟空客服",
+      "category": "产品",
+      "note": "智能客服机器人",
+      "weight": 20
+    },
+    {
+      "word": "灵犀引擎",
+      "category": "产品",
+      "note": "自研推理引擎",
+      "weight": 25
+    },
+    {
+      "word": "七天无理由退换",
+      "category": "售后",
+      "note": "售后服务承诺",
+      "weight": 20
+    },
+    {
+      "word": "618大促",
+      "category": "营销",
+      "note": "年中大促活动名",
+      "weight": 30
+    },
+    {
+      "word": "会员积分翻倍",
+      "category": "营销",
+      "note": "大促期间权益",
+      "weight": 20
+    },
+    {
+      "word": "灵犀大模型",
+      "category": "产品",
+      "note": "公司旗舰大模型",
+      "weight": 20
+    },
+    {
+      "word": "通义听悟",
+      "category": "产品",
+      "note": "转写工具",
+      "weight": 30
+    }
+  ]
+}

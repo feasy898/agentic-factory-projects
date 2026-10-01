@@ -1,0 +1,46 @@
+{
+  "recordedAt": "2026-09-28T11:45:17.353Z",
+  "recordRaw": false,
+  "command": "offpeak-messages",
+  "dryRun": false,
+  "request": {
+    "method": "POST",
+    "url": "https://zcode.z.ai/api/v1/off-peak/anthropic/v1/messages",
+    "headers": {
+      "User-Agent": "ZCode/3.14.3",
+      "HTTP-Referer": "https://zcode.z.ai",
+      "X-Title": "Z Code@electron",
+      "X-ZCode-App-Version": "3.14.3",
+      "X-Platform": "win32-x64",
+      "X-Os-Category": "windows",
+      "X-Client-Language": "unknown",
+      "X-Client-Timezone": "Asia/Shanghai",
+      "x-request-id": "9d5aaa5f-3a66-4b7b-bc93-bbcec2668610",
+      "authorization": "Bearer eyJh…(211 chars, masked)",
+      "x-coding-plan-api-key": "a61b678a8d5…(49 chars, masked)",
+      "content-type": "application/json",
+      "x-off-peak-ticket-id": "2104537561773121536",
+      "anthropic-version": "2023-06-01"
+    },
+    "body": {
+      "model": "GLM-5.3-Flash",
+      "max_tokens": 64,
+      "stream": false,
+      "messages": [
+        {
+          "role": "user",
+          "content": "用一句话回答：1+1等于几？"
+        }
+      ]
+    }
+  },
+  "response": {
+    "status": 400,
+    "requestId": "2026092811451727d7782335f541fa2541",
+    "body": {
+      "code": 3001,
+      "msg": "parameter error",
+      "logid": "2026092811451727d7782335f541fa2541"
+    }
+  }
+}

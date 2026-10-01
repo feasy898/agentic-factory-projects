@@ -1,0 +1,12 @@
+normal m_full rc=0
+normal m_partial rc=0
+normal m_empty rc=0
+partial m_full rc=0
+partial m_partial rc=0
+partial m_empty rc=0
+empty m_full rc=0
+empty m_partial rc=0
+empty m_empty rc=0
+discover normal rc=0
+discover partial rc=0
+discover empty rc=0

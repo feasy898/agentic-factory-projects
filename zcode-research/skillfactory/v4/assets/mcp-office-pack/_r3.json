@@ -1,0 +1,32 @@
+{
+  "ok": false,
+  "tested": "D:\\workspace\\zcode研究\\skillfactory\\_tmp_rev7_empty",
+  "reference": "D:\\workspace\\zcode研究\\skillfactory\\v4\\assets\\mcp-office-pack\\oracle",
+  "checks": [
+    {
+      "name": "package_validate_all_green",
+      "pass": false,
+      "detail": "D:\\workspace\\zcode研究\\skillfactory\\_tmp_rev7_empty\\validate.py 不在盘（contract §1 必备）"
+    },
+    {
+      "name": "config_json_valid",
+      "pass": false,
+      "detail": "D:\\workspace\\zcode研究\\skillfactory\\_tmp_rev7_empty/mcp.office.json: 配置不在盘: D:\\workspace\\zcode研究\\skillfactory\\_tmp_rev7_empty\\mcp.office.json"
+    },
+    {
+      "name": "scenario_coverage_matrix",
+      "pass": false,
+      "detail": "配置不可解析，无法计算槽位"
+    },
+    {
+      "name": "docs_one_to_one",
+      "pass": false,
+      "detail": "配置不可解析，无法核对对应关系"
+    },
+    {
+      "name": "coverage_equivalent_to_reference",
+      "pass": false,
+      "detail": "被测缺参照槽位: ['Excel', 'PPT', 'Word', '搜索', '文件', '浏览器']"
+    }
+  ]
+}

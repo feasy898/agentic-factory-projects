@@ -1,0 +1,61 @@
+{
+  "tool": "validate.py",
+  "asset": "skillfactory/v3/assets/prompt-regression/package",
+  "golden": "skillfactory\\v3\\assets\\prompt-regression\\package\\golden.json",
+  "generated_at": "2026-09-30T08:45:36",
+  "ok": true,
+  "summary": {
+    "validator_checks": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0
+    },
+    "items": 25,
+    "domains": {
+      "doc-writing": 6,
+      "table-data": 5,
+      "meeting-minutes": 3,
+      "ppt-outline": 3,
+      "email-comm": 4,
+      "process-spec": 4
+    },
+    "checks_in_golden": 125
+  },
+  "checks": [
+    {
+      "name": "load_json",
+      "passed": true,
+      "detail": "已加载（UTF-8 JSON 解析成功，items=25）"
+    },
+    {
+      "name": "schema_top",
+      "passed": true,
+      "detail": "顶层结构合法（version='1.0.0-package'，items=25 题，顶层键 ['description', 'items', 'version'] 均在允许集合内）"
+    },
+    {
+      "name": "schema_items",
+      "passed": true,
+      "detail": "25 题键集恰为 ['checks', 'domain', 'id', 'instruction']，id 正则/六域枚举/instruction 非空/checks 数组全部合法"
+    },
+    {
+      "name": "ids_unique",
+      "passed": true,
+      "detail": "25 个 id 全局唯一（且均匹配 ID 正则的前提已在 schema_items 校验）"
+    },
+    {
+      "name": "domain_coverage",
+      "passed": true,
+      "detail": "域配比: 文档写作=6/6、表格数据=5/5、会议纪要=3/3、PPT要点=3/3、邮件沟通=4/4、流程规范=4/4，共 25 题（与 spec R4 配比一致）"
+    },
+    {
+      "name": "instruction_quality",
+      "passed": true,
+      "detail": "25 题 instruction 长度均在 [80, 2000] 且含材料标记"
+    },
+    {
+      "name": "checks_shape",
+      "passed": true,
+      "detail": "25 题共 125 条 check：数量 3-5、name 合法且题内唯一、desc 1-300 字、type 枚举/缺省 semantic、contains/regex value 非空、regex 可编译，全部合法"
+    }
+  ]
+}

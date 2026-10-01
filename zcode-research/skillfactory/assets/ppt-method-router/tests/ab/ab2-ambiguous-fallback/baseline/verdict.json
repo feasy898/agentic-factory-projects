@@ -1,0 +1,68 @@
+{
+  "case": "case11",
+  "command": "python package/scripts/route.py --input oracle/inputs/case11.txt",
+  "cwd": "skillfactory/assets/ppt-method-router",
+  "stdout": "{\"method\": \"editable_pptx\", \"confidence\": 0.4, \"reasons\": [\"未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个\", \"按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行\"]}\r\n",
+  "stderr": "",
+  "exit_code": 0,
+  "reference_from_task_brief": {
+    "method": "editable_pptx",
+    "confidence": 0.4
+  },
+  "checks": {
+    "rerun_exit_code_0": true,
+    "rerun_bytes_identical_to_first_run": true,
+    "stdout_single_line": true,
+    "stdout_ends_with_single_trailing_newline": true,
+    "stdout_parses_as_json": true,
+    "keys_exactly_method_confidence_reasons": true,
+    "stderr_empty": true,
+    "method_matches_reference_editable_pptx": true,
+    "method_in_contract_enum": true,
+    "confidence_numeric_not_bool": true,
+    "confidence_in_0_1": true,
+    "confidence_low_le_0_6": true,
+    "confidence_equals_reference_0_4": true,
+    "reasons_nonempty_array": true,
+    "reasons_state_no_keyword_hit_or_no_signal": true,
+    "reasons_state_fallback_default": true,
+    "reasons_no_fabricated_hit_claim": true
+  },
+  "detail": {
+    "rerun": {
+      "cmd": "python package/scripts/route.py --input oracle/inputs/case11.txt",
+      "exit_code": 0,
+      "stdout_bytes": 404,
+      "encoding": "utf-8",
+      "bytes_identical": true
+    },
+    "positive_hit_occurrences": [],
+    "mentions_input_plain_words": {
+      "产品介绍": false,
+      "团队情况": false,
+      "产品": false,
+      "团队": false
+    },
+    "case": "case11",
+    "command": "python package/scripts/route.py --input oracle/inputs/case11.txt",
+    "cwd": "skillfactory/assets/ppt-method-router",
+    "stdout_raw": "{\"method\": \"editable_pptx\", \"confidence\": 0.4, \"reasons\": [\"未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个\", \"按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行\"]}\r\n",
+    "stdout_bytes": 404,
+    "stdout_encoding": "utf-8",
+    "stderr_text": "",
+    "exit_code_first_run": 0,
+    "parsed": {
+      "method": "editable_pptx",
+      "confidence": 0.4,
+      "reasons": [
+        "未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个",
+        "按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行"
+      ]
+    },
+    "reference_from_task_brief": {
+      "method": "editable_pptx",
+      "confidence": 0.4
+    }
+  },
+  "overall": "PASS"
+}

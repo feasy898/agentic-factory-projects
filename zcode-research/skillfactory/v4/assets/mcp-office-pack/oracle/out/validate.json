@@ -1,0 +1,62 @@
+{
+  "oracle": "mcp-office-pack",
+  "generated_at": "2026-09-30T14:53:47+0800",
+  "config": "D:\\workspace\\zcode研究\\skillfactory\\v4\\assets\\mcp-office-pack\\oracle\\mcp.office.json",
+  "checks": [
+    {
+      "id": "json_valid",
+      "name": "JSON 合法",
+      "pass": true,
+      "detail": "JSON 合法，mcpServers 共 10 条",
+      "problems": []
+    },
+    {
+      "id": "fields_complete",
+      "name": "每条字段齐全",
+      "pass": true,
+      "detail": "10 条全部含必备字段",
+      "problems": []
+    },
+    {
+      "id": "names_unique",
+      "name": "name 唯一且合规",
+      "pass": true,
+      "detail": "10 个 name 无重复且符合 ^[a-z][a-z0-9-]$",
+      "problems": []
+    },
+    {
+      "id": "no_real_secrets",
+      "name": "密钥占位符未被真值替换（正则）",
+      "pass": true,
+      "detail": "11 条密钥正则扫描配置全文与全部 env 值，零命中",
+      "problems": []
+    },
+    {
+      "id": "placeholders_intact",
+      "name": "secret_env 占位符形态完好",
+      "pass": true,
+      "detail": "全部 secret_env 变量保持 ${VAR} 占位形态",
+      "problems": []
+    },
+    {
+      "id": "docs_exist",
+      "name": "每个 name 有 docs/ 手册且必备小节齐全",
+      "pass": true,
+      "detail": "docs/ 共 10 份，与配置一一对应",
+      "problems": []
+    },
+    {
+      "id": "artifacts_exist",
+      "name": "产物在盘（配置/docs/out 可写）",
+      "pass": true,
+      "detail": "mcp.office.json、docs/、out/ 均在盘且可写",
+      "problems": []
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "all_green": true
+  }
+}

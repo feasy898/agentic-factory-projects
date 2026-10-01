@@ -1,0 +1,27 @@
+{
+  "ok": false,
+  "tested": "tests\\ab\\ab5-determinism-layout-selfeval\\arm-a\\rep2\\_work\\emptydir",
+  "reference": "oracle\\out",
+  "checks": [
+    {
+      "name": "units_found",
+      "pass": false,
+      "detail": "被测根 tests\\ab\\ab5-determinism-layout-selfeval\\arm-a\\rep2\\_work\\emptydir：缺单元 ['周报/case1', '周报/case2', '请示函/case1', '请示函/case2', '会议通知/case1', '会议通知/case2', '工作总结/case1', '工作总结/case2']；多余产物单元 无（期望恰 8 个）"
+    },
+    {
+      "name": "products_exact",
+      "pass": true,
+      "detail": "每个单元目录恰含 文书.docx + fields.json"
+    },
+    {
+      "name": "reference_dir_has_units",
+      "pass": true,
+      "detail": "参照根 oracle\\out 含 8/8 个产物单元"
+    },
+    {
+      "name": "field_fill_agreement_ge_90pct",
+      "pass": false,
+      "detail": "字段填充一致率 0.0%（0/66，阈值 90%）；不一致: 周报/case1/部门; 周报/case1/填报人; 周报/case1/周期; 周报/case1/本周工作内容; 周报/case1/下周工作计划; 周报/case1/问题与需协调事项; 周报/case1/报送日期; 周报/case2/部门; 周报/case2/填报人; 周报/case2/周期…"
+    }
+  ]
+}

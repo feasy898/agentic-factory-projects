@@ -1,0 +1,150 @@
+
+########## 请示函 case2 fields.json 对照 ##########
+深度 diff 差异数（全量）=2；剔除 $.outputs.* 后=0
+  $.outputs.docx: DIFF "A='package\\\\out\\\\请示函\\\\case2\\\\文书.docx' B='oracle\\\\out\\\\请示函\\\\case2\\\\文书.docx'"
+  $.outputs.fields_json: DIFF "A='package\\\\out\\\\请示函\\\\case2\\\\fields.json' B='oracle\\\\out\\\\请示函\\\\case2\\\\fields.json'"
+-- PKG 台账逐字段 --
+  顶层键: ['fields', 'filled_fields', 'missing_fields', 'outputs', 'summary', 'template', 'title']
+  summary 键: ['filled', 'missing', 'missing_required', 'missing_required_names', 'total', 'unknown_keys']
+  summary: total=8 filled=4 missing=4 missing_required=2 names=['主送机关', '请示事项'] unknown=[]
+  title='关于延期举办季度评审会的请示'
+  filled_fields=['请示事由', '请示缘由', '请示单位', '联系人']
+  missing_fields=['主送机关', '请示事项', '联系电话', '成文日期']
+    - 请示事由: required=True kind=text status=filled value='延期举办季度评审会'
+    - 主送机关: required=True kind=text status=missing value=None rendered_as='以____占位'
+    - 请示缘由: required=True kind=text status=filled value='因关键评审人出差，原定会议时间无法保证评审质量。'
+    - 请示事项: required=True kind=text status=missing value=None rendered_as='以____占位'
+    - 请示单位: required=True kind=text status=filled value='评测技术部'
+    - 联系人: required=False kind=text status=filled value='李工'
+    - 联系电话: required=False kind=text status=missing value=None rendered_as='留空（渲染为空字符串）'
+    - 成文日期: required=False kind=text status=missing value=None rendered_as='留空（渲染为空字符串）'
+  计数自洽: filled+missing==total → True; missing_required_names==缺失且必填序列 → True
+-- ORC 台账逐字段 --
+  summary: total=8 filled=4 missing=4 missing_required=2 names=['主送机关', '请示事项'] unknown=[]
+    - 请示事由: required=True kind=text status=filled value='延期举办季度评审会'
+    - 主送机关: required=True kind=text status=missing value=None rendered_as='以____占位'
+    - 请示缘由: required=True kind=text status=filled value='因关键评审人出差，原定会议时间无法保证评审质量。'
+    - 请示事项: required=True kind=text status=missing value=None rendered_as='以____占位'
+    - 请示单位: required=True kind=text status=filled value='评测技术部'
+    - 联系人: required=False kind=text status=filled value='李工'
+    - 联系电话: required=False kind=text status=missing value=None rendered_as='留空（渲染为空字符串）'
+    - 成文日期: required=False kind=text status=missing value=None rendered_as='留空（渲染为空字符串）'
+
+########## 会议通知 case2 fields.json 对照 ##########
+深度 diff 差异数（全量）=2；剔除 $.outputs.* 后=0
+  $.outputs.docx: DIFF "A='package\\\\out\\\\会议通知\\\\case2\\\\文书.docx' B='oracle\\\\out\\\\会议通知\\\\case2\\\\文书.docx'"
+  $.outputs.fields_json: DIFF "A='package\\\\out\\\\会议通知\\\\case2\\\\fields.json' B='oracle\\\\out\\\\会议通知\\\\case2\\\\fields.json'"
+-- PKG 台账逐字段 --
+  顶层键: ['fields', 'filled_fields', 'missing_fields', 'outputs', 'summary', 'template', 'title']
+  summary 键: ['filled', 'missing', 'missing_required', 'missing_required_names', 'total', 'unknown_keys']
+  summary: total=11 filled=5 missing=6 missing_required=2 names=['会议名称', '会议地点'] unknown=['备注']
+  title='关于召开____的通知'
+  filled_fields=['召开单位', '主送对象', '会议时间', '参会人员', '发文日期']
+  missing_fields=['会议名称', '会议地点', '会议议题', '会议要求', '联系人', '联系电话']
+    - 会议名称: required=True kind=text status=missing value=None rendered_as='以____占位'
+    - 召开单位: required=True kind=text status=filled value='评测技术部'
+    - 主送对象: required=True kind=text status=filled value='各部门'
+    - 会议时间: required=True kind=text status=filled value='2026年10月16日（周五）10:00'
+    - 会议地点: required=True kind=text status=missing value=None rendered_as='以____占位'
+    - 参会人员: required=True kind=text status=filled value='全体评测组成员'
+    - 会议议题: required=False kind=text status=missing value=None rendered_as='留空（渲染为空字符串）'
+    - 会议要求: required=False kind=list status=missing value=None rendered_as='省略该条目/小节'
+    - 联系人: required=False kind=text status=missing value=None rendered_as='留空（渲染为空字符串）'
+    - 联系电话: required=False kind=text status=missing value=None rendered_as='留空（渲染为空字符串）'
+    - 发文日期: required=False kind=text status=filled value='2026年9月30日'
+  计数自洽: filled+missing==total → True; missing_required_names==缺失且必填序列 → True
+-- ORC 台账逐字段 --
+  summary: total=11 filled=5 missing=6 missing_required=2 names=['会议名称', '会议地点'] unknown=['备注']
+    - 会议名称: required=True kind=text status=missing value=None rendered_as='以____占位'
+    - 召开单位: required=True kind=text status=filled value='评测技术部'
+    - 主送对象: required=True kind=text status=filled value='各部门'
+    - 会议时间: required=True kind=text status=filled value='2026年10月16日（周五）10:00'
+    - 会议地点: required=True kind=text status=missing value=None rendered_as='以____占位'
+    - 参会人员: required=True kind=text status=filled value='全体评测组成员'
+    - 会议议题: required=False kind=text status=missing value=None rendered_as='留空（渲染为空字符串）'
+    - 会议要求: required=False kind=list status=missing value=None rendered_as='省略该条目/小节'
+    - 联系人: required=False kind=text status=missing value=None rendered_as='留空（渲染为空字符串）'
+    - 联系电话: required=False kind=text status=missing value=None rendered_as='留空（渲染为空字符串）'
+    - 发文日期: required=False kind=text status=filled value='2026年9月30日'
+
+########## 请示函 case2 文书.docx 渲染对照 ##########
+段落数 A(PKG)=7 B(ORC)=9
+  P00 [SAME]
+     A: '关于延期举办季度评审会的请示' align=center flc=None fl=None font=黑体/44
+  P01 [SAME]
+     A: '____：' align=None flc=None fl=None font=仿宋/32
+  P02 [SAME]
+     A: '因关键评审人出差，原定会议时间无法保证评审质量。' align=None flc=200 fl=None font=仿宋/32
+  P03 [DIFF]
+     A: '____' align=None flc=200 fl=None font=仿宋/32
+     B: '现就有关事项请示如下：' align=None flc=200 fl=640 font=仿宋/32
+  P04 [DIFF]
+     A: '联系人：李工\u3000\u3000联系电话：' align=None flc=200 fl=None font=仿宋/32
+     B: '____' align=None flc=200 fl=640 font=仿宋/32
+  P05 [DIFF]
+     A: '评测技术部' align=right flc=None fl=None font=仿宋/32
+     B: '妥否，请批示。' align=None flc=200 fl=640 font=仿宋/32
+  P06 [DIFF]
+     A: '' align=right flc=None fl=None font=None/None
+     B: '联系人：李工\u3000\u3000联系电话：' align=None flc=200 fl=640 font=仿宋/32
+  P07 [DIFF]
+     A: <缺失>
+     B: '评测技术部' align=right flc=None fl=None font=仿宋/32
+  P08 [DIFF]
+     A: <缺失>
+     B: '' align=right flc=None fl=None font=仿宋/32
+-- 针脚检索（全文）--
+  '____：': in-A=True in-B=True
+  '____': in-A=True in-B=True
+  '联系人：李工': in-A=True in-B=True
+  '联系电话：': in-A=True in-B=True
+  '评测技术部': in-A=True in-B=True
+  数字探针（输入无任何数字→文书出现任何数字即编造）: A=[] B=[]
+  A 末个非空段: '评测技术部' align=right (倒数第二非空段='联系人：李工\u3000\u3000联系电话：' align=None)
+  B 末个非空段: '评测技术部' align=right (倒数第二非空段='联系人：李工\u3000\u3000联系电话：' align=None)
+
+########## 会议通知 case2 文书.docx 渲染对照 ##########
+段落数 A(PKG)=9 B(ORC)=9
+  P00 [SAME]
+     A: '关于召开____的通知' align=center flc=None fl=None font=黑体/44
+  P01 [SAME]
+     A: '各部门：' align=None flc=None fl=None font=仿宋/32
+  P02 [DIFF]
+     A: '会议时间：2026年10月16日（周五）10:00' align=None flc=200 fl=None font=仿宋/32
+     B: '经研究，决定召开____。现将有关事项通知如下：' align=None flc=200 fl=640 font=仿宋/32
+  P03 [DIFF]
+     A: '会议地点：____' align=None flc=200 fl=None font=仿宋/32
+     B: '一、会议时间：2026年10月16日（周五）10:00' align=None flc=200 fl=640 font=仿宋/32
+  P04 [DIFF]
+     A: '参会人员：全体评测组成员' align=None flc=200 fl=None font=仿宋/32
+     B: '二、会议地点：____' align=None flc=200 fl=640 font=仿宋/32
+  P05 [DIFF]
+     A: '会议议题：' align=None flc=200 fl=None font=仿宋/32
+     B: '三、参会人员：全体评测组成员' align=None flc=200 fl=640 font=仿宋/32
+  P06 [DIFF]
+     A: '联系人：\u3000\u3000联系电话：' align=None flc=200 fl=None font=仿宋/32
+     B: '特此通知。' align=None flc=200 fl=640 font=仿宋/32
+  P07 [SAME]
+     A: '评测技术部' align=right flc=None fl=None font=仿宋/32
+  P08 [SAME]
+     A: '2026年9月30日' align=right flc=None fl=None font=仿宋/32
+-- 针脚检索（全文）--
+  '关于召开____的通知': in-A=True in-B=True
+  '会议地点：____': in-A=True in-B=True
+  '各部门：': in-A=True in-B=True
+  '一、会议要求': in-A=False in-B=False
+  '会议议题：': in-A=True in-B=False
+  '联系人：': in-A=True in-B=False
+  '联系电话：': in-A=True in-B=False
+  '评测技术部': in-A=True in-B=True
+  '2026年9月30日': in-A=True in-B=True
+  '此键不在模板字段内': in-A=False in-B=False
+  '特此通知': in-A=False in-B=True
+  A 末个非空段: '2026年9月30日' align=right (倒数第二非空段='评测技术部' align=right)
+  B 末个非空段: '2026年9月30日' align=right (倒数第二非空段='评测技术部' align=right)
+
+########## 确定性核验（fresh vs 运行前快照）##########
+  PKG 请示函: fields.json 逐字节相同=True; docx zip 内容不同的 entry=无
+  PKG 会议通知: fields.json 逐字节相同=True; docx zip 内容不同的 entry=无
+  ORC 请示函: fields.json 逐字节相同=False; docx zip 内容不同的 entry=无
+  ORC 会议通知: fields.json 逐字节相同=False; docx zip 内容不同的 entry=无

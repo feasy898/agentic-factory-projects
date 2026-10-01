@@ -1,0 +1,73 @@
+==============================================================================
+[A(被测 gen_doc.py)] G1-模板名非法
+  CMD : C:\Program Files\Python312\python.exe package/scripts/gen_doc.py --template 证书 --data oracle/inputs/周报/case1.json --outdir tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/a/g1/out
+  RC  : 2
+  OUT : (空)
+  ERR : usage: gen_doc.py [-h] --template {周报,请示函,会议通知,工作总结} --data DATA --outdir  … 共3行
+  残留: outdir存在=False 父目录存在=False 树新增=无 traceback=False
+==============================================================================
+[A(被测 gen_doc.py)] G2-data文件不存在
+  CMD : C:\Program Files\Python312\python.exe package/scripts/gen_doc.py --template 周报 --data tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/inputs/ghost_404.json --outdir tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/a/g2/out
+  RC  : 2
+  OUT : (空)
+  ERR : 错误：数据文件不存在：tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/inputs/ghost_404.json
+  残留: outdir存在=False 父目录存在=False 树新增=无 traceback=False
+==============================================================================
+[A(被测 gen_doc.py)] G3-非JSON
+  CMD : C:\Program Files\Python312\python.exe package/scripts/gen_doc.py --template 周报 --data tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/inputs/not-json.json --outdir tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/a/g3/out
+  RC  : 2
+  OUT : (空)
+  ERR : 错误：数据文件不是合法 JSON：tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/inputs/not-json.json（Expecting value: line 1 column 1 (char 0)）
+  残留: outdir存在=False 父目录存在=False 树新增=无 traceback=False
+==============================================================================
+[A(被测 gen_doc.py)] G4-顶层数组
+  CMD : C:\Program Files\Python312\python.exe package/scripts/gen_doc.py --template 周报 --data tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/inputs/array-top.json --outdir tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/a/g4/out
+  RC  : 2
+  OUT : (空)
+  ERR : 错误：数据 JSON 顶层必须是对象（键值对），实际为 list
+  残留: outdir存在=False 父目录存在=False 树新增=无 traceback=False
+==============================================================================
+[A(被测 gen_doc.py)] G0-合法对照
+  CMD : C:\Program Files\Python312\python.exe package/scripts/gen_doc.py --template 周报 --data oracle/inputs/周报/case1.json --outdir tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/a/control/周报/case1
+  RC  : 0
+  OUT : 已生成：tests\ab\ab4-invalid-input-rejection\arm-b\rep1\_work\a\control\周报\case1\文书.docx（模板=周报，标题=研发部工作周报，字段 filled/total=7/7，必填缺失=无，模板外键=无）
+  ERR : (空)
+  残留: outdir存在=True 父目录存在=True 树新增=['control', 'control/周报', 'control/周报/case1', 'control/周报/case1/fields.json', 'control/周报/case1/文书.docx'] traceback=False
+==============================================================================
+[B(参照 oracle.py)] G1-模板名非法
+  CMD : C:\Program Files\Python312\python.exe oracle/oracle.py --template 证书 --data oracle/inputs/周报/case1.json --outdir tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/b/g1/out
+  RC  : 2
+  OUT : (空)
+  ERR : usage: oracle.py [-h] --template {周报,请示函,会议通知,工作总结} --data DATA --outdir  … 共3行
+  残留: outdir存在=False 父目录存在=False 树新增=无 traceback=False
+==============================================================================
+[B(参照 oracle.py)] G2-data文件不存在
+  CMD : C:\Program Files\Python312\python.exe oracle/oracle.py --template 周报 --data tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/inputs/ghost_404.json --outdir tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/b/g2/out
+  RC  : 2
+  OUT : (空)
+  ERR : [oracle] 数据文件不存在: tests\ab\ab4-invalid-input-rejection\arm-b\rep1\_work\inputs\ghost_404.json
+  残留: outdir存在=False 父目录存在=False 树新增=无 traceback=False
+==============================================================================
+[B(参照 oracle.py)] G3-非JSON
+  CMD : C:\Program Files\Python312\python.exe oracle/oracle.py --template 周报 --data tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/inputs/not-json.json --outdir tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/b/g3/out
+  RC  : 2
+  OUT : (空)
+  ERR : [oracle] JSON 解析失败: Expecting value: line 1 column 1 (char 0)
+  残留: outdir存在=False 父目录存在=False 树新增=无 traceback=False
+==============================================================================
+[B(参照 oracle.py)] G4-顶层数组
+  CMD : C:\Program Files\Python312\python.exe oracle/oracle.py --template 周报 --data tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/inputs/array-top.json --outdir tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/b/g4/out
+  RC  : 2
+  OUT : (空)
+  ERR : [oracle] 数据必须是 JSON 对象（键值对）
+  残留: outdir存在=False 父目录存在=False 树新增=无 traceback=False
+==============================================================================
+[B(参照 oracle.py)] G0-合法对照
+  CMD : C:\Program Files\Python312\python.exe oracle/oracle.py --template 周报 --data oracle/inputs/周报/case1.json --outdir tests/ab/ab4-invalid-input-rejection/arm-b/rep1/_work/b/control/周报/case1
+  RC  : 0
+  OUT : OK template=周报 docx=tests\ab\ab4-invalid-input-rejection\arm-b\rep1\_work\b\control\周报\case1\文书.docx fields=tests\ab\ab4-invalid-input-rejection\arm-b\rep1\_work\b\control\周报\case1\fields.json filled=7 missing=0 missing_required=0
+  ERR : (空)
+  残留: outdir存在=True 父目录存在=True 树新增=['control', 'control/周报', 'control/周报/case1', 'control/周报/case1/fields.json', 'control/周报/case1/文书.docx'] traceback=False
+==============================================================================
+ghost 文件仍未被创建: True
+共享状态零改动: {'package/out': True, 'oracle/out': True}

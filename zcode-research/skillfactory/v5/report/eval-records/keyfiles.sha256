@@ -1,0 +1,21 @@
+# keyfiles.sha256 — R2 刷新版（worker-B 2026-10-01）
+# 对应提交：文件态 = 2015999(+0f6ed6c) 之后工作区；旧版台账 = skillfactory/v5/eval-round-20261001/keyfiles.sha256（b7f88fe 提交，2015999 迭代前态）
+1c145f3cb6d7c4ea15bb0189b0d9e04201889e64b7b32cc11b61f7901fb2120c  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/spec.md
+2d6d8249ca137915ce0a4dd218b9eba308c79dd171420da7c942aaf5d3dfff1c  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/contract.md
+c9d1f45b8774e0176ed66b14d558e2e0851277137f5567d41781bfd255ee29c7  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/eval/runner.py
+aad52fddca61f60e1e6ac71174f796d2f7206decca860f6b5ae03868f664089d  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/package/SKILL.md
+18186243c8dcc0486f9de9cf666172a521ab1e0b6ccc8919f30c0a93811e1f24  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/package/hotwords.py
+c99307372993aa930d75191bac2b0544e48e996f1557face819c524b68c07cdf  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/package/run_all.py
+adc9b47400d37b2b7df87888291db491b73839f293c33447f587766cf985a340  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/speaker-mapping/spec.md
+acd0600523987d80b2f0d43db0f6b3dfaeb835ba18ea46d32b9cb50578f1c92e  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/speaker-mapping/contract.md
+e4a2ca240e6765338992047bc1e9283fd250eb9d103a299746ab24c4e5ee662a  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/speaker-mapping/eval/runner.py
+2c5d78ad0ddf253fe7517fee7f3000bf1b63852bf67dac7bde720debfd8e638b  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/speaker-mapping/package/SKILL.md
+f6c7974996a6dbfc8921de737a0d2d629ab07a04f08e802b8cfaa7d7e4013d30  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/speaker-mapping/package/map_speakers.py
+f99a9a6933241cbb29d4ee45d95b409a7df4959e57b96af7a461c0d9a7905b99  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/spec.md
+d54b86613029c2923f2fbeca9b390b118b4df37234b1fd45216b334d42a01a9c  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/contract.md
+5b666278f47610ad404b477c29541e9458b072db2b1a12d65cf13a3e905dabbd  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/eval/runner.py
+20272e91a4c27ee5a34a2133d5fad100aef4cc842cd5286e912c0490482bb7ed  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/package/SKILL.md
+22da16974c299d4f07a319db9f7a2fd2263be9784732e19a3c0ec710e69cef8a  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/package/gen_deploy.py
+29d28545ec63e61ee483171f37e087ffc6c55f835bcc9e3efede5e2088565106  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/package/validate.py
+d51ca37e73b97db8bf7cf43c8fcc479086fda0ae6d4a5ea5e5d0c51c99b0d389  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle/gen_deploy.py
+5ee1568c840147d8814b723247b5f7cf03cd71ac107963dbd0649acb4ddc6b2c  /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle/validate.py

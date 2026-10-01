@@ -1,0 +1,54 @@
+# mcp.list — OFFICE-KIT 推荐 MCP 选件（从 skillfactory/v2/CATALOG.md 目录内选，全部注明出处与状态）
+
+> 选件原则（KIT-SPEC §2.3）：读写分离、写类默认 ask、归档仓如实标注、**本 kit 冒烟任务（转写→纪要→周报）为纯文本进出，不实装任何 MCP**——以下为办公域扩展场景（表格/长文档/邮件/协同）的预选清单。
+> 出处缩写：CATALOG = `skillfactory/v2/CATALOG.md`；ASSET-DOC = `skillfactory/v2/evalbench/<slug>/ASSET-DOC.md`。
+
+## T1 首选：办公文档三件套（Excel / Word / PPT）
+
+### 1. excel-mcp-server（haris-musa）——台账与表格读写
+- **目录出处**：CATALOG.md:146（A4.3）；本地整理稿 `v2/evalbench/excel-mcp-server/ASSET-DOC.md`（2026-09-29 抓取）
+- **推荐理由**：26 工具覆盖读写/格式/图表/汇总表；**安全设计是选它的决定性理由**——`--allow-dir` 目录沙箱、公式白名单（拒 WEBSERVICE/CALL 等危险函数）、只读模式、不静默覆盖、单元格内容按数据不按指令（防注入），与本 kit「工具与沙箱」红线同构
+- **挂载**：`uvx excel-mcp-server stdio --allow-dir <工作簿目录>`（只读场景加 `--read-only`）
+- **状态注记**：4.2k★ 活跃（changelog 2026-09-28）；我方盲评 Δ=+0.67/胜率 0.67，**未达复合线，中期信号**（LEADERBOARD.md #5，文档增益口径）
+
+### 2. Office-Word-MCP-Server——长文档/公文读写
+- **目录出处**：CATALOG.md:148（A4.3）
+- **推荐理由**：功能面最全的 Word MCP（标题段落表格图片/查找替换/批注提取/转 PDF），python-docx 系与本 kit 纪要 docx 产物同栈
+- **挂载**：uvx 按其 README 配置
+- **状态注记**：**仓库 2026-03-03 已归档（只读）**，uvx 仍可装——归档件用于装前须自评安全面，不指望更新
+
+### 3. Office-PowerPoint-MCP-Server——汇报 PPT 生成
+- **目录出处**：CATALOG.md:149（A4.3）
+- **推荐理由**：32+ 工具（幻灯片/文本/表格图表/模板），与 skills.manifest 的 ppt-method-router/monthly-report-ppt 组成「路由→生成」链
+- **状态注记**：同作者同日归档（2026-03-03），处置同上
+
+## T2 数据入口：文档解析与中文协同
+
+### 4. markitdown-mcp（Microsoft MarkItDown）——万物转 Markdown 读入
+- **目录出处**：CATALOG.md:334（B1.2）
+- **推荐理由**：docx/pptx/xlsx/PDF/邮件 → Markdown，是「先读旧文档再加工」场景的最省事前置管道；微软官方、MIT
+- **挂载**：`markitdown-mcp`（仅读，天然只读）
+
+### 5. larksuite/cli + 26 个飞书 agent skills——中文办公协同
+- **目录出处**：CATALOG.md:339（B1.3）；ASSET-DOC `v2/evalbench/lark-cli/`
+- **推荐理由**：飞书官方 CLI（200+ 命令/2500+ API），文档/审批/日历/表格/消息全通；默认输入注入防护 + OS 密钥链存凭据；**我方盲评唯一 accepted 项（Δ=+1.33，3/3 胜，中期信号）**（LEADERBOARD.md #1）
+- **挂载**：`npx @larksuite/cli@latest install` + `npx skills add larksuite/cli -y -g`；需飞书应用凭证
+- **适用**：团队在飞书生态时必选；不在则跳过
+
+## T3 网关层：外发自动化（必须配 hooks 护栏后可用）
+
+### 6. google_workspace_mcp——Gmail/Docs/Sheets/Slides 一体
+- **目录出处**：CATALOG.md:150（A4.3）
+- **推荐理由**：一个 server 打通邮件+在线文档（Gmail 15+/Docs 19+/Sheets 14+/Slides 7 工具），OAuth 2.1 PKCE
+- **红线联动**：任何发送类工具必须设 ask + 装载 `hooks.sample.json` 的外发确认类 hook；AGENTS.md 边界条款「未经确认不外发」适用
+
+### 7. Zapier MCP / Composio——SaaS 外发网关（按需，默认不装）
+- **目录出处**：CATALOG.md:163-164（A4.5）
+- **推荐理由**：9000+/1500+ SaaS 的托管执行层，「凭证不进模型 + 权限分级 + 操作审计」是治理课程级设计
+- **红线联动**：同上；且外发动作一律先出草稿待用户确认（AGENTS.md §五）
+
+## 明确不装（本轮决策记录）
+
+- **modelcontextprotocol/servers 官方参考集**：教学定位非生产（CATALOG.md:135），不进生产力 kit；
+- **Google 官方 Gmail MCP**：Developer Preview、无发送能力（CATALOG.md:151），与 T3 需求不匹配；
+- **冒烟任务零 MCP**：转写→纪要→周报为纯文本进出，内置文件读写 + meeting-minutes 脚本已闭环，装 MCP 只增攻击面（KIT-SPEC §2.3 决策规则原文适用）。

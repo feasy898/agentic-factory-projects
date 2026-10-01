@@ -1,0 +1,133 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v4/assets/office-eval-suite/eval",
+  "candidate": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\oes_red_fx_ogv93l_v/t3-copy",
+  "reference": ".",
+  "candidate_layout": "root",
+  "resolved_via": "direct",
+  "reference_resolved_via": "direct",
+  "self_eval": false,
+  "sampled_ids": [],
+  "ok": false,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 3,
+      "failed": 1
+    },
+    "items": 50,
+    "domains": {
+      "doc-writing": 8,
+      "table-data": 6,
+      "meeting-minutes": 6,
+      "ppt-outline": 5,
+      "email-comm": 7,
+      "process-spec": 6,
+      "info-extraction": 6,
+      "rewrite-polish": 6
+    },
+    "checks_in_suite": 230,
+    "identical_vs_reference": 50,
+    "exported_items_v1": 25
+  },
+  "checks": [
+    {
+      "name": "validate_all_green",
+      "passed": true,
+      "detail": "被测校验器全绿：9/9 项通过，items=50，checks_in_suite=230",
+      "candidate_layout": "root",
+      "resolved_via": "direct"
+    },
+    {
+      "name": "ratio_difficulty_per_spec",
+      "passed": true,
+      "detail": "域配比: 文档写作=8/8、表格数据=6/6、会议纪要=6/6、PPT要点=5/5、邮件沟通=7/7、流程规范=6/6、信息抽取=6/6、改写润色=6/6，共 50 题；难度: 文档写作 易2/中5/难1；表格数据 易1/中4/难1；会议纪要 易1/中4/难1；PPT要点 易1/中3/难1；邮件沟通 易2/中4/难1；流程规范 易1/中4/难1；信息抽取 易1/中4/难1；改写润色 易1/中4/难1（八域精确配比 + 难度分布与 spec 一致）",
+      "domains": {
+        "doc-writing": 8,
+        "table-data": 6,
+        "meeting-minutes": 6,
+        "ppt-outline": 5,
+        "email-comm": 7,
+        "process-spec": 6,
+        "info-extraction": 6,
+        "rewrite-polish": 6
+      }
+    },
+    {
+      "name": "no_dup_vs_reference",
+      "passed": false,
+      "detail": "与参照套件完全相同题 50 > 上限 10（['dw-01', 'dw-02', 'dw-03', 'dw-04', 'dw-05', 'dw-06', 'dw-07', 'dw-08', 'td-01', 'td-02', 'td-03', 'td-04', 'td-05', 'td-06', 'mm-01', 'mm-02', 'mm-03', 'mm-04', 'mm-05', 'mm-06', 'po-01', 'po-02', 'po-03', 'po-04', 'po-05', 'ec-01', 'ec-02', 'ec-03', 'ec-04', 'ec-05', 'ec-06', 'ec-07', 'ps-01', 'ps-02', 'ps-03', 'ps-04', 'ps-05', 'ps-06', 'ie-01', 'ie-02', 'ie-03', 'ie-04', 'ie-05', 'ie-06', 'rp-01', 'rp-02', 'rp-03', 'rp-04', 'rp-05', 'rp-06']）；相似度审计 max=1.0000 mean=1.0000",
+      "self_eval": false,
+      "reference_resolved_via": "direct",
+      "identical_vs_reference": 50,
+      "identical_ids": [
+        "dw-01",
+        "dw-02",
+        "dw-03",
+        "dw-04",
+        "dw-05",
+        "dw-06",
+        "dw-07",
+        "dw-08",
+        "td-01",
+        "td-02",
+        "td-03",
+        "td-04",
+        "td-05",
+        "td-06",
+        "mm-01",
+        "mm-02",
+        "mm-03",
+        "mm-04",
+        "mm-05",
+        "mm-06",
+        "po-01",
+        "po-02",
+        "po-03",
+        "po-04",
+        "po-05",
+        "ec-01",
+        "ec-02",
+        "ec-03",
+        "ec-04",
+        "ec-05",
+        "ec-06",
+        "ec-07",
+        "ps-01",
+        "ps-02",
+        "ps-03",
+        "ps-04",
+        "ps-05",
+        "ps-06",
+        "ie-01",
+        "ie-02",
+        "ie-03",
+        "ie-04",
+        "ie-05",
+        "ie-06",
+        "rp-01",
+        "rp-02",
+        "rp-03",
+        "rp-04",
+        "rp-05",
+        "rp-06"
+      ],
+      "max_similarity_vs_reference": 1.0,
+      "mean_similarity_vs_reference": 1.0
+    },
+    {
+      "name": "legacy_export_v1_green",
+      "passed": true,
+      "detail": "legacy 兼容导出 → v1 校验器全绿：导出 25 题（六域配比 {'文档写作': 6, '表格数据': 5, '会议纪要': 3, 'PPT要点': 3, '邮件沟通': 4, '流程规范': 4}），v1 校验 7/7 项通过",
+      "exported_items": 25,
+      "per_domain_taken": {
+        "文档写作": 6,
+        "表格数据": 5,
+        "会议纪要": 3,
+        "PPT要点": 3,
+        "邮件沟通": 4,
+        "流程规范": 4
+      }
+    }
+  ]
+}

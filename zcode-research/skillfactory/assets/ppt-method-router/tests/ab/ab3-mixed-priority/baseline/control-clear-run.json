@@ -1,0 +1,8 @@
+{
+  "command": "python package/scripts/route.py --input tests/ab/ab3-mixed-priority/baseline/control-clear-template-fill.txt",
+  "cwd": "D:\\workspace\\zcode研究\\skillfactory\\assets\\ppt-method-router",
+  "exit_code": 0,
+  "stdout": "{\"method\": \"template_fill\", \"confidence\": 0.9, \"reasons\": [\"命中[template_fill(套用既有公司模板)]关键词：模板、套用、品牌\", \"仅单一类别命中、无信号冲突；置信度 = 0.80 + 0.05×(命中词数−1) 上限 0.95，本条命中 3 词 → 0.9\"]}\r\n",
+  "stderr": "",
+  "input_text": "请套用公司品牌模板填充这份红头通知 (self-written clear single-category control, not from oracle)"
+}

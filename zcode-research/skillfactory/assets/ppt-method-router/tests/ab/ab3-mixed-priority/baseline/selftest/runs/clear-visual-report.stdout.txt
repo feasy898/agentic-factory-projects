@@ -1,0 +1,1 @@
+{"method": "visual_report", "confidence": 0.85, "reasons": ["命中 visual_report 信号关键词: 海报、一页", "仅命中单一类别 visual_report，无冲突，按该类别裁定"]}

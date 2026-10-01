@@ -1,0 +1,23 @@
+{
+  "tasks": 2,
+  "baselineMean": 9,
+  "treatmentMean": 8.5,
+  "delta": -0.5,
+  "winRate": 0,
+  "verdicts": [
+    {
+      "task": "ab-001-rename",
+      "baselineScore": 9,
+      "treatmentScore": 8,
+      "better": "baseline",
+      "reason": "两份均按简报完整实现且 front-matter 实测合规（我实跑校验：两份 name 均为 batch-rename-files/18 字符/正则通过；description 甲 405 字符、乙 316 字符，均≤1024 且含「批量重命名/整理/rename/organize」触发语）。差异集中在三点：(1) 分步方法——两份均 5 步覆盖 pattern匹配→模板展开→dry-run→apply 主流程，但乙每步附可复制命令与检查点，产物更可判定（rename-log.tsv 表头+行数=N+1、退出码 0/1/2 语义、日志写 cwd 防自卷入匹配范围），并附实测可运行的参考实现（我实跑其 qc_check.py 29 项 ALL PASS，内嵌脚本与 verify/rename_files.py 2694 字符逐字一致）；甲判据可判定（预览条数=快照数、renamed+skipped=总数）但无落地代码。(2) 常见坑——甲 6 条与乙 7 条均覆盖 rubric 四类风险，但乙多两个实测独有真风险：坑 2「os.rename 平台相关，POSIX 静默替换、不能裸依赖兜底」（transcript P2/T7 实测证据），而甲分步方法第 5 步称 Windows 的 FileExistsError「与预检构成双保险」，未提示 POSIX 上这层保险不存在会静默覆盖；乙坑 5 重跑扰动有 T5 实测（report_001.log→report_002.log，因 skipped 编号空洞），甲未覆盖。(3) 来源引用与纯净度——乙显式按五要素（名称/类型出处/日期/位置/引用内容与验证方式）组织且如实标注 POSIX 侧未实测；甲引用深度更佳（简报逐行溯源 L5-L17、POSIX rename(2) 标注文献依据，我实跑其 selfcheck_ab001.py 9/9 PASS 属实、treatment 必读的 package/example/SKILL.md 确认存在且结构同构），但未按五要素格式显式组织，且 SKILL.md 正文混入评测元叙事（「treatment 组」「成文前读过 package/SKILL.md…」「skillfactory 企业标准」），对最终读者是杂质。甲的优势（逐行溯源纪律、dry-run 写清单的简报 L10/L12 张力正面处理、description 边界段更完整）不足以抵消上述缺口。甲 8、乙 9，乙更好。"
+    },
+    {
+      "task": "ab-002-weekly-report",
+      "baselineScore": 9,
+      "treatmentScore": 9,
+      "better": "tie",
+      "reason": "本组甲=baseline、乙=treatment，两份六维度全部达标且声明 100% 经我复跑验证属实。front-matter：两份 name=weekly-report（13 字符合规）；甲 desc 190 字符、乙 273 字符均≤1024 且含「每周五/周期性汇报」触发场景（我实跑甲 check-frontmatter.ps1 输出与声称逐字一致，乙 selfcheck 9/9 PASS）。输出结构：均定义固定三小节+空节保留标题标「无」，甲模板带日期区间且空节规则三处呼应，乙【空节红线】「禁止为了不空而编造条目」与防编造联动。分步方法：均 5 步覆盖收集→归类→复核出处，产物名具体（周报-YYYY-Www.md）；乙给命令级动作（git log --pretty=format:\"%h %s\" 含实测引号陷阱与修复留痕、isocalendar() 核对命令）可照做性更强，甲的五要素登记规格更完整。溯源红线：均「不得编造、对应不上即删、无出处条目数为 0」，甲覆盖三节全部条目且「缺任一要素视为出处不明不得作依据」更硬。常见坑：均 5 条覆盖 rubric 三示例；甲坑 5 的跨工具周次实证（Python/GNU/Node 均 W40、PowerShell %V 误报 W39）经我实跑复现（Get-Date '2026-09-29' -UFormat %V 输出 39），是两份中唯一复现的工具真实缺陷发现，并伴随诚实自纠记录（初版 W39→修正 W40）；乙坑均三段式且多「汇总变改写或评价」与边界联动。来源引用：甲「来源引用五要素」显式成节并落为输入记录引用规范+「设计依据与材料来源」注明简报路径/编号/读取日期，直接命中任务说明「来源引用五要素」字面；乙 6 条含行号级溯源（L9-L17）与输入引用方式专条但未显式五要素且第 1 条缺读取日期。其他：乙验证链更完整（distill.py 同参两跑 outline.json cmp 逐字节一致、draft_skill 副本 cmp 一致，均我复验）且声明了「真实交付时目录名须与 name 一致」而甲遗漏；但乙 SKILL.md 正文成品声明混入评测装置元信息（「本目录名 treatment 由 A/B 评测装置指定」），甲零元信息污染。两份各有一个独特实测发现（甲 PowerShell %V 误报、乙 git log 引号 argv 拆分），互有领先幅度小，同一质量档，9/9 平。"
+    }
+  ]
+}

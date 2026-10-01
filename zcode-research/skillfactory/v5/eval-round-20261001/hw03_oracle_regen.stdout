@@ -1,0 +1,11 @@
+[run_all] 01_list_initial        exit=0 expect=ok   -> OK | [产品]（2 词）
+[run_all] 02_add_ok              exit=0 expect=ok   -> OK | 已添加：灵犀大模型（类别：产品，权重：20） 备注：公司旗舰大模型
+[run_all] 03_add_duplicate       exit=2 expect=fail -> OK | 错误：热词「悟空客服」已存在（类别：产品），不可重复添加
+[run_all] 04_add_with_weight     exit=0 expect=ok   -> OK | 已添加：通义听悟（类别：产品，权重：30） 备注：转写工具
+[run_all] 05_remove_ok           exit=0 expect=ok   -> OK | 已删除：闪修服务（类别：售后）
+[run_all] 06_remove_missing      exit=2 expect=fail -> OK | 错误：热词「不存在的词」不存在，无法删除
+[run_all] 07_list_final          exit=0 expect=ok   -> OK | [产品]（4 词）
+[run_all] 08_export_funasr       exit=0 expect=ok   -> OK | 已导出 7 条热词 → hotwords_funasr.txt（格式 funasr）
+[run_all] 09_export_plain        exit=0 expect=ok   -> OK | 已导出 7 条热词 → hotwords_plain.txt（格式 plain）
+[run_all] 10_export_stdout       exit=0 expect=ok   -> OK | 悟空客服 20
+[run_all] 全部 10 步按预期跑通，快照见 out/

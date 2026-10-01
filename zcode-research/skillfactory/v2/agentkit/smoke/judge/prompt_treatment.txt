@@ -1,0 +1,8 @@
+【装配指示】开始任务前，先完整阅读 D:\workspace\zcode研究\skillfactory\v2\agentkit\OFFICE-KIT\AGENTS.md 并严格按其执行；技能调用遵循 D:\workspace\zcode研究\skillfactory\v2\agentkit\OFFICE-KIT\skills.manifest。
+
+【任务】工作区里有两个会议转写文件：
+1. D:\workspace\zcode研究\skillfactory\v2\agentkit\smoke\inputs\meetingA.txt
+2. D:\workspace\zcode研究\skillfactory\v2\agentkit\smoke\inputs\meetingB.txt
+请分别把每段转写整理成三段式会议纪要（一、决议事项；二、待办事项表格，含事项/负责人/期限列；三、风险与关注），然后把两场会议汇总成一页周报（含决议数/待办数/风险数统计）。
+把全部内容（两份纪要 + 一页周报）写入：D:\workspace\zcode研究\skillfactory\v2\agentkit\smoke\treatment\OUT.md
+完成后确保文件已真实写入并回读确认。

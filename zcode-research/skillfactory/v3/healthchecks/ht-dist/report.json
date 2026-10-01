@@ -1,0 +1,38 @@
+{
+  "tool": "healthcheck.py 1.0.0",
+  "target": "D:\\workspace\\zcode研究\\skillfactory\\dist\\hot-templates-skill",
+  "generated_at": "2026-09-30T15:40:59+0800",
+  "summary": {
+    "total": 5,
+    "pass": 5,
+    "fail": 0
+  },
+  "rating": "A",
+  "checks": [
+    {
+      "name": "skill_md_exists",
+      "pass": true,
+      "detail": "SKILL.md 存在（8682 字节）"
+    },
+    {
+      "name": "front_matter_fields",
+      "pass": true,
+      "detail": "front-matter 五字段齐全（name/version/license/description/permissions 均非空）"
+    },
+    {
+      "name": "eval_present",
+      "pass": true,
+      "detail": "eval/ 目录存在"
+    },
+    {
+      "name": "eval_smoke",
+      "pass": true,
+      "detail": "smoke exit=0 | cmd: python eval/runner.py reference/out reference/out | stdout 摘要: { \"ok\": true, \"summary\": { \"cases\": 8, \"checks_total\": 40, \"passed\": 40, \"failed\": 0, \"consistency_threshold\": 0.9, \"consistency_min\": 1.0 }, \"checks\": [ { \"name\": \"dy/case1/artifacts_present\", \"pass\": true, \"detail\": \"骨架.md（921 字符）+ structure.json（3001 字符）均存在且可解析\" }, { \"name\": \"dy/case1/structure_json_self_consistent\", \"pass\": true, \"detail\": \"schema 与计数全部自洽（6 要素）\" }, { \"name\": \"dy/case1/platform…"
+    },
+    {
+      "name": "scripts_syntax",
+      "pass": true,
+      "detail": "scripts/ 下 1 个 *.py 全部语法可编译: scripts/gen.py"
+    }
+  ]
+}

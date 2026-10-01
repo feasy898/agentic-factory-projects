@@ -1,0 +1,75 @@
+{
+  "tool": "run_fixtures.py",
+  "asset": "skillfactory/v5/assets/deploy-pack/oracle",
+  "started_at": "2026-10-01T03:31:32+08:00",
+  "duration_s": 0.64,
+  "total": 7,
+  "passed": 7,
+  "failed": 0,
+  "verdict": "ALL FIXTURES AS EXPECTED",
+  "entries": [
+    {
+      "fixture": "services-canonical.txt",
+      "kind": "positive",
+      "services": "asr,minutes,todo",
+      "command": "gen_deploy.py --services asr,minutes,todo --out pack-canonical && validate.py --pack pack-canonical --services asr,minutes,todo",
+      "expected": "gen exit=0; validate exit=0 (ALL GREEN)",
+      "observed": "gen exit=0; validate exit=0; verdict=ALL GREEN",
+      "verdict": "OK"
+    },
+    {
+      "fixture": "services-invalid.txt",
+      "kind": "gen-reject",
+      "services": "asr,wat",
+      "command": "gen_deploy.py --services asr,wat --out pack-invalid",
+      "expected": "gen exit=2 且不建目录",
+      "observed": "gen exit=2; 目录存在=False; stderr=[GEN-FAIL] 非法 --services: 'asr,wat'（未知: wat）；可用服务: asr,minutes,todo",
+      "verdict": "OK"
+    },
+    {
+      "fixture": "services-subset.txt",
+      "kind": "positive",
+      "services": "asr,todo",
+      "command": "gen_deploy.py --services asr,todo --out pack-subset && validate.py --pack pack-subset --services asr,todo",
+      "expected": "gen exit=0; validate exit=0 (ALL GREEN)",
+      "observed": "gen exit=0; validate exit=0; verdict=ALL GREEN",
+      "verdict": "OK"
+    },
+    {
+      "fixture": "red-bad-yaml/",
+      "kind": "red-pack",
+      "services": "默认三服务",
+      "command": "validate.py --pack red-bad-yaml --out out/red/red-bad-yaml-report.json",
+      "expected": "validate exit=1（判为残缺包）",
+      "observed": "validate exit=1; FAIL 项=['C1 compose_safe_load']",
+      "verdict": "OK"
+    },
+    {
+      "fixture": "red-env-drift/",
+      "kind": "red-pack",
+      "services": "默认三服务",
+      "command": "validate.py --pack red-env-drift --out out/red/red-env-drift-report.json",
+      "expected": "validate exit=1（判为残缺包）",
+      "observed": "validate exit=1; FAIL 项=['C3 env_consistent']",
+      "verdict": "OK"
+    },
+    {
+      "fixture": "red-hardcoded-secret/",
+      "kind": "red-pack",
+      "services": "默认三服务",
+      "command": "validate.py --pack red-hardcoded-secret --out out/red/red-hardcoded-secret-report.json",
+      "expected": "validate exit=1（判为残缺包）",
+      "observed": "validate exit=1; FAIL 项=['C4 no_hardcoded_secrets']",
+      "verdict": "OK"
+    },
+    {
+      "fixture": "red-missing-service/",
+      "kind": "red-pack",
+      "services": "默认三服务",
+      "command": "validate.py --pack red-missing-service --out out/red/red-missing-service-report.json",
+      "expected": "validate exit=1（判为残缺包）",
+      "observed": "validate exit=1; FAIL 项=['C2 services_exact']",
+      "verdict": "OK"
+    }
+  ]
+}

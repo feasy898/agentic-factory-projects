@@ -1,0 +1,125 @@
+{
+  "meta": {
+    "generated_at": "2026-09-30",
+    "mode": "material-self-contained",
+    "note": "按任务限制未读取 skillfactory/ 下任何文件；模板规格以任务下发说明（6镜/45秒，字段：时间轴/画面/口播/字幕）为准",
+    "platform": "video",
+    "topic": "居家哑铃入门"
+  },
+  "template": {
+    "name": "6镜45秒分镜表",
+    "frozen": true,
+    "shot_count": 6,
+    "duration_sec": 45,
+    "fields": ["时间轴", "画面", "口播", "字幕"]
+  },
+  "input": {
+    "points": [
+      { "id": "p1", "text": "用装满水的矿泉箱代替哑铃做划船" }
+    ],
+    "points_count": 1
+  },
+  "slot_filling": {
+    "content_slots": 4,
+    "filled_by_point": 3,
+    "filled_by_derivation": 1,
+    "missing_point_slots": 3,
+    "policy": "单要点拆解扩展：p1 拆为「道具亮相/动作准备/动作发力」三镜；剩余 1 个内容槽以话题常识派生补位并标注 source=derived，供人工复核，不冒充要点原文",
+    "review_flags": ["shot-5"]
+  },
+  "shots": [
+    {
+      "no": 1,
+      "id": "shot-1",
+      "role": "hook",
+      "timeline": "00:00-00:05",
+      "t_start": "00:00",
+      "t_end": "00:05",
+      "duration_sec": 5,
+      "visual": "客厅实景：主角拎起一对哑铃又放回，镜头快切到桌上一排装满水的矿泉水瓶；大字标题弹入压屏。",
+      "voiceover": "一副哑铃两三百，买回就吃灰？今天零成本入门。",
+      "subtitle": "哑铃吃灰？0元入门练背",
+      "source": "template-fixed",
+      "source_ref": "hook固定槽·内容取自topic"
+    },
+    {
+      "no": 2,
+      "id": "shot-2",
+      "role": "content-prop",
+      "timeline": "00:05-00:12",
+      "t_start": "00:05",
+      "t_end": "00:12",
+      "duration_sec": 7,
+      "visual": "特写：拧紧瓶盖灌满500ml小瓶；手掂1.5L大瓶与整提矿泉水，与哑铃同框对比大小重量。",
+      "voiceover": "装满水的矿泉箱就是平替哑铃：小瓶半公斤，大瓶一公斤半，整提约六公斤，练划船够了。",
+      "subtitle": "水瓶=哑铃｜0.5~6kg 随手有",
+      "source": "p1",
+      "source_ref": "p1直取"
+    },
+    {
+      "no": 3,
+      "id": "shot-3",
+      "role": "content-form-prep",
+      "timeline": "00:12-00:20",
+      "t_start": "00:12",
+      "t_end": "00:20",
+      "duration_sec": 8,
+      "visual": "侧面全景：单手扶椅背，双脚与肩同宽，俯身约45°，另一手拎瓶自然下垂；屏幕箭头标注「腰背挺直·核心收紧」。",
+      "voiceover": "一手扶稳椅子，俯身约45度，持瓶手自然下垂，肩膀放松，腰背挺直，千万别弓背。",
+      "subtitle": "扶稳→俯身45°→腰背挺直",
+      "source": "p1",
+      "source_ref": "p1拆解·准备位"
+    },
+    {
+      "no": 4,
+      "id": "shot-4",
+      "role": "content-form-pull",
+      "timeline": "00:20-00:28",
+      "t_start": "00:20",
+      "t_end": "00:28",
+      "duration_sec": 8,
+      "visual": "近景慢动作：水瓶沿身体拉到腰侧、肘部贴身后顶、肩胛收紧定格1秒；插入错误示范闪帧（直臂乱甩）打红叉。",
+      "voiceover": "贴着身体把水瓶拉到腰侧，想象用肘往后顶，后背夹紧停一秒，慢慢放下。呼气拉，吸气放。",
+      "subtitle": "拉到腰侧·夹背停1秒·呼气拉",
+      "source": "p1",
+      "source_ref": "p1拆解·发力程"
+    },
+    {
+      "no": 5,
+      "id": "shot-5",
+      "role": "content-prescription",
+      "timeline": "00:28-00:36",
+      "t_start": "00:28",
+      "t_end": "00:36",
+      "duration_sec": 8,
+      "visual": "分屏字卡：左半正确动作循环，右半弹出「每侧12次×3组·间歇30秒」；三连拍红叉提示：弓背/耸肩/甩臂。",
+      "voiceover": "每侧12次，做3组，组间歇30秒。记住三个别：别弓背、别耸肩、别甩胳膊，发力的是背不是手。",
+      "subtitle": "12次×3组｜别弓背·别耸肩·别甩臂",
+      "source": "derived",
+      "source_ref": "派生补位·处方与纠错（需人工复核次数/组数参数）"
+    },
+    {
+      "no": 6,
+      "id": "shot-6",
+      "role": "cta",
+      "timeline": "00:36-00:45",
+      "t_start": "00:36",
+      "t_end": "00:45",
+      "duration_sec": 9,
+      "visual": "主角放下水瓶拍拍手，镜头拉远至客厅全景；弹出「7天零器械跟练」字卡，结尾定格+关注按钮动效。",
+      "voiceover": "每天10分钟，两周感受后背变紧、体态变直。关注我，下期教你一只水瓶练肩。",
+      "subtitle": "关注·下期「一只水瓶练肩」",
+      "source": "template-fixed",
+      "source_ref": "CTA固定槽·内容取自topic"
+    }
+  ],
+  "extras": {
+    "note": "以下均为派生内容〔derived〕，非冻结模板必需字段",
+    "titles": [
+      "别买哑铃了！一提矿泉水在家练出紧致背",
+      "0元居家练背：装满水的矿泉箱就是你的第一个哑铃",
+      "居家哑铃入门第1课：水瓶划船，两周体态大变样"
+    ],
+    "tags": ["居家健身", "哑铃入门", "零器械健身", "练背", "水瓶健身"]
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "recordedAt": "2026-09-28T11:43:49.839Z",
+  "recordRaw": false,
+  "command": "offpeak-take",
+  "dryRun": false,
+  "request": {
+    "method": "POST",
+    "url": "https://zcode.z.ai/api/v1/off-peak/ticket",
+    "headers": {
+      "User-Agent": "ZCode/3.14.3",
+      "HTTP-Referer": "https://zcode.z.ai",
+      "X-Title": "Z Code@electron",
+      "X-ZCode-App-Version": "3.14.3",
+      "X-Platform": "win32-x64",
+      "X-Os-Category": "windows",
+      "X-Client-Language": "unknown",
+      "X-Client-Timezone": "Asia/Shanghai",
+      "x-request-id": "61bde917-e66d-43aa-b163-fcbe29d4bf3d",
+      "authorization": "Bearer eyJh…(211 chars, masked)",
+      "x-coding-plan-api-key": "a61b678a8d5…(49 chars, masked)",
+      "content-type": "application/json"
+    },
+    "body": {
+      "task_id": "offpeak-6398bd2c-eb2a-4da4-b254-791b3344ab4a"
+    }
+  },
+  "response": {
+    "status": 200,
+    "requestId": "2026092811434992c18d6c76cb41c20ee3",
+    "body": {
+      "code": 0,
+      "msg": "success",
+      "data": {
+        "ticket_id": "2104537561773121536",
+        "task_id": "offpeak-6398bd2c-eb2a-4da4-b254-791b3344ab4a",
+        "state": "queued",
+        "position": 6,
+        "next_poll_after": 90,
+        "queued_at": 1790595829797
+      },
+      "logid": "2026092811434992c18d6c76cb41c20ee3"
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "ok": true,
+  "tested": "monthly-report-ppt/package/out",
+  "reference": "monthly-report-ppt/oracle/out",
+  "checks": [
+    {
+      "name": "case1/pptx_open_pages_ge4",
+      "pass": true,
+      "detail": "打开成功：实际页数=4（要求≥4），内嵌图片=2（2 页），表格=1；summary.页数=4"
+    },
+    {
+      "name": "case1/charts_3png_and_embedded",
+      "pass": true,
+      "detail": "图表 PNG 缺失=无；pptx 含图片的页=2（要求≥2）"
+    },
+    {
+      "name": "case1/summary_matches_recalc",
+      "pass": true,
+      "detail": "与独立重算一致：18 项核对全部通过（源=monthly-report-ppt\\oracle\\inputs\\case1.xlsx，容差 5%）"
+    },
+    {
+      "name": "case1/dirty_data_rules",
+      "pass": true,
+      "detail": "脏数据处理正确：去重 25−3=22；缺失日期 1 行未计入月度（月度合计和=74，数量合计=78.0）；缺失数量 1 行按 0 计"
+    },
+    {
+      "name": "case1/pages_within_2_of_ref",
+      "pass": true,
+      "detail": "被测页数=4，参照页数=4，差=0（允许≤2）"
+    },
+    {
+      "name": "case2/pptx_open_pages_ge4",
+      "pass": true,
+      "detail": "打开成功：实际页数=4（要求≥4），内嵌图片=2（2 页），表格=1；summary.页数=4"
+    },
+    {
+      "name": "case2/charts_3png_and_embedded",
+      "pass": true,
+      "detail": "图表 PNG 缺失=无；pptx 含图片的页=2（要求≥2）"
+    },
+    {
+      "name": "case2/summary_matches_recalc",
+      "pass": true,
+      "detail": "与独立重算一致：18 项核对全部通过（源=monthly-report-ppt\\oracle\\inputs\\case2.xlsx，容差 5%）"
+    },
+    {
+      "name": "case2/dirty_data_rules",
+      "pass": true,
+      "detail": "脏数据处理正确：去重 21−5=16；缺失日期 2 行未计入月度（月度合计和=65，数量合计=67.0）；缺失数量 0 行按 0 计"
+    },
+    {
+      "name": "case2/pages_within_2_of_ref",
+      "pass": true,
+      "detail": "被测页数=4，参照页数=4，差=0（允许≤2）"
+    },
+    {
+      "name": "case3/pptx_open_pages_ge4",
+      "pass": true,
+      "detail": "打开成功：实际页数=4（要求≥4），内嵌图片=2（2 页），表格=1；summary.页数=4"
+    },
+    {
+      "name": "case3/charts_3png_and_embedded",
+      "pass": true,
+      "detail": "图表 PNG 缺失=无；pptx 含图片的页=2（要求≥2）"
+    },
+    {
+      "name": "case3/summary_matches_recalc",
+      "pass": true,
+      "detail": "与独立重算一致：18 项核对全部通过（源=monthly-report-ppt\\oracle\\inputs\\case3.xlsx，容差 5%）"
+    },
+    {
+      "name": "case3/dirty_data_rules",
+      "pass": true,
+      "detail": "脏数据处理正确：去重 9−2=7；缺失日期 0 行未计入月度（月度合计和=22，数量合计=22.0）；缺失数量 0 行按 0 计"
+    },
+    {
+      "name": "case3/pages_within_2_of_ref",
+      "pass": true,
+      "detail": "被测页数=4，参照页数=4，差=0（允许≤2）"
+    },
+    {
+      "name": "reference_dir_has_units",
+      "pass": true,
+      "detail": "参照目录 monthly-report-ppt/oracle/out 含 3 个产物单元"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "ask_command": "python package/scripts/route.py --input oracle/inputs/case11.txt",
+  "cwd": "D:\\workspace\\zcode研究\\skillfactory\\assets\\ppt-method-router",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "runs": [
+    {
+      "tag": "primary",
+      "returncode": 0,
+      "stdout_encoding_detected": "utf-8",
+      "stdout_repr": "'{\"method\": \"editable_pptx\", \"confidence\": 0.4, \"reasons\": [\"未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个\", \"按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行\"]}\\r\\n'",
+      "stderr_repr": "''",
+      "stripped": "{\"method\": \"editable_pptx\", \"confidence\": 0.4, \"reasons\": [\"未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个\", \"按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行\"]}",
+      "single_line_nonempty": true,
+      "stdout_json_parses": true,
+      "stdout_json_error": null
+    },
+    {
+      "tag": "repeat1",
+      "returncode": 0,
+      "stdout_encoding_detected": "utf-8",
+      "stdout_repr": "'{\"method\": \"editable_pptx\", \"confidence\": 0.4, \"reasons\": [\"未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个\", \"按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行\"]}\\r\\n'",
+      "stderr_repr": "''",
+      "stripped": "{\"method\": \"editable_pptx\", \"confidence\": 0.4, \"reasons\": [\"未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个\", \"按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行\"]}",
+      "single_line_nonempty": true,
+      "stdout_json_parses": true,
+      "stdout_json_error": null
+    },
+    {
+      "tag": "repeat2",
+      "returncode": 0,
+      "stdout_encoding_detected": "utf-8",
+      "stdout_repr": "'{\"method\": \"editable_pptx\", \"confidence\": 0.4, \"reasons\": [\"未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个\", \"按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行\"]}\\r\\n'",
+      "stderr_repr": "''",
+      "stripped": "{\"method\": \"editable_pptx\", \"confidence\": 0.4, \"reasons\": [\"未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个\", \"按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行\"]}",
+      "single_line_nonempty": true,
+      "stdout_json_parses": true,
+      "stdout_json_error": null
+    }
+  ],
+  "stability_all_identical_stdout_and_rc": true,
+  "labels_case11_entry_only": null,
+  "labels_note": "top-level JSON type is list, not dict"
+}

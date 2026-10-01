@@ -1,0 +1,62 @@
+{
+  "skill": "ppt-method-router",
+  "eval_inputs": [
+    {"case": "case1", "input": "oracle/inputs/case1.txt", "output": "oracle/out"},
+    {"case": "case2", "input": "oracle/inputs/case2.txt", "output": "oracle/out"},
+    {"case": "case3", "input": "oracle/inputs/case3.txt", "output": "oracle/out"},
+    {"case": "case4", "input": "oracle/inputs/case4.txt", "output": "oracle/out"},
+    {"case": "case5", "input": "oracle/inputs/case5.txt", "output": "oracle/out"},
+    {"case": "case6", "input": "oracle/inputs/case6.txt", "output": "oracle/out"},
+    {"case": "case7", "input": "oracle/inputs/case7.txt", "output": "oracle/out"},
+    {"case": "case8", "input": "oracle/inputs/case8.txt", "output": "oracle/out"},
+    {"case": "case9", "input": "oracle/inputs/case9.txt", "output": "oracle/out"},
+    {"case": "case10", "input": "oracle/inputs/case10.txt", "output": "oracle/out"},
+    {"case": "case11", "input": "oracle/inputs/case11.txt", "output": "oracle/out"},
+    {"case": "case12", "input": "oracle/inputs/case12.txt", "output": "oracle/out"},
+    {"case": "case13", "input": "oracle/inputs/case13.txt", "output": "oracle/out"},
+    {"case": "case14", "input": "oracle/inputs/case14.txt", "output": "oracle/out"},
+    {"case": "case15", "input": "oracle/inputs/case15.txt", "output": "oracle/out"},
+    {"case": "case16", "input": "oracle/inputs/case16.txt", "output": "oracle/out"},
+    {"case": "case17", "input": "oracle/inputs/case17.txt", "output": "oracle/out"},
+    {"case": "case18", "input": "oracle/inputs/case18.txt", "output": "oracle/out"},
+    {"case": "case19", "input": "oracle/inputs/case19.txt", "output": "oracle/out"},
+    {"case": "case20", "input": "oracle/inputs/case20.txt", "output": "oracle/out"}
+  ],
+  "ab_tasks": [
+    {
+      "id": "ab1-clear-single-category",
+      "instruction": "以 package 实现对清晰型单信号样例做单条路由：运行 python package/scripts/route.py --input oracle/inputs/case9.txt，把 stdout 的 JSON 判定与 oracle/out/labels.json 中 case9 的判定逐字段对照，报告 method 是否一致、confidence 是否为 [0,1] 数值、reasons 是否说明了裁定依据。",
+      "input": "oracle/inputs/case9.txt（清晰型单信号：「做一张海报贴在展位，风格醒目一点」，仅命中 visual_report 关键词「海报」，参照判定 visual_report / 0.8）",
+      "rubric": [
+        "输出的 method 与参照判定一致：visual_report",
+        "stdout 恰为一行可解析 JSON，含 method/confidence/reasons 三个字段，无多余日志混入",
+        "confidence 为 0 到 1 之间的数值",
+        "reasons 非空，且明确提到命中关键词「海报」或等价的裁定依据，而非空泛套话"
+      ]
+    },
+    {
+      "id": "ab2-ambiguous-fallback",
+      "instruction": "以 package 实现对无信号歧义样例做单条路由：运行 python package/scripts/route.py --input oracle/inputs/case11.txt，把输出与 oracle/out/labels.json 中 case11 的判定对照，重点检查：无任何关键词命中时是否稳定落到兜底裁定，且 reasons 如实说明无信号与兜底依据。",
+      "input": "oracle/inputs/case11.txt（歧义型·无信号：「内容大概是产品介绍和团队情况，你看着办」，不命中任何关键词，参照判定 editable_pptx / 0.4 兜底）",
+      "rubric": [
+        "输出的 method 与参照判定一致：editable_pptx（兜底裁定）",
+        "reasons 非空，且明确说明「未命中任何类别关键词/无信号」与兜底默认这一事实，未编造命中词",
+        "confidence 为 0 到 1 之间的数值，且明显低于有明确信号命中的情形（≤0.6），体现低置信",
+        "未把「产品介绍」「团队情况」等普通词误报为任何类别关键词的命中",
+        "stdout 恰为一行可解析 JSON，退出码为 0"
+      ]
+    },
+    {
+      "id": "ab3-mixed-priority",
+      "instruction": "以 package 实现对混合冲突样例做单条路由：运行 python package/scripts/route.py --input oracle/inputs/case15.txt，把输出与 oracle/out/labels.json 中 case15 的判定对照，重点检查：template_fill 与 visual_report 信号同时出现时，是否按优先级表 template_fill > editable_pptx > visual_report 裁定，且 reasons 完整披露两类命中与冲突提示。",
+      "input": "oracle/inputs/case15.txt（混合型·两类冲突：「品牌部要一张一页海报」，命中 template_fill 的「品牌」与 visual_report 的「海报、一页」，参照判定 template_fill / 0.65）",
+      "rubric": [
+        "输出的 method 与参照判定一致：template_fill（「品牌」所在类优先级高于「海报/一页」所在类）",
+        "reasons 非空，且同时列出两类命中关键词：template_fill 的「品牌」与 visual_report 的「海报、一页」（或等价披露）",
+        "reasons 明确说明按优先级 template_fill > editable_pptx > visual_report 裁定，并给出冲突提示或人工复核建议",
+        "confidence 为 0 到 1 之间的数值，且低于同类别无冲突的清晰情形（冲突压低置信度，参照为 0.65，应 ≤0.75）",
+        "stdout 恰为一行可解析 JSON，退出码为 0"
+      ]
+    }
+  ]
+}

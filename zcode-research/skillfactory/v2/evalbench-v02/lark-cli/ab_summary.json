@@ -1,0 +1,100 @@
+{
+  "slug": "lark-cli",
+  "name": "larksuite/cli（飞书官方 CLI + agent skills）",
+  "assetType": "skill",
+  "tasks": 8,
+  "baselineMean": 7.9375,
+  "treatmentMean": 9.625,
+  "delta": 1.6875,
+  "winRate": 0.75,
+  "reverseTasks": 0,
+  "accepted": true,
+  "driftNote": "抽检分差≤2，裁判一致",
+  "taskAggs": [
+    {
+      "id": "t1",
+      "baseMean": 7,
+      "treatMean": 8.5,
+      "majority": "treatment",
+      "repNotes": [
+        "rep1: 核验方式：本机未装 lark-cli（bash 报 command not found），无法实跑；",
+        "rep2: 核验口径：本机无 lark-cli（本轮复测 command -v lark-cli → NOT F"
+      ]
+    },
+    {
+      "id": "t2",
+      "baseMean": 8.5,
+      "treatMean": 10,
+      "majority": "treatment",
+      "repNotes": [
+        "rep1: 核验方式：本机无 lark-cli 未实跑；抓官方仓库 7 次验证（lark-base SKILL.",
+        "rep2: 核验方式：本机无 lark-cli 未实跑；本轮新抓官方仓库 5 次（shortcuts/base/"
+      ]
+    },
+    {
+      "id": "t3",
+      "baseMean": 8,
+      "treatMean": 9,
+      "majority": "tie",
+      "repNotes": [
+        "rep1: 核验方式：本机无 lark-cli 未实跑；本轮抓官方仓库 6 次（lark-base SKILL.",
+        "rep2: 核验方式：本机无 lark-cli 未实跑；本轮新抓官方仓库 3 次（shortcuts/base/"
+      ]
+    },
+    {
+      "id": "t4",
+      "baseMean": 7,
+      "treatMean": 9.5,
+      "majority": "tie",
+      "repNotes": [
+        "rep1: 核验方式：本机无 lark-cli 未实跑；本轮新抓官方仓库 3 次（skills/lark-im/",
+        "rep2: 核验方式：本机无 lark-cli 未实跑；本轮新抓官方仓库 3 次（components/butt"
+      ]
+    },
+    {
+      "id": "t5",
+      "baseMean": 8,
+      "treatMean": 10,
+      "majority": "treatment",
+      "repNotes": [
+        "rep1: 数据全部在题面内，以信息提取正确性与回发命令合规性为主评判；两产物结论均已与题面逐条比对。\n\n【共同",
+        "rep2: 数据全部在题面内，按信息提取正确性与回发命令合规性评判；两产物结论均已逐条比对题面。\n\n【共同正确】"
+      ]
+    },
+    {
+      "id": "t6",
+      "baseMean": 8,
+      "treatMean": 10,
+      "majority": "treatment",
+      "repNotes": [
+        "rep1: 评判基准：题面 A–E 摘录 + 已实证的官方错误契约（前轮抓取 errs/ERROR_CONTRA",
+        "rep2: 评判基准：题面 A–E 摘录 + 已实证的官方错误契约（前轮实抓 errs/ERROR_CONTRA"
+      ]
+    },
+    {
+      "id": "t7",
+      "baseMean": 9.5,
+      "treatMean": 10,
+      "majority": "treatment",
+      "repNotes": [
+        "rep1: 评判基准：本轮实抓官方 skills/lark-calendar/ 全套（SKILL.md、sugg",
+        "rep2: 评判基准：沿用前轮已实证的 calendar 全套官方文档（SKILL/suggestion/roo"
+      ]
+    },
+    {
+      "id": "t8",
+      "baseMean": 7.5,
+      "treatMean": 10,
+      "majority": "treatment",
+      "repNotes": [
+        "rep1: 评判基准：本轮实抓 skills/lark-sheets/ 全套（SKILL.md、referenc",
+        "rep2: 评判基准：沿用前轮已实证的 lark-sheets 全套（SKILL.md、workbook.md、"
+      ]
+    }
+  ],
+  "correction": {
+    "corrected": true,
+    "date": "2026-09-30",
+    "reason": "v0.2 首测脚本 majority 计算把甲乙判反（(better==='a')!==swap 应为 ===swap）：均值与 delta 未受影响，majority/winRate/reverseTasks/accepted 原值全部反演；本文件按留档 taskAggs 逐任务翻转 majority 后确定性重算。"
+  }
+}

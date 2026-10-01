@@ -1,0 +1,42 @@
+{
+  "checks": [
+    {
+      "name": "reference_labels_parseable",
+      "pass": true,
+      "detail": "参照 ppt-method-router/oracle/out/labels.json 可解析，共 20 条"
+    },
+    {
+      "name": "tested_labels_parseable",
+      "pass": true,
+      "detail": "被测 ppt-method-router/package/out/labels.json 可解析，共 20 条"
+    },
+    {
+      "name": "tested_labels_complete_20",
+      "pass": true,
+      "detail": "恰含 case1..case20 各一条，共 20 条"
+    },
+    {
+      "name": "tested_entry_schema",
+      "pass": true,
+      "detail": "20 条 method 均合法且 confidence ∈ [0,1]"
+    },
+    {
+      "name": "tested_reasons_nonempty",
+      "pass": true,
+      "detail": "20 条 reasons 均非空"
+    },
+    {
+      "name": "method_agreement_ge_80",
+      "pass": true,
+      "detail": "method 一致率 20/20 = 100.0%（阈值 80%）"
+    }
+  ],
+  "summary": {
+    "tested_dir": "ppt-method-router/package/out",
+    "reference_dir": "ppt-method-router/oracle/out",
+    "expected_cases": 20,
+    "agreement_rate": 1.0,
+    "agreement_threshold": 0.8,
+    "all_pass": true
+  }
+}

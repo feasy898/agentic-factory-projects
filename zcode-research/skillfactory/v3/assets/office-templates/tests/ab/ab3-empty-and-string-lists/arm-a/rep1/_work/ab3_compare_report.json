@@ -1,0 +1,1348 @@
+{
+ "周报": {
+  "template": "周报",
+  "fields_top_keys_equal": true,
+  "fields_diffs_minus_outputs": [],
+  "fields_bytes_equal_minus_outputs": true,
+  "agreement_spec10": {
+   "matched": 7,
+   "total": 7,
+   "rate": 1.0,
+   "mismatch_names": []
+  },
+  "title": {
+   "A": "____工作周报",
+   "B": "____工作周报"
+  },
+  "summary": {
+   "A": {
+    "total": 7,
+    "filled": 3,
+    "missing": 4,
+    "missing_required": 3,
+    "missing_required_names": [
+     "部门",
+     "周期",
+     "本周工作内容"
+    ],
+    "unknown_keys": []
+   },
+   "B": {
+    "total": 7,
+    "filled": 3,
+    "missing": 4,
+    "missing_required": 3,
+    "missing_required_names": [
+     "部门",
+     "周期",
+     "本周工作内容"
+    ],
+    "unknown_keys": []
+   }
+  },
+  "focus_rows_A": [
+   {
+    "name": "部门",
+    "required": true,
+    "kind": "text",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "以____占位"
+   },
+   {
+    "name": "填报人",
+    "required": true,
+    "kind": "text",
+    "status": "filled",
+    "value": "赵倩",
+    "rendered_as": null
+   },
+   {
+    "name": "周期",
+    "required": true,
+    "kind": "text",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "以____占位"
+   },
+   {
+    "name": "本周工作内容",
+    "required": true,
+    "kind": "list",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "以____占位条目"
+   },
+   {
+    "name": "下周工作计划",
+    "required": true,
+    "kind": "list",
+    "status": "filled",
+    "value": [
+     "整理缺陷清单并分派责任人"
+    ],
+    "rendered_as": null
+   },
+   {
+    "name": "问题与需协调事项",
+    "required": false,
+    "kind": "list",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "省略该条目/小节"
+   },
+   {
+    "name": "报送日期",
+    "required": false,
+    "kind": "text",
+    "status": "filled",
+    "value": "2026-09-28",
+    "rendered_as": null
+   }
+  ],
+  "focus_rows_B": [
+   {
+    "name": "部门",
+    "required": true,
+    "kind": "text",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "以____占位"
+   },
+   {
+    "name": "填报人",
+    "required": true,
+    "kind": "text",
+    "status": "filled",
+    "value": "赵倩",
+    "rendered_as": null
+   },
+   {
+    "name": "周期",
+    "required": true,
+    "kind": "text",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "以____占位"
+   },
+   {
+    "name": "本周工作内容",
+    "required": true,
+    "kind": "list",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "以____占位条目"
+   },
+   {
+    "name": "下周工作计划",
+    "required": true,
+    "kind": "list",
+    "status": "filled",
+    "value": [
+     "整理缺陷清单并分派责任人"
+    ],
+    "rendered_as": null
+   },
+   {
+    "name": "问题与需协调事项",
+    "required": false,
+    "kind": "list",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "省略该条目/小节"
+   },
+   {
+    "name": "报送日期",
+    "required": false,
+    "kind": "text",
+    "status": "filled",
+    "value": "2026-09-28",
+    "rendered_as": null
+   }
+  ],
+  "page_equal": true,
+  "page": {
+   "A": {
+    "w_cm": 21.001,
+    "h_cm": 29.7,
+    "top_cm": 3.701,
+    "bottom_cm": 3.5,
+    "left_cm": 2.799,
+    "right_cm": 2.6
+   },
+   "B": {
+    "w_cm": 21.001,
+    "h_cm": 29.7,
+    "top_cm": 3.701,
+    "bottom_cm": 3.5,
+    "left_cm": 2.799,
+    "right_cm": 2.6
+   }
+  },
+  "para_count": {
+   "A": 7,
+   "B": 7
+  },
+  "docx_sig_identical": false,
+  "A_lines": [
+   "00|jc=center|flc=None|line=None/None|ri=None|____工作周报|east=黑体,size=22.0",
+   "01|jc=None  |flc=200 |line=560/exact|ri=None|填报人：赵倩　　周期：____|east=仿宋,size=16.0",
+   "02|jc=None  |flc=200 |line=560/exact|ri=None|一、本周工作内容|east=黑体,size=16.0",
+   "03|jc=None  |flc=200 |line=560/exact|ri=None|1．____|east=仿宋,size=16.0",
+   "04|jc=None  |flc=200 |line=560/exact|ri=None|二、下周工作计划|east=黑体,size=16.0",
+   "05|jc=None  |flc=200 |line=560/exact|ri=None|1．整理缺陷清单并分派责任人|east=仿宋,size=16.0",
+   "06|jc=right |flc=None|line=560/exact|ri=640|报送日期：2026-09-28|east=仿宋,size=16.0"
+  ],
+  "B_lines": [
+   "00|jc=center|flc=None|line=560/exact|ri=None|____工作周报|east=黑体,size=22.0",
+   "01|jc=center|flc=None|line=560/exact|ri=None|填报人：赵倩　　部门：____　　周期：____|east=仿宋,size=16.0",
+   "02|jc=None  |flc=200 |line=560/exact|ri=None|一、本周工作内容|east=黑体,size=16.0",
+   "03|jc=None  |flc=200 |line=560/exact|ri=None|1．____|east=仿宋,size=16.0",
+   "04|jc=None  |flc=200 |line=560/exact|ri=None|二、下周工作计划|east=黑体,size=16.0",
+   "05|jc=None  |flc=200 |line=560/exact|ri=None|1．整理缺陷清单并分派责任人|east=仿宋,size=16.0",
+   "06|jc=right |flc=None|line=560/exact|ri=640|报送日期：2026-09-28|east=仿宋,size=16.0"
+  ],
+  "A_paras_sig": [
+   {
+    "text": "____工作周报",
+    "empty": false,
+    "jc": "center",
+    "firstLineChars": null,
+    "firstLine": null,
+    "right": null,
+    "line": null,
+    "lineRule": null,
+    "before": null,
+    "after": null,
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "黑体",
+      "hAnsi": "黑体",
+      "size_pt": 22.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "填报人：赵倩　　周期：____",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "一、本周工作内容",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "黑体",
+      "hAnsi": "黑体",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "1．____",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "二、下周工作计划",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "黑体",
+      "hAnsi": "黑体",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "1．整理缺陷清单并分派责任人",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "报送日期：2026-09-28",
+    "empty": false,
+    "jc": "right",
+    "firstLineChars": null,
+    "firstLine": null,
+    "right": "640",
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   }
+  ],
+  "B_paras_sig": [
+   {
+    "text": "____工作周报",
+    "empty": false,
+    "jc": "center",
+    "firstLineChars": null,
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 22.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "填报人：赵倩　　部门：____　　周期：____",
+    "empty": false,
+    "jc": "center",
+    "firstLineChars": null,
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "一、本周工作内容",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": "640",
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "1．____",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": "640",
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "二、下周工作计划",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": "640",
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "1．整理缺陷清单并分派责任人",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": "640",
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "报送日期：2026-09-28",
+    "empty": false,
+    "jc": "right",
+    "firstLineChars": null,
+    "firstLine": null,
+    "right": "640",
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   }
+  ],
+  "sections_A": [
+   "一、本周工作内容",
+   "二、下周工作计划"
+  ],
+  "sections_B": [
+   "一、本周工作内容",
+   "二、下周工作计划"
+  ],
+  "rubric_r1_placeholder_entry": {
+   "A_节头存在": true,
+   "A_占位条目存在": true,
+   "B_节头存在": true,
+   "B_占位条目存在": true,
+   "A_rendered_as": "以____占位条目",
+   "B_rendered_as": "以____占位条目"
+  },
+  "rubric_r3_optional_omission": {
+   "A_问题节头未出现": true,
+   "B_问题节头未出现": true,
+   "A_记账missing": {
+    "name": "问题与需协调事项",
+    "required": false,
+    "kind": "list",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "省略该条目/小节"
+   },
+   "B_记账missing": {
+    "name": "问题与需协调事项",
+    "required": false,
+    "kind": "list",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "省略该条目/小节"
+   }
+  },
+  "rubric_r4_spec9_accounting": {
+   "A_missing_required_names": [
+    "部门",
+    "周期",
+    "本周工作内容"
+   ],
+   "B_missing_required_names": [
+    "部门",
+    "周期",
+    "本周工作内容"
+   ],
+   "expect": [
+    "部门",
+    "周期",
+    "本周工作内容"
+   ],
+   "A_title": "____工作周报",
+   "B_title": "____工作周报",
+   "expect_title": "____工作周报",
+   "A_filled_total": [
+    3,
+    7
+   ],
+   "B_filled_total": [
+    3,
+    7
+   ]
+  },
+  "rubric_r5_numbering_signature": {
+   "A_sections": [
+    "一、本周工作内容",
+    "二、下周工作计划"
+   ],
+   "B_sections": [
+    "一、本周工作内容",
+    "二、下周工作计划"
+   ],
+   "expect_sections": [
+    "一、本周工作内容",
+    "二、下周工作计划"
+   ],
+   "A_last_nonempty": "报送日期：2026-09-28",
+   "B_last_nonempty": "报送日期：2026-09-28",
+   "A_last_nonempty_jc": "right",
+   "B_last_nonempty_jc": "right",
+   "A_last_nonempty_right": "640",
+   "B_last_nonempty_right": "640",
+   "A_item_lines": [
+    "1．____",
+    "1．整理缺陷清单并分派责任人"
+   ],
+   "B_item_lines": [
+    "1．____",
+    "1．整理缺陷清单并分派责任人"
+   ]
+  },
+  "placeholder_count": {
+   "A": 3,
+   "B": 4
+  },
+  "determinism": {
+   "A_fields_bytes_equal_run1_run2": true,
+   "B_fields_bytes_equal_run1_run2": true,
+   "A_docx_sig_equal_run1_run2": false,
+   "B_docx_sig_equal_run1_run2": false,
+   "md5_docx": {
+    "A_run1": "51b87d702a3fe248b3abe97f51689286",
+    "A_run2": "2a923815282e02e12a3b0c615765883d",
+    "B_run1": "98b770249c25de69a2d627f88bf1c5e8",
+    "B_run2": "31202d4c4b22b9bba26b70f74fd8ee60"
+   }
+  },
+  "baseline": {
+   "freshB_vs_stored_oracle_fields_equal": true,
+   "freshA_vs_stored_package_fields_equal": true
+  }
+ },
+ "工作总结": {
+  "template": "工作总结",
+  "fields_top_keys_equal": true,
+  "fields_diffs_minus_outputs": [],
+  "fields_bytes_equal_minus_outputs": true,
+  "agreement_spec10": {
+   "matched": 7,
+   "total": 7,
+   "rate": 1.0,
+   "mismatch_names": []
+  },
+  "title": {
+   "A": "____2026年9月工作总结",
+   "B": "____2026年9月工作总结"
+  },
+  "summary": {
+   "A": {
+    "total": 7,
+    "filled": 3,
+    "missing": 4,
+    "missing_required": 2,
+    "missing_required_names": [
+     "总结主体",
+     "主要成绩"
+    ],
+    "unknown_keys": []
+   },
+   "B": {
+    "total": 7,
+    "filled": 3,
+    "missing": 4,
+    "missing_required": 2,
+    "missing_required_names": [
+     "总结主体",
+     "主要成绩"
+    ],
+    "unknown_keys": []
+   }
+  },
+  "focus_rows_A": [
+   {
+    "name": "总结主体",
+    "required": true,
+    "kind": "text",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "以____占位"
+   },
+   {
+    "name": "总结时段",
+    "required": true,
+    "kind": "text",
+    "status": "filled",
+    "value": "2026年9月",
+    "rendered_as": null
+   },
+   {
+    "name": "工作回顾",
+    "required": true,
+    "kind": "list",
+    "status": "filled",
+    "value": [
+     "完成评测平台月度巡检"
+    ],
+    "rendered_as": null
+   },
+   {
+    "name": "主要成绩",
+    "required": true,
+    "kind": "list",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "以____占位条目"
+   },
+   {
+    "name": "存在问题",
+    "required": false,
+    "kind": "list",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "省略该条目/小节"
+   },
+   {
+    "name": "下一步工作打算",
+    "required": true,
+    "kind": "list",
+    "status": "filled",
+    "value": [
+     "制定四季度评测排期"
+    ],
+    "rendered_as": null
+   },
+   {
+    "name": "成文日期",
+    "required": false,
+    "kind": "text",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "留空（渲染为空字符串）"
+   }
+  ],
+  "focus_rows_B": [
+   {
+    "name": "总结主体",
+    "required": true,
+    "kind": "text",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "以____占位"
+   },
+   {
+    "name": "总结时段",
+    "required": true,
+    "kind": "text",
+    "status": "filled",
+    "value": "2026年9月",
+    "rendered_as": null
+   },
+   {
+    "name": "工作回顾",
+    "required": true,
+    "kind": "list",
+    "status": "filled",
+    "value": [
+     "完成评测平台月度巡检"
+    ],
+    "rendered_as": null
+   },
+   {
+    "name": "主要成绩",
+    "required": true,
+    "kind": "list",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "以____占位条目"
+   },
+   {
+    "name": "存在问题",
+    "required": false,
+    "kind": "list",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "省略该条目/小节"
+   },
+   {
+    "name": "下一步工作打算",
+    "required": true,
+    "kind": "list",
+    "status": "filled",
+    "value": [
+     "制定四季度评测排期"
+    ],
+    "rendered_as": null
+   },
+   {
+    "name": "成文日期",
+    "required": false,
+    "kind": "text",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "留空（渲染为空字符串）"
+   }
+  ],
+  "page_equal": true,
+  "page": {
+   "A": {
+    "w_cm": 21.001,
+    "h_cm": 29.7,
+    "top_cm": 3.701,
+    "bottom_cm": 3.5,
+    "left_cm": 2.799,
+    "right_cm": 2.6
+   },
+   "B": {
+    "w_cm": 21.001,
+    "h_cm": 29.7,
+    "top_cm": 3.701,
+    "bottom_cm": 3.5,
+    "left_cm": 2.799,
+    "right_cm": 2.6
+   }
+  },
+  "para_count": {
+   "A": 9,
+   "B": 9
+  },
+  "docx_sig_identical": false,
+  "A_lines": [
+   "00|jc=center|flc=None|line=None/None|ri=None|____2026年9月工作总结|east=黑体,size=22.0",
+   "01|jc=None  |flc=200 |line=560/exact|ri=None|一、工作回顾|east=黑体,size=16.0",
+   "02|jc=None  |flc=200 |line=560/exact|ri=None|1．完成评测平台月度巡检|east=仿宋,size=16.0",
+   "03|jc=None  |flc=200 |line=560/exact|ri=None|二、主要成绩|east=黑体,size=16.0",
+   "04|jc=None  |flc=200 |line=560/exact|ri=None|1．____|east=仿宋,size=16.0",
+   "05|jc=None  |flc=200 |line=560/exact|ri=None|四、下一步工作打算|east=黑体,size=16.0",
+   "06|jc=None  |flc=200 |line=560/exact|ri=None|1．制定四季度评测排期|east=仿宋,size=16.0",
+   "07|jc=right |flc=None|line=560/exact|ri=640|____|east=仿宋,size=16.0",
+   "08|jc=right |flc=None|line=560/exact|ri=640|<空段>|east=?,size=?"
+  ],
+  "B_lines": [
+   "00|jc=center|flc=None|line=560/exact|ri=None|____2026年9月工作总结|east=黑体,size=22.0",
+   "01|jc=None  |flc=200 |line=560/exact|ri=None|一、工作回顾|east=黑体,size=16.0",
+   "02|jc=None  |flc=200 |line=560/exact|ri=None|1．完成评测平台月度巡检|east=仿宋,size=16.0",
+   "03|jc=None  |flc=200 |line=560/exact|ri=None|二、主要成绩|east=黑体,size=16.0",
+   "04|jc=None  |flc=200 |line=560/exact|ri=None|1．____|east=仿宋,size=16.0",
+   "05|jc=None  |flc=200 |line=560/exact|ri=None|三、下一步工作打算|east=黑体,size=16.0",
+   "06|jc=None  |flc=200 |line=560/exact|ri=None|1．制定四季度评测排期|east=仿宋,size=16.0",
+   "07|jc=right |flc=None|line=560/exact|ri=640|____|east=仿宋,size=16.0",
+   "08|jc=right |flc=None|line=560/exact|ri=640|<空段>|east=仿宋,size=16.0"
+  ],
+  "A_paras_sig": [
+   {
+    "text": "____2026年9月工作总结",
+    "empty": false,
+    "jc": "center",
+    "firstLineChars": null,
+    "firstLine": null,
+    "right": null,
+    "line": null,
+    "lineRule": null,
+    "before": null,
+    "after": null,
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "黑体",
+      "hAnsi": "黑体",
+      "size_pt": 22.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "一、工作回顾",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "黑体",
+      "hAnsi": "黑体",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "1．完成评测平台月度巡检",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "二、主要成绩",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "黑体",
+      "hAnsi": "黑体",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "1．____",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "四、下一步工作打算",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "黑体",
+      "hAnsi": "黑体",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "1．制定四季度评测排期",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "____",
+    "empty": false,
+    "jc": "right",
+    "firstLineChars": null,
+    "firstLine": null,
+    "right": "640",
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": null
+     }
+    ]
+   },
+   {
+    "text": "",
+    "empty": true,
+    "jc": "right",
+    "firstLineChars": null,
+    "firstLine": null,
+    "right": "640",
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": []
+   }
+  ],
+  "B_paras_sig": [
+   {
+    "text": "____2026年9月工作总结",
+    "empty": false,
+    "jc": "center",
+    "firstLineChars": null,
+    "firstLine": null,
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 22.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "一、工作回顾",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": "640",
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "1．完成评测平台月度巡检",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": "640",
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "二、主要成绩",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": "640",
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "1．____",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": "640",
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "三、下一步工作打算",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": "640",
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "黑体",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "1．制定四季度评测排期",
+    "empty": false,
+    "jc": null,
+    "firstLineChars": "200",
+    "firstLine": "640",
+    "right": null,
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "____",
+    "empty": false,
+    "jc": "right",
+    "firstLineChars": null,
+    "firstLine": null,
+    "right": "640",
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   },
+   {
+    "text": "",
+    "empty": true,
+    "jc": "right",
+    "firstLineChars": null,
+    "firstLine": null,
+    "right": "640",
+    "line": "560",
+    "lineRule": "exact",
+    "before": "0",
+    "after": "0",
+    "runs": [
+     {
+      "eastAsia": "仿宋",
+      "ascii": "Times New Roman",
+      "hAnsi": "Times New Roman",
+      "size_pt": 16.0,
+      "bold": false
+     }
+    ]
+   }
+  ],
+  "sections_A": [
+   "一、工作回顾",
+   "二、主要成绩",
+   "四、下一步工作打算"
+  ],
+  "sections_B": [
+   "一、工作回顾",
+   "二、主要成绩",
+   "三、下一步工作打算"
+  ],
+  "rubric_r1_placeholder_entry": {
+   "A_节头存在": true,
+   "A_占位条目存在": true,
+   "B_节头存在": true,
+   "B_占位条目存在": true,
+   "A_rendered_as": "以____占位条目",
+   "B_rendered_as": "以____占位条目"
+  },
+  "rubric_r2_string_singularization": {
+   "A_回顾节头": true,
+   "A_单项条目": true,
+   "B_回顾节头": true,
+   "B_单项条目": true,
+   "A_value": [
+    "完成评测平台月度巡检"
+   ],
+   "B_value": [
+    "完成评测平台月度巡检"
+   ],
+   "A_status": "filled",
+   "B_status": "filled"
+  },
+  "rubric_r3_optional_omission": {
+   "A_存在问题节未出现": true,
+   "B_存在问题节未出现": true,
+   "A_记账missing": {
+    "name": "存在问题",
+    "required": false,
+    "kind": "list",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "省略该条目/小节"
+   },
+   "B_记账missing": {
+    "name": "存在问题",
+    "required": false,
+    "kind": "list",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "省略该条目/小节"
+   },
+   "A_成文日期_末段为空段": true,
+   "B_成文日期_末段为空段": true,
+   "A_记账成文日期": {
+    "name": "成文日期",
+    "required": false,
+    "kind": "text",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "留空（渲染为空字符串）"
+   },
+   "B_记账成文日期": {
+    "name": "成文日期",
+    "required": false,
+    "kind": "text",
+    "status": "missing",
+    "value": null,
+    "rendered_as": "留空（渲染为空字符串）"
+   }
+  },
+  "rubric_r4_spec9_accounting": {
+   "A_missing_required_names": [
+    "总结主体",
+    "主要成绩"
+   ],
+   "B_missing_required_names": [
+    "总结主体",
+    "主要成绩"
+   ],
+   "expect": [
+    "总结主体",
+    "主要成绩"
+   ],
+   "A_title": "____2026年9月工作总结",
+   "B_title": "____2026年9月工作总结",
+   "expect_title": "____2026年9月工作总结",
+   "A_filled_total": [
+    3,
+    7
+   ],
+   "B_filled_total": [
+    3,
+    7
+   ]
+  },
+  "rubric_r5_numbering_signature": {
+   "A_sections": [
+    "一、工作回顾",
+    "二、主要成绩",
+    "四、下一步工作打算"
+   ],
+   "B_sections": [
+    "一、工作回顾",
+    "二、主要成绩",
+    "三、下一步工作打算"
+   ],
+   "expect_sections": [
+    "一、工作回顾",
+    "二、主要成绩",
+    "三、下一步工作打算"
+   ],
+   "A_last_nonempty": "____",
+   "B_last_nonempty": "____",
+   "A_last_nonempty_jc": "right",
+   "B_last_nonempty_jc": "right",
+   "A_last_nonempty_right": "640",
+   "B_last_nonempty_right": "640",
+   "A_item_lines": [
+    "1．完成评测平台月度巡检",
+    "1．____",
+    "1．制定四季度评测排期"
+   ],
+   "B_item_lines": [
+    "1．完成评测平台月度巡检",
+    "1．____",
+    "1．制定四季度评测排期"
+   ]
+  },
+  "placeholder_count": {
+   "A": 3,
+   "B": 3
+  },
+  "determinism": {
+   "A_fields_bytes_equal_run1_run2": true,
+   "B_fields_bytes_equal_run1_run2": true,
+   "A_docx_sig_equal_run1_run2": true,
+   "B_docx_sig_equal_run1_run2": false,
+   "md5_docx": {
+    "A_run1": "4adfde68b822be19ed127f85aa2fd420",
+    "A_run2": "4adfde68b822be19ed127f85aa2fd420",
+    "B_run1": "036ebf07f1aedfacfdc9afa1ddc2b52e",
+    "B_run2": "54046b1b1a305e0bbdc1328a224bc107"
+   }
+  },
+  "baseline": {
+   "freshB_vs_stored_oracle_fields_equal": true,
+   "freshA_vs_stored_package_fields_equal": true
+  }
+ }
+}

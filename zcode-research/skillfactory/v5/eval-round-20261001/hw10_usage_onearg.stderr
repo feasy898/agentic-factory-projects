@@ -1,0 +1,2 @@
+usage: runner.py [-h] [--out OUT] candidate reference
+runner.py: error: the following arguments are required: reference

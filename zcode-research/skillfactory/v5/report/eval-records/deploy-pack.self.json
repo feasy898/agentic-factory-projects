@@ -1,0 +1,68 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v5/assets/deploy-pack/eval",
+  "candidate": "skillfactory/v5/assets/deploy-pack/oracle/out",
+  "reference": "skillfactory/v5/assets/deploy-pack/oracle/out",
+  "candidate_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle/out/pack-canonical",
+  "candidate_resolved_via": "pack-canonical",
+  "reference_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle/out/pack-canonical",
+  "reference_resolved_via": "pack-canonical",
+  "oracle_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle",
+  "oracle_resolved_via": "reference-ancestor(/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle)",
+  "self_eval": true,
+  "ok": true,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0
+    },
+    "text_agreement_rate": 1.0
+  },
+  "checks": [
+    {
+      "name": "compose_yaml_three_services",
+      "passed": true,
+      "detail": "safe_load 通过; 服务集恰为 ['asr', 'minutes', 'todo']（三服务齐全且无多余）"
+    },
+    {
+      "name": "env_compose_vars_consistent",
+      "passed": true,
+      "detail": "compose引用 12 个/.env 定义 12 个; 双向一致"
+    },
+    {
+      "name": "validate_all_green",
+      "passed": true,
+      "oracle_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle",
+      "oracle_resolved_via": "reference-ancestor(/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle)",
+      "detail": "oracle validate.py 全绿: verdict=ALL GREEN, 7 pass / 0 fail / 0 skip"
+    },
+    {
+      "name": "reference_text_agreement_90pct",
+      "passed": true,
+      "detail": "与参照 pack 三文件文本一致率 100.00%（278/278 行位匹配，阈值 90%；行级 difflib、CRLF 归一、BOM 容忍）",
+      "text_agreement_rate": 1.0,
+      "threshold": 0.9,
+      "per_file": [
+        {
+          "file": "docker-compose.yml",
+          "ref_lines": 57,
+          "cand_lines": 57,
+          "matched": 57
+        },
+        {
+          "file": ".env.example",
+          "ref_lines": 35,
+          "cand_lines": 35,
+          "matched": 35
+        },
+        {
+          "file": "DEPLOY.md",
+          "ref_lines": 47,
+          "cand_lines": 47,
+          "matched": 47
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "summary": {
+    "total": 4,
+    "pass": 4,
+    "fail": 0,
+    "tested_root": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/speaker-mapping/package/out",
+    "reference_root": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/speaker-mapping/oracle/out"
+  },
+  "checks": [
+    {
+      "name": "replacement_line_by_line",
+      "pass": true,
+      "detail": "9 组映射产物逐字节等于期望常量（含替换正确、未映射标签原样保留、时间戳/冒号/正文逐字节不动）"
+    },
+    {
+      "name": "unmapped_warnings",
+      "pass": true,
+      "detail": "9 组 stderr 存档的 WARNING 与期望逐一相符（未映射标签原样保留且有警告；empty+m_full 另有 3 条映射键未出现警告）"
+    },
+    {
+      "name": "discover_stats",
+      "pass": true,
+      "detail": "3 个 discover JSON 统计正确: normal 3人(4/3/3)、partial 4人(3/3/2/2，SPEAKER_03 按首次出现排第2)、empty 0人；draft_mapping 与清单一致"
+    },
+    {
+      "name": "reference_agreement_100pct",
+      "pass": true,
+      "detail": "与参照产物一致 12/12（100%，确定性要求；discover JSON 按 A-2 归一，9 txt 逐字节）"
+    }
+  ]
+}

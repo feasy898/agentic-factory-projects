@@ -1,0 +1,33 @@
+{
+  "slug": "hooks-mastery",
+  "name": "disler/claude-code-hooks-mastery（hooks 实战教学库）",
+  "tasks": 3,
+  "baselineMean": 9,
+  "treatmentMean": 8.333333333333334,
+  "delta": -0.6666666666666666,
+  "winRate": 0,
+  "accepted": false,
+  "verdicts": [
+    {
+      "task": "hooks-mastery-t1",
+      "baseline": 9,
+      "treatment": 8,
+      "winner": "baseline",
+      "note": "两份产物均满足 rubric 全部四条，均给出可复现实测。逐条核实（我亲自运行/抓取的证据）：①JSON 语法与层级：用"
+    },
+    {
+      "task": "hooks-mastery-t2",
+      "baseline": 9,
+      "treatment": 8,
+      "winner": "baseline",
+      "note": "rubric 四条两份均完全达标：①错误1（事件）——甲 OUT.md:15-19 指出 PostToolUse 发生在"
+    },
+    {
+      "task": "hooks-mastery-t3",
+      "baseline": 9,
+      "treatment": 9,
+      "winner": "tie",
+      "note": "rubric 四条两份均完全达标，且我对两份脚本做了同一 7 用例矩阵的独立复测，行为完全一致：①事件与匹配——甲 OU"
+    }
+  ]
+}

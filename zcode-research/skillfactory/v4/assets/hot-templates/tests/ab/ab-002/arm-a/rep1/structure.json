@@ -1,0 +1,113 @@
+{
+  "meta": {
+    "platform": "xhs",
+    "topic": "租房避坑指南",
+    "template": "hot-templates",
+    "frozen_rules": ["标题带数字", "emoji规则", "正文分块", "标签组"],
+    "note": "冻结项在任务中仅给定规则名；template_rules 内的量化参数为本次 ab-002/arm-a/rep1 的实例化设定。生成全程未读取 skillfactory/ 下任何文件，素材仅来自任务给定材料（5 条要点）。",
+    "generated_at": "2026-09-30",
+    "arm": "ab-002/arm-a/rep1"
+  },
+  "template_rules": {
+    "title_with_number": {
+      "title_must_contain_digit": true,
+      "max_chars": 20,
+      "emoji_at_end": 1,
+      "variants_allowed": true
+    },
+    "emoji_rules": {
+      "budget_total": 10,
+      "per_role": {
+        "title": 1,
+        "hook": 1,
+        "each_point": 1,
+        "cta": 2
+      },
+      "style": "每个要点块以一枚主题 emoji 开头（存于该块 emoji 字段，渲染在小标题前）；钩子与 CTA 的 emoji 内联在 text 中；不连用、不堆砌；备选标题中的 emoji 不计入正帖预算"
+    },
+    "body_chunking": {
+      "order": ["hook", "point", "point", "point", "point", "point", "cta", "tags"],
+      "point_block_format": "【要点块 N】emoji 小标题 + 一两句『怎么做』",
+      "separator": "块间空行"
+    },
+    "tag_group": {
+      "count_range": [5, 8],
+      "mix": {
+        "话题": 3,
+        "人群/场景": 2,
+        "泛流量": 2
+      }
+    }
+  },
+  "title": {
+    "main": "租房避坑｜签合同前必看的5条保命铁律🏠",
+    "char_count": 19,
+    "contains_number": "5",
+    "variants": [
+      {
+        "text": "刚毕业租房被坑过才懂的5件事😭",
+        "char_count": 15
+      },
+      {
+        "text": "租房小白必存！5步避开99%的坑✅",
+        "char_count": 17
+      }
+    ]
+  },
+  "body": [
+    {
+      "role": "hook",
+      "text": "第一次租房的朋友先别急着交钱！合同里这几处没写清楚，押金可能就打水漂💸"
+    },
+    {
+      "role": "point",
+      "index": 1,
+      "source_point": "签约前查房东房产证与身份证一致性",
+      "emoji": "📑",
+      "label": "查房东身份",
+      "text": "签约前让房东出示房产证和身份证，两证姓名必须一致；遇二房东，还要看原房东的书面转租授权。"
+    },
+    {
+      "role": "point",
+      "index": 2,
+      "source_point": "押金条款写明退还条件与时限",
+      "emoji": "💰",
+      "label": "押金条款",
+      "text": "退还条件、扣除范围、退还时限（建议≤7个工作日）全部写进合同，口头承诺一律不作数。"
+    },
+    {
+      "role": "point",
+      "index": 3,
+      "source_point": "入住当天拍照录像留档",
+      "emoji": "📸",
+      "label": "入住留档",
+      "text": "入住当天全屋拍照+录像，墙面、家具、家电、门锁逐个拍，保留拍摄日期并同步给房东留底。"
+    },
+    {
+      "role": "point",
+      "index": 4,
+      "source_point": "水电燃气表底数写进合同附件",
+      "emoji": "💡",
+      "label": "表底数",
+      "text": "水、电、燃气三块表当场抄底数，写进合同附件并双方签字，别替上家背欠费。"
+    },
+    {
+      "role": "point",
+      "index": 5,
+      "source_point": "转租条款提前约定违约金",
+      "emoji": "📄",
+      "label": "转租条款",
+      "text": "能不能转租、是否需房东书面同意、违约金多少，提前谈好写进合同才算数。"
+    },
+    {
+      "role": "cta",
+      "text": "这5条都是真金白银换来的经验，看房签约前照着过一遍🌟\n评论区聊聊你踩过最离谱的租房坑？先收藏，签合同当天直接对照✅"
+    }
+  ],
+  "tags": ["#租房避坑", "#租房攻略", "#第一次租房", "#毕业季租房", "#租房合同", "#租房干货", "#生活经验"],
+  "tag_mix": {
+    "话题": ["#租房避坑", "#租房攻略", "#租房合同"],
+    "人群/场景": ["#第一次租房", "#毕业季租房"],
+    "泛流量": ["#租房干货", "#生活经验"]
+  }
+}

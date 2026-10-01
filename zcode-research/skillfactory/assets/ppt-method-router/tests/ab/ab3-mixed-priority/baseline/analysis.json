@@ -1,0 +1,40 @@
+{
+  "command": "python package/scripts/route.py --input oracle/inputs/case15.txt",
+  "cwd": "D:\\workspace\\zcode研究\\skillfactory\\assets\\ppt-method-router",
+  "exit_code": 0,
+  "stdout": "{\"method\": \"template_fill\", \"confidence\": 0.65, \"reasons\": [\"命中[template_fill(套用既有公司模板)]关键词：品牌\", \"命中[visual_report(图文海报/信息图)]关键词：海报、一页\", \"多类信号同时出现（template_fill > visual_report），按优先级 template_fill > editable_pptx > visual_report 裁定为 template_fill(套用既有公司模板)\", \"冲突说明：意图同时携带 2 类制作信号（共 3 个命中词），制作方向可能未定，置信度上限压至 0.75（本条 0.65）；建议人工复核或向用户确认主用途后再移交执行\"]}\r\n",
+  "stderr": "",
+  "parsed_output": {
+    "method": "template_fill",
+    "confidence": 0.65,
+    "reasons": [
+      "命中[template_fill(套用既有公司模板)]关键词：品牌",
+      "命中[visual_report(图文海报/信息图)]关键词：海报、一页",
+      "多类信号同时出现（template_fill > visual_report），按优先级 template_fill > editable_pptx > visual_report 裁定为 template_fill(套用既有公司模板)",
+      "冲突说明：意图同时携带 2 类制作信号（共 3 个命中词），制作方向可能未定，置信度上限压至 0.75（本条 0.65）；建议人工复核或向用户确认主用途后再移交执行"
+    ]
+  },
+  "checks": {
+    "exit_code_is_0": true,
+    "stdout_single_line": true,
+    "stdout_parses_as_json": true,
+    "method_equals_reference_template_fill": true,
+    "reasons_non_empty_list": true,
+    "reasons_disclose_template_fill_keyword_brand": true,
+    "reasons_disclose_visual_report_keywords_poster_onepage": true,
+    "reasons_state_priority_chain": true,
+    "reasons_state_conflict_notice": true,
+    "reasons_state_human_review_suggestion": true,
+    "confidence_is_number_in_0_1": true,
+    "confidence_le_0_75_conflict_suppressed": true,
+    "confidence_equals_reference_0_65": true
+  },
+  "labels_compare": {
+    "labels_file_found": true,
+    "case15_entry_found": true,
+    "ref_method_matches_output": true,
+    "ref_confidence_matches_output": true,
+    "matched_entry_key_name": null
+  },
+  "stdout_parse_error": null
+}

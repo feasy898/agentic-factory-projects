@@ -1,0 +1,139 @@
+{
+  "template_version": "1.0",
+  "platform": "dy",
+  "platform_name": "抖音口播稿",
+  "structure_name": "3秒钩子 + 痛点 + 价值点×3 + CTA",
+  "topic": "时间管理",
+  "points_input_count": 3,
+  "points_used": [
+    "四象限法给任务排优先级",
+    "番茄钟25分钟专注+5分钟休息",
+    "每周日晚固定30分钟复盘"
+  ],
+  "points_unused": [],
+  "element_count": 6,
+  "elements": [
+    {
+      "id": "hook_3s",
+      "name": "3秒钩子（0-3s）",
+      "order": 1,
+      "required": true,
+      "text": "别划走！还在为「时间管理」反复内耗的人，这条视频就是给你准备的——【占位:可替换为你的原创钩子强句，一句制造好奇或冲突】",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "可替换为你的原创钩子强句，一句制造好奇或冲突"
+      ],
+      "filled_from_input": [
+        "topic"
+      ],
+      "meta": {
+        "beat": "0-3秒留住人：反问+利益点，语速快、重音落在主题词"
+      }
+    },
+    {
+      "id": "pain_point",
+      "name": "痛点共鸣",
+      "order": 2,
+      "required": true,
+      "text": "我太懂这种痛了：【占位:痛点场景，写目标人群最扎心的一个具体瞬间】。不是你不努力，是方法从一开始就错了。",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "痛点场景，写目标人群最扎心的一个具体瞬间"
+      ],
+      "filled_from_input": [],
+      "meta": {
+        "beat": "说中一件事，让观众对号入座"
+      }
+    },
+    {
+      "id": "value_1",
+      "name": "价值点1",
+      "order": 3,
+      "required": true,
+      "text": "第一招：四象限法给任务排优先级。【占位:一句话展开：怎么做/效果/案例】",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "一句话展开：怎么做/效果/案例"
+      ],
+      "filled_from_input": [
+        "point#1"
+      ],
+      "meta": {
+        "beat": "一条卖点一句展开，信息密度拉满"
+      }
+    },
+    {
+      "id": "value_2",
+      "name": "价值点2",
+      "order": 4,
+      "required": true,
+      "text": "第二招：番茄钟25分钟专注+5分钟休息。【占位:一句话展开：怎么做/效果/案例】",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "一句话展开：怎么做/效果/案例"
+      ],
+      "filled_from_input": [
+        "point#2"
+      ],
+      "meta": {
+        "beat": "一条卖点一句展开，信息密度拉满"
+      }
+    },
+    {
+      "id": "value_3",
+      "name": "价值点3",
+      "order": 5,
+      "required": true,
+      "text": "第三招：每周日晚固定30分钟复盘。【占位:一句话展开：怎么做/效果/案例】",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "一句话展开：怎么做/效果/案例"
+      ],
+      "filled_from_input": [
+        "point#3"
+      ],
+      "meta": {
+        "beat": "一条卖点一句展开，信息密度拉满"
+      }
+    },
+    {
+      "id": "cta",
+      "name": "行动号召（CTA）",
+      "order": 6,
+      "required": true,
+      "text": "方法就这三条，现在就去用。觉得有用就点赞收藏，评论区扣「1」，我把【占位:配套资料/下期选题】整理给你。",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "配套资料/下期选题"
+      ],
+      "filled_from_input": [],
+      "meta": {
+        "beat": "点赞+收藏+评论三连指令，给一个扣词降低互动门槛"
+      }
+    }
+  ],
+  "placeholder_stats": {
+    "total_open": 6,
+    "total_filled_from_input": 4,
+    "by_element": {
+      "hook_3s": 1,
+      "pain_point": 1,
+      "value_1": 1,
+      "value_2": 1,
+      "value_3": 1,
+      "cta": 1
+    },
+    "open_tokens_unique": [
+      "可替换为你的原创钩子强句，一句制造好奇或冲突",
+      "痛点场景，写目标人群最扎心的一个具体瞬间",
+      "一句话展开：怎么做/效果/案例",
+      "配套资料/下期选题"
+    ],
+    "filled_slots": [
+      "topic",
+      "point#1",
+      "point#2",
+      "point#3"
+    ]
+  }
+}

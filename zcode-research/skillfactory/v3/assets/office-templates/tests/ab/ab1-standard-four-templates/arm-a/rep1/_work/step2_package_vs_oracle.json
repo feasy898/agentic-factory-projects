@@ -1,0 +1,298 @@
+[
+ {
+  "template": "周报",
+  "fields_top_keys_equal": true,
+  "fields_diffs_minus_outputs": [],
+  "fields_outputs_tested": {
+   "docx": "package\\out\\周报\\case1\\文书.docx",
+   "fields_json": "package\\out\\周报\\case1\\fields.json"
+  },
+  "fields_outputs_oracle": {
+   "docx": "oracle\\out\\周报\\case1\\文书.docx",
+   "fields_json": "oracle\\out\\周报\\case1\\fields.json"
+  },
+  "agreement": {
+   "matched": 7,
+   "total": 7,
+   "rate": 1.0,
+   "mismatch_names": []
+  },
+  "title": {
+   "tested": "研发部工作周报",
+   "oracle": "研发部工作周报"
+  },
+  "page_equal": true,
+  "page": {
+   "tested": {
+    "w_cm": 21.001,
+    "h_cm": 29.7,
+    "top_cm": 3.701,
+    "bottom_cm": 3.5,
+    "left_cm": 2.799,
+    "right_cm": 2.6
+   },
+   "oracle": {
+    "w_cm": 21.001,
+    "h_cm": 29.7,
+    "top_cm": 3.701,
+    "bottom_cm": 3.5,
+    "left_cm": 2.799,
+    "right_cm": 2.6
+   }
+  },
+  "para_count": {
+   "tested": 11,
+   "oracle": 11
+  },
+  "docx_identical_sig": false,
+  "tested_lines": [
+   "00|jc=center|flc=None|line=None/None|ri=None|研发部工作周报|east=黑体,size=22.0",
+   "01|jc=None  |flc=200 |line=560/exact|ri=None|填报人：王小明　　周期：2026-09-21 至 2026-09-27|east=仿宋,size=16.0",
+   "02|jc=None  |flc=200 |line=560/exact|ri=None|一、本周工作内容|east=黑体,size=16.0",
+   "03|jc=None  |flc=200 |line=560/exact|ri=None|1．完成打分器 v0.9 与评测台联调|east=仿宋,size=16.0",
+   "04|jc=None  |flc=200 |line=560/exact|ri=None|2．修复评测集 3 处标注不一致问题|east=仿宋,size=16.0",
+   "05|jc=None  |flc=200 |line=560/exact|ri=None|二、下周工作计划|east=黑体,size=16.0",
+   "06|jc=None  |flc=200 |line=560/exact|ri=None|1．启动回归测试全量跑批|east=仿宋,size=16.0",
+   "07|jc=None  |flc=200 |line=560/exact|ri=None|2．输出周度质量报告初稿|east=仿宋,size=16.0",
+   "08|jc=None  |flc=200 |line=560/exact|ri=None|三、问题与需协调事项|east=黑体,size=16.0",
+   "09|jc=None  |flc=200 |line=560/exact|ri=None|1．测试机资源紧张，需协调一台 GPU 机器|east=仿宋,size=16.0",
+   "10|jc=right |flc=None|line=560/exact|ri=640|报送日期：2026-09-28|east=仿宋,size=16.0"
+  ],
+  "oracle_lines": [
+   "00|jc=center|flc=None|line=560/exact|ri=None|研发部工作周报|east=黑体,size=22.0",
+   "01|jc=center|flc=None|line=560/exact|ri=None|填报人：王小明　　部门：研发部　　周期：2026-09-21 至 2026-09-27|east=仿宋,size=16.0",
+   "02|jc=None  |flc=200 |line=560/exact|ri=None|一、本周工作内容|east=黑体,size=16.0",
+   "03|jc=None  |flc=200 |line=560/exact|ri=None|1．完成打分器 v0.9 与评测台联调|east=仿宋,size=16.0",
+   "04|jc=None  |flc=200 |line=560/exact|ri=None|2．修复评测集 3 处标注不一致问题|east=仿宋,size=16.0",
+   "05|jc=None  |flc=200 |line=560/exact|ri=None|二、下周工作计划|east=黑体,size=16.0",
+   "06|jc=None  |flc=200 |line=560/exact|ri=None|1．启动回归测试全量跑批|east=仿宋,size=16.0",
+   "07|jc=None  |flc=200 |line=560/exact|ri=None|2．输出周度质量报告初稿|east=仿宋,size=16.0",
+   "08|jc=None  |flc=200 |line=560/exact|ri=None|三、问题与需协调事项|east=黑体,size=16.0",
+   "09|jc=None  |flc=200 |line=560/exact|ri=None|1．测试机资源紧张，需协调一台 GPU 机器|east=仿宋,size=16.0",
+   "10|jc=right |flc=None|line=560/exact|ri=640|报送日期：2026-09-28|east=仿宋,size=16.0"
+  ]
+ },
+ {
+  "template": "请示函",
+  "fields_top_keys_equal": true,
+  "fields_diffs_minus_outputs": [],
+  "fields_outputs_tested": {
+   "docx": "package\\out\\请示函\\case1\\文书.docx",
+   "fields_json": "package\\out\\请示函\\case1\\fields.json"
+  },
+  "fields_outputs_oracle": {
+   "docx": "oracle\\out\\请示函\\case1\\文书.docx",
+   "fields_json": "oracle\\out\\请示函\\case1\\fields.json"
+  },
+  "agreement": {
+   "matched": 8,
+   "total": 8,
+   "rate": 1.0,
+   "mismatch_names": []
+  },
+  "title": {
+   "tested": "关于采购评测用 GPU 服务器的请示",
+   "oracle": "关于采购评测用 GPU 服务器的请示"
+  },
+  "page_equal": true,
+  "page": {
+   "tested": {
+    "w_cm": 21.001,
+    "h_cm": 29.7,
+    "top_cm": 3.701,
+    "bottom_cm": 3.5,
+    "left_cm": 2.799,
+    "right_cm": 2.6
+   },
+   "oracle": {
+    "w_cm": 21.001,
+    "h_cm": 29.7,
+    "top_cm": 3.701,
+    "bottom_cm": 3.5,
+    "left_cm": 2.799,
+    "right_cm": 2.6
+   }
+  },
+  "para_count": {
+   "tested": 7,
+   "oracle": 9
+  },
+  "docx_identical_sig": false,
+  "tested_lines": [
+   "00|jc=center|flc=None|line=None/None|ri=None|关于采购评测用 GPU 服务器的请示|east=黑体,size=22.0",
+   "01|jc=None  |flc=None|line=560/exact|ri=None|公司总经理办公会：|east=仿宋,size=16.0",
+   "02|jc=None  |flc=200 |line=560/exact|ri=None|因评测规模扩大，现有设备无法满足批量推理需求，评测周期被迫拉长。|east=仿宋,size=16.0",
+   "03|jc=None  |flc=200 |line=560/exact|ri=None|申请采购 V100S 服务器 2 台，预算 12 万元，本月内完成到货验收。|east=仿宋,size=16.0",
+   "04|jc=None  |flc=200 |line=560/exact|ri=None|联系人：李工　　联系电话：010-88886666|east=仿宋,size=16.0",
+   "05|jc=right |flc=None|line=560/exact|ri=640|评测技术部|east=仿宋,size=16.0",
+   "06|jc=right |flc=None|line=560/exact|ri=640|2026年9月28日|east=仿宋,size=16.0"
+  ],
+  "oracle_lines": [
+   "00|jc=center|flc=None|line=560/exact|ri=None|关于采购评测用 GPU 服务器的请示|east=黑体,size=22.0",
+   "01|jc=None  |flc=None|line=560/exact|ri=None|公司总经理办公会：|east=仿宋,size=16.0",
+   "02|jc=None  |flc=200 |line=560/exact|ri=None|因评测规模扩大，现有设备无法满足批量推理需求，评测周期被迫拉长。|east=仿宋,size=16.0",
+   "03|jc=None  |flc=200 |line=560/exact|ri=None|现就有关事项请示如下：|east=仿宋,size=16.0",
+   "04|jc=None  |flc=200 |line=560/exact|ri=None|申请采购 V100S 服务器 2 台，预算 12 万元，本月内完成到货验收。|east=仿宋,size=16.0",
+   "05|jc=None  |flc=200 |line=560/exact|ri=None|妥否，请批示。|east=仿宋,size=16.0",
+   "06|jc=None  |flc=200 |line=560/exact|ri=None|联系人：李工　　联系电话：010-88886666|east=仿宋,size=16.0",
+   "07|jc=right |flc=None|line=560/exact|ri=640|评测技术部|east=仿宋,size=16.0",
+   "08|jc=right |flc=None|line=560/exact|ri=640|2026年9月28日|east=仿宋,size=16.0"
+  ]
+ },
+ {
+  "template": "会议通知",
+  "fields_top_keys_equal": true,
+  "fields_diffs_minus_outputs": [],
+  "fields_outputs_tested": {
+   "docx": "package\\out\\会议通知\\case1\\文书.docx",
+   "fields_json": "package\\out\\会议通知\\case1\\fields.json"
+  },
+  "fields_outputs_oracle": {
+   "docx": "oracle\\out\\会议通知\\case1\\文书.docx",
+   "fields_json": "oracle\\out\\会议通知\\case1\\fields.json"
+  },
+  "agreement": {
+   "matched": 11,
+   "total": 11,
+   "rate": 1.0,
+   "mismatch_names": []
+  },
+  "title": {
+   "tested": "关于召开三季度质量评审会的通知",
+   "oracle": "关于召开三季度质量评审会的通知"
+  },
+  "page_equal": true,
+  "page": {
+   "tested": {
+    "w_cm": 21.001,
+    "h_cm": 29.7,
+    "top_cm": 3.701,
+    "bottom_cm": 3.5,
+    "left_cm": 2.799,
+    "right_cm": 2.6
+   },
+   "oracle": {
+    "w_cm": 21.001,
+    "h_cm": 29.7,
+    "top_cm": 3.701,
+    "bottom_cm": 3.5,
+    "left_cm": 2.799,
+    "right_cm": 2.6
+   }
+  },
+  "para_count": {
+   "tested": 12,
+   "oracle": 12
+  },
+  "docx_identical_sig": false,
+  "tested_lines": [
+   "00|jc=center|flc=None|line=None/None|ri=None|关于召开三季度质量评审会的通知|east=黑体,size=22.0",
+   "01|jc=None  |flc=None|line=560/exact|ri=None|各部门、各项目组：|east=仿宋,size=16.0",
+   "02|jc=None  |flc=200 |line=560/exact|ri=None|会议时间：2026年10月9日（周五）14:00|east=仿宋,size=16.0",
+   "03|jc=None  |flc=200 |line=560/exact|ri=None|会议地点：3 号楼 501 会议室|east=仿宋,size=16.0",
+   "04|jc=None  |flc=200 |line=560/exact|ri=None|参会人员：各部门负责人、各项目组 PM|east=仿宋,size=16.0",
+   "05|jc=None  |flc=200 |line=560/exact|ri=None|会议议题：三季度评测结果复盘与四季度计划|east=仿宋,size=16.0",
+   "06|jc=None  |flc=200 |line=560/exact|ri=None|一、会议要求|east=黑体,size=16.0",
+   "07|jc=None  |flc=200 |line=560/exact|ri=None|1．会前提交本部门质量简报|east=仿宋,size=16.0",
+   "08|jc=None  |flc=200 |line=560/exact|ri=None|2．迟到 10 分钟以上按缺席处理|east=仿宋,size=16.0",
+   "09|jc=None  |flc=200 |line=560/exact|ri=None|联系人：李工　　联系电话：010-88886666|east=仿宋,size=16.0",
+   "10|jc=right |flc=None|line=560/exact|ri=640|评测技术部|east=仿宋,size=16.0",
+   "11|jc=right |flc=None|line=560/exact|ri=640|2026年9月28日|east=仿宋,size=16.0"
+  ],
+  "oracle_lines": [
+   "00|jc=center|flc=None|line=560/exact|ri=None|关于召开三季度质量评审会的通知|east=黑体,size=22.0",
+   "01|jc=None  |flc=None|line=560/exact|ri=None|各部门、各项目组：|east=仿宋,size=16.0",
+   "02|jc=None  |flc=200 |line=560/exact|ri=None|经研究，决定召开三季度质量评审会。现将有关事项通知如下：|east=仿宋,size=16.0",
+   "03|jc=None  |flc=200 |line=560/exact|ri=None|一、会议时间：2026年10月9日（周五）14:00|east=仿宋,size=16.0",
+   "04|jc=None  |flc=200 |line=560/exact|ri=None|二、会议地点：3 号楼 501 会议室|east=仿宋,size=16.0",
+   "05|jc=None  |flc=200 |line=560/exact|ri=None|三、参会人员：各部门负责人、各项目组 PM|east=仿宋,size=16.0",
+   "06|jc=None  |flc=200 |line=560/exact|ri=None|四、会议议题：三季度评测结果复盘与四季度计划|east=仿宋,size=16.0",
+   "07|jc=None  |flc=200 |line=560/exact|ri=None|五、会议要求：会前提交本部门质量简报；迟到 10 分钟以上按缺席处理。|east=仿宋,size=16.0",
+   "08|jc=None  |flc=200 |line=560/exact|ri=None|特此通知。|east=仿宋,size=16.0",
+   "09|jc=None  |flc=200 |line=560/exact|ri=None|联系人：李工　　联系电话：010-88886666|east=仿宋,size=16.0",
+   "10|jc=right |flc=None|line=560/exact|ri=640|评测技术部|east=仿宋,size=16.0",
+   "11|jc=right |flc=None|line=560/exact|ri=640|2026年9月28日|east=仿宋,size=16.0"
+  ]
+ },
+ {
+  "template": "工作总结",
+  "fields_top_keys_equal": true,
+  "fields_diffs_minus_outputs": [],
+  "fields_outputs_tested": {
+   "docx": "package\\out\\工作总结\\case1\\文书.docx",
+   "fields_json": "package\\out\\工作总结\\case1\\fields.json"
+  },
+  "fields_outputs_oracle": {
+   "docx": "oracle\\out\\工作总结\\case1\\文书.docx",
+   "fields_json": "oracle\\out\\工作总结\\case1\\fields.json"
+  },
+  "agreement": {
+   "matched": 7,
+   "total": 7,
+   "rate": 1.0,
+   "mismatch_names": []
+  },
+  "title": {
+   "tested": "评测技术部2026年第三季度工作总结",
+   "oracle": "评测技术部2026年第三季度工作总结"
+  },
+  "page_equal": true,
+  "page": {
+   "tested": {
+    "w_cm": 21.001,
+    "h_cm": 29.7,
+    "top_cm": 3.701,
+    "bottom_cm": 3.5,
+    "left_cm": 2.799,
+    "right_cm": 2.6
+   },
+   "oracle": {
+    "w_cm": 21.001,
+    "h_cm": 29.7,
+    "top_cm": 3.701,
+    "bottom_cm": 3.5,
+    "left_cm": 2.799,
+    "right_cm": 2.6
+   }
+  },
+  "para_count": {
+   "tested": 15,
+   "oracle": 15
+  },
+  "docx_identical_sig": false,
+  "tested_lines": [
+   "00|jc=center|flc=None|line=None/None|ri=None|评测技术部2026年第三季度工作总结|east=黑体,size=22.0",
+   "01|jc=None  |flc=200 |line=560/exact|ri=None|一、工作回顾|east=黑体,size=16.0",
+   "02|jc=None  |flc=200 |line=560/exact|ri=None|1．完成 P0 打分器三轮迭代|east=仿宋,size=16.0",
+   "03|jc=None  |flc=200 |line=560/exact|ri=None|2．建设 12 份评测 JSON 台账|east=仿宋,size=16.0",
+   "04|jc=None  |flc=200 |line=560/exact|ri=None|二、主要成绩|east=黑体,size=16.0",
+   "05|jc=None  |flc=200 |line=560/exact|ri=None|1．打分一致性从 6.1 提升到 7.4|east=仿宋,size=16.0",
+   "06|jc=None  |flc=200 |line=560/exact|ri=None|2．评测周期缩短 30%|east=仿宋,size=16.0",
+   "07|jc=None  |flc=200 |line=560/exact|ri=None|三、存在问题|east=黑体,size=16.0",
+   "08|jc=None  |flc=200 |line=560/exact|ri=None|1．标注规范仍有歧义|east=仿宋,size=16.0",
+   "09|jc=None  |flc=200 |line=560/exact|ri=None|2．GPU 资源排期紧张|east=仿宋,size=16.0",
+   "10|jc=None  |flc=200 |line=560/exact|ri=None|四、下一步工作打算|east=黑体,size=16.0",
+   "11|jc=None  |flc=200 |line=560/exact|ri=None|1．发布标注规范 v2|east=仿宋,size=16.0",
+   "12|jc=None  |flc=200 |line=560/exact|ri=None|2．引入自动化回归评测|east=仿宋,size=16.0",
+   "13|jc=right |flc=None|line=560/exact|ri=640|评测技术部|east=仿宋,size=16.0",
+   "14|jc=right |flc=None|line=560/exact|ri=640|2026年9月30日|east=仿宋,size=16.0"
+  ],
+  "oracle_lines": [
+   "00|jc=center|flc=None|line=560/exact|ri=None|评测技术部2026年第三季度工作总结|east=黑体,size=22.0",
+   "01|jc=None  |flc=200 |line=560/exact|ri=None|一、工作回顾|east=黑体,size=16.0",
+   "02|jc=None  |flc=200 |line=560/exact|ri=None|1．完成 P0 打分器三轮迭代|east=仿宋,size=16.0",
+   "03|jc=None  |flc=200 |line=560/exact|ri=None|2．建设 12 份评测 JSON 台账|east=仿宋,size=16.0",
+   "04|jc=None  |flc=200 |line=560/exact|ri=None|二、主要成绩|east=黑体,size=16.0",
+   "05|jc=None  |flc=200 |line=560/exact|ri=None|1．打分一致性从 6.1 提升到 7.4|east=仿宋,size=16.0",
+   "06|jc=None  |flc=200 |line=560/exact|ri=None|2．评测周期缩短 30%|east=仿宋,size=16.0",
+   "07|jc=None  |flc=200 |line=560/exact|ri=None|三、存在问题|east=黑体,size=16.0",
+   "08|jc=None  |flc=200 |line=560/exact|ri=None|1．标注规范仍有歧义|east=仿宋,size=16.0",
+   "09|jc=None  |flc=200 |line=560/exact|ri=None|2．GPU 资源排期紧张|east=仿宋,size=16.0",
+   "10|jc=None  |flc=200 |line=560/exact|ri=None|四、下一步工作打算|east=黑体,size=16.0",
+   "11|jc=None  |flc=200 |line=560/exact|ri=None|1．发布标注规范 v2|east=仿宋,size=16.0",
+   "12|jc=None  |flc=200 |line=560/exact|ri=None|2．引入自动化回归评测|east=仿宋,size=16.0",
+   "13|jc=right |flc=None|line=560/exact|ri=640|评测技术部|east=仿宋,size=16.0",
+   "14|jc=right |flc=None|line=560/exact|ri=640|2026年9月30日|east=仿宋,size=16.0"
+  ]
+ }
+]

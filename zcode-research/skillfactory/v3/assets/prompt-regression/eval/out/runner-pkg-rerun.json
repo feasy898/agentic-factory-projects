@@ -1,0 +1,187 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v3/assets/prompt-regression/eval",
+  "candidate": "package",
+  "reference": "oracle",
+  "candidate_layout": "root",
+  "resolved_via": "direct",
+  "reference_resolved_via": "direct",
+  "self_eval": false,
+  "sampled_ids": [
+    "po-01",
+    "mm-02",
+    "ec-04"
+  ],
+  "ok": true,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0
+    },
+    "items": 25,
+    "domains": {
+      "doc-writing": 6,
+      "table-data": 5,
+      "meeting-minutes": 3,
+      "ppt-outline": 3,
+      "email-comm": 4,
+      "process-spec": 4
+    },
+    "checks_in_golden": 125,
+    "identical_vs_reference": 0
+  },
+  "checks": [
+    {
+      "name": "validate_all_green",
+      "passed": true,
+      "detail": "被测校验器全绿：7/7 项通过，items=25，checks_in_golden=125",
+      "candidate_layout": "root",
+      "resolved_via": "direct"
+    },
+    {
+      "name": "domain_coverage_per_spec",
+      "passed": true,
+      "detail": "域配比: 文档写作=6/6、表格数据=5/5、会议纪要=3/3、PPT要点=3/3、邮件沟通=4/4、流程规范=4/4，共 25 题（与 spec 一致）",
+      "domains": {
+        "doc-writing": 6,
+        "table-data": 5,
+        "meeting-minutes": 3,
+        "ppt-outline": 3,
+        "email-comm": 4,
+        "process-spec": 4
+      }
+    },
+    {
+      "name": "no_duplicate_vs_reference",
+      "passed": true,
+      "detail": "内部 25 条归一化唯一；与参照集完全相同题 0 ≤ 5；相似度审计 max=0.3275 mean=0.1872",
+      "self_eval": false,
+      "identical_vs_reference": 0,
+      "identical_ids": [],
+      "max_similarity_vs_reference": 0.3275,
+      "mean_similarity_vs_reference": 0.1872
+    },
+    {
+      "name": "sampled_checks_decidable",
+      "passed": true,
+      "detail": "抽样 3 题（['po-01', 'mm-02', 'ec-04']）共 15 条 check 全部可判（种子 20260930；人工复核脚本化，明细见 samples 字段）",
+      "samples": [
+        {
+          "id": "po-01",
+          "domain": "ppt-outline",
+          "ok": true,
+          "question_problems": [],
+          "checks": [
+            {
+              "name": "revenue",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "yoy",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "renewal-rate",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "h2-plan",
+              "type": "contains",
+              "ok": true,
+              "note": "contains 可判"
+            },
+            {
+              "name": "slide-count",
+              "type": "semantic",
+              "ok": true,
+              "note": "semantic 判据具体可执行"
+            }
+          ]
+        },
+        {
+          "id": "mm-02",
+          "domain": "meeting-minutes",
+          "ok": true,
+          "question_problems": [],
+          "checks": [
+            {
+              "name": "project-name",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "change-items",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "next-step",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "acceptance",
+              "type": "contains",
+              "ok": true,
+              "note": "contains 可判"
+            },
+            {
+              "name": "risk-section",
+              "type": "semantic",
+              "ok": true,
+              "note": "semantic 判据具体可执行"
+            }
+          ]
+        },
+        {
+          "id": "ec-04",
+          "domain": "email-comm",
+          "ok": true,
+          "question_problems": [],
+          "checks": [
+            {
+              "name": "position",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "experience",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "interview-slot",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "resume-attach",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "factual-tone",
+              "type": "semantic",
+              "ok": true,
+              "note": "semantic 判据具体可执行"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

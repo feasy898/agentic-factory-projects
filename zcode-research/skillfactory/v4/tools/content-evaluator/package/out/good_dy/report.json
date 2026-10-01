@@ -1,0 +1,75 @@
+{
+  "tool": "evaluate.py 1.0.0",
+  "input": "D:\\workspace\\zcode研究\\skillfactory\\v4\\tools\\content-evaluator\\package\\fixtures\\good_dy.md",
+  "platform": "dy",
+  "platform_label": "抖音",
+  "generated_at": "2026-09-30T11:29:29+0800",
+  "summary": {
+    "applied": 9,
+    "pass": 9,
+    "fail": 0,
+    "warn": 0
+  },
+  "score": {
+    "passed": 9,
+    "applied": 9,
+    "ratio": 1.0,
+    "text": "9/9"
+  },
+  "checks": [
+    {
+      "name": "title_length",
+      "pass": true,
+      "warning": false,
+      "detail": "标题 12 字，在区间 [10, 30] 内"
+    },
+    {
+      "name": "emoji_density",
+      "pass": true,
+      "warning": false,
+      "detail": "emoji 共 0 个，未超软上限 10"
+    },
+    {
+      "name": "body_length",
+      "pass": true,
+      "warning": false,
+      "detail": "正文 154 字，在区间 [50, 300] 内"
+    },
+    {
+      "name": "paragraph_max",
+      "pass": true,
+      "warning": false,
+      "detail": "最长段落 34 字，未超单段上限 120"
+    },
+    {
+      "name": "tag_count",
+      "pass": true,
+      "warning": false,
+      "detail": "标签 5 个，在区间 [3, 8] 内"
+    },
+    {
+      "name": "banned_words",
+      "pass": true,
+      "warning": false,
+      "detail": "未命中极限词（词表 44 词）"
+    },
+    {
+      "name": "structure_hook",
+      "pass": true,
+      "warning": false,
+      "detail": "首段含问号"
+    },
+    {
+      "name": "structure_cta",
+      "pass": true,
+      "warning": false,
+      "detail": "正文含 CTA 引导词「点赞」"
+    },
+    {
+      "name": "structure_para",
+      "pass": true,
+      "warning": false,
+      "detail": "段落 6 段，达到最少 2 段"
+    }
+  ]
+}

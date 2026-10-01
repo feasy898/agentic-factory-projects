@@ -1,0 +1,100 @@
+{
+  "skill": "hot-templates",
+  "eval_inputs": [
+    {
+      "case": "dy/case1",
+      "input": "oracle/inputs/dy/case1.json",
+      "output": "oracle/out/dy/case1"
+    },
+    {
+      "case": "dy/case2",
+      "input": "oracle/inputs/dy/case2.json",
+      "output": "oracle/out/dy/case2"
+    },
+    {
+      "case": "xhs/case1",
+      "input": "oracle/inputs/xhs/case1.json",
+      "output": "oracle/out/xhs/case1"
+    },
+    {
+      "case": "xhs/case2",
+      "input": "oracle/inputs/xhs/case2.json",
+      "output": "oracle/out/xhs/case2"
+    },
+    {
+      "case": "wx/case1",
+      "input": "oracle/inputs/wx/case1.json",
+      "output": "oracle/out/wx/case1"
+    },
+    {
+      "case": "wx/case2",
+      "input": "oracle/inputs/wx/case2.json",
+      "output": "oracle/out/wx/case2"
+    },
+    {
+      "case": "video/case1",
+      "input": "oracle/inputs/video/case1.json",
+      "output": "oracle/out/video/case1"
+    },
+    {
+      "case": "video/case2",
+      "input": "oracle/inputs/video/case2.json",
+      "output": "oracle/out/video/case2"
+    }
+  ],
+  "ab_tasks": [
+    {
+      "id": "ab-001",
+      "instruction": "使用 hot-templates 技能，生成抖音口播爆款内容骨架，产物写入指定的输出目录 <outdir>（必须含 <outdir>/骨架.md 与 <outdir>/structure.json 两份文件）。材料自含——platform=dy，topic=通勤时间管理，points=[\"前一天晚上定好三件要事\", \"通勤路上只听行业播客不刷短视频\", \"到公司先花10分钟写当日清单\"]（恰好 3 条）。冻结模板：3秒钩子 + 痛点 + 价值点×3 + CTA。",
+      "input": null,
+      "rubric": [
+        "结构：structure.json 含全部 6 个要素且 id 顺序为 hook_3s、pain_point、value_1、value_2、value_3、cta，其中钩子（hook_3s）与 CTA（cta）的 text 均非空",
+        "填充：3 条卖点分别出现在 value_1/value_2/value_3 的 text 中且 filled_from_input 含 point#1、point#2、point#3；points_used 为 3 条原文；value 槽位无【占位:价值点N】",
+        "自洽：每个 element 的 placeholder_count 与 text 中【占位:…】正则重计数一致；placeholder_stats.by_element 求和 == total_open；骨架.md 主题行含「通勤时间管理」且尾部有「占位符统计」节",
+        "纯净：两份产物中均无 {{ 或 }} 模板残留"
+      ]
+    },
+    {
+      "id": "ab-002",
+      "instruction": "使用 hot-templates 技能，生成小红书图文爆款内容骨架，产物写入指定输出目录 <outdir>（骨架.md + structure.json）。材料自含——platform=xhs，topic=租房避坑指南，points 共 5 条：[\"签约前查房东房产证与身份证一致性\", \"押金条款写明退还条件与时限\", \"入住当天拍照录像留档\", \"水电燃气表底数写进合同附件\", \"转租条款提前约定违约金\"]。冻结模板：标题带数字 + emoji规则 + 正文分块 + 标签组。",
+      "input": null,
+      "rubric": [
+        "结构：7 个要素齐备（title、hook_block、point_block_1..3、summary_block、tag_group）；title 的 text 含 🔥 且含数字 3",
+        "emoji 规则：meta.emoji 按映射表冻结——hook_block=✅、point_block_*=💡、summary_block=📌、tag_group=🏷️",
+        "截断策略：仅前 3 条卖点进正文干货块（filled_from_input 含 point#1..3），第 4、5 条原文完整且保序记入 points_unused，points_used 恰为前 3 条",
+        "标签组：tag_group 的 text 含 3-8 个 # 话题标签，且首标签由主题派生（#租房避坑指南，已去空白与 #）"
+      ]
+    },
+    {
+      "id": "ab-003",
+      "instruction": "使用 hot-templates 技能，生成公众号文章爆款内容骨架，产物写入指定输出目录 <outdir>（骨架.md + structure.json）。材料自含——platform=wx，topic=非暴力沟通，points=[]（空列表，零卖点边界）。冻结模板：引子 + 三段论（是什么/为什么/怎么办）+ 金句收尾。",
+      "input": null,
+      "rubric": [
+        "结构：5 个要素齐备（lead_in、thesis_what、thesis_why、thesis_how、golden_ending）；三个 thesis 要素的 text 分别以「一、是什么」「二、为什么」「三、怎么办」开头",
+        "零卖点边界：thesis_how 的三个抓手全部落【占位:价值点1】【占位:价值点2】【占位:价值点3】，points_used 为 [null, null, null]，任何要素的 filled_from_input 不含 point#N",
+        "收尾与统计：golden_ending 的 text 含「共勉」；placeholder_stats.total_open == by_element 各值之和，且与骨架.md「占位符统计」节的数字一致"
+      ]
+    },
+    {
+      "id": "ab-004",
+      "instruction": "使用 hot-templates 技能，生成短视频分镜表爆款内容骨架，产物写入指定输出目录 <outdir>（骨架.md + structure.json）。材料自含——platform=video，topic=居家哑铃入门，points=[\"用装满水的矿泉箱代替哑铃做划船\"]（仅 1 条，验证缺失槽位）。冻结模板：6 镜 45 秒分镜表（时间轴/画面/口播/字幕）。",
+      "input": null,
+      "rubric": [
+        "分镜结构：恰 6 个分镜要素（shot_1..shot_6）；骨架.md 含表头「| 序号 | 时间轴 | 画面 | 口播 | 字幕 |」（时间轴/画面/口播/字幕四列齐备）",
+        "时间轴冻结：六镜 meta.time_range 依次为 00:00-00:03、00:03-00:10、00:10-00:20、00:20-00:30、00:30-00:40、00:40-00:45（3/7/10/10/10/5 秒），骨架.md 含「共 45 秒」",
+        "缺失槽位：唯一卖点入 shot_3（filled_from_input 含 point#1），shot_4 与 shot_5 的 text 含【占位:价值点2】【占位:价值点3】，points_used 为 [原卖点, null, null]",
+        "尾部总表：骨架.md 含「分镜总表」节聚合全部 6 行分镜；「占位符统计」节数字与 structure.json 的 placeholder_stats 同源一致"
+      ]
+    },
+    {
+      "id": "ab-005",
+      "instruction": "使用 hot-templates 技能完成两项工程性验收（不要求产出常规骨架交付目录）：① 用完全相同的输入（platform=dy，topic=确定性复跑主题，points=[\"要点甲\", \"要点乙\", \"要点丙\"]）连续生成两次到两个不同输出目录，逐字节比对两份 骨架.md 与 structure.json；② 分别用非法 platform（如 bilibili）与空 topic（空白串）各触发一次生成，观察退出码、stderr 与输出目录是否被创建。",
+      "input": null,
+      "rubric": [
+        "确定性：两次生成的 骨架.md 与 structure.json 均逐字节一致（引擎无时间戳、无随机数）",
+        "失败路径：非法 platform 退出码为 2 且不创建输出目录；空 topic 退出码为 2、stderr 有报错且不创建输出目录",
+        "成功路径不受影响：合法输入仍以退出码 0 结束并写出 骨架.md + structure.json 两份文件，成功行打印 OK 前缀"
+      ]
+    }
+  ]
+}

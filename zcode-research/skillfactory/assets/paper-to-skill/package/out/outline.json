@@ -1,0 +1,143 @@
+{
+  "generator": "oracle.py",
+  "generator_version": "1.0.0",
+  "deterministic": true,
+  "source": "oracle/inputs/source.md",
+  "source_url": "https://agentskills.io/specification",
+  "source_title": "Specification",
+  "stats": {
+    "line_count": 282,
+    "char_count": 8457,
+    "h1_count": 1,
+    "h2_count": 6,
+    "h3_count": 5,
+    "h4_to_h6_count": 6,
+    "heading_count": 18,
+    "list_item_count": 33,
+    "unordered_list_item_count": 30,
+    "ordered_list_item_count": 3,
+    "code_block_count": 19,
+    "code_line_count": 77,
+    "code_block_languages": {
+      "bash": 1,
+      "markdown": 3,
+      "plain": 1,
+      "yaml": 14
+    },
+    "table_row_count": 7
+  },
+  "outline": [
+    {
+      "level": 1,
+      "text": "Specification",
+      "line": 6,
+      "children": [
+        {
+          "level": 2,
+          "text": "Directory structure",
+          "line": 10,
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "`SKILL.md` format",
+          "line": 23,
+          "children": [
+            {
+              "level": 3,
+              "text": "Frontmatter",
+              "line": 27,
+              "children": [
+                {
+                  "level": 4,
+                  "text": "`name` field",
+                  "line": 62,
+                  "children": []
+                },
+                {
+                  "level": 4,
+                  "text": "`description` field",
+                  "line": 102,
+                  "children": []
+                },
+                {
+                  "level": 4,
+                  "text": "`license` field",
+                  "line": 124,
+                  "children": []
+                },
+                {
+                  "level": 4,
+                  "text": "`compatibility` field",
+                  "line": 139,
+                  "children": []
+                },
+                {
+                  "level": 4,
+                  "text": "`metadata` field",
+                  "line": 167,
+                  "children": []
+                },
+                {
+                  "level": 4,
+                  "text": "`allowed-tools` field",
+                  "line": 185,
+                  "children": []
+                }
+              ]
+            },
+            {
+              "level": 3,
+              "text": "Body content",
+              "line": 200,
+              "children": []
+            }
+          ]
+        },
+        {
+          "level": 2,
+          "text": "Optional directories",
+          "line": 212,
+          "children": [
+            {
+              "level": 3,
+              "text": "`scripts/`",
+              "line": 216,
+              "children": []
+            },
+            {
+              "level": 3,
+              "text": "`references/`",
+              "line": 226,
+              "children": []
+            },
+            {
+              "level": 3,
+              "text": "`assets/`",
+              "line": 236,
+              "children": []
+            }
+          ]
+        },
+        {
+          "level": 2,
+          "text": "Progressive disclosure",
+          "line": 244,
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "File references",
+          "line": 254,
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "Validation",
+          "line": 267,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

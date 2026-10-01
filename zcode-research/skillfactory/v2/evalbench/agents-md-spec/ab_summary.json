@@ -1,0 +1,33 @@
+{
+  "slug": "agents-md-spec",
+  "name": "AGENTS.md 开放规范（agents.md + agentsmd/agents.md 合并条目）",
+  "tasks": 3,
+  "baselineMean": 8.666666666666666,
+  "treatmentMean": 8.333333333333334,
+  "delta": -0.3333333333333333,
+  "winRate": 0.3333333333333333,
+  "accepted": false,
+  "verdicts": [
+    {
+      "task": "agents-md-spec-t1",
+      "baseline": 8,
+      "treatment": 9,
+      "winner": "treatment",
+      "note": "两份产物均存在且已读全文（arm-a/OUT.md、arm-b/OUT.md），rubric 4 项全部满足：(1) 计"
+    },
+    {
+      "task": "agents-md-spec-t2",
+      "baseline": 9,
+      "treatment": 8,
+      "winner": "baseline",
+      "note": "两份产物均存在且已读全文。rubric 四项两臂均满足：①甲结论 npm 并引用内层例外条款「因客户要求锁文件必须是 p"
+    },
+    {
+      "task": "agents-md-spec-t3",
+      "baseline": 9,
+      "treatment": 8,
+      "winner": "baseline",
+      "note": "两份产物均存在且已读全文，rubric 四项均满足：①格式——两臂均以单文件标准 Markdown 代码块交"
+    }
+  ]
+}

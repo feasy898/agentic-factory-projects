@@ -1,0 +1,2 @@
+sample deliverable: this is a normal output file.
+two lines, UTF-8, no phone number and no ID number.

@@ -1,0 +1,50 @@
+[
+  {
+    "tag": "PKG",
+    "template": "请示函",
+    "cmd": "C:\\Program Files\\Python312\\python.exe package\\scripts\\gen_doc.py --template 请示函 --data oracle\\inputs\\请示函\\case2.json --outdir package\\out\\请示函\\case2",
+    "exit": 0,
+    "stdout": "已生成：package\\out\\请示函\\case2\\文书.docx（模板=请示函，标题=关于延期举办季度评审会的请示，字段 filled/total=4/8，必填缺失=['主送机关', '请示事项']，模板外键=无）",
+    "stderr": "",
+    "files": [
+      "fields.json",
+      "文书.docx"
+    ]
+  },
+  {
+    "tag": "PKG",
+    "template": "会议通知",
+    "cmd": "C:\\Program Files\\Python312\\python.exe package\\scripts\\gen_doc.py --template 会议通知 --data oracle\\inputs\\会议通知\\case2.json --outdir package\\out\\会议通知\\case2",
+    "exit": 0,
+    "stdout": "已生成：package\\out\\会议通知\\case2\\文书.docx（模板=会议通知，标题=关于召开____的通知，字段 filled/total=5/11，必填缺失=['会议名称', '会议地点']，模板外键=['备注']）",
+    "stderr": "",
+    "files": [
+      "fields.json",
+      "文书.docx"
+    ]
+  },
+  {
+    "tag": "ORC",
+    "template": "请示函",
+    "cmd": "C:\\Program Files\\Python312\\python.exe oracle\\oracle.py --template 请示函 --data oracle\\inputs\\请示函\\case2.json --outdir oracle\\out\\请示函\\case2",
+    "exit": 0,
+    "stdout": "OK template=请示函 docx=oracle\\out\\请示函\\case2\\文书.docx fields=oracle\\out\\请示函\\case2\\fields.json filled=4 missing=4 missing_required=2",
+    "stderr": "",
+    "files": [
+      "fields.json",
+      "文书.docx"
+    ]
+  },
+  {
+    "tag": "ORC",
+    "template": "会议通知",
+    "cmd": "C:\\Program Files\\Python312\\python.exe oracle\\oracle.py --template 会议通知 --data oracle\\inputs\\会议通知\\case2.json --outdir oracle\\out\\会议通知\\case2",
+    "exit": 0,
+    "stdout": "OK template=会议通知 docx=oracle\\out\\会议通知\\case2\\文书.docx fields=oracle\\out\\会议通知\\case2\\fields.json filled=5 missing=6 missing_required=2",
+    "stderr": "",
+    "files": [
+      "fields.json",
+      "文书.docx"
+    ]
+  }
+]

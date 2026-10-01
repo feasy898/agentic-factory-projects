@@ -1,0 +1,1 @@
+{"method": "clarify", "confidence": 0.3, "reasons": ["未命中任何方法信号关键词，无法可靠判定产出方法", "fallback：建议人工介入，向用户澄清需要模板填充、可编辑 PPT 还是可视化报告"]}

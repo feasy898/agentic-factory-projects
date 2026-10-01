@@ -1,0 +1,75 @@
+{
+  "tool": "evaluate.py 1.0.0",
+  "input": "D:\\workspace\\zcode研究\\skillfactory\\v4\\tools\\content-evaluator\\package\\fixtures\\good_xhs.md",
+  "platform": "xhs",
+  "platform_label": "小红书",
+  "generated_at": "2026-09-30T11:29:36+0800",
+  "summary": {
+    "applied": 9,
+    "pass": 9,
+    "fail": 0,
+    "warn": 0
+  },
+  "score": {
+    "passed": 9,
+    "applied": 9,
+    "ratio": 1.0,
+    "text": "9/9"
+  },
+  "checks": [
+    {
+      "name": "title_length",
+      "pass": true,
+      "warning": false,
+      "detail": "标题 16 字，在区间 [8, 20] 内"
+    },
+    {
+      "name": "emoji_density",
+      "pass": true,
+      "warning": false,
+      "detail": "emoji 共 5 个，在区间 [2, 15] 内"
+    },
+    {
+      "name": "body_length",
+      "pass": true,
+      "warning": false,
+      "detail": "正文 198 字，在区间 [100, 800] 内"
+    },
+    {
+      "name": "paragraph_max",
+      "pass": true,
+      "warning": false,
+      "detail": "最长段落 40 字，未超单段上限 160"
+    },
+    {
+      "name": "tag_count",
+      "pass": true,
+      "warning": false,
+      "detail": "标签 7 个，在区间 [3, 10] 内"
+    },
+    {
+      "name": "banned_words",
+      "pass": true,
+      "warning": false,
+      "detail": "未命中极限词（词表 44 词）"
+    },
+    {
+      "name": "structure_hook",
+      "pass": true,
+      "warning": false,
+      "detail": "标题含钩子词「救命」"
+    },
+    {
+      "name": "structure_cta",
+      "pass": true,
+      "warning": false,
+      "detail": "正文含 CTA 引导词「评论」"
+    },
+    {
+      "name": "structure_para",
+      "pass": true,
+      "warning": false,
+      "detail": "段落 7 段，达到最少 3 段"
+    }
+  ]
+}

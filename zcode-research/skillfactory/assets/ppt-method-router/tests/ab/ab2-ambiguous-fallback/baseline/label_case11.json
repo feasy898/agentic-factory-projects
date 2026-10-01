@@ -1,0 +1,11 @@
+{
+  "found": true,
+  "entry": {
+    "case": "case11",
+    "method": "editable_pptx",
+    "confidence": 0.4,
+    "reasons": [
+      "未命中任何类别关键词（无信号），按兜底规则默认裁定 editable_pptx(数据驱动可编辑汇报)，置信度低"
+    ]
+  }
+}

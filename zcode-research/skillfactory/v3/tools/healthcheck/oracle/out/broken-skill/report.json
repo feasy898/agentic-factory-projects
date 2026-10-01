@@ -1,0 +1,38 @@
+{
+  "tool": "healthcheck.py 1.0.0",
+  "target": "D:\\workspace\\zcode研究\\skillfactory\\v3\\tools\\healthcheck\\fixtures\\broken-skill",
+  "generated_at": "2026-09-30T03:57:24+0800",
+  "summary": {
+    "total": 5,
+    "pass": 2,
+    "fail": 3
+  },
+  "rating": "C",
+  "checks": [
+    {
+      "name": "skill_md_exists",
+      "pass": true,
+      "detail": "SKILL.md 存在（473 字节）"
+    },
+    {
+      "name": "front_matter_fields",
+      "pass": false,
+      "detail": "front-matter 缺字段: version, license, permissions（已有: name, description）"
+    },
+    {
+      "name": "eval_present",
+      "pass": false,
+      "detail": "缺少 eval/ 目录（无确定性评测）"
+    },
+    {
+      "name": "eval_smoke",
+      "pass": true,
+      "detail": "skip: 缺 eval/ 目录，跳过 smoke"
+    },
+    {
+      "name": "scripts_syntax",
+      "pass": false,
+      "detail": "1/1 个脚本语法不过: scripts/bad_syntax.py: 第6行 SyntaxError: invalid syntax"
+    }
+  ]
+}

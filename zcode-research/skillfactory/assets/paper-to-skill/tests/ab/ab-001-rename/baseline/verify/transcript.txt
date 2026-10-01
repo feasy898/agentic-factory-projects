@@ -1,0 +1,96 @@
+=== environment ===
+2026-09-29 07:35:50 +0800
+MINGW64_NT-10.0-20348 x86_64
+Python 3.12.10
+mv path: /usr/bin/mv
+cwd: /d/workspace/zcode研究/skillfactory/assets/paper-to-skill/tests/ab/ab-001-rename/baseline/verify
+
+=== P0: probe mv default behavior (dst already exists) ===
+mv exit=0; a1.txt=B; b1.txt still exists: no
+
+=== P1: probe mv -n (dst already exists) ===
+mv -n exit=0; a2.txt=A; b2.txt still exists: yes
+
+=== P2: probe python os.rename / os.replace on win32 ===
+platform: win32
+target a.txt exists before: True
+os.rename(b -> existing a): raised -> FileExistsError - [WinError 183] 当文件已存在时，无法创建该文件。: 'C:\\Users\\Administrator\\AppData\\Local\\Temp\\rename_probe_s9aze7l8\\b.txt' -> 'C:\\Users\\Administrator\\AppData\\Local\\Temp\\rename_probe_s9aze7l8\\a.txt'
+  after failed rename: a.txt = A ; b.txt still exists: True
+os.replace(c -> existing a): NO ERROR -> OVERWROTE, a.txt = C ; c.txt gone: True
+explicit exists-check on existing target: would SKIP, not touching files
+
+=== fixture setup ===
+fixtures-case/upper.LOG
+fixtures-log/alpha.log
+fixtures-log/beta.log
+fixtures-log/gamma.log
+fixtures-log/notes.txt
+fixtures-log/report_002.log
+fixtures-log/subdir
+fixtures-log/subdir/inner.log
+fixtures-mixed/a.log
+fixtures-mixed/b.txt
+fixtures-mixed/c.TXT
+fixtures-mixed/subdir2
+fixtures-mixed/subdir2/x.log
+
+=== T1: dry-run on fixtures-log (pattern *.log, prefix report_) ===
+would-rename	fixtures-log\alpha.log -> fixtures-log\report_001.log
+skipped	fixtures-log\beta.log -> fixtures-log\report_002.log
+would-rename	fixtures-log\gamma.log -> fixtures-log\report_003.log
+would-rename	fixtures-log\report_002.log -> fixtures-log\report_004.log
+summary: 4 matched, 1 skipped, 3 would-rename
+exit=1
+
+=== T2: fixtures-log unchanged after dry-run ===
+fixtures-log/alpha.log
+fixtures-log/beta.log
+fixtures-log/gamma.log
+fixtures-log/notes.txt
+fixtures-log/report_002.log
+fixtures-log/subdir
+fixtures-log/subdir/inner.log
+notes.txt still present: yes
+
+=== T3: apply on fixtures-log ===
+renamed	fixtures-log\alpha.log -> fixtures-log\report_001.log
+skipped	fixtures-log\beta.log -> fixtures-log\report_002.log
+renamed	fixtures-log\gamma.log -> fixtures-log\report_003.log
+renamed	fixtures-log\report_002.log -> fixtures-log\report_004.log
+log: D:\workspace\zcode研究\skillfactory\assets\paper-to-skill\tests\ab\ab-001-rename\baseline\verify\rename-log.tsv
+summary: 4 matched, 1 skipped, 3 renamed
+exit=1
+
+=== T4: post-apply state ===
+fixtures-log/report_001.log = AAA
+fixtures-log/beta.log = BBB
+fixtures-log/report_002.log = MISSING
+fixtures-log/report_003.log = GGG
+fixtures-log/report_004.log = R002
+fixtures-log/notes.txt = NOT-MATCHED
+fixtures-log/subdir/inner.log = INNER
+--- rename-log.tsv (written to cwd, NOT the target dir) ---
+status	src	dst
+renamed	fixtures-log\alpha.log	fixtures-log\report_001.log
+skipped	fixtures-log\beta.log	fixtures-log\report_002.log
+renamed	fixtures-log\gamma.log	fixtures-log\report_003.log
+renamed	fixtures-log\report_002.log	fixtures-log\report_004.log
+
+=== T5: re-apply same command (rerun perturbation) ===
+skipped	fixtures-log\beta.log -> fixtures-log\report_001.log
+renamed	fixtures-log\report_001.log -> fixtures-log\report_002.log
+skipped	fixtures-log\report_003.log -> fixtures-log\report_003.log
+skipped	fixtures-log\report_004.log -> fixtures-log\report_004.log
+log: D:\workspace\zcode研究\skillfactory\assets\paper-to-skill\tests\ab\ab-001-rename\baseline\verify\rename-log.tsv
+summary: 4 matched, 3 skipped, 1 renamed
+exit=1
+
+=== T6: dry-run on fixtures-mixed (pattern *): extension preserved, dirs excluded ===
+would-rename	fixtures-mixed\a.log -> fixtures-mixed\report_001.log
+would-rename	fixtures-mixed\b.txt -> fixtures-mixed\report_002.txt
+would-rename	fixtures-mixed\c.TXT -> fixtures-mixed\report_003.TXT
+summary: 3 matched, 0 skipped, 3 would-rename
+exit=0
+
+=== T7: probe - case sensitivity of *.log glob on win32 ===
+glob *.log matches: ['fixtures-case\\upper.LOG']

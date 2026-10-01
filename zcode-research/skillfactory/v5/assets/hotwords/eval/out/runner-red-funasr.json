@@ -1,0 +1,83 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v5/assets/hotwords/eval",
+  "candidate": "C:/Users/ADMINI~1/AppData/Local/Temp/1/hw-cases/red-funasr/out",
+  "reference": "skillfactory/v5/assets/hotwords/oracle/out",
+  "candidate_resolved": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\1\\hw-cases\\red-funasr\\out",
+  "candidate_resolved_via": "direct",
+  "reference_resolved": "D:\\workspace\\zcode研究\\skillfactory\\v5\\assets\\hotwords\\oracle\\out",
+  "reference_resolved_via": "direct",
+  "self_eval": false,
+  "ok": false,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 2,
+      "failed": 2
+    },
+    "steps": {
+      "total": 10,
+      "ok": 10
+    },
+    "files": {
+      "files_universe": 54,
+      "files_matched": 53,
+      "files_mismatched": 1,
+      "files_missing": 0,
+      "files_extra": 0
+    },
+    "consistency_rate": 0.9815
+  },
+  "checks": [
+    {
+      "name": "script_sequence_consistent",
+      "passed": true,
+      "detail": "10 步序列（list_initial、add_ok、add_duplicate、add_with_weight、remove_ok、remove_missing、list_final、export_funasr、export_plain、export_stdout）目录/快照文件/expect/exit_code/manifest 登记全部一致",
+      "candidate_resolved": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\1\\hw-cases\\red-funasr\\out",
+      "candidate_resolved_via": "direct",
+      "steps_total": 10,
+      "steps_ok": 10
+    },
+    {
+      "name": "duplicate_add_rejected",
+      "passed": true,
+      "detail": "03_add_duplicate: exit=2、stderr 中文报错、stdout 空、store.json 与 02_add_ok 逐字节一致（库不变）；06_remove_missing: exit=2、stderr 中文报错、stdout 空、store.json 与 05_remove_ok 逐字节一致（库不变）",
+      "fail_steps": [
+        {
+          "step": "03_add_duplicate",
+          "ok": true,
+          "exit_code": 2
+        },
+        {
+          "step": "06_remove_missing",
+          "ok": true,
+          "exit_code": 2
+        }
+      ]
+    },
+    {
+      "name": "funasr_export_format",
+      "passed": false,
+      "detail": "hotwords_funasr.txt 与库快照推导的「词 权重」逐行期望不一致（127 字节 vs 期望 127 字节）",
+      "funasr_lines_ok": false
+    },
+    {
+      "name": "consistency_with_reference_100",
+      "passed": false,
+      "detail": "一致率 98.1%（53/54 逐文件一致，阈值 100%）；不一致: 08_export_funasr/hotwords_funasr.txt；缺失: 无；多出: 无",
+      "reference_resolved": "D:\\workspace\\zcode研究\\skillfactory\\v5\\assets\\hotwords\\oracle\\out",
+      "reference_resolved_via": "direct",
+      "files_universe": 54,
+      "files_matched": 53,
+      "files_mismatched": 1,
+      "files_missing": 0,
+      "files_extra": 0,
+      "consistency_rate": 0.9815,
+      "mismatched_files": [
+        "08_export_funasr/hotwords_funasr.txt"
+      ],
+      "missing_files": [],
+      "extra_files": []
+    }
+  ]
+}

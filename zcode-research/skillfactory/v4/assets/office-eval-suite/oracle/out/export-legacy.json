@@ -1,0 +1,24 @@
+{
+  "tool": "export_legacy.py",
+  "suite": "D:\\workspace\\zcode研究\\skillfactory\\v4\\assets\\office-eval-suite\\oracle\\suite.json",
+  "generated_at": "2026-09-30T09:23:30",
+  "ok": true,
+  "mode": "strict-v1",
+  "exported": "D:\\workspace\\zcode研究\\skillfactory\\v4\\assets\\office-eval-suite\\oracle\\out\\golden-legacy.json",
+  "total_items": 25,
+  "total_checks": 118,
+  "per_domain_taken": {
+    "文档写作": 6,
+    "表格数据": 5,
+    "会议纪要": 3,
+    "PPT要点": 3,
+    "邮件沟通": 4,
+    "流程规范": 4
+  },
+  "dropped_v2_only_domains": {
+    "信息抽取": 6,
+    "改写润色": 6
+  },
+  "dropped_field": "difficulty（v1 题目键集无此字段）",
+  "problems": []
+}

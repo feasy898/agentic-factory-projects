@@ -1,0 +1,74 @@
+{
+  "generator": "hot-templates 冻结模板（按任务自含材料内联生成）",
+  "generated_at": "2026-09-30",
+  "platform": "wx",
+  "topic": "非暴力沟通",
+  "points": [],
+  "template": {
+    "name": "引子+三段论+金句收尾",
+    "frozen": true,
+    "sections_order": ["引子", "是什么", "为什么", "怎么办", "金句收尾"],
+    "order_locked": true
+  },
+  "points_boundary": {
+    "points_empty": true,
+    "policy": "零卖点边界：不虚构收益/数据/效果断言；卖点位以『【卖点位：待填】』占位；钩子由场景痛点与提问驱动"
+  },
+  "sections": [
+    {
+      "id": "title-block",
+      "role": "标题区",
+      "required": true,
+      "guidance": "冲突感提问/意象对比；禁数字收益与标题党",
+      "placeholders": ["主标题终稿"]
+    },
+    {
+      "id": "hook",
+      "role": "引子",
+      "order": 1,
+      "sentence_skeleton": ["场景句", "共鸣句", "提问句", "引出句"],
+      "placeholders": ["场景", "共鸣", "提问", "引出", "完读悬念句"]
+    },
+    {
+      "id": "what",
+      "role": "三段论①是什么",
+      "order": 2,
+      "content_points": ["马歇尔·卢森堡提出NVC", "四要素：观察/感受/需要/请求", "反差：不是忍气吞声，而是诚实表达+尊重倾听"],
+      "placeholders": ["小标题", "暴力vs非暴力对照例句", "卖点位：待填"]
+    },
+    {
+      "id": "why",
+      "role": "三段论②为什么",
+      "order": 3,
+      "content_points": ["异化沟通四形态：道德评判/比较/回避责任/强人所难", "情绪背后是未被看见的需要", "关系磨损的定性代价（不编造统计）"],
+      "placeholders": ["小标题", "生活化例证", "话术翻译示范", "卖点位：待填"]
+    },
+    {
+      "id": "how",
+      "role": "三段论③怎么办",
+      "order": 4,
+      "content_points": ["四步法：观察→感受→需要→请求", "每步≤3行+1例句", "整段改写示范"],
+      "placeholders": ["小标题", "四个步骤例句", "整段改写示范", "卖点位：待填"]
+    },
+    {
+      "id": "quote-ending",
+      "role": "金句收尾",
+      "order": 5,
+      "structure": ["呼应引子场景", "金句", "互动引导+在看/转发"],
+      "placeholders": ["金句终稿", "呼应句", "留言话题", "互动图"]
+    }
+  ],
+  "platform_rules": {
+    "word_count": "1500-2500",
+    "paragraph_max_lines": 3,
+    "cadence": "每300-500字一个小标题或金句卡",
+    "image_slots": ["头图", "四要素示意图", "结尾互动图"]
+  },
+  "pending_items": ["标题终稿", "金句终稿", "四步例句", "整段改写示范", "互动话题终稿", "全部卖点位（points为空）"],
+  "provenance": {
+    "skill_invoked": false,
+    "skill_note": "hot-templates 未在本会话可用技能列表中注册；按任务自含材料（冻结模板定义内联于任务）直接生成",
+    "skillfactory_file_reads": 0,
+    "constraint": "任务禁止读取 skillfactory/ 任何文件；本次未读取该目录下任何文件内容（仅对自己创建的输出目录做 mkdir 与 ls 元数据确认）"
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "_meta": {
+    "pack": "mcp-office-pack",
+    "version": "1.0.0",
+    "target": "Claude Code (.mcp.json 兼容模板)",
+    "comment": "带 _ 前缀的字段与本包自定义字段（description/enabled/scenario/catalog/doc/secret_env）是模板扩展元数据；type/command/args/env/url/headers 为 Claude Code mcpServers 标准字段。所有密钥一律写作 ${ENV_VAR} 占位符，禁止写入真值。",
+    "placeholder_policy": "凡 secret_env 声明的变量，env 值必须保持 ${VAR_NAME} 形态；启用前通过环境变量注入真值。",
+    "catalog_source": "skillfactory/v2/CATALOG.md A4（MCP 工具生态），行号为 2026-09-30 时点行号",
+    "scenario_scope": "办公场景：文件 / Office 三件套（Excel/Word/PPT/Google 全家桶/Gmail）/ 浏览器自动化 / 搜索"
+  },
+  "mcpServers": {
+    "filesystem": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${OFFICE_FS_ROOT}"],
+      "env": {},
+      "description": "MCP 官方参考 Filesystem server：仅在授权目录内读写/移动/搜索文件，办公文件场景最小底座",
+      "enabled": true,
+      "scenario": "文件",
+      "secret_env": [],
+      "catalog": {
+        "section": "A4.1 参考实现与框架",
+        "record_url": "https://github.com/modelcontextprotocol/servers",
+        "catalog_line": "skillfactory/v2/CATALOG.md:187",
+        "form": "MCP 官方参考 server 集（7 个，含 Filesystem）；stdio，npm 包 @modelcontextprotocol/server-filesystem（2026.8.31 实测在架）；目录注记：README 自述教学示例非生产，但 Filesystem 为社区事实标准"
+      },
+      "doc": "docs/filesystem.md"
+    },
+    "excel": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["excel-mcp-server", "stdio"],
+      "env": { "EXCEL_FILES_PATH": "${OFFICE_EXCEL_DIR}" },
+      "description": "Excel MCP（haris-musa，openpyxl 系）：读写公式/大表分页/图表/条件格式，带目录沙箱+危险公式拦截",
+      "enabled": true,
+      "scenario": "Office 三件套",
+      "secret_env": [],
+      "catalog": {
+        "section": "A4.3 任务域 server·办公协同",
+        "record_url": "https://github.com/haris-musa/excel-mcp-server",
+        "catalog_line": "skillfactory/v2/CATALOG.md:198",
+        "form": "MCP server（stdio，PyPI 包 excel-mcp-server@1.1.1 实测在架，uvx 分发）；目录注记：4.2k★，changelog 2026-09-28，安全设计（公式白名单+沙箱+只读模式）是 MCP 工具安全教学样本"
+      },
+      "doc": "docs/excel.md"
+    },
+    "word": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "office-word-mcp-server", "word_mcp_server"],
+      "env": {},
+      "description": "Word MCP（GongRzhe，python-docx+FastMCP）：标题段落表格图片/查找替换/合并转 PDF，功能面最全 Word MCP",
+      "enabled": true,
+      "scenario": "Office 三件套",
+      "secret_env": [],
+      "catalog": {
+        "section": "A4.3 任务域 server·办公协同",
+        "record_url": "https://github.com/GongRzhe/Office-Word-MCP-Server",
+        "catalog_line": "skillfactory/v2/CATALOG.md:200",
+        "form": "MCP server（stdio，PyPI 包 office-word-mcp-server@1.1.11 实测在架，uvx 分发）；目录注记：~2.1k★，仓库 2026-03-03 已归档只读，选型需看维护状态（目录原文：讲工具选型的活教材），uvx 仍可装"
+      },
+      "doc": "docs/word.md"
+    },
+    "powerpoint": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "office-powerpoint-mcp-server", "--with", "mcp<2", "ppt_mcp_server"],
+      "env": {},
+      "description": "PowerPoint MCP（GongRzhe，python-pptx）：32+ 工具，幻灯片增删/文本图片表格图表/配色模板/母版/文本提取",
+      "enabled": true,
+      "scenario": "Office 三件套",
+      "secret_env": [],
+      "catalog": {
+        "section": "A4.3 任务域 server·办公协同",
+        "record_url": "https://github.com/GongRzhe/Office-PowerPoint-MCP-Server",
+        "catalog_line": "skillfactory/v2/CATALOG.md:201",
+        "form": "MCP server（stdio，PyPI 包 office-powerpoint-mcp-server@2.0.7 实测在架，uvx 分发）；目录注记：~1.9k★，与 Word-MCP 同作者同日归档（2026-03-03，实测），Smithery/uvx 仍可装，做社区 MCP 演进对照"
+      },
+      "doc": "docs/powerpoint.md"
+    },
+    "google-workspace": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["workspace-mcp", "--tool-tier", "core"],
+      "env": {
+        "GOOGLE_OAUTH_CLIENT_ID": "${GOOGLE_OAUTH_CLIENT_ID}",
+        "GOOGLE_OAUTH_CLIENT_SECRET": "${GOOGLE_OAUTH_CLIENT_SECRET}"
+      },
+      "description": "Google 全家桶一体化 MCP：Gmail 15+/Docs 19/Sheets 14/Slides 7 工具，OAuth 2.1 PKCE 多用户部署",
+      "enabled": true,
+      "scenario": "Office 三件套",
+      "secret_env": ["GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET"],
+      "catalog": {
+        "section": "A4.3 任务域 server·办公协同",
+        "record_url": "https://github.com/taylorwilsdon/google_workspace_mcp",
+        "catalog_line": "skillfactory/v2/CATALOG.md:202",
+        "form": "MCP server（stdio / streamable-http 双传输；PyPI 包 workspace-mcp@1.30.0 实测在架，uvx 分发）；目录注记：~3.3k★ 更新至 2026-09-29；OAuth 凭据经 Google Cloud Console OAuth 客户端获取（env 名 GOOGLE_OAUTH_CLIENT_ID/SECRET 已按官方 README 实抓核实），密钥只走占位符"
+      },
+      "doc": "docs/google-workspace.md"
+    },
+    "gmail-official": {
+      "type": "http",
+      "url": "https://gmailmcp.googleapis.com/mcp/v1",
+      "env": {},
+      "description": "Google 官方远程 Gmail MCP（Developer Preview）：9 工具只读取向（无发送），官方托管 vs 社区自建对照组",
+      "enabled": true,
+      "scenario": "Office 三件套",
+      "secret_env": [],
+      "catalog": {
+        "section": "A4.3 任务域 server·办公协同",
+        "record_url": "https://developers.google.com/workspace/gmail/api/guides/configure-mcp-server",
+        "catalog_line": "skillfactory/v2/CATALOG.md:203",
+        "form": "MCP server（远程 streamable-http，OAuth 2.0 由客户端承载，端点 gmailmcp.googleapis.com/mcp/v1 经官方文档页实抓，本机 2026-09-30 对 initialize 返回 HTTP 200）；目录注记：Developer Preview，需 Workspace 预览计划，官方文档警示邮件=不可信输入（间接提示注入）"
+      },
+      "doc": "docs/gmail-official.md"
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "env": {},
+      "description": "微软官方 Playwright MCP：经结构化可访问性快照操作网页（免视觉模型），浏览器自动化事实标准",
+      "enabled": true,
+      "scenario": "浏览器自动化",
+      "secret_env": [],
+      "catalog": {
+        "section": "A4.4 任务域 server·浏览器/文档/电商",
+        "record_url": "https://github.com/microsoft/playwright-mcp",
+        "catalog_line": "skillfactory/v2/CATALOG.md:215",
+        "form": "MCP server（stdio，npm 包 @playwright/mcp@0.0.83 实测在架，npx 即用）；目录注记：microsoft 官方组织 37.7k★，accessibility snapshot 机制，README 明示『非安全边界』定位"
+      },
+      "doc": "docs/playwright.md"
+    },
+    "excel-npm": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@negokaz/excel-mcp-server"],
+      "env": {},
+      "description": "Excel 读取 MCP（negokaz，Go+npm）：分页读（默认 4000 格）/写值公式/建表/区域样式，Windows 实时编辑+工作表截图",
+      "enabled": true,
+      "scenario": "Office 三件套",
+      "secret_env": [],
+      "catalog": {
+        "section": "A4.3 任务域 server·办公协同",
+        "record_url": "https://github.com/negokaz/excel-mcp-server",
+        "catalog_line": "skillfactory/v2/CATALOG.md:199",
+        "form": "MCP server（stdio，npm scope 包 @negokaz/excel-mcp-server@0.12.0 实测在架，bin=excel-mcp-server，Go 单二进制+npm 分发）；目录注记：~1k★/176 commits，MIT；与 haris-musa 版（PyPI/uvx）构成『读重于写互补选择』，截图工具可做『让 agent 看表格画面』演示"
+      },
+      "doc": "docs/excel-npm.md"
+    },
+    "tavily": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "tavily-mcp"],
+      "env": { "TAVILY_API_KEY": "${TAVILY_API_KEY}" },
+      "description": "Tavily 实时搜索 MCP：web 搜索/内容抽取/站点映射/爬取四类工具，调研类内容生产与评测执行基础工具",
+      "enabled": true,
+      "scenario": "搜索",
+      "secret_env": ["TAVILY_API_KEY"],
+      "catalog": {
+        "section": "A4.4 任务域 server·浏览器/文档/电商",
+        "record_url": "https://github.com/tavily-ai/tavily-mcp",
+        "catalog_line": "skillfactory/v2/CATALOG.md:214",
+        "form": "MCP server（stdio，npm 包 tavily-mcp@0.2.22 实测在架）+ 商业 SaaS API（tavily.com 按量计费）；目录注记：tavily-ai 官方 production-ready，2,415★/MIT；server 开源但搜索服务需 API key（密钥只走占位符，引入需预算评估——目录原文）"
+      },
+      "doc": "docs/tavily.md"
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "env": {},
+      "description": "Context7 文档检索 MCP：从源头拉最新文档与代码示例注入提示词，防 API 幻觉第一推荐（目录原文）",
+      "enabled": true,
+      "scenario": "文档检索（办公查证辅助）",
+      "secret_env": [],
+      "catalog": {
+        "section": "A4.4 任务域 server·浏览器/文档/电商",
+        "record_url": "https://github.com/upstash/context7",
+        "catalog_line": "skillfactory/v2/CATALOG.md:209",
+        "form": "MCP server（远程 http 端点 mcp.context7.com/mcp 本机 2026-09-30 对 initialize 实测返回 200；另有本地 stdio 形态 npm @upstash/context7-mcp@4.1.1 实测在架与 CLI/Skills 形态）；目录注记：62.5k★，『同一能力多形态封装』最佳活案例"
+      },
+      "doc": "docs/context7.md"
+    }
+  }
+}

@@ -1,0 +1,636 @@
+{
+  "version": "2.0.0-suite",
+  "description": "中文办公评测集 v2（office-eval-suite package 重造版）：50 道自含材料的中文办公任务题，八域精确配比（文档写作8/表格数据6/会议纪要6/PPT要点5/邮件沟通7/流程规范6/信息抽取6/改写润色6），每题带易/中/难难度档与 3-5 条可判定检查要点，全部题目按 contract.md 独立重造。",
+  "items": [
+    {
+      "id": "dw-01",
+      "domain": "doc-writing",
+      "difficulty": "易",
+      "instruction": "请根据如下要点，为公司全体员工撰写一份国庆节放假通知，用词正式、结构清晰。材料：放假时间为10月1日至10月7日，共7天，10月8日（周六）正常上班；9月30日（周五）下午16:00前，各部门需将节日期间值班名单报行政部；值班人员每日需在18:00前向行政部电话汇报安全情况；节前最后一天下班时，请各部门关闭门窗、切断电源，做好消防检查；如节日期间有紧急事务，请拨打行政部值班电话010-88886666。通知落款为行政部，日期为9月26日。",
+      "checks": [
+        {"name": "has-holiday-range", "desc": "通知明确写出放假时间范围10月1日至10月7日", "type": "contains", "value": "10月1日至10月7日"},
+        {"name": "has-return-workday", "desc": "写明10月8日正常上班的调休安排", "type": "contains", "value": "10月8日"},
+        {"name": "duty-list-deadline", "desc": "写明值班名单需在9月30日16:00前报行政部", "type": "contains", "value": "16:00"},
+        {"name": "emergency-phone", "desc": "包含节日期间紧急事务值班电话", "type": "contains", "value": "010-88886666"},
+        {"name": "formal-notice-tone", "desc": "全文为正式通知语体，结构清晰（标题、正文、落款、日期齐全）", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "dw-02",
+      "domain": "doc-writing",
+      "difficulty": "易",
+      "instruction": "请以销售部名义撰写一封致客户的感谢信。背景材料：华信科技与我司合作已满三年，累计采购额突破500万元；今年8月台风期间，对方主动延迟一周收货，缓解了我方仓库受灾压力；上季度双方联合完成智能仓储试点项目，验收评分92分。感谢信需表达三层意思：对长期信任的感谢、对台风期间包容的致谢、对未来深化合作的期待，篇幅300字左右，语气真诚而不夸张，结尾附公司名称与日期。",
+      "checks": [
+        {"name": "client-named", "desc": "提及客户名称华信科技", "type": "contains", "value": "华信科技"},
+        {"name": "typhoon-thanks", "desc": "专门致谢台风期间延迟收货的包容", "type": "contains", "value": "台风"},
+        {"name": "pilot-score-cited", "desc": "提及联合试点项目验收评分92分", "type": "contains", "value": "92"},
+        {"name": "three-part-structure", "desc": "包含感谢信任、致谢包容、期待合作三层内容", "type": "semantic"},
+        {"name": "sincere-tone", "desc": "语气真诚自然，篇幅约300字，无夸张套话", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "dw-03",
+      "domain": "doc-writing",
+      "difficulty": "中",
+      "instruction": "请依据下列版本更新记录，为「云笔记App」撰写一份面向用户的更新公告。材料（v3.8版本更新记录）：新增AI摘要功能，长文一键生成要点；修复安卓端深色模式下部分按钮看不清的问题；优化图片加载速度，弱网环境下打开速度提升约40%；调整免费版单条笔记容量上限为50MB；下线了使用率不足0.5%的旧版分享入口。公告需包含：版本号、更新亮点（放在最前）、问题修复、其他调整、对受影响用户（如旧版分享入口用户）的说明，整体风格友好简洁，避免技术术语。",
+      "checks": [
+        {"name": "version-stated", "desc": "公告写明版本号v3.8", "type": "contains", "value": "v3.8"},
+        {"name": "ai-highlight-first", "desc": "更新亮点置前且提到AI摘要功能", "type": "contains", "value": "AI摘要"},
+        {"name": "capacity-limit", "desc": "说明免费版单条笔记容量上限50MB", "type": "contains", "value": "50MB"},
+        {"name": "deprecated-entry-note", "desc": "对下线旧版分享入口有面向受影响用户的说明", "type": "contains", "value": "分享"},
+        {"name": "jargon-free-friendly", "desc": "风格友好简洁，无未解释的技术术语", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "dw-04",
+      "domain": "doc-writing",
+      "difficulty": "中",
+      "instruction": "请根据以下数据与要点，撰写客服部9月份月度工作报告，供部门例会宣读。数据：本月共接待工单4120件，环比增长8.3%；一次性解决率从78%提升到83%；平均响应时长由4.2分钟缩短至3.1分钟；收到客户表扬23次，投诉5次；新入职客服3人，均通过岗前考核。要点：报告需按总体数据、亮点分析、问题与不足、下月计划四部分展开；亮点部分需解释一次性解决率提升的原因（新增知识库话术库）；问题部分需指出投诉集中在物流查询类工单；下月计划需包含至少两条可执行措施。",
+      "checks": [
+        {"name": "total-tickets", "desc": "报告包含本月总工单量4120件", "type": "contains", "value": "4120"},
+        {"name": "resolution-rate", "desc": "包含一次性解决率提升到83%的数据", "type": "contains", "value": "83%"},
+        {"name": "complaint-cluster", "desc": "指出投诉集中在物流查询类工单", "type": "contains", "value": "物流"},
+        {"name": "four-sections", "desc": "按总体数据、亮点分析、问题与不足、下月计划四部分展开", "type": "semantic"},
+        {"name": "actionable-next", "desc": "下月计划包含至少两条可执行措施", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "dw-05",
+      "domain": "doc-writing",
+      "difficulty": "中",
+      "instruction": "请以人力资源部名义撰写一封给求职者的婉拒信。背景：候选人李女士应聘高级运营经理岗位，两轮面试表现良好，但最终录用的是另一位具备跨境电商经验的候选人；李女士的背景显示其有5年内容运营经验，未来如有合适岗位愿意再次联系。要求：先肯定其面试表现，再说明未录用的客观原因（不透露他人信息、不贬低候选人），结尾表达保留其应聘资料、欢迎关注公司后续招聘，语气尊重温和，篇幅200字左右，落款为人力资源部。",
+      "checks": [
+        {"name": "candidate-named", "desc": "信中提及候选人李女士", "type": "contains", "value": "李女士"},
+        {"name": "position-named", "desc": "提及应聘岗位高级运营经理", "type": "contains", "value": "高级运营经理"},
+        {"name": "no-blame-no-leak", "desc": "未贬低候选人，也未透露其他候选人信息", "type": "semantic"},
+        {"name": "respectful-warm", "desc": "先肯定表现再说明客观原因，结尾欢迎关注后续招聘，语气温和", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "dw-06",
+      "domain": "doc-writing",
+      "difficulty": "中",
+      "instruction": "请为「智慧园区能耗监测系统」项目撰写结项报告中的项目背景与目标章节。材料如下：本项目由市工信局于去年3月立项，旨在降低园区整体能耗；立项时园区年用电量约1200万度，其中空调系统占45%、照明占22%；项目目标为一年内实现单位面积能耗下降12%、完成32栋楼宇的智能电表改造、搭建统一能耗监测平台；项目实际于今年5月通过验收，能耗下降14.6%，超额完成目标。章节需交代立项缘由、现状问题、量化目标与完成情况，行文客观严谨，适合提交政府主管部门。",
+      "checks": [
+        {"name": "target-cited", "desc": "写明单位面积能耗下降12%的立项目标", "type": "contains", "value": "12%"},
+        {"name": "actual-result", "desc": "写明实际下降14.6%的验收结果", "type": "contains", "value": "14.6%"},
+        {"name": "meter-scope", "desc": "提及32栋楼宇智能电表改造", "type": "contains", "value": "32栋"},
+        {"name": "objective-gov-tone", "desc": "行文客观严谨，适合提交政府主管部门", "type": "semantic"},
+        {"name": "chapter-elements", "desc": "覆盖立项缘由、现状问题、量化目标、完成情况四要素", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "dw-07",
+      "domain": "doc-writing",
+      "difficulty": "中",
+      "instruction": "请为10月12日入职的新员工撰写一封入职欢迎信，随录取材料一并发送。材料清单：入职当天请携带身份证原件、学历学位证书、体检报告、一寸免冠照片2张；上午9:00到3楼人力资源部报到，中午公司提供欢迎午餐；下午由部门负责人带领熟悉工位并配发办公电脑；入职一周内完成入职培训，含公司制度、信息安全、产品线三门课程。欢迎信需包含报到时间地点、携带材料清单、首日与首周安排、一名入职对接人（行政部王姐，分机8021），语气热情亲切，让新人对第一天安排一目了然。",
+      "checks": [
+        {"name": "report-time-place", "desc": "写明上午9:00到3楼人力资源部报到", "type": "contains", "value": "9:00"},
+        {"name": "document-checklist", "desc": "包含身份证等入职携带材料清单", "type": "contains", "value": "身份证"},
+        {"name": "buddy-contact", "desc": "提供入职对接人及分机8021", "type": "contains", "value": "8021"},
+        {"name": "first-week-training", "desc": "提及一周内完成三门必修入职培训", "type": "contains", "value": "入职培训"},
+        {"name": "warm-clear-tone", "desc": "语气热情亲切，首日安排一目了然", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "dw-08",
+      "domain": "doc-writing",
+      "difficulty": "难",
+      "instruction": "请以CEO名义撰写一篇约600字的年度致辞，用于公司年会开场。背景材料：今年公司营收增长21%，但利润率下滑3个百分点；新业务线（企业服务）贡献了35%的增量收入；年内完成两次组织架构调整，员工流失率达到18%，高于去年；明年战略为聚焦核心、提质增效，计划将研发投入占比从9%提高到12%，并启动核心人才保留计划。致辞要求：坦诚承认挑战（利润率与人员流失），不过度渲染困难；突出新业务突破与团队韧性；清晰给出明年方向；结尾有感染力，能凝聚人心；避免空洞套话，需引用上述具体数据。",
+      "checks": [
+        {"name": "revenue-cited", "desc": "引用营收增长21%的数据", "type": "contains", "value": "21%"},
+        {"name": "attrition-cited", "desc": "提及员工流失率18%的挑战", "type": "contains", "value": "18%"},
+        {"name": "rd-invest-plan", "desc": "提及研发投入占比提高到12%的明年计划", "type": "contains", "value": "12%"},
+        {"name": "honest-about-challenges", "desc": "坦诚承认利润率下滑与人员流失，不回避不渲染", "type": "semantic"},
+        {"name": "rallying-close", "desc": "结尾有感染力，指向明年战略并凝聚人心", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "td-01",
+      "domain": "table-data",
+      "difficulty": "易",
+      "instruction": "以下是某网店下半年各月销售数据（单位：万元）：7月38.5，8月41.2，9月45.8，10月52.3，11月96.7，12月88.4。请计算下半年销售总额，指出销售额最高的月份，并计算12月环比11月的下降百分比（保留一位小数），列出算式。最后用三行以内的文字总结下半年销售走势，说明双11大促对全年业绩的影响。",
+      "checks": [
+        {"name": "halfyear-total", "desc": "给出下半年销售总额362.9万元", "type": "contains", "value": "362.9"},
+        {"name": "peak-month", "desc": "指出销售额最高的月份为11月", "type": "contains", "value": "11月"},
+        {"name": "dec-mom", "desc": "计算出12月环比11月下降约8.6%", "type": "contains", "value": "8.6"},
+        {"name": "trend-takeaway", "desc": "总结下半年走势并说明双11大促的影响", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "td-02",
+      "domain": "table-data",
+      "difficulty": "中",
+      "instruction": "材料：某部门Q3预算执行表（单位：万元）——市场推广：预算30.0，实际32.4；差旅费：预算8.0，实际6.5；设备采购：预算15.0，实际15.0；培训费：预算5.0，实际3.8；软件服务：预算12.0，实际13.5。请计算各科目执行率（实际除以预算，百分比保留一位小数），按执行率从高到低排序列成表格，指出超支科目及其超支金额，并就不超过120字给出超支科目的管控建议。",
+      "checks": [
+        {"name": "mkt-exec-rate", "desc": "算出市场推广执行率108.0%", "type": "contains", "value": "108.0"},
+        {"name": "soft-exec-rate", "desc": "算出软件服务执行率112.5%", "type": "contains", "value": "112.5"},
+        {"name": "overspend-items", "desc": "正确指出市场推广（超支2.4万）与软件服务（超支1.5万）两项", "type": "semantic"},
+        {"name": "rank-desc", "desc": "五个科目按执行率从高到低排列（112.5%出现在108.0%之前）", "type": "regex", "value": "112\\.5[\\s\\S]*108\\.0"},
+        {"name": "control-advice", "desc": "给出针对超支科目、不超过120字的管控建议", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "td-03",
+      "domain": "table-data",
+      "difficulty": "中",
+      "instruction": "下表为行政部9月考勤记录（节选）：张明——迟到2次、早退0次、缺勤1天；李红——迟到0次、早退1次、缺勤0天；王强——迟到5次、早退2次、缺勤0天；赵芳——迟到0次、早退0次、缺勤0天；陈晨——迟到3次、早退0次、缺勤2天。公司制度规定：月迟到满3次需提交书面说明，缺勤1天扣除当日工资。请统计需提交书面说明的员工名单，计算考勤异常（迟到、早退、缺勤任一不为零）人数占比，并按异常次数（迟到加早退计次）从多到少排出前两名。",
+      "checks": [
+        {"name": "written-statement-list", "desc": "名单正确为王强、陈晨（迟到满3次）", "type": "semantic"},
+        {"name": "abnormal-ratio", "desc": "算出考勤异常人数占比80%（4/5）", "type": "contains", "value": "80%"},
+        {"name": "rule-cited", "desc": "引用了迟到满3次需书面说明的制度依据", "type": "contains", "value": "书面说明"},
+        {"name": "top2-by-count", "desc": "按异常次数排出前两名：王强（7次）、陈晨（3次）", "type": "semantic"},
+        {"name": "calculation-shown", "desc": "统计口径与计算过程可见，结果可复核", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "td-04",
+      "domain": "table-data",
+      "difficulty": "中",
+      "instruction": "数据：某产品9月客户满意度调查共回收有效问卷480份，评分分布为——非常满意5分：216票；满意4分：168票；一般3分：72票；不满意2分：19票；非常不满意1分：5票。请计算平均满意度得分（保留两位小数）、满意率（4分及以上占比）与不满意率（2分及以下占比），并判断满意率超过80%这一说法是否成立，用一句话给出结论。",
+      "checks": [
+        {"name": "avg-score", "desc": "平均满意度得分4.19（保留两位小数）", "type": "contains", "value": "4.19"},
+        {"name": "satisfied-rate", "desc": "满意率（4分及以上）为80.0%", "type": "contains", "value": "80"},
+        {"name": "dissatisfied-rate", "desc": "不满意率（2分及以下）为5.0%", "type": "contains", "value": "5.0"},
+        {"name": "claim-verdict", "desc": "判断满意率超过80%的说法不成立（恰为80%，未超过）", "type": "semantic"},
+        {"name": "recomputable", "desc": "各项计算可由原始票数复核且无误", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "td-05",
+      "domain": "table-data",
+      "difficulty": "难",
+      "instruction": "如下为某连锁咖啡店两家门店连续两个月的经营数据（单位：千元）。A店：8月营收186、成本112；9月营收204、成本118。B店：8月营收145、成本98；9月营收132、成本101。请分别计算两店8月、9月的毛利率及9月环比8月的营收变化率（百分比保留一位小数），据此判断哪家门店经营状况更值得担忧，并用不超过100字说明理由。",
+      "checks": [
+        {"name": "a-margin-sep", "desc": "算出A店9月毛利率42.2%", "type": "contains", "value": "42.2"},
+        {"name": "b-margin-sep", "desc": "算出B店9月毛利率23.5%", "type": "contains", "value": "23.5"},
+        {"name": "mom-rates", "desc": "给出两店9月营收环比变化率（A店约+9.7%、B店约-9.0%）", "type": "semantic"},
+        {"name": "risk-verdict", "desc": "判断B店更值得担忧，理由不超过100字（毛利率大幅下滑且营收下降）", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "td-06",
+      "domain": "table-data",
+      "difficulty": "中",
+      "instruction": "请根据下列库存数据生成补货清单。数据（SKU｜名称｜当前库存｜日均销量｜安全库存）：S001｜A4打印纸｜120｜40｜200；S002｜签字笔｜850｜60｜300；S003｜文件夹｜95｜12｜150；S004｜订书机｜45｜3｜30；S005｜便利贴｜600｜50｜250。补货规则：当前库存低于安全库存的SKU需补货，建议补货量等于安全库存乘2减当前库存。请列出需补货的SKU及各自建议补货量，并按补货量从大到小排序。",
+      "checks": [
+        {"name": "s001-replenish", "desc": "S001建议补货量280件", "type": "contains", "value": "280"},
+        {"name": "s003-replenish", "desc": "S003建议补货量205件", "type": "contains", "value": "205"},
+        {"name": "no-false-positive", "desc": "未将库存充足的S002、S004、S005列入补货清单", "type": "semantic"},
+        {"name": "sorted-by-qty", "desc": "补货清单按建议补货量从大到小排序", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "mm-01",
+      "domain": "meeting-minutes",
+      "difficulty": "易",
+      "instruction": "以下是一次部门例会的要点记录，请整理成一份规范会议纪要。记录：周一上午10点，产品部例会，主持人陈莉；议题一，新版官网改稿进度，设计稿已完成80%，本周五前出终稿（负责人小吴）；议题二，用户反馈的注册流程繁琐问题，决定简化为三步，下周一上线试用（负责人小郑）；议题三，团建时间定为下周五下午，地点待定。纪要需含会议基本信息、按议题分列的讨论结果、每项任务的责任人与时限。",
+      "checks": [
+        {"name": "basic-info", "desc": "纪要含会议时间、名称、主持人等基本信息", "type": "semantic"},
+        {"name": "topic-grouped", "desc": "按议题分列讨论结果，条理清晰", "type": "semantic"},
+        {"name": "owner-deadline", "desc": "每项任务标注责任人与完成时限", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "mm-02",
+      "domain": "meeting-minutes",
+      "difficulty": "中",
+      "instruction": "请将下面的项目周会记录整理为标准会议纪要。记录：周三14:00-15:10，CRM系统二期周会，与会8人。开发组汇报：登录模块联调完成，工单模块完成60%，比计划滞后3天，原因是接口文档变更两次；测试组提出：回归用例已准备120条，建议滞后任务优先安排冒烟测试；项目经理决议：工单模块本周六加班赶工，下周二追平进度，接口文档冻结不再变更，由老周负责与甲方确认并邮件留痕；下次周会时间改为下周五上午。",
+      "checks": [
+        {"name": "meta-info", "desc": "含会议时间（14:00）与主题（CRM二期周会）", "type": "contains", "value": "14:00"},
+        {"name": "delay-cause", "desc": "记录工单模块滞后3天及接口文档变更原因", "type": "contains", "value": "接口文档"},
+        {"name": "owner-zhou", "desc": "写明由老周负责与甲方确认并邮件留痕", "type": "contains", "value": "老周"},
+        {"name": "resolutions-listed", "desc": "决议单列且可执行（周六赶工、下周二追平、文档冻结）", "type": "semantic"},
+        {"name": "next-meeting", "desc": "写明下次周会改为下周五上午", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "mm-03",
+      "domain": "meeting-minutes",
+      "difficulty": "中",
+      "instruction": "下面是产品团队头脑风暴的原始笔记，请整理成一份结构化会议纪要。笔记（关于提升App次日留存）：小林——push推送太频繁导致用户关闭通知，建议做推送偏好设置；阿凯——新用户引导太长，七步改三步；花花——首页信息流质量不稳定，建议加内容分级；小林——可做签到奖励，连续三天送会员；阿凯——反对签到，太老套，不如优化核心功能的加载速度；主持人总结：先做推送偏好与新手引导简化，内容分级下月评估。",
+      "checks": [
+        {"name": "retention-topic", "desc": "主题聚焦提升App次日留存", "type": "contains", "value": "留存"},
+        {"name": "idea-attribution", "desc": "每条建议保留提议人（小林、阿凯、花花）", "type": "semantic"},
+        {"name": "objection-kept", "desc": "保留反对意见（签到太老套）及其理由", "type": "semantic"},
+        {"name": "theme-grouping", "desc": "按推送、引导、内容、激励等主题归类，而非流水账", "type": "semantic"},
+        {"name": "conclusion-clear", "desc": "主持人结论单独成段（先做两项、内容分级下月评估）", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "mm-04",
+      "domain": "meeting-minutes",
+      "difficulty": "中",
+      "instruction": "请把以下跨部门协调会记录整理成纪要，注意如实反映分歧。记录：主题为新品上市时间，市场部要求10月20日上线配合双11预热；生产部表示原材料到货要10月25日，最早11月1日出货；供应链提出折中方案：10月20日先上预售链接、11月3日现货发货；市场部担心预售影响热度；财务提醒双11期间物流成本上浮15%，需重算毛利；会议决定：下周三前由财务出三版毛利测算，再定最终方案，本轮不做结论。",
+      "checks": [
+        {"name": "conflict-recorded", "desc": "如实记录市场部与生产部在上市时间上的分歧", "type": "semantic"},
+        {"name": "compromise-plan", "desc": "记录先预售、后现货发货的折中方案", "type": "contains", "value": "预售"},
+        {"name": "cost-warning", "desc": "包含物流成本上浮15%的财务提醒", "type": "contains", "value": "15%"},
+        {"name": "pending-next", "desc": "写明本轮未结论及下周三前财务出测算的后续安排", "type": "semantic"},
+        {"name": "neutral-wording", "desc": "行文中立，如实记录分歧而不预设立场", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "mm-05",
+      "domain": "meeting-minutes",
+      "difficulty": "难",
+      "instruction": "以下是一段电话会议的口语化原文（有重复与口头禅），请提炼成一份正式纪要。原文：'那个……我先说下哈，就是服务器这个扩容的事，运维这边意思是月底之前肯定能搞定，老李你那边客户承诺的上线时间最好往后挪一周，稳妥一点。然后客服培训的事，ppt我发群里了啊，大家有空看一眼，下周一培训必须所有人都到，要签到的。还有个事儿，预算追加的那个表，财务说格式不对，退回来了，老周你改完周三之前再报一次。行，那没别的事就先这样。'",
+      "checks": [
+        {"name": "formal-register", "desc": "转为正式书面语体，去除口头禅与重复", "type": "semantic"},
+        {"name": "capacity-deadline", "desc": "写明服务器扩容月底前完成", "type": "contains", "value": "月底"},
+        {"name": "launch-deferred", "desc": "记录客户上线时间建议后移一周及老李跟进", "type": "semantic"},
+        {"name": "training-mandatory", "desc": "写明下周一客服培训全员参加并签到", "type": "semantic"},
+        {"name": "budget-resubmit", "desc": "写明预算表修改后周三前重新提交（老周）", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "mm-06",
+      "domain": "meeting-minutes",
+      "difficulty": "中",
+      "instruction": "请根据以下季度复盘会要点整理会议纪要。要点：9月28日下午，客户成功部Q3复盘，共12人与会。成绩：Q3客户续约率91%，超目标3个百分点；新增标杆案例4个，其中2个来自金融行业。不足：工单首次响应超时占比6.8%，环比恶化1.2个百分点，主因是7月两位资深客服离职；客户健康分体系上线推迟两个月。改进决议：四季度招聘并培训3名客服；健康分体系10月底前必须上线，由数据组负责；每周五输出超时工单专项报告。",
+      "checks": [
+        {"name": "renewal-rate", "desc": "记录Q3客户续约率91%（超目标3个百分点）", "type": "contains", "value": "91%"},
+        {"name": "timeout-regression", "desc": "记录首次响应超时6.8%环比恶化1.2个百分点及主因", "type": "contains", "value": "6.8%"},
+        {"name": "health-deadline", "desc": "写明客户健康分体系10月底前上线", "type": "contains", "value": "10月底"},
+        {"name": "owners-assigned", "desc": "各项决议标注责任方（如数据组）", "type": "semantic"},
+        {"name": "minutes-structure", "desc": "符合纪要规范：基本信息、成绩、不足、决议分层清楚", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "po-01",
+      "domain": "ppt-outline",
+      "difficulty": "易",
+      "instruction": "请为面向企业客户的产品说明会设计一份PPT大纲（10页以内）。产品要点：智能考勤机X2，支持人脸识别与指纹双验证，识别速度0.3秒；可对接钉钉、企业微信等主流办公平台；断网时可离线打卡，联网后自动同步；整机质保三年，提供上门安装。大纲需按痛点引入、产品方案、核心功能、客户案例、服务保障、下一步行动的顺序组织，每页给出标题与两条要点，并在最后一页预留联系方式。",
+      "checks": [
+        {"name": "flow-order", "desc": "按痛点引入、产品方案、核心功能、客户案例、服务保障、下一步行动组织", "type": "semantic"},
+        {"name": "speed-point", "desc": "功能页含0.3秒识别速度", "type": "contains", "value": "0.3"},
+        {"name": "offline-capability", "desc": "提及断网离线打卡、联网自动同步", "type": "contains", "value": "离线"},
+        {"name": "warranty-term", "desc": "服务保障页含整机质保三年", "type": "contains", "value": "三年"},
+        {"name": "contact-last", "desc": "最后一页为联系方式或下一步行动页", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "po-02",
+      "domain": "ppt-outline",
+      "difficulty": "中",
+      "instruction": "请为市场部年度营销复盘设计PPT大纲。数据材料：全年市场费用480万元，获客成本从年初的320元每人降至年末的265元每人；内容营销贡献线索占比从18%提升至35%；展会获客单价最高，达890元每人；Q4因预算冻结，线索量环比下降22%。大纲要求：先讲全年大盘与投产比，再分渠道复盘（突出内容营销的性价比），直面Q4的问题与原因，最后给出明年三项策略建议，并在附录保留各渠道明细数据页。",
+      "checks": [
+        {"name": "annual-budget", "desc": "含全年市场费用480万元", "type": "contains", "value": "480"},
+        {"name": "cac-trend", "desc": "展示获客成本从320元降至265元", "type": "contains", "value": "265"},
+        {"name": "channel-review", "desc": "分渠道复盘并突出内容营销性价比（线索占比18%提升至35%）", "type": "semantic"},
+        {"name": "q4-facing", "desc": "单独一页直面Q4线索量环比下降22%及预算冻结原因", "type": "semantic"},
+        {"name": "next-year-strategy", "desc": "给出明年三项策略建议并附渠道明细数据页", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "po-03",
+      "domain": "ppt-outline",
+      "difficulty": "中",
+      "instruction": "请为一场面向同行的行业分享设计PPT大纲，主题为中小企业的数字化生存。背景与调研笔记：调研显示73%的中小企业认为数字化重要但不知从何下手；样本企业中仅31%用上了云ERP；典型案例为一家50人的五金厂，上马进销存系统后库存周转天数从45天降到28天；常见误区是把数字化等同于买软件。分享时长20分钟，大纲需在10页以内，开头用调研数据抓注意力，结尾给出三步上手清单。",
+      "checks": [
+        {"name": "hook-data", "desc": "开头用73%调研数据抓注意力", "type": "contains", "value": "73%"},
+        {"name": "case-study-page", "desc": "包含五金厂案例页（库存周转45天降到28天）", "type": "semantic"},
+        {"name": "misconception-clarified", "desc": "澄清把数字化等同于买软件的误区", "type": "semantic"},
+        {"name": "closing-checklist", "desc": "结尾给出三步上手清单，总页数不超过10页以匹配20分钟", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "po-04",
+      "domain": "ppt-outline",
+      "difficulty": "中",
+      "instruction": "请为初创公司「袋鼠闪送」同城急送业务的融资路演设计PPT大纲。材料：公司成立两年，覆盖3个城市，注册骑手8200人；去年营收1200万元，同比增长180%，毛利率28%；本轮融资目标2000万元，资金用途为扩展至8个城市（60%）、研发智能调度系统（30%）、流动资金（10%）；核心壁垒为平均28分钟送达与96%准时率。大纲需涵盖市场规模、商业模式、增长数据、竞争壁垒、融资计划与团队介绍，篇幅12页左右。",
+      "checks": [
+        {"name": "growth-numbers", "desc": "含营收1200万元与同比增长180%", "type": "contains", "value": "180%"},
+        {"name": "fund-allocation", "desc": "融资用途比例齐全（60%、30%、10%）", "type": "contains", "value": "60%"},
+        {"name": "moat-metrics", "desc": "突出平均28分钟送达与96%准时率壁垒", "type": "contains", "value": "96%"},
+        {"name": "deck-structure", "desc": "涵盖市场规模、商业模式、增长数据、竞争壁垒、融资计划、团队介绍", "type": "semantic"},
+        {"name": "page-budget", "desc": "篇幅约12页，详略得当", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "po-05",
+      "domain": "ppt-outline",
+      "difficulty": "难",
+      "instruction": "如下是新课《职场写作二十四讲》的筹备素材，请据此设计一份培训课件大纲。素材：目标学员为工作1-3年的职场新人，共24讲，每讲15分钟；学员调研显示最头痛的三类写作依次为：向领导汇报（62%）、跨部门邮件（48%）、会议纪要（37%）；课程方要求每4讲后设一次随堂练习与点评环节，全部课程配一张写作模板速查表作为附录。大纲需覆盖课程定位、模块划分（建议按场景分组）、练习安排与附录说明。",
+      "checks": [
+        {"name": "scene-modules", "desc": "按汇报、邮件、纪要等场景划分模块", "type": "semantic"},
+        {"name": "practice-rhythm", "desc": "每4讲安排一次随堂练习与点评", "type": "semantic"},
+        {"name": "appendix-sheet", "desc": "含写作模板速查表附录", "type": "contains", "value": "速查表"}
+      ]
+    },
+    {
+      "id": "ec-01",
+      "domain": "email-comm",
+      "difficulty": "易",
+      "instruction": "请写一封会议改期通知邮件。信息如下：原定本周四下午3点的季度评审会，因两位外部评审专家临时出差，改期为下周一上午10点，地点不变（3号会议室），会议时长仍为2小时；请各与会人确认新时间能否参加，如冲突请在明天下午5点前回复替代人选。邮件收件人为项目组全体成员，语气礼貌简洁，主题行需可直接识别会议名称与新时间。",
+      "checks": [
+        {"name": "new-slot", "desc": "明确新时间为下周一上午10点、地点不变", "type": "contains", "value": "下周一"},
+        {"name": "conflict-deadline", "desc": "写明冲突者须在明天下午5点前回复替代人选", "type": "contains", "value": "5点前"},
+        {"name": "subject-line", "desc": "主题行可直接识别会议名称与新时间", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ec-02",
+      "domain": "email-comm",
+      "difficulty": "易",
+      "instruction": "请以采购专员身份给供应商写一封询价邮件。需求材料：我司计划采购笔记本电脑120台，配置要求为14英寸、i5及以上处理器、16GB内存、512GB固态硬盘、支持三年上门保修；需要对方在10天内提供含税单价、总报价、货期与质保条款；如采购量达到150台是否有额外折扣，也请一并说明；报价单请用Excel附件发送至采购部公共邮箱。邮件需说明询价截止时间（两周内），并请对方确认收到。",
+      "checks": [
+        {"name": "qty-and-config", "desc": "写明120台及关键配置（14英寸、i5、16GB、512GB）", "type": "contains", "value": "120台"},
+        {"name": "warranty-req", "desc": "写明三年上门保修要求", "type": "contains", "value": "三年"},
+        {"name": "quote-deadline", "desc": "明确10天内反馈报价与两周询价截止", "type": "contains", "value": "10天"},
+        {"name": "volume-discount", "desc": "询问150台批量采购的额外折扣", "type": "contains", "value": "150台"},
+        {"name": "ack-request", "desc": "请对方确认收到，并指明Excel附件与公共邮箱", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ec-03",
+      "domain": "email-comm",
+      "difficulty": "中",
+      "instruction": "请以项目经理身份给客户写一封项目延期致歉邮件。背景：因甲方上周两次临时变更接口需求，数据中心模块开发进度延后，原定10月25日的上线日期需推迟至11月8日；我方已增派两名工程师并行开发，并承诺每周五发送进度简报；为弥补影响，愿意免费提供三个月的运维增强服务（原价4.8万元）。邮件需先致歉并说明原因（表述客观、不指责甲方）、给出新的里程碑时间表、说明补救措施，结尾请求客户回复确认。",
+      "checks": [
+        {"name": "new-milestone", "desc": "写明新上线日期11月8日", "type": "contains", "value": "11月8日"},
+        {"name": "cause-objective", "desc": "延期原因表述客观，无指责客户的措辞", "type": "semantic"},
+        {"name": "weekly-update", "desc": "承诺每周五发送进度简报", "type": "contains", "value": "每周五"},
+        {"name": "remedy-offer", "desc": "提出免费三个月运维增强服务（价值4.8万元）作为补偿", "type": "contains", "value": "三个月"},
+        {"name": "confirm-request", "desc": "结尾请求客户回复确认新计划", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ec-04",
+      "domain": "email-comm",
+      "difficulty": "中",
+      "instruction": "请以财务部名义给客户写一封催款邮件，语气委婉但立场清晰。记录：贵司订单对应发票（编号FP-2026-0631，金额28.6万元）已逾期60天未付款；合同约定的付款周期为验收后30天，该笔款项已于8月底到期；我方已于9月初电话提醒一次。邮件需说明欠款事实与金额（信息准确）、重申付款期限已过、给出明确的最迟付款日期（本月20日前）、并提示逾期将按合同收取每日0.05%的滞纳金，同时为催款打扰致歉并表达继续合作的意愿。",
+      "checks": [
+        {"name": "invoice-facts", "desc": "写明发票编号FP-2026-0631与金额28.6万元", "type": "contains", "value": "28.6万"},
+        {"name": "overdue-facts", "desc": "说明已逾期60天且9月初已电话提醒", "type": "contains", "value": "60天"},
+        {"name": "pay-by-date", "desc": "给出本月20日前付款的明确期限", "type": "contains", "value": "20日"},
+        {"name": "late-fee-clause", "desc": "提示逾期按每日0.05%收取滞纳金", "type": "regex", "value": "0\\.05%"},
+        {"name": "firm-but-polite", "desc": "立场清晰且为打扰致歉，表达继续合作意愿", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ec-05",
+      "domain": "email-comm",
+      "difficulty": "中",
+      "instruction": "请以客服主管身份回复下面这封客户投诉邮件。客户原文：'你们也太离谱了吧！我在你们平台买的空气炸锅，用了两次就加热管坏了，报修都一周了没人理！今天必须给我个说法，不然我就去投诉到消协！'回复要求：先诚恳致歉、不辩解；说明已加急处理——维修人员将于明日上午上门，如无法修复直接换新机；赠送一年延保作为补偿；留下直线电话便于随时跟进；语气专业冷静，避免被客户情绪带动。",
+      "checks": [
+        {"name": "apology-first", "desc": "开头诚恳致歉，先安抚不辩解", "type": "semantic"},
+        {"name": "visit-tomorrow", "desc": "说明维修人员明日上午上门", "type": "contains", "value": "明天"},
+        {"name": "replace-policy", "desc": "写明无法修复直接换新机", "type": "contains", "value": "换新"},
+        {"name": "compensation-plan", "desc": "提出赠送一年延保的补偿", "type": "contains", "value": "延保"},
+        {"name": "calm-professional", "desc": "语气专业冷静，留直线电话便于跟进", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ec-06",
+      "domain": "email-comm",
+      "difficulty": "中",
+      "instruction": "请以数据组名义给研发部负责人写一封跨部门资源协调邮件。数据材料：Q4大促数据看板需在11月1日前上线，涉及5张实时报表；当前数据组仅2人可用，按现有排期最早11月10日完成；需要研发部借调1名前端工程师支援3周，负责看板可视化部分；作为交换，数据组可在12月为研发部开展SQL性能优化培训（已有多人报名）。邮件需写清缺口与影响、具体支援请求（人数、时长、工作内容）、交换条件与致谢，并请求本周五前回复。",
+      "checks": [
+        {"name": "gap-impact", "desc": "写明11月1日上线要求与11月10日排期的缺口及影响", "type": "contains", "value": "11月10日"},
+        {"name": "support-request", "desc": "具体请求借调1名前端工程师支援3周", "type": "contains", "value": "3周"},
+        {"name": "exchange-offer", "desc": "提出12月SQL性能优化培训作为交换", "type": "semantic"},
+        {"name": "reply-deadline", "desc": "请求本周五前回复", "type": "contains", "value": "周五"},
+        {"name": "gratitude-tone", "desc": "含致谢，语气为平等协作的跨部门沟通", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ec-07",
+      "domain": "email-comm",
+      "difficulty": "难",
+      "instruction": "请以商务总监身份回复一封合作提议邮件，需要婉拒但留住关系。背景：对方是一家社区团购平台，提议与我司（冷链物流服务商）共建前置仓，但要求我方承担70%的仓建成本并独家绑定三年；经测算该模式投资回报周期长达4年，且独家条款将限制我司与其他渠道合作。回复要求：感谢信任并肯定对方模式的价值；明确说明无法接受成本分摊比例与独家条款两点及原因；提出替代方案——先在两个城市开展轻量级运力合作，效果好的话明年再谈深化；结尾保持开放，邀请对方来我司考察。",
+      "checks": [
+        {"name": "clear-decline", "desc": "明确说明无法接受成本分摊比例与独家条款两点及原因", "type": "semantic"},
+        {"name": "alternative-plan", "desc": "提出先在两城开展轻量运力合作的替代方案", "type": "contains", "value": "运力"},
+        {"name": "data-backed-reason", "desc": "拒绝理由引用测算（回报周期4年、独家条款限制渠道）", "type": "semantic"},
+        {"name": "door-open", "desc": "邀请对方考察，未关闭未来深化合作的大门", "type": "semantic"},
+        {"name": "gratitude-first", "desc": "感谢信任并肯定对方模式价值后再婉拒", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ps-01",
+      "domain": "process-spec",
+      "difficulty": "易",
+      "instruction": "请根据如下信息，编写公司会议室预订流程说明（供员工自助查阅）。信息：预订统一通过OA系统行政服务-会议室预订入口提交，需提前半个工作日申请；单次会议最长4小时，如需延时需行政部审批；超过20人的会议需使用大会议室并额外报备设备需求；取消会议请提前2小时在系统内操作，否则计入部门月度会议纪律统计；每周五16:00后系统释放下周未确认的预约。流程说明需按申请、审批、使用、取消四步写清，每步注明责任人与时限。",
+      "checks": [
+        {"name": "four-step-flow", "desc": "按申请、审批、使用、取消四步组织", "type": "semantic"},
+        {"name": "advance-booking", "desc": "写明需提前半个工作日通过OA申请", "type": "contains", "value": "半个工作日"},
+        {"name": "cancel-rule", "desc": "写明提前2小时取消及未取消计入统计的后果", "type": "contains", "value": "2小时"}
+      ]
+    },
+    {
+      "id": "ps-02",
+      "domain": "process-spec",
+      "difficulty": "中",
+      "instruction": "请根据以下要点撰写公司差旅报销规范（试行版）。要点：交通费凭票据实报，高铁二等座、飞机经济舱为报销标准，超标需部门总监事前审批；住宿标准为一线城市400元每晚、其他城市300元每晚；出差补贴每天100元，当日往返减半；报销需在返程后10个工作日内提交，附行程单与发票，逾期视为放弃；单笔超过1万元的报销需财务经理加签。规范需分条款编号，语言无歧义，便于新员工直接执行。",
+      "checks": [
+        {"name": "hotel-standard", "desc": "写明一线城市400元每晚、其他城市300元每晚的住宿标准", "type": "contains", "value": "400元"},
+        {"name": "allowance-rule", "desc": "写明每天100元补贴且当日往返减半", "type": "contains", "value": "100元"},
+        {"name": "submit-window", "desc": "写明返程后10个工作日内提交报销", "type": "contains", "value": "10个工作日"},
+        {"name": "clause-numbered", "desc": "分条款编号、无歧义，新员工可直接执行", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ps-03",
+      "domain": "process-spec",
+      "difficulty": "中",
+      "instruction": "请依据下列记录编写IT设备报修流程。记录：员工发现设备故障后先在IT服务台页面提交工单，写明设备编号与故障现象；服务台在2小时内响应并初步分诊，软件问题远程处理，硬件问题派单上门；上门维修承诺4个工作小时内到达；维修期间超过一天的，由IT部提供备用机；修复后需报修人确认签字，工单方可关闭；每月IT部汇总报修最多的前三类故障并在全员邮件中发布预防提示。",
+      "checks": [
+        {"name": "ticket-entry", "desc": "第一步为IT服务台提交工单（含设备编号与故障现象）", "type": "contains", "value": "工单"},
+        {"name": "response-sla", "desc": "写明2小时内响应分诊", "type": "contains", "value": "2小时"},
+        {"name": "backup-device", "desc": "写明维修超一天提供备用机", "type": "contains", "value": "备用机"},
+        {"name": "close-confirmation", "desc": "修复后需报修人确认签字方可关闭工单", "type": "semantic"},
+        {"name": "monthly-top3", "desc": "包含月度前三类故障汇总与全员预防提示", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ps-04",
+      "domain": "process-spec",
+      "difficulty": "中",
+      "instruction": "请根据以下材料编写新员工入职办理流程（供HR与用人部门协同使用）。材料：Offer发放后，HR提前3个工作日发送入职材料清单与报到指引；入职当天上午办理入职手续（合同签署、工卡门禁、账号开通），下午由用人部门安排导师；入职第1周完成三门必修培训；试用期3个月，第1个月末与试用期结束前各进行一次正式面谈；转正评估由直属上级发起，HRBP复核，全流程在OA留痕。流程需明确每个环节的责任方与时间节点。",
+      "checks": [
+        {"name": "pre-boarding", "desc": "写明Offer发放后提前3个工作日发送材料清单", "type": "contains", "value": "3个工作日"},
+        {"name": "day1-arrangement", "desc": "入职当天手续（合同、工卡、账号）与导师安排齐全", "type": "contains", "value": "合同"},
+        {"name": "probation-talks", "desc": "两次正式面谈节点明确（第1个月末与试用期结束前）", "type": "semantic"},
+        {"name": "owner-per-step", "desc": "各环节责任方明确（HR、用人部门、HRBP）", "type": "semantic"},
+        {"name": "oa-traceable", "desc": "转正评估全流程在OA留痕", "type": "contains", "value": "OA"}
+      ]
+    },
+    {
+      "id": "ps-05",
+      "domain": "process-spec",
+      "difficulty": "难",
+      "instruction": "请根据如下信息编写线上版本发布审批流程。信息：所有对外发布必须走四级审批——研发负责人（代码评审）、测试负责人（回归通过）、产品负责人（功能验收）、技术总监（发布窗口）；发布窗口仅限周二与周四的21:00-22:00，紧急修复需技术总监口头批准并于次日补签；发布前必须完成回滚预案，明确触发条件（核心功能不可用超过10分钟即回滚）与执行人；发布后30分钟内在观察群报平安，24小时内出发布报告；连续两次回滚的模块需冻结一周并出复盘。",
+      "checks": [
+        {"name": "approval-chain", "desc": "写明研发、测试、产品、技术总监四级审批", "type": "contains", "value": "技术总监"},
+        {"name": "release-window", "desc": "发布窗口为周二与周四21:00-22:00", "type": "contains", "value": "21:00"},
+        {"name": "rollback-trigger", "desc": "回滚触发条件明确（核心功能不可用超过10分钟）", "type": "contains", "value": "10分钟"},
+        {"name": "emergency-path", "desc": "紧急修复口头批准加次日补签的路径清晰", "type": "semantic"},
+        {"name": "freeze-consequence", "desc": "包含连续两次回滚冻结一周并复盘的规则", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ps-06",
+      "domain": "process-spec",
+      "difficulty": "中",
+      "instruction": "请依据以下记录编写客服工单处理SOP。记录：工单按影响范围分为P1（批量客户不可用）到P3（个别咨询）三级；P1级需15分钟内响应、2小时内给出临时方案，并同步升级至值班经理；P2级2小时内响应、24小时内解决；P3级1个工作日内响应；所有工单处理过程必须每次跟进都在系统内留言，禁止口头私下沟通不留痕；工单解决后24小时内进行客户满意度回访，回访差评的工单自动重开并由质检复核。",
+      "checks": [
+        {"name": "p1-sla", "desc": "P1级15分钟内响应、2小时内给临时方案并升级值班经理", "type": "contains", "value": "15分钟"},
+        {"name": "tier-slas", "desc": "P2（2小时响应、24小时解决）与P3（1个工作日响应）时限准确", "type": "semantic"},
+        {"name": "trace-requirement", "desc": "写明处理过程必须在系统内留言留痕", "type": "contains", "value": "留言"},
+        {"name": "reopen-mechanism", "desc": "差评工单自动重开并由质检复核", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ie-01",
+      "domain": "info-extraction",
+      "difficulty": "易",
+      "instruction": "请阅读以下公司简介原文，抽取关键信息并按成立时间、总部所在地、员工规模、主营业务四项输出。原文：星澜智联科技有限公司成立于2015年3月，总部位于杭州高新区，并在深圳、成都设有研发中心；公司现有员工约460人，其中研发人员占比58%；主营业务为工业物联网网关与设备管理SaaS平台，2025年营收1.8亿元，服务制造类企业超过700家。抽取结果用简洁列表呈现，不要额外发挥。",
+      "checks": [
+        {"name": "founding-date", "desc": "成立时间2015年3月", "type": "contains", "value": "2015年3月"},
+        {"name": "hq-location", "desc": "总部所在地为杭州", "type": "contains", "value": "杭州"},
+        {"name": "headcount", "desc": "员工规模约460人", "type": "contains", "value": "460"},
+        {"name": "fields-only", "desc": "严格按四项字段输出，无额外发挥", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ie-02",
+      "domain": "info-extraction",
+      "difficulty": "中",
+      "instruction": "请从下面这段招聘启事原文中抽取信息，输出为结构化清单：岗位名称、经验要求、学历要求、必备技能、加分项、薪资范围、工作地点。原文：'资深数据分析工程师｜薪资25-40K·14薪｜坐标北京朝阳区。要求：5年以上数据分析经验，统招本科及以上学历；精通SQL与Python，有Airflow或Spark任一调度经验；熟悉A/B测试方法。加分项：有推荐系统或风控方向的数据经验；带过3人以上小团队。'",
+      "checks": [
+        {"name": "salary-range", "desc": "薪资范围25-40K·14薪", "type": "contains", "value": "25-40K"},
+        {"name": "experience-req", "desc": "经验要求5年以上数据分析", "type": "contains", "value": "5年以上"},
+        {"name": "must-skills", "desc": "必备技能含SQL与Python及调度经验", "type": "contains", "value": "SQL"},
+        {"name": "bonus-items", "desc": "加分项完整（推荐系统或风控经验、带3人以上团队）", "type": "semantic"},
+        {"name": "work-location", "desc": "工作地点北京朝阳区", "type": "contains", "value": "朝阳"}
+      ]
+    },
+    {
+      "id": "ie-03",
+      "domain": "info-extraction",
+      "difficulty": "中",
+      "instruction": "以下是某项目第7周周报记录，请抽取全部风险项，输出为表格：风险描述、影响、应对措施、责任人、状态。记录节选：'一、数据库主从延迟偶发升高，可能影响报表实时性，DBA正在优化同步参数，状态处理中；二、关键开发张三下月婚假两周，登录模块联调可能延期，计划由李四提前熟悉代码顶岗；三、甲方第四季度预算尚未批复，二期合同签署存在不确定性，销售总监跟进中；四、测试环境服务器到期未续费，已提交续费流程，预计下周恢复。'",
+      "checks": [
+        {"name": "all-risks", "desc": "四个风险项全部抽出，无遗漏", "type": "semantic"},
+        {"name": "db-latency-risk", "desc": "包含数据库主从延迟风险", "type": "contains", "value": "主从延迟"},
+        {"name": "budget-risk", "desc": "包含甲方预算未批复、二期合同不确定性风险", "type": "contains", "value": "预算"},
+        {"name": "risk-fields", "desc": "每项含风险描述、影响、措施、责任人、状态", "type": "semantic"},
+        {"name": "faithful-mapping", "desc": "责任人与状态与原文对应无误", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ie-04",
+      "domain": "info-extraction",
+      "difficulty": "中",
+      "instruction": "请从以下简历节选中抽取工作经历，按时间倒序输出：公司、职位、起止年月、核心业绩。简历原文：'2019.07-2022.05 旋极信息 高级Java工程师：主导订单中心微服务改造，峰值TPS从800提升至3500。2016.03-2019.06 拓维系统 Java工程师：参与电信计费系统开发，负责对账模块，月均处理账单200万条。2014.07-2016.02 中软国际 Java开发实习生后转正，参与OA系统维护。'",
+      "checks": [
+        {"name": "reverse-order", "desc": "工作经历按时间倒序排列", "type": "semantic"},
+        {"name": "tps-result", "desc": "保留订单中心改造TPS从800提升至3500的业绩", "type": "contains", "value": "3500"},
+        {"name": "bill-volume", "desc": "保留月均处理账单200万条的业绩", "type": "contains", "value": "200万"},
+        {"name": "three-stints", "desc": "三段经历齐全，公司与起止年月准确", "type": "semantic"},
+        {"name": "field-format", "desc": "每段按公司、职位、起止年月、核心业绩四字段输出", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ie-05",
+      "domain": "info-extraction",
+      "difficulty": "难",
+      "instruction": "请阅读以下双方往来邮件原文（节选），抽取甲方做出的全部承诺，输出为清单：承诺内容、时间或截止时间、出处（哪封邮件）。邮件一（甲方王经理，9月3日）：我们力争9月15日前完成一期款支付，合同模板本周五前发你。邮件二（甲方王经理，9月10日）：一期款财务流程已发起，预计9月20日到账，比之前说的晚几天请理解；验收标准文档我们9月底前定稿。邮件三（甲方抄送全员，9月18日）：王经理本周起休假，其承诺事项由刘总监代为跟进。",
+      "checks": [
+        {"name": "payment-tracked", "desc": "抓到一期款承诺并识别时间变更（9月15日前改为预计9月20日到账）", "type": "semantic"},
+        {"name": "contract-template", "desc": "抓到合同模板当周五前发出的承诺及出处", "type": "semantic"},
+        {"name": "acceptance-doc", "desc": "抓到验收标准文档9月底前定稿的承诺", "type": "semantic"},
+        {"name": "owner-change", "desc": "识别承诺跟进人变更为刘总监", "type": "semantic"},
+        {"name": "source-per-item", "desc": "每条承诺标注出处（哪封邮件、哪一日）", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "ie-06",
+      "domain": "info-extraction",
+      "difficulty": "中",
+      "instruction": "请从以下会议纪要记录中抽取全部行动项，输出为清单：事项、负责人、截止日期、验收标准。纪要节选：'一、官网新视觉稿由设计组小美在本周五前给出终稿，以评审组签字为准；二、服务器扩容由运维老段在下周三前完成，扩容后压测报告发项目群；三、客户案例文案由市场部阿哲在10月15日前交两篇，需通过品牌审核；四、旧系统数据迁移演练由数据组在月底前组织一次，演练成功标准为数据零丢失。'",
+      "checks": [
+        {"name": "all-actions", "desc": "四条行动项全部抽出", "type": "semantic"},
+        {"name": "action-fields", "desc": "每条含事项、负责人、截止日期、验收标准", "type": "semantic"},
+        {"name": "zero-loss-standard", "desc": "迁移演练验收标准为数据零丢失", "type": "contains", "value": "零丢失"},
+        {"name": "deadlines-accurate", "desc": "各负责人与截止日期与纪要原文一致", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "rp-01",
+      "domain": "rewrite-polish",
+      "difficulty": "易",
+      "instruction": "请把下面这段口语化的工作交接留言改写成正式的书面交接说明，保留全部信息。原文：'那个保洁的事儿，就是3楼保洁阿姨10号就不干了，这几天你盯一下3楼的卫生，还有保洁公司那边我还没跟他们说，你有空打个电话跟他们说要补人，最好下周一人就能到位，钥匙在原来那个抽屉里锁着呢。'要求：改写后分条陈述，无口语词，信息一项不落（人员离岗时间、卫生盯关照、需通知保洁公司补人、期望到位时间、钥匙位置）。",
+      "checks": [
+        {"name": "no-colloquialism", "desc": "改写后为规范书面语，无口语词与语气词", "type": "semantic"},
+        {"name": "leave-date-kept", "desc": "保留保洁阿姨10号离岗信息", "type": "contains", "value": "10号"},
+        {"name": "key-location-kept", "desc": "保留钥匙位置信息", "type": "contains", "value": "钥匙"},
+        {"name": "info-complete", "desc": "离岗时间、卫生盯关照、通知补人、到位时间、钥匙位置五项信息分条陈述一项不落", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "rp-02",
+      "domain": "rewrite-polish",
+      "difficulty": "中",
+      "instruction": "请将下面这段项目汇报压缩为不超过150字的精炼版本，保留关键数字与结论。原文：'这个季度我们这个项目吧，整体来说是按计划在推进的，虽然中间出了一些小的波折，比如人员流动什么的，但是总体影响不大。目前来看，一期开发的12个功能点里面已经上线了10个，剩下2个预计在月底之前也能上线。客户那边对我们的反馈还是不错的，上个月的满意度调研给了92分，比上一个季度高了5分。下一阶段的主要任务就是二期的需求调研，预计下个月中旬可以正式启动。'",
+      "checks": [
+        {"name": "within-150", "desc": "压缩后不超过150字", "type": "semantic"},
+        {"name": "feature-progress", "desc": "保留12个功能点已上线10个、余2个月底前上线", "type": "contains", "value": "10个"},
+        {"name": "satisfaction-kept", "desc": "保留满意度92分、环比提升5分", "type": "contains", "value": "92分"},
+        {"name": "next-phase-kept", "desc": "保留下阶段二期需求调研下月中旬启动", "type": "semantic"},
+        {"name": "filler-removed", "desc": "删除口水话与冗余语气，行文凝练", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "rp-03",
+      "domain": "rewrite-polish",
+      "difficulty": "中",
+      "instruction": "请将下面这段翻译腔严重的文案改写为自然流畅的中文，不得改变原意。原文：'作为一个被广泛使用的项目管理工具，它被设计出来的目的是为了使得团队的合作能够被促进。任务的分配将会被每一个成员所看到，并且讨论能够在任务下面被发起。当一个新的通知被收到的时候，一个提醒将会被发送到你的手机上。'",
+      "checks": [
+        {"name": "active-voice", "desc": "消除翻译腔的被动句式，改为自然主动表达", "type": "semantic"},
+        {"name": "meaning-preserved", "desc": "功能点原意不变（促进协作、任务对成员可见、任务下可发起讨论、通知提醒）", "type": "semantic"},
+        {"name": "natural-chinese", "desc": "行文符合中文表达习惯，流畅自然", "type": "semantic"},
+        {"name": "notify-point", "desc": "保留收到通知时手机提醒的功能点", "type": "contains", "value": "提醒"}
+      ]
+    },
+    {
+      "id": "rp-04",
+      "domain": "rewrite-polish",
+      "difficulty": "中",
+      "instruction": "下面是一段客服话术素材，请将其润色得更礼貌、更有服务感，但不得改变事实内容。素材原文：'你这个订单已经发货了，物流信息自己去看订单页，我们没办法控制快递快慢。退货可以，但要自己出运费，因为是你的问题不是我们的问题。'润色要求：保留已发货、退货运费由买家承担的事实与责任认定依据，同时增加共情表述，让客户感到被尊重。",
+      "checks": [
+        {"name": "polite-tone", "desc": "去除生硬表达，用语礼貌有服务感", "type": "semantic"},
+        {"name": "facts-unchanged", "desc": "事实不变：已发货、退货运费买家承担、责任认定依据保留", "type": "semantic"},
+        {"name": "logistics-guide", "desc": "保留物流信息在订单页查询的指引", "type": "contains", "value": "订单"},
+        {"name": "empathy-added", "desc": "增加共情或致意表述", "type": "semantic"},
+        {"name": "return-process-clear", "desc": "退货方案表述清晰可执行", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "rp-05",
+      "domain": "rewrite-polish",
+      "difficulty": "难",
+      "instruction": "请将下面这则部门调整通知的原文改写为更温和、更易被员工接受的版本，但必须保留全部决定要素，不得含糊其辞。原文：'由于业务调整，B组撤销，B组全部6名员工并入A组，汇报对象改为A组组长，工位搬到5楼，下周一生效，不服从者按离职处理。'改写要求：说明调整的合理背景；对受影响员工表达关切；明确保留生效日期、汇报关系、工位变动等全部硬信息；把不服从者按离职处理改写为合规且不失原则的表述（如按公司规章制度办理）；语气坚定而尊重。",
+      "checks": [
+        {"name": "effective-date-kept", "desc": "保留下周一生效的时间要素", "type": "contains", "value": "下周一"},
+        {"name": "report-line-kept", "desc": "保留并入A组、汇报A组组长的人事要素", "type": "contains", "value": "A组"},
+        {"name": "seat-change-kept", "desc": "保留工位搬至5楼的安排", "type": "contains", "value": "5楼"},
+        {"name": "compliant-consequence", "desc": "不服从按离职处理已改写为合规且不失原则的表述", "type": "semantic"},
+        {"name": "firm-respectful", "desc": "有调整背景与关切表达，语气坚定而尊重", "type": "semantic"}
+      ]
+    },
+    {
+      "id": "rp-06",
+      "domain": "rewrite-polish",
+      "difficulty": "中",
+      "instruction": "请把下面这段面向工程师的系统说明改写成普通用户能看懂的版本，原文术语需全部转译。原文：'系统采用异步消息队列削峰，当并发请求超过阈值时进入降级模式，非核心链路自动熔断，数据最终一致性通过补偿任务保证，用户请求的P99延迟控制在800毫秒以内。'改写要求：不用任何技术术语；用生活化类比解释高峰期可能出现的现象；说明对用户的实际影响（高峰时部分功能可能稍慢或暂不可用，数据不会丢失）；篇幅不超过200字。",
+      "checks": [
+        {"name": "jargon-free", "desc": "无任何技术术语（队列、熔断、一致性、P99等均已转译）", "type": "semantic"},
+        {"name": "everyday-analogy", "desc": "用生活化类比解释高峰期现象", "type": "semantic"},
+        {"name": "user-impact", "desc": "说明实际影响：高峰部分功能稍慢或暂不可用、数据不丢失", "type": "semantic"},
+        {"name": "within-200", "desc": "改写后篇幅不超过200字", "type": "semantic"}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+# docker-compose.yml — 由 gen_deploy.py 自动生成（勿手工编辑；调参改 .env 即可）
+# 项目: asr-minutes-todo
+# 服务: asr, minutes, todo
+# 管线接线: asr 的 ASR_OUTPUT_DIR 与 minutes 的 MINUTES_INPUT_DIR 指向同一路径
+
+name: asr-minutes-todo
+
+services:
+  asr:
+    image: "${ASR_IMAGE:-placeholder/asr:dev}"
+      broken: [unclosed
+    restart: unless-stopped
+    environment:
+      ASR_INPUT_DIR: "${ASR_INPUT_DIR:-./data/incoming}"
+      ASR_OUTPUT_DIR: "${ASR_OUTPUT_DIR:-./data/asr-out}"
+      ASR_MODEL: "${ASR_MODEL:-base}"
+    volumes:
+      - "${ASR_INPUT_DIR:-./data/incoming}:/data/in"
+      - "${ASR_OUTPUT_DIR:-./data/asr-out}:/data/out"
+    ports:
+      - "${ASR_PORT:-8001}:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/healthz || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  minutes:
+    image: "${MINUTES_IMAGE:-placeholder/minutes:dev}"
+    restart: unless-stopped
+    environment:
+      MINUTES_INPUT_DIR: "${MINUTES_INPUT_DIR:-./data/asr-out}"
+      MINUTES_OUTPUT_DIR: "${MINUTES_OUTPUT_DIR:-./data/minutes-out}"
+    volumes:
+      - "${MINUTES_INPUT_DIR:-./data/asr-out}:/data/in"
+      - "${MINUTES_OUTPUT_DIR:-./data/minutes-out}:/data/out"
+    ports:
+      - "${MINUTES_PORT:-8002}:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/healthz || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  todo:
+    image: "${TODO_IMAGE:-placeholder/todo:dev}"
+    restart: unless-stopped
+    environment:
+      TODO_DATA_DIR: "${TODO_DATA_DIR:-./data/todo}"
+    volumes:
+      - "${TODO_DATA_DIR:-./data/todo}:/data"
+    ports:
+      - "${TODO_PORT:-8003}:8000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/healthz || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 5

@@ -1,0 +1,45 @@
+{
+  "_readme": [
+    "OFFICE-KIT 护栏样例（sample）——遵循 Claude Code hooks 官方三层结构：事件 -> matcher -> handler 数组（官方 33 事件/5 handler 口径，见 skillfactory/v2/TAXONOMY.md 锚7）。",
+    "本文件仅是样例，不自动生效；启用=把各事件块复制进宿主端 settings 的 hooks 配置。拦截类（PreToolUse）退出码 2 = 阻断，stderr 内容回给模型。",
+    "三个 hook 对应 AGENTS.md 红线：H1 敏感词拦截（红线6）、H2 产物落盘校验（红线3/8，写后回读三态）、H3 外发命令拦截（红线7/边界条款）。",
+    "正则与脱敏规则为示例口径，按业务调整；统计类长数字（发票号等）可能误报，命中后按提示脱敏或人工放行。",
+    "依赖：python 3.x（PATH 中可用的 python 命令）。Windows/macOS/Linux 通用。"
+  ],
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python -c \"import sys,json,re\nd=json.load(sys.stdin)\nti=d.get('tool_input',{})\nc=ti.get('content') or ti.get('new_string') or ti.get('file_path') or ''\npats={'手机号':r'(?<!\\d)1[3-9]\\d{9}(?!\\d)','身份证':r'(?<!\\d)\\d{17}[0-9Xx](?!\\d)','银行卡':r'(?<!\\d)\\d{16,19}(?!\\d)','凭据赋值':r'(?i)(password|passwd|api[_-]?key|secret|token)\\s*[:=]\\s*[^\\s\\x27\\x22]{6,}'}\nhits=[k for k,p in pats.items() if re.search(p,c)]\nif hits:\n    print('OFFICE-KIT 敏感词拦截：命中 %s。处理：脱敏为 ***尾4位 后重写；确属正常数字请人工放行。'%('、'.join(hits)), file=sys.stderr)\n    sys.exit(2)\n\""
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python -c \"import sys,json,re,os\nd=json.load(sys.stdin)\ncmd=d.get('tool_input',{}).get('command','')\nout=re.search(r'\\b(curl|wget|Invoke-WebRequest|Invoke-RestMethod|scp|sftp|ftp)\\b',cmd,re.I)\nif out and os.environ.get('OFFICE_KIT_ALLOW_NET')!='1':\n    print('OFFICE-KIT 外发命令拦截：检测到对外传输命令(%s)。未经用户确认禁止外发；确需外发请先征得用户同意并设置环境变量 OFFICE_KIT_ALLOW_NET=1 后重试。'%out.group(1), file=sys.stderr)\n    sys.exit(2)\n\""
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "timeout": 10,
+            "command": "python -c \"import sys,json,os\nd=json.load(sys.stdin)\np=d.get('tool_input',{}).get('file_path','')\nbase=os.path.basename(p)\nif base=='summary.json':\n    if not os.path.exists(p):\n        print('OFFICE-KIT 产物落盘校验失败：summary.json 未真实落盘（写后回读三态不通过）。', file=sys.stderr); sys.exit(2)\n    import json as j\n    try:\n        o=j.load(open(p,encoding='utf-8-sig'))\n    except Exception as e:\n        print('OFFICE-KIT 产物落盘校验失败：summary.json 不是合法 JSON：%s'%e, file=sys.stderr); sys.exit(2)\n    need=['决议事项','待办事项','风险与关注','合计']\n    miss=[k for k in need if k not in o]\n    if miss:\n        print('OFFICE-KIT 产物落盘校验失败：summary.json 缺键 %s（四键名必须精确）。'%miss, file=sys.stderr); sys.exit(2)\nelif base.endswith('.docx'):\n    if not os.path.exists(p):\n        print('OFFICE-KIT 产物落盘校验失败：docx 产物未真实落盘（写后回读三态不通过）。', file=sys.stderr); sys.exit(2)\n\""
+          }
+        ]
+      }
+    ]
+  }
+}

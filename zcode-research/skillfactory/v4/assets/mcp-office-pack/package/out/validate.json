@@ -1,0 +1,66 @@
+{
+  "oracle": {
+    "asset": "mcp-office-pack",
+    "reference": "skillfactory/v4/assets/mcp-office-pack/oracle",
+    "spec": "spec.md v1.0（2026-09-30）"
+  },
+  "generated_at": "2026-09-30T15:52:45+0800",
+  "config": "mcp.office.json",
+  "checks": [
+    {
+      "id": "json_valid",
+      "name": "配置 JSON 可解析且结构顶层合法（spec §3.1）",
+      "pass": true,
+      "detail": "mcpServers 为对象；_meta 元数据 7 键齐备（pack=mcp-office-pack version=1.0.0）",
+      "problems": []
+    },
+    {
+      "id": "fields_complete",
+      "name": "逐条 entry 必备字段与约束（spec §3.2 字段表）",
+      "pass": true,
+      "detail": "10 条 entry 字段逐条核验完成",
+      "problems": []
+    },
+    {
+      "id": "names_unique",
+      "name": "name 合法且唯一（spec §3.3）",
+      "pass": true,
+      "detail": "10 个 name 全部合法唯一",
+      "problems": []
+    },
+    {
+      "id": "no_real_secrets",
+      "name": "密钥零真值：11 条正则族扫配置全文 + 全部 env 值（spec §3.4）",
+      "pass": true,
+      "detail": "11 条正则族 × 5 个扫描面全部未命中",
+      "problems": []
+    },
+    {
+      "id": "placeholders_intact",
+      "name": "secret_env 声明键保持 ${VAR} 占位形态（spec §3.4）",
+      "pass": true,
+      "detail": "secret_env 共声明 3 个密钥键，全部保持占位形态",
+      "problems": []
+    },
+    {
+      "id": "docs_exist",
+      "name": "D1 手册与条目双向一一对应（spec §5 D1）",
+      "pass": true,
+      "detail": "10 条 entry ↔ 10 份手册，双向一一对应",
+      "problems": []
+    },
+    {
+      "id": "artifacts_exist",
+      "name": "手册产物质量线：D2 四小节+正文长度，D3 含目录实录 URL（spec §5）",
+      "pass": true,
+      "detail": "10 份手册四小节/长度≥200/record_url 全部达标",
+      "problems": []
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "passed": 7,
+    "failed": 0,
+    "all_green": true
+  }
+}

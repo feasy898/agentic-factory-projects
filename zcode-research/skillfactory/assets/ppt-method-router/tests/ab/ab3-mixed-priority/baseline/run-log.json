@@ -1,0 +1,40 @@
+{
+  "run": "ab3-mixed-priority / baseline",
+  "executed_at": "2026-09-29T07:55-07:58+08:00 (main run ~07:55; control run ~07:57; log finalized 07:57:53)",
+  "executor": "zcode subagent (GLM-5.3-Flash), independent run for ab3-mixed-priority",
+  "command_under_test": "python package/scripts/route.py --input oracle/inputs/case15.txt",
+  "cwd": "D:\\workspace\\zcode研究\\skillfactory\\assets\\ppt-method-router",
+  "environment": {
+    "os": "Windows Server 2022 (win32 10.0.20348 x64)",
+    "python": "3.12.10"
+  },
+  "provenance_sha256": {
+    "package/scripts/route.py (canonical, executed)": "ce6c8fe2602e9a1f990605dcaac32be6a42956d635239add65805b9b3ad6ebeb",
+    "oracle/inputs/case15.txt (canonical, executed)": "c180ebd492d36a8dfcd8ca9c9b1dc6449021dc7169a7fb9c69e3c46a6cbd4a4c",
+    "route-output-raw.txt (this run's stdout)": "ff24f14f57f90eaf253ab852858cf6896fb5f928eabb17193c04b413372eb5ef",
+    "control-output-raw.txt (this run's control stdout)": "6b3ca6a20baca3a62f7ee51c62bf5c3a7f3efe33dd8e8c2f8727ebcf5670620e"
+  },
+  "fairness_note": "Per the ask, package/, oracle/ and spec.md were never read (no file content opened). route.py was only executed as a black box via the exact command above. Stale package/ and oracle/ copies found inside this baseline directory (left by an earlier attempt) hash-differ from canonical and were NOT executed; canonical paths under the asset root were used.",
+  "reproducibility_note": "A run-log.json from an earlier attempt at this same ask (same command, same cwd) was present with exit_code=0 and byte-identical routing decision (method=template_fill, confidence=0.65, same 4 reasons); this fresh run reproduced it exactly.",
+  "main_run": {
+    "argv": ["python", "package/scripts/route.py", "--input", "oracle/inputs/case15.txt"],
+    "exit_code": 0,
+    "stdout_file": "route-output-raw.txt",
+    "stderr_file": "stderr.txt (empty, 0 bytes)",
+    "stdout_is_single_json_line": true
+  },
+  "control_run": {
+    "purpose": "Empirically verify that the mixed-conflict case's confidence (0.65) is lower than a same-category clear case (conflict suppresses confidence), per rubric clause '低于同类别无冲突的清晰情形'",
+    "input_file": "control-input-clear-templatefill.txt",
+    "input_origin": "Synthesized by this executor (contains 品牌/模板 only, no visual_report trigger words); not an oracle input",
+    "command": "python package/scripts/route.py --input tests/ab/ab3-mixed-priority/baseline/control-input-clear-templatefill.txt",
+    "exit_code": 0,
+    "result": {"method": "template_fill", "confidence": 0.85, "note": "router itself reported 仅单一类别命中、无信号冲突"},
+    "comparison": "mixed case15 = 0.65  <  clear single-category control = 0.85; also 0.65 <= 0.75 rubric cap"
+  },
+  "verification": {
+    "checks_executed": 8,
+    "checks_passed": 8,
+    "detail_file": "verify-result.txt"
+  }
+}

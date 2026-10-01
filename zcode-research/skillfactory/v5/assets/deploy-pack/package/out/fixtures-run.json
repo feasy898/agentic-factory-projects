@@ -1,0 +1,116 @@
+{
+  "total": 7,
+  "passed": 7,
+  "verdict": "ALL FIXTURES AS EXPECTED",
+  "asset": "skillfactory/v5/assets/deploy-pack/package",
+  "note": "package 自产正/反例全量实跑记录（工具=package/gen_deploy.py + package/validate.py）",
+  "entries": [
+    {
+      "name": "canonical",
+      "services": "asr,minutes,todo",
+      "gen_exit": 0,
+      "validate_exit": 0,
+      "verdict": "ALL GREEN",
+      "summary": {
+        "pass": 7,
+        "fail": 0,
+        "skip": 0
+      },
+      "expected": "ALL GREEN",
+      "pass": true
+    },
+    {
+      "name": "subset",
+      "services": "asr,todo",
+      "gen_exit": 0,
+      "validate_exit": 0,
+      "verdict": "ALL GREEN",
+      "summary": {
+        "pass": 6,
+        "fail": 0,
+        "skip": 1
+      },
+      "expected": "ALL GREEN（C5 SKIP）",
+      "pass": true
+    },
+    {
+      "name": "invalid",
+      "services": "asr,wat",
+      "gen_exit": 2,
+      "stderr": "[GEN-FAIL] 非法 --services: 'asr,wat'（未知: wat），可用值: asr, minutes, todo",
+      "output_dir_created": false,
+      "expected": "exit 2 且不建目录",
+      "pass": true
+    },
+    {
+      "name": "red-bad-yaml",
+      "validate_exit": 1,
+      "verdict": "FAILED",
+      "summary": {
+        "pass": 1,
+        "fail": 1,
+        "skip": 5
+      },
+      "FAIL": [
+        "compose_safe_load"
+      ],
+      "expected_FAIL": [
+        "compose_safe_load"
+      ],
+      "pass": true
+    },
+    {
+      "name": "red-missing-service",
+      "services": "asr,minutes",
+      "gen_exit": 0,
+      "validate_exit": 1,
+      "verdict": "FAILED",
+      "summary": {
+        "pass": 5,
+        "fail": 1,
+        "skip": 1
+      },
+      "FAIL": [
+        "services_exact"
+      ],
+      "expected_FAIL": [
+        "services_exact"
+      ],
+      "pass": true
+    },
+    {
+      "name": "red-env-drift",
+      "validate_exit": 1,
+      "verdict": "FAILED",
+      "summary": {
+        "pass": 5,
+        "fail": 1,
+        "skip": 1
+      },
+      "FAIL": [
+        "env_consistent"
+      ],
+      "expected_FAIL": [
+        "env_consistent"
+      ],
+      "pass": true
+    },
+    {
+      "name": "red-hardcoded-secret",
+      "validate_exit": 1,
+      "verdict": "FAILED",
+      "summary": {
+        "pass": 5,
+        "fail": 1,
+        "skip": 1
+      },
+      "FAIL": [
+        "no_hardcoded_secrets"
+      ],
+      "expected_FAIL": [
+        "no_hardcoded_secrets"
+      ],
+      "pass": true
+    }
+  ]
+}

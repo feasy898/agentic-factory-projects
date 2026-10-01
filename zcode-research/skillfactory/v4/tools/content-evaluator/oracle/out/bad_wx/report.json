@@ -1,0 +1,75 @@
+{
+  "tool": "evaluate.py 1.0.0",
+  "input": "D:\\workspace\\zcode研究\\skillfactory\\v4\\tools\\content-evaluator\\oracle\\fixtures\\bad_wx.md",
+  "platform": "wx",
+  "platform_label": "微信公众号",
+  "generated_at": "2026-09-30T09:14:21+0800",
+  "summary": {
+    "applied": 9,
+    "pass": 6,
+    "fail": 3,
+    "warn": 1
+  },
+  "score": {
+    "passed": 6,
+    "applied": 9,
+    "ratio": 0.6667,
+    "text": "6/9"
+  },
+  "checks": [
+    {
+      "name": "title_length",
+      "pass": true,
+      "warning": false,
+      "detail": "标题 20 字，在区间 [10, 64] 内：深度好文：三步搞定年终汇报，看完就能上手"
+    },
+    {
+      "name": "emoji_density",
+      "pass": true,
+      "warning": true,
+      "detail": "emoji 共 22 个，超过上限 20（仅警告，不计失败）"
+    },
+    {
+      "name": "body_length",
+      "pass": true,
+      "warning": false,
+      "detail": "正文 526 字（去空白），在区间 [300, 3000]"
+    },
+    {
+      "name": "paragraph_max",
+      "pass": false,
+      "warning": false,
+      "detail": "共 4 段，最长第 2 段 422 字（上限 350）：年终汇报的本质不是罗列功劳，而是证明你对团队目标的理解深度。很多人一上来就把自己全年做过的事情按时间顺序全部列出来，写了整整十页幻灯片，结果讲到第五页的时..."
+    },
+    {
+      "name": "tag_count",
+      "pass": true,
+      "warning": false,
+      "detail": "未发现 #标签，要求区间 [0, 8]"
+    },
+    {
+      "name": "banned_words",
+      "pass": false,
+      "warning": false,
+      "detail": "命中 6 个极限词（共 6 次）：100%×1、全网最×1、国家级×1、完美×1、最好×1、立竿见影×1"
+    },
+    {
+      "name": "structure_hook",
+      "pass": true,
+      "warning": false,
+      "detail": "有钩子（为什么、什么、？(问句)）：为什么你的年终汇报总是讲不清重点？问题多半不在内容，而在结构。"
+    },
+    {
+      "name": "structure_cta",
+      "pass": false,
+      "warning": false,
+      "detail": "正文未见 CTA 引导词（点赞、关注、收藏、码住、转发、评论 等）"
+    },
+    {
+      "name": "structure_para",
+      "pass": true,
+      "warning": false,
+      "detail": "正文分 4 段，≥ 最少要求 3 段"
+    }
+  ]
+}

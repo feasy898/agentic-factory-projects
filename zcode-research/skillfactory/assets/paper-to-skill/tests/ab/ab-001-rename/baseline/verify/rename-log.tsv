@@ -1,0 +1,5 @@
+status	src	dst
+skipped	fixtures-log\beta.log	fixtures-log\report_001.log
+renamed	fixtures-log\report_001.log	fixtures-log\report_002.log
+skipped	fixtures-log\report_003.log	fixtures-log\report_003.log
+skipped	fixtures-log\report_004.log	fixtures-log\report_004.log

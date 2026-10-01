@@ -1,0 +1,116 @@
+{
+  "package": "D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-guard-hooks\\package",
+  "total": 12,
+  "passed": 12,
+  "failed": 0,
+  "cases": [
+    {
+      "suite": "validate_output",
+      "name": "good.txt 通过",
+      "script": "hooks/validate_output.py",
+      "expected_exit": 0,
+      "exit": 0,
+      "ok": true,
+      "problems": []
+    },
+    {
+      "suite": "validate_output",
+      "name": "clean.docx 通过",
+      "script": "hooks/validate_output.py",
+      "expected_exit": 0,
+      "exit": 0,
+      "ok": true,
+      "problems": []
+    },
+    {
+      "suite": "validate_output",
+      "name": "bad_empty.txt 阻断(空文件)",
+      "script": "hooks/validate_output.py",
+      "expected_exit": 2,
+      "exit": 2,
+      "ok": true,
+      "problems": []
+    },
+    {
+      "suite": "validate_output",
+      "name": "bad_encoding.txt 阻断(非UTF-8)",
+      "script": "hooks/validate_output.py",
+      "expected_exit": 2,
+      "exit": 2,
+      "ok": true,
+      "problems": []
+    },
+    {
+      "suite": "validate_output",
+      "name": "corrupt.docx 阻断(python-docx 打不开)",
+      "script": "hooks/validate_output.py",
+      "expected_exit": 2,
+      "exit": 2,
+      "ok": true,
+      "problems": []
+    },
+    {
+      "suite": "validate_output",
+      "name": "缺失文件阻断",
+      "script": "hooks/validate_output.py",
+      "expected_exit": 2,
+      "exit": 2,
+      "ok": true,
+      "problems": []
+    },
+    {
+      "suite": "validate_output",
+      "name": "嵌套 tool_input.file_path schema",
+      "script": "hooks/validate_output.py",
+      "expected_exit": 0,
+      "exit": 0,
+      "ok": true,
+      "problems": []
+    },
+    {
+      "suite": "pii_guard",
+      "name": "pii.txt 阻断(脱敏命中，手机+身份证各一条)",
+      "script": "hooks/pii_guard.py",
+      "expected_exit": 2,
+      "exit": 2,
+      "ok": true,
+      "problems": []
+    },
+    {
+      "suite": "pii_guard",
+      "name": "good.txt 干净放行",
+      "script": "hooks/pii_guard.py",
+      "expected_exit": 0,
+      "exit": 0,
+      "ok": true,
+      "problems": []
+    },
+    {
+      "suite": "pii_guard",
+      "name": "bad_empty.txt 空文件 fail-open",
+      "script": "hooks/pii_guard.py",
+      "expected_exit": 0,
+      "exit": 0,
+      "ok": true,
+      "problems": []
+    },
+    {
+      "suite": "pii_guard",
+      "name": "bad_encoding.txt 非 UTF-8 不扫描放行",
+      "script": "hooks/pii_guard.py",
+      "expected_exit": 0,
+      "exit": 0,
+      "ok": true,
+      "problems": []
+    },
+    {
+      "suite": "pii_guard",
+      "name": "clean.docx 二进制跳过放行",
+      "script": "hooks/pii_guard.py",
+      "expected_exit": 0,
+      "exit": 0,
+      "ok": true,
+      "problems": []
+    }
+  ]
+}

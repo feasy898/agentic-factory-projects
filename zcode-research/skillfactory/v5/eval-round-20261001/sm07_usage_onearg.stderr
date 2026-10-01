@@ -1,0 +1,1 @@
+用法：python eval/runner.py [<被测产物根> <参照产物根>]（缺省两者均为 /opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/speaker-mapping/oracle/out）

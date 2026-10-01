@@ -1,0 +1,38 @@
+{
+  "tool": "healthcheck.py 1.0.0",
+  "target": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/speaker-mapping/package",
+  "generated_at": "2026-10-01T03:31:35+0800",
+  "summary": {
+    "total": 5,
+    "pass": 2,
+    "fail": 3
+  },
+  "rating": "C",
+  "checks": [
+    {
+      "name": "skill_md_exists",
+      "pass": true,
+      "detail": "SKILL.md 存在（4075 字节）"
+    },
+    {
+      "name": "front_matter_fields",
+      "pass": false,
+      "detail": "front-matter 缺字段: version, license, permissions（已有: name, description）"
+    },
+    {
+      "name": "eval_present",
+      "pass": false,
+      "detail": "缺少 eval/ 目录（无确定性评测）"
+    },
+    {
+      "name": "eval_smoke",
+      "pass": true,
+      "detail": "skip: 缺 eval/ 目录，跳过 smoke"
+    },
+    {
+      "name": "scripts_syntax",
+      "pass": false,
+      "detail": "scripts/ 目录不存在"
+    }
+  ]
+}

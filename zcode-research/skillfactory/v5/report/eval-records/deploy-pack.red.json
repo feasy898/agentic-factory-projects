@@ -1,0 +1,46 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v5/assets/deploy-pack/eval",
+  "candidate": "/tmp/wb_red_empty_dp",
+  "reference": "skillfactory/v5/assets/deploy-pack/oracle/out",
+  "candidate_resolved": null,
+  "candidate_resolved_via": "none",
+  "reference_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle/out/pack-canonical",
+  "reference_resolved_via": "pack-canonical",
+  "oracle_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle",
+  "oracle_resolved_via": "reference-ancestor(/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle)",
+  "self_eval": false,
+  "ok": false,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 0,
+      "failed": 4
+    },
+    "text_agreement_rate": null
+  },
+  "checks": [
+    {
+      "name": "compose_yaml_three_services",
+      "passed": false,
+      "detail": "前置失败：被测产物根未解析出 pack（已尝试 <root>/docker-compose.yml、<root>/pack-canonical/docker-compose.yml、<root>/out/pack-canonical/docker-compose.yml）: /tmp/wb_red_empty_dp"
+    },
+    {
+      "name": "env_compose_vars_consistent",
+      "passed": false,
+      "detail": "前置失败：被测产物根未解析（见第 1 项）"
+    },
+    {
+      "name": "validate_all_green",
+      "passed": false,
+      "detail": "前置失败：被测产物根未解析（见第 1 项）",
+      "oracle_resolved": "/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle",
+      "oracle_resolved_via": "reference-ancestor(/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/deploy-pack/oracle)"
+    },
+    {
+      "name": "reference_text_agreement_90pct",
+      "passed": false,
+      "detail": "前置失败：被测产物根未解析（见第 1 项）"
+    }
+  ]
+}

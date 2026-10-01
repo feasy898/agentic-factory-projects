@@ -1,0 +1,1 @@
+[map_speakers.py] INFO: 写出 out\normal__m_full.txt（共 10 行，替换标签 10 处，未映射标签 0 种）

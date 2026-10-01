@@ -1,0 +1,12 @@
+[OK] 01_list_initial exit=0 初始演示库按类别分组列出
+[OK] 02_add_ok exit=0 追加新词条
+[OK] 03_add_duplicate exit=2 重复词条报错（退出码 2，库不变）
+[OK] 04_add_with_weight exit=0 带自定义权重追加
+[OK] 05_remove_ok exit=0 按词删除既有词条
+[OK] 06_remove_missing exit=2 删除不存在的词报错（退出码 2）
+[OK] 07_list_final exit=0 增删后的库按类别分组列出
+[OK] 08_export_funasr exit=0 导出 FunASR 热词文件（词 权重）
+[OK] 09_export_plain exit=0 导出纯文本热词文件（每行一词）
+[OK] 10_export_stdout exit=0 省略 --out 时导出到标准输出
+10/10 步 OK；产物目录：/opt/gpumachine/projects/zcode-research/skillfactory/v5/assets/hotwords/package/out
+EXIT=0
