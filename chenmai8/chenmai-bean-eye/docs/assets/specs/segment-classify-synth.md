@@ -1,12 +1,16 @@
 # M12 合成 + M4 分割 + M5 分类 合并 spec（segment-classify-synth）
 
-> 状态：三模块均已落库**冻结**（2026-09-30 处置复跑 `tests/test_synth.py` +
-> `tests/test_segment.py` + `tests/test_oracle.py` + `tests/test_classify.py`
-> → **74 passed in 216.25s**，exit 0；全套件 508 passed）。
+> 状态：三模块均已落库**冻结**（四入口 `tests/test_synth.py` / `tests/test_segment.py` /
+> `tests/test_oracle.py` / `tests/test_classify.py` = **74 passed**（23+23+9+19）exit 0；
+> 2026-09-30 处置复跑 216.25s、资产漂移回填批同日独立复跑 82.69s/98.55s/101.61s/158.91s
+> 逐入口 23/23/9/19 passed，acc 0.7712 / normal 召回 0.95 实读
+> `out/eval/classify_report.json` 复核一致；全套件 508 passed）。
 > 本页对照已落库代码（`beaneye/synth/`、`beaneye/segment/`、`beaneye/classify/`）、
 > 三份配置（`configs/synth.yaml`、`configs/segment.yaml`、`configs/rules_v0.yaml`）
 > 与四个测试文件 docstring 提炼于 2026-09-30，为三模块的**合并再生 spec**
 > （资产包首版仅覆盖 7 个旧模块，本页补齐 D4 批缺口——见 manifest 变更史）。
+> **first-draft：以代码为真相写出，未经盲重生成验证**——本页尚未经「只凭 spec 盲再生
+> 三模块」回验；发现 spec 与代码漂移时，以代码为真相修订本页。
 > 逐行精读级别低于首版 7 张 spec：以「接口签名 + 契约语义 + 验收线 + 已知坑」为纲，
 > 实现细节以代码与提交注记为权威真源。
 
