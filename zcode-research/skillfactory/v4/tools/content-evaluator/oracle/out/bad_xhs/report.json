@@ -1,0 +1,75 @@
+{
+  "tool": "evaluate.py 1.0.0",
+  "input": "D:\\workspace\\zcode研究\\skillfactory\\v4\\tools\\content-evaluator\\oracle\\fixtures\\bad_xhs.md",
+  "platform": "xhs",
+  "platform_label": "小红书",
+  "generated_at": "2026-09-30T09:14:17+0800",
+  "summary": {
+    "applied": 9,
+    "pass": 4,
+    "fail": 5,
+    "warn": 0
+  },
+  "score": {
+    "passed": 4,
+    "applied": 9,
+    "ratio": 0.4444,
+    "text": "4/9"
+  },
+  "checks": [
+    {
+      "name": "title_length",
+      "pass": false,
+      "warning": false,
+      "detail": "标题 25 字，超出区间 [8, 20]：全网最好的咖啡馆没有之一！史上最全探店攻略必看收藏"
+    },
+    {
+      "name": "emoji_density",
+      "pass": false,
+      "warning": false,
+      "detail": "emoji 共 0 个，不足区间 [2, 15]"
+    },
+    {
+      "name": "body_length",
+      "pass": true,
+      "warning": false,
+      "detail": "正文 118 字（去空白），在区间 [100, 800]"
+    },
+    {
+      "name": "paragraph_max",
+      "pass": true,
+      "warning": false,
+      "detail": "共 3 段，最长第 1 段 45 字（上限 160）：这家店号称是全国第一的宝藏咖啡馆，绝对是你喝过最好喝的拿铁，史无前例的丝滑口感，百年难遇。"
+    },
+    {
+      "name": "tag_count",
+      "pass": false,
+      "warning": false,
+      "detail": "未发现 #标签，要求区间 [3, 10]"
+    },
+    {
+      "name": "banned_words",
+      "pass": false,
+      "warning": false,
+      "detail": "命中 12 个极限词（共 13 次）：最好×2、世界级×1、全国第一×1、全网最×1、史无前例×1、完美×1、无敌×1、立竿见影×1、第一×1、纯天然×1、零风险×1、顶级×1"
+    },
+    {
+      "name": "structure_hook",
+      "pass": true,
+      "warning": false,
+      "detail": "有钩子（攻略、必看）：这家店号称是全国第一的宝藏咖啡馆，绝对是你喝过最好喝的拿铁，史无前例的丝滑口感，百年难遇。"
+    },
+    {
+      "name": "structure_cta",
+      "pass": false,
+      "warning": false,
+      "detail": "正文未见 CTA 引导词（点赞、关注、收藏、码住、转发、评论 等）"
+    },
+    {
+      "name": "structure_para",
+      "pass": true,
+      "warning": false,
+      "detail": "正文分 3 段，≥ 最少要求 3 段"
+    }
+  ]
+}

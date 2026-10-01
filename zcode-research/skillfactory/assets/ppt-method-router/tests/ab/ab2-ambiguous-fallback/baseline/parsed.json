@@ -1,0 +1,22 @@
+{
+  "case": "case11",
+  "command": "python package/scripts/route.py --input oracle/inputs/case11.txt",
+  "cwd": "skillfactory/assets/ppt-method-router",
+  "exit_code": 0,
+  "stdout_bytes": 404,
+  "stdout_line_count": 1,
+  "stderr": "",
+  "parsed": {
+    "method": "editable_pptx",
+    "confidence": 0.4,
+    "reasons": [
+      "未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个",
+      "按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行"
+    ]
+  },
+  "reference_from_task_brief": { "method": "editable_pptx", "confidence": 0.4 },
+  "reference_source_note": "参照判定取自任务材料原文（case11：editable_pptx / 0.4 兜底）；按公平性限制未读取 oracle/out/labels.json",
+  "rerun": { "exit_code": 0, "bytes_identical_to_first_run": true },
+  "checks_11_of_11_pass": true,
+  "verified_by": "verify.py（本次运行执行，明细见 verify.log）"
+}

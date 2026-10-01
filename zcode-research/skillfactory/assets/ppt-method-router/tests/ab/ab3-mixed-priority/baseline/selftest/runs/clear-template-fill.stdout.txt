@@ -1,0 +1,1 @@
+{"method": "template_fill", "confidence": 0.85, "reasons": ["命中 template_fill 信号关键词: 品牌、品牌部、模板、填充", "仅命中单一类别 template_fill，无冲突，按该类别裁定"]}

@@ -1,0 +1,51 @@
+{
+  "generator": "oracle.py",
+  "generator_version": "1.0.0",
+  "deterministic": true,
+  "source": "eval/ab_briefs/weekly-report-brief.md",
+  "source_url": null,
+  "source_title": "能力简报：生成周报骨架（A/B 任务材料 · ab-002）",
+  "stats": {
+    "line_count": 17,
+    "char_count": 400,
+    "h1_count": 1,
+    "h2_count": 3,
+    "h3_count": 0,
+    "h4_to_h6_count": 0,
+    "heading_count": 4,
+    "list_item_count": 6,
+    "unordered_list_item_count": 6,
+    "ordered_list_item_count": 0,
+    "code_block_count": 0,
+    "code_line_count": 0,
+    "code_block_languages": {},
+    "table_row_count": 0
+  },
+  "outline": [
+    {
+      "level": 1,
+      "text": "能力简报：生成周报骨架（A/B 任务材料 · ab-002）",
+      "line": 1,
+      "children": [
+        {
+          "level": 2,
+          "text": "目标能力",
+          "line": 3,
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "需求要点",
+          "line": 7,
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "边界",
+          "line": 15,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

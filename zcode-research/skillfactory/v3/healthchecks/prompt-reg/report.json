@@ -1,0 +1,38 @@
+{
+  "tool": "healthcheck.py 1.0.0",
+  "target": "D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\prompt-regression\\package",
+  "generated_at": "2026-09-30T08:44:26+0800",
+  "summary": {
+    "total": 5,
+    "pass": 2,
+    "fail": 3
+  },
+  "rating": "C",
+  "checks": [
+    {
+      "name": "skill_md_exists",
+      "pass": true,
+      "detail": "SKILL.md 存在（4076 字节）"
+    },
+    {
+      "name": "front_matter_fields",
+      "pass": false,
+      "detail": "front-matter 块缺失（首行不是 ---）"
+    },
+    {
+      "name": "eval_present",
+      "pass": false,
+      "detail": "缺少 eval/ 目录（无确定性评测）"
+    },
+    {
+      "name": "eval_smoke",
+      "pass": true,
+      "detail": "skip: 缺 eval/ 目录，跳过 smoke"
+    },
+    {
+      "name": "scripts_syntax",
+      "pass": false,
+      "detail": "scripts/ 目录不存在"
+    }
+  ]
+}

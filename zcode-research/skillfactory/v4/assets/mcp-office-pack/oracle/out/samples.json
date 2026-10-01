@@ -1,0 +1,286 @@
+{
+  "oracle": "mcp-office-pack",
+  "generated_at": "2026-09-30T10:11:50+0800",
+  "config": "D:\\workspace\\zcode研究\\skillfactory\\v4\\assets\\mcp-office-pack\\oracle\\mcp.office.json",
+  "method": "stdio: JSON-RPC initialize + tools/list 握手；http: POST initialize",
+  "samples": [
+    {
+      "name": "filesystem",
+      "status": "pass",
+      "server_info": {
+        "name": "secure-filesystem-server",
+        "version": "0.2.0"
+      },
+      "protocol_version": "2025-03-26",
+      "tools_count": 14,
+      "tools_list": [
+        "create_directory",
+        "directory_tree",
+        "edit_file",
+        "get_file_info",
+        "list_allowed_directories",
+        "list_directory",
+        "list_directory_with_sizes",
+        "move_file",
+        "read_file",
+        "read_media_file",
+        "read_multiple_files",
+        "read_text_file"
+      ],
+      "elapsed_s": 31.8,
+      "type": "stdio"
+    },
+    {
+      "name": "excel",
+      "status": "pass",
+      "server_info": {
+        "description": "Create, read and edit Excel workbooks without Microsoft Excel.",
+        "name": "excel-mcp-server",
+        "title": "Excel MCP Server",
+        "version": "1.1.1",
+        "websiteUrl": "https://github.com/haris-musa/excel-mcp-server"
+      },
+      "protocol_version": "2025-03-26",
+      "tools_count": 26,
+      "tools_list": [
+        "add_conditional_format",
+        "add_data_validation",
+        "clear_range",
+        "copy_range",
+        "copy_sheet",
+        "create_chart",
+        "create_sheet",
+        "create_summary_table",
+        "create_table",
+        "create_workbook",
+        "delete_rows_or_columns",
+        "delete_sheet"
+      ],
+      "elapsed_s": 32.4,
+      "type": "stdio"
+    },
+    {
+      "name": "word",
+      "status": "pass",
+      "server_info": {
+        "name": "Word Document Server",
+        "version": "4.0.10"
+      },
+      "protocol_version": "2025-03-26",
+      "tools_count": 54,
+      "tools_list": [
+        "add_endnote_to_document",
+        "add_footnote_after_text",
+        "add_footnote_before_text",
+        "add_footnote_enhanced",
+        "add_footnote_robust",
+        "add_footnote_to_document",
+        "add_heading",
+        "add_page_break",
+        "add_paragraph",
+        "add_picture",
+        "add_table",
+        "apply_table_alternating_rows"
+      ],
+      "elapsed_s": 41.2,
+      "type": "stdio"
+    },
+    {
+      "name": "powerpoint",
+      "status": "pass",
+      "server_info": {
+        "name": "ppt-mcp-server",
+        "version": "1.30.0"
+      },
+      "protocol_version": "2025-03-26",
+      "tools_count": 37,
+      "tools_list": [
+        "add_bullet_points",
+        "add_chart",
+        "add_connector",
+        "add_shape",
+        "add_slide",
+        "add_table",
+        "apply_picture_effects",
+        "apply_professional_design",
+        "apply_slide_template",
+        "auto_generate_presentation",
+        "create_presentation",
+        "create_presentation_from_template"
+      ],
+      "elapsed_s": 45.3,
+      "type": "stdio"
+    },
+    {
+      "name": "google-workspace",
+      "status": "pass",
+      "server_info": {
+        "name": "google_workspace",
+        "version": "4.0.10"
+      },
+      "protocol_version": "2025-03-26",
+      "tools_count": null,
+      "tools_list": null,
+      "elapsed_s": 66.4,
+      "type": "stdio"
+    },
+    {
+      "name": "gmail-official",
+      "http_status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "mcp_rpc": {
+        "id": 1,
+        "jsonrpc": "2.0",
+        "result": {
+          "capabilities": {
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "protocolVersion": "2025-03-26",
+          "serverInfo": {
+            "name": "StatelessServer",
+            "version": "ESF"
+          }
+        }
+      },
+      "body_snippet": "{\"id\":1,\"jsonrpc\":\"2.0\",\"result\":{\"capabilities\":{\"tools\":{\"listChanged\":false}},\"protocolVersion\":\"2025-03-26\",\"serverInfo\":{\"name\":\"StatelessServer\",\"version\":\"ESF\"}}}",
+      "server_info": {
+        "name": "StatelessServer",
+        "version": "ESF"
+      },
+      "protocol_version": "2025-03-26",
+      "verdict": "initialize 成功（匿名可达）",
+      "status": "pass",
+      "elapsed_s": 1.0,
+      "type": "http"
+    },
+    {
+      "name": "playwright",
+      "status": "pass",
+      "server_info": {
+        "name": "Playwright",
+        "version": "1.64.0-alpha-1790635538000"
+      },
+      "protocol_version": "2025-03-26",
+      "tools_count": 25,
+      "tools_list": [
+        "browser_click",
+        "browser_close",
+        "browser_console_messages",
+        "browser_drag",
+        "browser_drop",
+        "browser_emulate_media",
+        "browser_evaluate",
+        "browser_file_upload",
+        "browser_fill_form",
+        "browser_find",
+        "browser_handle_dialog",
+        "browser_hover"
+      ],
+      "elapsed_s": 48.3,
+      "type": "stdio"
+    },
+    {
+      "name": "excel-npm",
+      "status": "pass",
+      "server_info": {
+        "name": "excel-mcp-server",
+        "version": "0.12.0-SNAPSHOT-1ff4340"
+      },
+      "protocol_version": "2025-03-26",
+      "tools_count": 7,
+      "tools_list": [
+        "excel_copy_sheet",
+        "excel_create_table",
+        "excel_describe_sheets",
+        "excel_format_range",
+        "excel_read_sheet",
+        "excel_screen_capture",
+        "excel_write_to_sheet"
+      ],
+      "elapsed_s": 51.7,
+      "type": "stdio"
+    },
+    {
+      "name": "tavily",
+      "status": "pass",
+      "server_info": {
+        "name": "tavily-mcp",
+        "version": "0.2.22"
+      },
+      "protocol_version": "2025-03-26",
+      "tools_count": 5,
+      "tools_list": [
+        "tavily_crawl",
+        "tavily_extract",
+        "tavily_map",
+        "tavily_research",
+        "tavily_search"
+      ],
+      "elapsed_s": 36.6,
+      "type": "stdio"
+    },
+    {
+      "name": "context7",
+      "http_status": 200,
+      "content_type": "text/event-stream",
+      "mcp_rpc": {
+        "result": {
+          "protocolVersion": "2025-03-26",
+          "capabilities": {
+            "tools": {
+              "listChanged": false
+            },
+            "prompts": {
+              "listChanged": false
+            },
+            "resources": {
+              "listChanged": false,
+              "subscribe": false
+            }
+          },
+          "serverInfo": {
+            "name": "Context7",
+            "version": "4.1.1",
+            "websiteUrl": "https://context7.com",
+            "description": "Context7 provides up-to-date documentation and code examples for libraries and frameworks.",
+            "icons": [
+              {
+                "src": "https://context7.com/context7-icon-green.png",
+                "mimeType": "image/png"
+              }
+            ]
+          },
+          "instructions": "Use this server to fetch current documentation whenever the user asks about a library, framework, SDK, API, CLI tool, or cloud service — even well-known ones like React, Next.js, Prisma, Express, Tailwind, Django, or Spring Boot. This includes API syntax, configuration, version migration, library-specific debugging, setup instructions, and CLI tool usage. Use even when you think you know the answer — your training data may not reflect recent changes. Prefer this over web search for library docs.\n\nDo not use for: refactoring, writing scripts from scratch, debugging business logic, code review, or general programming concepts."
+        },
+        "jsonrpc": "2.0",
+        "id": 1
+      },
+      "body_snippet": "event: message data: {\"result\":{\"protocolVersion\":\"2025-03-26\",\"capabilities\":{\"tools\":{\"listChanged\":false},\"prompts\":{\"listChanged\":false},\"resources\":{\"listChanged\":false,\"subscribe\":false}},\"serverInfo\":{\"name\":\"Context7\",\"version\":\"4.1.1\",\"websiteUrl\":\"https://context7.com\",\"description\":\"Conte",
+      "server_info": {
+        "name": "Context7",
+        "version": "4.1.1",
+        "websiteUrl": "https://context7.com",
+        "description": "Context7 provides up-to-date documentation and code examples for libraries and frameworks.",
+        "icons": [
+          {
+            "src": "https://context7.com/context7-icon-green.png",
+            "mimeType": "image/png"
+          }
+        ]
+      },
+      "protocol_version": "2025-03-26",
+      "verdict": "initialize 成功（匿名可达）",
+      "status": "pass",
+      "elapsed_s": 1.2,
+      "type": "http"
+    }
+  ],
+  "summary": {
+    "total": 10,
+    "passed": 10,
+    "failed": 0,
+    "note": "pass=协议握手成功；pass_auth_required=远程端点活性证实但要求 OAuth"
+  }
+}

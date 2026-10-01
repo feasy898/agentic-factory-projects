@@ -1,0 +1,41 @@
+{
+  "tasks": 5,
+  "baselineMean": 7.7,
+  "treatmentMean": 8.9,
+  "delta": 1.2000000000000002,
+  "winRate": 1,
+  "reverseTasks": 0,
+  "accepted": true,
+  "taskAggs": [
+    {
+      "id": "ab1-standard-four-templates",
+      "baseMean": 7,
+      "treatMean": 9,
+      "majority": "treatment"
+    },
+    {
+      "id": "ab2-boundary-missing-required",
+      "baseMean": 8,
+      "treatMean": 9,
+      "majority": "treatment"
+    },
+    {
+      "id": "ab3-empty-and-string-lists",
+      "baseMean": 7.5,
+      "treatMean": 9,
+      "majority": "treatment"
+    },
+    {
+      "id": "ab4-invalid-input-rejection",
+      "baseMean": 8.5,
+      "treatMean": 8.5,
+      "majority": "treatment"
+    },
+    {
+      "id": "ab5-determinism-layout-selfeval",
+      "baseMean": 7.5,
+      "treatMean": 9,
+      "majority": "treatment"
+    }
+  ]
+}

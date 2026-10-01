@@ -1,0 +1,35 @@
+{
+  "recordedAt": "2026-09-28T11:40:24.721Z",
+  "recordRaw": false,
+  "command": "offpeak-availability",
+  "dryRun": false,
+  "request": {
+    "method": "GET",
+    "url": "https://zcode.z.ai/api/v1/off-peak/ticket/availability",
+    "headers": {
+      "User-Agent": "ZCode/3.14.3",
+      "HTTP-Referer": "https://zcode.z.ai",
+      "X-Title": "Z Code@electron",
+      "X-ZCode-App-Version": "3.14.3",
+      "X-Platform": "win32-x64",
+      "X-Os-Category": "windows",
+      "X-Client-Language": "unknown",
+      "X-Client-Timezone": "Asia/Shanghai",
+      "x-request-id": "ca5a3cab-5bee-4bd4-bea6-b5d6703222a4",
+      "authorization": "Bearer eyJh…(211 chars, masked)",
+      "x-coding-plan-api-key": "a61b678a8d5…(49 chars, masked)"
+    }
+  },
+  "response": {
+    "status": 200,
+    "requestId": "202609281140242209fff41e68df74fccc",
+    "body": {
+      "code": 0,
+      "msg": "success",
+      "data": {
+        "can_take_number": true
+      },
+      "logid": "202609281140242209fff41e68df74fccc"
+    }
+  }
+}

@@ -1,0 +1,136 @@
+{
+  "template_version": "1.0",
+  "platform": "wx",
+  "platform_name": "公众号文章",
+  "structure_name": "引子 + 三段论 + 金句收尾",
+  "topic": "非暴力沟通",
+  "points_input_count": 0,
+  "points_used": [
+    null,
+    null,
+    null
+  ],
+  "points_unused": [],
+  "element_count": 5,
+  "elements": [
+    {
+      "id": "lead_in",
+      "name": "引子",
+      "order": 1,
+      "required": true,
+      "text": "【占位:用一个具体场景/对话/新闻切入，150字左右】——这背后，其实是同一个问题：非暴力沟通。",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "用一个具体场景/对话/新闻切入，150字左右"
+      ],
+      "filled_from_input": [
+        "topic"
+      ],
+      "meta": {
+        "beat": "场景化开场，把读者拉进问题现场"
+      }
+    },
+    {
+      "id": "thesis_what",
+      "name": "三段论·一（是什么）",
+      "order": 2,
+      "required": true,
+      "text": "一、是什么\n非暴力沟通的本质，不是【占位:常见误解】，而是【占位:一句话给出你的定义】。",
+      "placeholder_count": 2,
+      "open_placeholders": [
+        "常见误解",
+        "一句话给出你的定义"
+      ],
+      "filled_from_input": [
+        "topic"
+      ],
+      "meta": {
+        "beat": "先破后立，给出定义"
+      }
+    },
+    {
+      "id": "thesis_why",
+      "name": "三段论·二（为什么）",
+      "order": 3,
+      "required": true,
+      "text": "二、为什么\n大多数人在非暴力沟通上反复失败，根源有三：【占位:根因1】；【占位:根因2】；【占位:根因3】。",
+      "placeholder_count": 3,
+      "open_placeholders": [
+        "根因1",
+        "根因2",
+        "根因3"
+      ],
+      "filled_from_input": [
+        "topic"
+      ],
+      "meta": {
+        "beat": "归因，三条根因对齐后文三个抓手"
+      }
+    },
+    {
+      "id": "thesis_how",
+      "name": "三段论·三（怎么办）",
+      "order": 4,
+      "required": true,
+      "text": "三、怎么办\n落到操作层面，给你三个抓手：\n1. 【占位:价值点1】——【占位:展开：具体做法+一个例子】\n2. 【占位:价值点2】——【占位:展开：具体做法+一个例子】\n3. 【占位:价值点3】——【占位:展开：具体做法+一个例子】",
+      "placeholder_count": 6,
+      "open_placeholders": [
+        "价值点1",
+        "展开：具体做法+一个例子",
+        "价值点2",
+        "价值点3"
+      ],
+      "filled_from_input": [],
+      "meta": {
+        "beat": "三个抓手一一对应三条根因，可执行"
+      }
+    },
+    {
+      "id": "golden_ending",
+      "name": "金句收尾",
+      "order": 5,
+      "required": true,
+      "text": "「非暴力沟通这件事，【占位:金句主体——句式建议：真正的…不是靠…，而是靠…】」\n共勉。",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "金句主体——句式建议：真正的…不是靠…，而是靠…"
+      ],
+      "filled_from_input": [
+        "topic"
+      ],
+      "meta": {
+        "beat": "一句话收束，可直接被读者摘抄转发"
+      }
+    }
+  ],
+  "placeholder_stats": {
+    "total_open": 13,
+    "total_filled_from_input": 4,
+    "by_element": {
+      "lead_in": 1,
+      "thesis_what": 2,
+      "thesis_why": 3,
+      "thesis_how": 6,
+      "golden_ending": 1
+    },
+    "open_tokens_unique": [
+      "用一个具体场景/对话/新闻切入，150字左右",
+      "常见误解",
+      "一句话给出你的定义",
+      "根因1",
+      "根因2",
+      "根因3",
+      "价值点1",
+      "展开：具体做法+一个例子",
+      "价值点2",
+      "价值点3",
+      "金句主体——句式建议：真正的…不是靠…，而是靠…"
+    ],
+    "filled_slots": [
+      "topic",
+      "topic",
+      "topic",
+      "topic"
+    ]
+  }
+}

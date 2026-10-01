@@ -1,0 +1,21 @@
+{
+ "final_state": {
+  "fields.json": {
+   "size": 2594,
+   "md5": "596379276c096786b4329c0b998f49e9",
+   "mtime": "2026-09-30T07:20:18"
+  },
+  "文书.docx": {
+   "size": 37200,
+   "md5": "60afc8ff93152f429e3156db58aa1720",
+   "mtime": "2026-09-30T07:20:18"
+  }
+ },
+ "fields_raw_eq_run1": true,
+ "fields_raw_eq_run2": true,
+ "docx_sig_eq_run1": true,
+ "docx_sig_eq_run2": true,
+ "runner_ok": true,
+ "runner_checks_failed": [],
+ "runner_agree_detail": "字段填充一致率 100.0%（66/66，阈值 90%）"
+}

@@ -1,0 +1,21 @@
+route-stdout.txt bytes = 258
+route-stderr.txt bytes = 0
+stdout total lines = 1; non-empty lines = 1
+  line1: '{"method": "visual_report", "confidence": 0.8, "reasons": ["命中[visual_report(图文海报/信息图)]关键词：海报", "仅单一类别命中、无信号冲突；置信度 = 0.80 + 0.05×(命中词数−1) 上限 0.95，本条命中 1 词 → 0.8"]}'
+top-level keys = ['confidence', 'method', 'reasons']
+method = 'visual_report'  (reference: 'visual_report')
+confidence = 0.8 (type=float) numeric_in_[0,1]=True equals_ref_0.8=True
+reasons type = list(len=2); joined text = '命中[visual_report(图文海报/信息图)]关键词：海报 仅单一类别命中、无信号冲突；置信度 = 0.80 + 0.05×(命中词数−1) 上限 0.95，本条命中 1 词 → 0.8'
+reasons non-empty = True; mentions 海报 = True
+stderr empty = True
+
+== check verdicts ==
+  [PASS] stdout_is_single_parseable_json_line
+  [PASS] keys_are_method_confidence_reasons
+  [PASS] method_matches_reference_visual_report
+  [PASS] confidence_is_numeric_in_0_1
+  [PASS] confidence_equals_reference_0_8
+  [PASS] reasons_nonempty
+  [PASS] reasons_mention_poster_keyword
+  [PASS] stderr_empty
+OVERALL: PASS

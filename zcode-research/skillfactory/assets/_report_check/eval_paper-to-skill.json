@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "case": "spec",
+  "checks": [
+    {
+      "name": "example_skill_md_complete",
+      "pass": true,
+      "detail": "五要素齐全：front-matter(name+description) ✓ 触发描述 250 字 ✓ 分步方法 ✓ 常见坑 ✓ 来源引用 ✓（SKILL.md） [判定对象=example]"
+    },
+    {
+      "name": "steps_actionable",
+      "pass": true,
+      "detail": "6 条编号步骤全部可判定（均含溯源/命令/产物标记之一，SKILL.md） [判定对象=example]"
+    },
+    {
+      "name": "outline_stats_within_30pct",
+      "pass": true,
+      "detail": "13 项数值统计偏差均 ≤30%（最大  0.0%）"
+    }
+  ]
+}

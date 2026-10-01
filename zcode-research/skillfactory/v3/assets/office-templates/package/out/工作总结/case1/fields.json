@@ -1,0 +1,89 @@
+{
+  "template": "工作总结",
+  "title": "评测技术部2026年第三季度工作总结",
+  "filled_fields": [
+    "总结主体",
+    "总结时段",
+    "工作回顾",
+    "主要成绩",
+    "存在问题",
+    "下一步工作打算",
+    "成文日期"
+  ],
+  "missing_fields": [],
+  "fields": [
+    {
+      "name": "总结主体",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "评测技术部"
+    },
+    {
+      "name": "总结时段",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "2026年第三季度"
+    },
+    {
+      "name": "工作回顾",
+      "required": true,
+      "kind": "list",
+      "status": "filled",
+      "value": [
+        "完成 P0 打分器三轮迭代",
+        "建设 12 份评测 JSON 台账"
+      ]
+    },
+    {
+      "name": "主要成绩",
+      "required": true,
+      "kind": "list",
+      "status": "filled",
+      "value": [
+        "打分一致性从 6.1 提升到 7.4",
+        "评测周期缩短 30%"
+      ]
+    },
+    {
+      "name": "存在问题",
+      "required": false,
+      "kind": "list",
+      "status": "filled",
+      "value": [
+        "标注规范仍有歧义",
+        "GPU 资源排期紧张"
+      ]
+    },
+    {
+      "name": "下一步工作打算",
+      "required": true,
+      "kind": "list",
+      "status": "filled",
+      "value": [
+        "发布标注规范 v2",
+        "引入自动化回归评测"
+      ]
+    },
+    {
+      "name": "成文日期",
+      "required": false,
+      "kind": "text",
+      "status": "filled",
+      "value": "2026年9月30日"
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "filled": 7,
+    "missing": 0,
+    "missing_required": 0,
+    "missing_required_names": [],
+    "unknown_keys": []
+  },
+  "outputs": {
+    "docx": "package\\out\\工作总结\\case1\\文书.docx",
+    "fields_json": "package\\out\\工作总结\\case1\\fields.json"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "labels_file_found": true,
+  "case15_entry_found": true,
+  "ref_method_field_present": true,
+  "ref_confidence_field_present": true,
+  "ref_method_matches_output": true,
+  "ref_confidence_matches_output": true
+}

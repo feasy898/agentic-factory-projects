@@ -1,0 +1,88 @@
+{
+  "template": "周报",
+  "title": "____工作周报",
+  "filled_fields": [
+    "填报人",
+    "下周工作计划",
+    "报送日期"
+  ],
+  "missing_fields": [
+    "部门",
+    "周期",
+    "本周工作内容",
+    "问题与需协调事项"
+  ],
+  "fields": [
+    {
+      "name": "部门",
+      "required": true,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "以____占位"
+    },
+    {
+      "name": "填报人",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "赵倩"
+    },
+    {
+      "name": "周期",
+      "required": true,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "以____占位"
+    },
+    {
+      "name": "本周工作内容",
+      "required": true,
+      "kind": "list",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "以____占位条目"
+    },
+    {
+      "name": "下周工作计划",
+      "required": true,
+      "kind": "list",
+      "status": "filled",
+      "value": [
+        "整理缺陷清单并分派责任人"
+      ]
+    },
+    {
+      "name": "问题与需协调事项",
+      "required": false,
+      "kind": "list",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "省略该条目/小节"
+    },
+    {
+      "name": "报送日期",
+      "required": false,
+      "kind": "text",
+      "status": "filled",
+      "value": "2026-09-28"
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "filled": 3,
+    "missing": 4,
+    "missing_required": 3,
+    "missing_required_names": [
+      "部门",
+      "周期",
+      "本周工作内容"
+    ],
+    "unknown_keys": []
+  },
+  "outputs": {
+    "docx": "out\\周报\\case2\\文书.docx",
+    "fields_json": "out\\周报\\case2\\fields.json"
+  }
+}

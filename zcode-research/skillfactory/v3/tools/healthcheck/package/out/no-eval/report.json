@@ -1,0 +1,38 @@
+{
+  "tool": "healthcheck.py 1.0.0",
+  "target": "D:\\workspace\\zcode研究\\skillfactory\\v3\\tools\\healthcheck\\fixtures\\no-eval",
+  "generated_at": "2026-09-30T04:46:53+0800",
+  "summary": {
+    "total": 5,
+    "pass": 4,
+    "fail": 1
+  },
+  "rating": "B",
+  "checks": [
+    {
+      "name": "skill_md_exists",
+      "pass": true,
+      "detail": "SKILL.md 存在（360 字节）"
+    },
+    {
+      "name": "front_matter_fields",
+      "pass": true,
+      "detail": "front-matter 五字段齐全（name/version/license/description/permissions 均非空）"
+    },
+    {
+      "name": "eval_present",
+      "pass": false,
+      "detail": "缺少 eval/ 目录（无确定性评测）"
+    },
+    {
+      "name": "eval_smoke",
+      "pass": true,
+      "detail": "skip: 缺 eval/ 目录，跳过 smoke"
+    },
+    {
+      "name": "scripts_syntax",
+      "pass": true,
+      "detail": "scripts/ 下 1 个 *.py 全部语法可编译: scripts/ok.py"
+    }
+  ]
+}

@@ -1,0 +1,347 @@
+{
+  "ok": true,
+  "tested": "oracle\\out",
+  "reference": "oracle\\out",
+  "checks": [
+    {
+      "name": "units_found",
+      "pass": true,
+      "detail": "8 个期望单元齐全: 周报/case1, 周报/case2, 请示函/case1, 请示函/case2, 会议通知/case1, 会议通知/case2, 工作总结/case1, 工作总结/case2"
+    },
+    {
+      "name": "products_exact",
+      "pass": true,
+      "detail": "每个单元目录恰含 文书.docx + fields.json"
+    },
+    {
+      "name": "reference_dir_has_units",
+      "pass": true,
+      "detail": "参照根 oracle\\out 含 8/8 个产物单元"
+    },
+    {
+      "name": "周报/case1/docx_opens_safe",
+      "pass": true,
+      "detail": "DOCTYPE/ENTITY 扫描通过且 python-docx 打开成功"
+    },
+    {
+      "name": "周报/case1/layout_title_centered",
+      "pass": true,
+      "detail": "标题='研发部工作周报' 居中=True eastAsia=黑体 字号=22.0pt（要求居中/黑体/22pt/与 title 一致）"
+    },
+    {
+      "name": "周报/case1/layout_salutation_flush_left",
+      "pass": true,
+      "detail": "该模板无称谓段（spec V3），跳过"
+    },
+    {
+      "name": "周报/case1/layout_body_indent",
+      "pass": true,
+      "detail": "firstLineChars=200 段落数=8，其中仿宋/Times New Roman/16pt/28磅固定行距段=有"
+    },
+    {
+      "name": "周报/case1/layout_signature_right",
+      "pass": true,
+      "detail": "落款='报送日期：2026-09-28' 右对齐=True 右缩进=32.0pt（要求右对齐、右空两字≈32pt）"
+    },
+    {
+      "name": "周报/case1/fields_json_self_consistent",
+      "pass": true,
+      "detail": "S1–S3 全部自洽（7 个字段与字段表一致）"
+    },
+    {
+      "name": "周报/case1/fields_match_docx",
+      "pass": true,
+      "detail": "title 与全部 filled 值在文中；占位符 0 处 ≥ 必填缺失 0"
+    },
+    {
+      "name": "周报/case1/boundary_reported",
+      "pass": true,
+      "detail": "缺失记账正确：必填缺失 无 以____占位；选填缺失 无 留空/省略"
+    },
+    {
+      "name": "周报/case2/docx_opens_safe",
+      "pass": true,
+      "detail": "DOCTYPE/ENTITY 扫描通过且 python-docx 打开成功"
+    },
+    {
+      "name": "周报/case2/layout_title_centered",
+      "pass": true,
+      "detail": "标题='____工作周报' 居中=True eastAsia=黑体 字号=22.0pt（要求居中/黑体/22pt/与 title 一致）"
+    },
+    {
+      "name": "周报/case2/layout_salutation_flush_left",
+      "pass": true,
+      "detail": "该模板无称谓段（spec V3），跳过"
+    },
+    {
+      "name": "周报/case2/layout_body_indent",
+      "pass": true,
+      "detail": "firstLineChars=200 段落数=4，其中仿宋/Times New Roman/16pt/28磅固定行距段=有"
+    },
+    {
+      "name": "周报/case2/layout_signature_right",
+      "pass": true,
+      "detail": "落款='报送日期：2026-09-28' 右对齐=True 右缩进=32.0pt（要求右对齐、右空两字≈32pt）"
+    },
+    {
+      "name": "周报/case2/fields_json_self_consistent",
+      "pass": true,
+      "detail": "S1–S3 全部自洽（7 个字段与字段表一致）"
+    },
+    {
+      "name": "周报/case2/fields_match_docx",
+      "pass": true,
+      "detail": "title 与全部 filled 值在文中；占位符 4 处 ≥ 必填缺失 3"
+    },
+    {
+      "name": "周报/case2/boundary_reported",
+      "pass": true,
+      "detail": "缺失记账正确：必填缺失 ['部门', '周期', '本周工作内容'] 以____占位；选填缺失 ['问题与需协调事项'] 留空/省略"
+    },
+    {
+      "name": "请示函/case1/docx_opens_safe",
+      "pass": true,
+      "detail": "DOCTYPE/ENTITY 扫描通过且 python-docx 打开成功"
+    },
+    {
+      "name": "请示函/case1/layout_title_centered",
+      "pass": true,
+      "detail": "标题='关于采购评测用 GPU 服务器的请示' 居中=True eastAsia=黑体 字号=22.0pt（要求居中/黑体/22pt/与 title 一致）"
+    },
+    {
+      "name": "请示函/case1/layout_salutation_flush_left",
+      "pass": true,
+      "detail": "称谓='公司总经理办公会：' firstLineChars=无（要求顶格且以「：」收尾）"
+    },
+    {
+      "name": "请示函/case1/layout_body_indent",
+      "pass": true,
+      "detail": "firstLineChars=200 段落数=5，其中仿宋/Times New Roman/16pt/28磅固定行距段=有"
+    },
+    {
+      "name": "请示函/case1/layout_signature_right",
+      "pass": true,
+      "detail": "落款='2026年9月28日' 右对齐=True 右缩进=32.0pt（要求右对齐、右空两字≈32pt）"
+    },
+    {
+      "name": "请示函/case1/fields_json_self_consistent",
+      "pass": true,
+      "detail": "S1–S3 全部自洽（8 个字段与字段表一致）"
+    },
+    {
+      "name": "请示函/case1/fields_match_docx",
+      "pass": true,
+      "detail": "title 与全部 filled 值在文中；占位符 0 处 ≥ 必填缺失 0"
+    },
+    {
+      "name": "请示函/case1/boundary_reported",
+      "pass": true,
+      "detail": "缺失记账正确：必填缺失 无 以____占位；选填缺失 无 留空/省略"
+    },
+    {
+      "name": "请示函/case2/docx_opens_safe",
+      "pass": true,
+      "detail": "DOCTYPE/ENTITY 扫描通过且 python-docx 打开成功"
+    },
+    {
+      "name": "请示函/case2/layout_title_centered",
+      "pass": true,
+      "detail": "标题='关于延期举办季度评审会的请示' 居中=True eastAsia=黑体 字号=22.0pt（要求居中/黑体/22pt/与 title 一致）"
+    },
+    {
+      "name": "请示函/case2/layout_salutation_flush_left",
+      "pass": true,
+      "detail": "称谓='____：' firstLineChars=无（要求顶格且以「：」收尾）"
+    },
+    {
+      "name": "请示函/case2/layout_body_indent",
+      "pass": true,
+      "detail": "firstLineChars=200 段落数=5，其中仿宋/Times New Roman/16pt/28磅固定行距段=有"
+    },
+    {
+      "name": "请示函/case2/layout_signature_right",
+      "pass": true,
+      "detail": "落款='评测技术部' 右对齐=True 右缩进=32.0pt（要求右对齐、右空两字≈32pt）"
+    },
+    {
+      "name": "请示函/case2/fields_json_self_consistent",
+      "pass": true,
+      "detail": "S1–S3 全部自洽（8 个字段与字段表一致）"
+    },
+    {
+      "name": "请示函/case2/fields_match_docx",
+      "pass": true,
+      "detail": "title 与全部 filled 值在文中；占位符 2 处 ≥ 必填缺失 2"
+    },
+    {
+      "name": "请示函/case2/boundary_reported",
+      "pass": true,
+      "detail": "缺失记账正确：必填缺失 ['主送机关', '请示事项'] 以____占位；选填缺失 ['联系电话', '成文日期'] 留空/省略"
+    },
+    {
+      "name": "会议通知/case1/docx_opens_safe",
+      "pass": true,
+      "detail": "DOCTYPE/ENTITY 扫描通过且 python-docx 打开成功"
+    },
+    {
+      "name": "会议通知/case1/layout_title_centered",
+      "pass": true,
+      "detail": "标题='关于召开三季度质量评审会的通知' 居中=True eastAsia=黑体 字号=22.0pt（要求居中/黑体/22pt/与 title 一致）"
+    },
+    {
+      "name": "会议通知/case1/layout_salutation_flush_left",
+      "pass": true,
+      "detail": "称谓='各部门、各项目组：' firstLineChars=无（要求顶格且以「：」收尾）"
+    },
+    {
+      "name": "会议通知/case1/layout_body_indent",
+      "pass": true,
+      "detail": "firstLineChars=200 段落数=8，其中仿宋/Times New Roman/16pt/28磅固定行距段=有"
+    },
+    {
+      "name": "会议通知/case1/layout_signature_right",
+      "pass": true,
+      "detail": "落款='2026年9月28日' 右对齐=True 右缩进=32.0pt（要求右对齐、右空两字≈32pt）"
+    },
+    {
+      "name": "会议通知/case1/fields_json_self_consistent",
+      "pass": true,
+      "detail": "S1–S3 全部自洽（11 个字段与字段表一致）"
+    },
+    {
+      "name": "会议通知/case1/fields_match_docx",
+      "pass": true,
+      "detail": "title 与全部 filled 值在文中；占位符 0 处 ≥ 必填缺失 0"
+    },
+    {
+      "name": "会议通知/case1/boundary_reported",
+      "pass": true,
+      "detail": "缺失记账正确：必填缺失 无 以____占位；选填缺失 无 留空/省略"
+    },
+    {
+      "name": "会议通知/case2/docx_opens_safe",
+      "pass": true,
+      "detail": "DOCTYPE/ENTITY 扫描通过且 python-docx 打开成功"
+    },
+    {
+      "name": "会议通知/case2/layout_title_centered",
+      "pass": true,
+      "detail": "标题='关于召开____的通知' 居中=True eastAsia=黑体 字号=22.0pt（要求居中/黑体/22pt/与 title 一致）"
+    },
+    {
+      "name": "会议通知/case2/layout_salutation_flush_left",
+      "pass": true,
+      "detail": "称谓='各部门：' firstLineChars=无（要求顶格且以「：」收尾）"
+    },
+    {
+      "name": "会议通知/case2/layout_body_indent",
+      "pass": true,
+      "detail": "firstLineChars=200 段落数=5，其中仿宋/Times New Roman/16pt/28磅固定行距段=有"
+    },
+    {
+      "name": "会议通知/case2/layout_signature_right",
+      "pass": true,
+      "detail": "落款='2026年9月30日' 右对齐=True 右缩进=32.0pt（要求右对齐、右空两字≈32pt）"
+    },
+    {
+      "name": "会议通知/case2/fields_json_self_consistent",
+      "pass": true,
+      "detail": "S1–S3 全部自洽（11 个字段与字段表一致）"
+    },
+    {
+      "name": "会议通知/case2/fields_match_docx",
+      "pass": true,
+      "detail": "title 与全部 filled 值在文中；占位符 3 处 ≥ 必填缺失 2"
+    },
+    {
+      "name": "会议通知/case2/boundary_reported",
+      "pass": true,
+      "detail": "缺失记账正确：必填缺失 ['会议名称', '会议地点'] 以____占位；选填缺失 ['会议议题', '会议要求', '联系人', '联系电话'] 留空/省略"
+    },
+    {
+      "name": "工作总结/case1/docx_opens_safe",
+      "pass": true,
+      "detail": "DOCTYPE/ENTITY 扫描通过且 python-docx 打开成功"
+    },
+    {
+      "name": "工作总结/case1/layout_title_centered",
+      "pass": true,
+      "detail": "标题='评测技术部2026年第三季度工作总结' 居中=True eastAsia=黑体 字号=22.0pt（要求居中/黑体/22pt/与 title 一致）"
+    },
+    {
+      "name": "工作总结/case1/layout_salutation_flush_left",
+      "pass": true,
+      "detail": "该模板无称谓段（spec V3），跳过"
+    },
+    {
+      "name": "工作总结/case1/layout_body_indent",
+      "pass": true,
+      "detail": "firstLineChars=200 段落数=12，其中仿宋/Times New Roman/16pt/28磅固定行距段=有"
+    },
+    {
+      "name": "工作总结/case1/layout_signature_right",
+      "pass": true,
+      "detail": "落款='2026年9月30日' 右对齐=True 右缩进=32.0pt（要求右对齐、右空两字≈32pt）"
+    },
+    {
+      "name": "工作总结/case1/fields_json_self_consistent",
+      "pass": true,
+      "detail": "S1–S3 全部自洽（7 个字段与字段表一致）"
+    },
+    {
+      "name": "工作总结/case1/fields_match_docx",
+      "pass": true,
+      "detail": "title 与全部 filled 值在文中；占位符 0 处 ≥ 必填缺失 0"
+    },
+    {
+      "name": "工作总结/case1/boundary_reported",
+      "pass": true,
+      "detail": "缺失记账正确：必填缺失 无 以____占位；选填缺失 无 留空/省略"
+    },
+    {
+      "name": "工作总结/case2/docx_opens_safe",
+      "pass": true,
+      "detail": "DOCTYPE/ENTITY 扫描通过且 python-docx 打开成功"
+    },
+    {
+      "name": "工作总结/case2/layout_title_centered",
+      "pass": true,
+      "detail": "标题='____2026年9月工作总结' 居中=True eastAsia=黑体 字号=22.0pt（要求居中/黑体/22pt/与 title 一致）"
+    },
+    {
+      "name": "工作总结/case2/layout_salutation_flush_left",
+      "pass": true,
+      "detail": "该模板无称谓段（spec V3），跳过"
+    },
+    {
+      "name": "工作总结/case2/layout_body_indent",
+      "pass": true,
+      "detail": "firstLineChars=200 段落数=6，其中仿宋/Times New Roman/16pt/28磅固定行距段=有"
+    },
+    {
+      "name": "工作总结/case2/layout_signature_right",
+      "pass": true,
+      "detail": "落款='____' 右对齐=True 右缩进=32.0pt（要求右对齐、右空两字≈32pt）"
+    },
+    {
+      "name": "工作总结/case2/fields_json_self_consistent",
+      "pass": true,
+      "detail": "S1–S3 全部自洽（7 个字段与字段表一致）"
+    },
+    {
+      "name": "工作总结/case2/fields_match_docx",
+      "pass": true,
+      "detail": "title 与全部 filled 值在文中；占位符 3 处 ≥ 必填缺失 2"
+    },
+    {
+      "name": "工作总结/case2/boundary_reported",
+      "pass": true,
+      "detail": "缺失记账正确：必填缺失 ['总结主体', '主要成绩'] 以____占位；选填缺失 ['存在问题', '成文日期'] 留空/省略"
+    },
+    {
+      "name": "field_fill_agreement_ge_90pct",
+      "pass": true,
+      "detail": "字段填充一致率 100.0%（66/66，阈值 90%）"
+    }
+  ]
+}

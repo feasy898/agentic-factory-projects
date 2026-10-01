@@ -1,0 +1,41 @@
+{
+  "skill": "paper-to-skill",
+  "eval_inputs": [
+    {
+      "case": "spec",
+      "input": "oracle/inputs/source.md",
+      "output": "oracle/out"
+    },
+    {
+      "case": "blog",
+      "input": "oracle/inputs/source-blog.md",
+      "output": "oracle/out-blog"
+    }
+  ],
+  "ab_tasks": [
+    {
+      "id": "ab-001-rename",
+      "instruction": "为「批量重命名文件」小能力写一个 SKILL.md，保存到指定输出目录的 SKILL.md（<output>/SKILL.md）。能力需求以 eval/ab_briefs/batch-rename-brief.md 为准（pattern 匹配、前缀+3位序号模板、dry-run/apply 双模式、重名跳过不覆盖、重命名清单产物）。要求：front-matter 的 name/description 符合 agentskills.io 规范；正文含分步方法（每步有明确动作与可判定产物）、常见坑、来源引用五要素。treatment 组先完整阅读 package/example/SKILL.md 再写；baseline 组不读任何示例直接写。",
+      "input": "eval/ab_briefs/batch-rename-brief.md",
+      "rubric": [
+        "front-matter 合规：含 name（小写字母/数字/连字符，≤64 字符，无首尾/连续连字符，如 batch-rename-files）与 description（≤1024 字符，说明触发场景：用户要求批量重命名/整理目录内文件名时）",
+        "分步方法：≥3 条编号步骤，覆盖 pattern 匹配→模板展开→dry-run 预览→apply 执行的主流程，每步含明确动作与可判定产物（如预览清单、重命名日志的文件名）",
+        "常见坑：≥2 条真实风险被显式列出（如目标重名覆盖、pattern 误匹配子目录、扩展名丢失、文件顺序不确定导致序号抖动），且与简报需求一致",
+        "安全红线：明确规定 dry-run 先行、重名跳过绝不覆盖；未编造简报中不存在的功能",
+        "来源引用：注明设计依据（capability 简报，及所依赖的系统调用如 mv/os.rename 的行为）"
+      ]
+    },
+    {
+      "id": "ab-002-weekly-report",
+      "instruction": "为「生成周报骨架」小能力写一个 SKILL.md，保存到指定输出目录的 SKILL.md（<output>/SKILL.md）。能力需求以 eval/ab_briefs/weekly-report-brief.md 为准（固定三小节：本周完成/下周计划/风险与求助；进展必须有出处、不得编造；空节保留标题标注'无'）。要求：front-matter 的 name/description 符合 agentskills.io 规范；正文含分步方法（每步有明确动作与可判定产物）、常见坑、来源引用五要素。treatment 组先完整阅读 package/example/SKILL.md 再写；baseline 组不读任何示例直接写。",
+      "input": "eval/ab_briefs/weekly-report-brief.md",
+      "rubric": [
+        "front-matter 合规：name 规范（如 weekly-report），description 含触发场景（每周五/周期性汇报）且 ≤1024 字符",
+        "输出结构：SKILL.md 明确定义固定三小节（本周完成/下周计划/风险与求助）及空节处理规则（保留标题并标注'无'）",
+        "分步方法：≥3 条编号步骤（收集一周记录→按三小节归类→复核每条进展的出处），每步含明确动作与可判定产物（如 周报-YYYY-Www.md 文件名）",
+        "溯源红线：明确规定每条进展须对应输入记录、不得编造；常见坑 ≥2 条（如编造进展、数据口径不一致、遗漏阻塞项）",
+        "来源引用：注明材料来源或设计依据（capability 简报与输入记录的引用方式）"
+      ]
+    }
+  ]
+}

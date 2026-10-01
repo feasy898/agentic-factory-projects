@@ -1,0 +1,41 @@
+== check 1: stdout line count ==
+raw_bytes: 599 | ends_with_newline: True
+splitlines -> 1 line(s)
+PASS
+== check 2: stdout parses as JSON ==
+parsed OK, top-level keys: ['confidence', 'method', 'reasons']
+PASS
+== check 3: method matches reference (template_fill) ==
+method = 'template_fill' | reference = template_fill
+PASS
+== check 4: reasons non-empty and disclose BOTH category hits ==
+reasons count: 4
+  reasons[0]: 命中[template_fill(套用既有公司模板)]关键词：品牌
+  reasons[1]: 命中[visual_report(图文海报/信息图)]关键词：海报、一页
+  reasons[2]: 多类信号同时出现（template_fill > visual_report），按优先级 template_fill > editable_pptx > visual_report 裁定为 template_fill(套用既有公司模板)
+  reasons[3]: 冲突说明：意图同时携带 2 类制作信号（共 3 个命中词），制作方向可能未定，置信度上限压至 0.75（本条 0.65）；建议人工复核或向用户确认主用途后再移交执行
+template_fill hit ('品牌') disclosed: True
+visual_report hit ('海报'、'一页') disclosed: True
+PASS
+== check 5: priority statement template_fill > editable_pptx > visual_report ==
+exact priority chain found: True
+PASS
+== check 6: conflict disclosure / human-review suggestion ==
+conflict mention: True | human-review suggestion: True
+PASS
+== check 7: confidence numeric in [0,1] and <= 0.75 (reference 0.65) ==
+confidence = 0.65 | numeric: True | in [0,1]: True | <= 0.75: True | == reference 0.65: True
+PASS
+== check 8: exit code ==
+exit code file: '0'
+PASS
+== summary ==
+  check 1: PASS
+  check 2: PASS
+  check 3: PASS
+  check 4: PASS
+  check 5: PASS
+  check 6: PASS
+  check 7: PASS
+  check 8: PASS
+ALL: PASS

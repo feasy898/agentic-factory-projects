@@ -1,0 +1,168 @@
+{
+  "command": "C:\\Program Files\\Python312\\python.exe package/scripts/route.py --input oracle/inputs/case15.txt",
+  "cwd": "skillfactory/assets/ppt-method-router/",
+  "stdout": {
+    "method": "template_fill",
+    "confidence": 0.65,
+    "reasons": [
+      "命中[template_fill(套用既有公司模板)]关键词：品牌",
+      "命中[visual_report(图文海报/信息图)]关键词：海报、一页",
+      "多类信号同时出现（template_fill > visual_report），按优先级 template_fill > editable_pptx > visual_report 裁定为 template_fill(套用既有公司模板)",
+      "冲突说明：意图同时携带 2 类制作信号（共 3 个命中词），制作方向可能未定，置信度上限压至 0.75（本条 0.65）；建议人工复核或向用户确认主用途后再移交执行"
+    ]
+  },
+  "oracle_case15": {
+    "case": "case15",
+    "method": "template_fill",
+    "confidence": 0.65,
+    "reasons": [
+      "命中[template_fill(套用既有公司模板)]关键词：品牌",
+      "命中[visual_report(图文海报/信息图)]关键词：海报、一页",
+      "多类信号同时出现（template_fill > visual_report），按优先级 template_fill > editable_pptx > visual_report 裁定为 template_fill(套用既有公司模板)",
+      "冲突说明：visual_report(图文海报/信息图) 信号同样存在但优先级较低；若实际以该方式为准，建议人工复核"
+    ]
+  },
+  "checks": [
+    {
+      "check": "exit_code_0",
+      "passed": true,
+      "detail": "returncode=0"
+    },
+    {
+      "check": "stdout_one_line",
+      "passed": true,
+      "detail": "non-blank lines=1, ends with newline=True"
+    },
+    {
+      "check": "stdout_no_bom",
+      "passed": true,
+      "detail": "first bytes=b'{\"m'"
+    },
+    {
+      "check": "stdout_utf8_raw_nonascii",
+      "passed": true,
+      "detail": "「品牌」以 UTF-8 原样出现且无 \\u 转义（ensure_ascii=False）"
+    },
+    {
+      "check": "stdout_parseable_json",
+      "passed": true,
+      "detail": "json.loads ok；顶层字段=['confidence', 'method', 'reasons']"
+    },
+    {
+      "check": "stderr_empty",
+      "passed": true,
+      "detail": "stderr bytes=0"
+    },
+    {
+      "check": "reproducible_rerun",
+      "passed": true,
+      "detail": "两次运行 stdout 均为 599 字节，逐字节一致=True"
+    },
+    {
+      "check": "artifact_matches_rerun",
+      "passed": true,
+      "detail": "stdout.raw（599 字节）与重跑输出逐字节一致=True"
+    },
+    {
+      "check": "method_is_template_fill",
+      "passed": true,
+      "detail": "method='template_fill'（参照 oracle case15 = template_fill）"
+    },
+    {
+      "check": "method_in_contract_enum",
+      "passed": true,
+      "detail": "method 在契约三值枚举内"
+    },
+    {
+      "check": "confidence_in_0_1",
+      "passed": true,
+      "detail": "confidence=0.65（float）"
+    },
+    {
+      "check": "confidence_le_0.75",
+      "passed": true,
+      "detail": "confidence=0.65 <= 0.75（冲突上限）"
+    },
+    {
+      "check": "confidence_below_clear_single_category_floor",
+      "passed": true,
+      "detail": "0.65 < 0.80 = SKILL.md §4 R3 单类清晰情形公式下限（0.80+0.05×0）"
+    },
+    {
+      "check": "confidence_matches_priority_formula",
+      "passed": true,
+      "detail": "confidence=0.65 == min(0.75, 0.60+0.05×(3−2)) = 0.65"
+    },
+    {
+      "check": "reasons_non_empty_strings",
+      "passed": true,
+      "detail": "reasons=4 条，均非空字符串"
+    },
+    {
+      "check": "reasons_disclose_template_fill_hit_brand",
+      "passed": true,
+      "detail": "template_fill 命中行='命中[template_fill(套用既有公司模板)]关键词：品牌'（含「品牌」=True）"
+    },
+    {
+      "check": "reasons_disclose_visual_report_hits",
+      "passed": true,
+      "detail": "visual_report 命中行='命中[visual_report(图文海报/信息图)]关键词：海报、一页'（含「海报」「一页」=True）"
+    },
+    {
+      "check": "reasons_state_priority_chain",
+      "passed": true,
+      "detail": "reasons 含完整优先级链「template_fill > editable_pptx > visual_report」"
+    },
+    {
+      "check": "reasons_state_conflict",
+      "passed": true,
+      "detail": "reasons 含冲突说明表述"
+    },
+    {
+      "check": "reasons_give_review_advice",
+      "passed": true,
+      "detail": "reasons 含人工复核/向用户确认建议"
+    },
+    {
+      "check": "independent_recompute_hits",
+      "passed": true,
+      "detail": "独立复算 16 词子串匹配={'template_fill': ['品牌'], 'editable_pptx': [], 'visual_report': ['海报', '一页']}"
+    },
+    {
+      "check": "reasons_no_fabricated_editable_hits",
+      "passed": true,
+      "detail": "case15 无 editable_pptx 关键词命中，reasons 命中行未虚构 editable_pptx 命中（editable_pptx 仅作为优先级链一环出现，属如实披露）"
+    },
+    {
+      "check": "oracle_case15_reference_values",
+      "passed": true,
+      "detail": "oracle case15 = template_fill / 0.65"
+    },
+    {
+      "check": "oracle_method_match",
+      "passed": true,
+      "detail": "package='template_fill' oracle='template_fill'"
+    },
+    {
+      "check": "oracle_confidence_match",
+      "passed": true,
+      "detail": "package=0.65 oracle=0.65"
+    },
+    {
+      "check": "oracle_reasons_disclose_both_categories",
+      "passed": true,
+      "detail": "oracle case15 reasons 同样同时披露「品牌」与「海报、一页」两类命中"
+    },
+    {
+      "check": "oracle_reasons_disclose_priority_and_review",
+      "passed": true,
+      "detail": "oracle case15 reasons 同样写明优先级链与人工复核建议"
+    },
+    {
+      "check": "package_batch_consistent",
+      "passed": true,
+      "detail": "单条路由与 package 批量产物 case15 均为 template_fill / 0.65"
+    }
+  ],
+  "all_passed": true
+}

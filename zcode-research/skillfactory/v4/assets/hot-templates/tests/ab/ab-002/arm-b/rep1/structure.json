@@ -1,0 +1,181 @@
+{
+  "template_version": "1.0",
+  "platform": "xhs",
+  "platform_name": "小红书图文",
+  "structure_name": "标题带数字 + emoji规则 + 正文分块 + 标签组",
+  "topic": "租房避坑指南",
+  "points_input_count": 5,
+  "points_used": [
+    "签约前查房东房产证与身份证一致性",
+    "押金条款写明退还条件与时限",
+    "入住当天拍照录像留档"
+  ],
+  "points_unused": [
+    "水电燃气表底数写进合同附件",
+    "转租条款提前约定违约金"
+  ],
+  "element_count": 7,
+  "elements": [
+    {
+      "id": "title",
+      "name": "标题（带数字）",
+      "order": 1,
+      "required": true,
+      "text": "🔥亲测有效｜租房避坑指南的3个方法，【占位:目标人群，如：打工人/新手宝妈】看完直接抄作业",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "目标人群，如：打工人/新手宝妈"
+      ],
+      "filled_from_input": [
+        "topic"
+      ],
+      "meta": {
+        "emoji": "🔥",
+        "rule": "标题带数字（3=价值点数，模板冻结为3）+人群词，emoji 置顶"
+      }
+    },
+    {
+      "id": "hook_block",
+      "name": "正文·开头钩子块",
+      "order": 2,
+      "required": true,
+      "text": "✅ 开头钩子\n租房避坑指南这件事，我真的走过太多弯路——【占位:一句真实经历/翻车现场】。这篇一次性讲透，先收藏再看！",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "一句真实经历/翻车现场"
+      ],
+      "filled_from_input": [
+        "topic"
+      ],
+      "meta": {
+        "emoji": "✅",
+        "rule": "钩子块固定 ✅：身份代入+收藏指令"
+      }
+    },
+    {
+      "id": "point_block_1",
+      "name": "正文·干货块1",
+      "order": 3,
+      "required": true,
+      "text": "💡 干货1｜签约前查房东房产证与身份证一致性\n【占位:2-3步操作拆解，越具体越好】",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "2-3步操作拆解，越具体越好"
+      ],
+      "filled_from_input": [
+        "point#1"
+      ],
+      "meta": {
+        "emoji": "💡",
+        "rule": "干货块固定 💡：小标题=卖点，正文=步骤"
+      }
+    },
+    {
+      "id": "point_block_2",
+      "name": "正文·干货块2",
+      "order": 4,
+      "required": true,
+      "text": "💡 干货2｜押金条款写明退还条件与时限\n【占位:2-3步操作拆解，越具体越好】",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "2-3步操作拆解，越具体越好"
+      ],
+      "filled_from_input": [
+        "point#2"
+      ],
+      "meta": {
+        "emoji": "💡",
+        "rule": "干货块固定 💡：小标题=卖点，正文=步骤"
+      }
+    },
+    {
+      "id": "point_block_3",
+      "name": "正文·干货块3",
+      "order": 5,
+      "required": true,
+      "text": "💡 干货3｜入住当天拍照录像留档\n【占位:2-3步操作拆解，越具体越好】",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "2-3步操作拆解，越具体越好"
+      ],
+      "filled_from_input": [
+        "point#3"
+      ],
+      "meta": {
+        "emoji": "💡",
+        "rule": "干货块固定 💡：小标题=卖点，正文=步骤"
+      }
+    },
+    {
+      "id": "summary_block",
+      "name": "正文·总结块",
+      "order": 6,
+      "required": true,
+      "text": "📌 划重点\n租房避坑指南的核心就三点：签约前查房东房产证与身份证一致性、押金条款写明退还条件与时限、入住当天拍照录像留档。【占位:一句互动引导，如：你最想先试哪个？评论区聊聊】",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "一句互动引导，如：你最想先试哪个？评论区聊聊"
+      ],
+      "filled_from_input": [
+        "topic",
+        "point#1",
+        "point#2",
+        "point#3"
+      ],
+      "meta": {
+        "emoji": "📌",
+        "rule": "总结块固定 📌：三点复述+互动引导"
+      }
+    },
+    {
+      "id": "tag_group",
+      "name": "标签组（5个）",
+      "order": 7,
+      "required": true,
+      "text": "#租房避坑指南 #干货分享 #方法论 #自我提升 【占位:2个垂直领域标签，如：#时间管理 #精力管理】",
+      "placeholder_count": 1,
+      "open_placeholders": [
+        "2个垂直领域标签，如：#时间管理 #精力管理"
+      ],
+      "filled_from_input": [
+        "topic(派生标签)"
+      ],
+      "meta": {
+        "emoji": "🏷️",
+        "rule": "标签组=主题大词+流量泛词+垂直长尾，首标签由主题派生"
+      }
+    }
+  ],
+  "placeholder_stats": {
+    "total_open": 7,
+    "total_filled_from_input": 10,
+    "by_element": {
+      "title": 1,
+      "hook_block": 1,
+      "point_block_1": 1,
+      "point_block_2": 1,
+      "point_block_3": 1,
+      "summary_block": 1,
+      "tag_group": 1
+    },
+    "open_tokens_unique": [
+      "目标人群，如：打工人/新手宝妈",
+      "一句真实经历/翻车现场",
+      "2-3步操作拆解，越具体越好",
+      "一句互动引导，如：你最想先试哪个？评论区聊聊",
+      "2个垂直领域标签，如：#时间管理 #精力管理"
+    ],
+    "filled_slots": [
+      "topic",
+      "topic",
+      "point#1",
+      "point#2",
+      "point#3",
+      "topic",
+      "point#1",
+      "point#2",
+      "point#3",
+      "topic(派生标签)"
+    ]
+  }
+}

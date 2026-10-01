@@ -1,0 +1,41 @@
+{
+  "tasks": 5,
+  "baselineMean": 3.9,
+  "treatmentMean": 10,
+  "delta": 6.1,
+  "winRate": 1,
+  "reverseTasks": 0,
+  "accepted": true,
+  "taskAggs": [
+    {
+      "id": "ab-001",
+      "baseMean": 3,
+      "treatMean": 10,
+      "majority": "treatment"
+    },
+    {
+      "id": "ab-002",
+      "baseMean": 3,
+      "treatMean": 10,
+      "majority": "treatment"
+    },
+    {
+      "id": "ab-003",
+      "baseMean": 3,
+      "treatMean": 10,
+      "majority": "treatment"
+    },
+    {
+      "id": "ab-004",
+      "baseMean": 2,
+      "treatMean": 10,
+      "majority": "treatment"
+    },
+    {
+      "id": "ab-005",
+      "baseMean": 8.5,
+      "treatMean": 10,
+      "majority": "treatment"
+    }
+  ]
+}

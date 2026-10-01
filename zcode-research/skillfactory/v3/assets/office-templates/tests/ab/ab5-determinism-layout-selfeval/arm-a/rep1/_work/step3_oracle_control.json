@@ -1,0 +1,44 @@
+{
+ "run1": {
+  "cmd": "C:\\Program Files\\Python312\\python.exe D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-templates\\oracle\\oracle.py --template 会议通知 --data D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-templates\\oracle\\inputs\\会议通知\\case1.json --outdir D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-templates\\tests\\ab\\ab5-determinism-layout-selfeval\\arm-a\\rep1\\_work\\oracle-run1",
+  "exit": 0,
+  "stdout_tail": "OK template=会议通知 docx=D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-templates\\tests\\ab\\ab5-determinism-layout-selfeval\\arm-a\\rep1\\_work\\oracle-run1\\文书.docx fields=D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-templates\\tests\\ab\\ab5-determinism-layout-selfeval\\arm-a\\rep1\\_work\\oracle-run1\\fields.json filled=11 missing=0 missing_required=0",
+  "dir_listing": [
+   "fields.json",
+   "文书.docx"
+  ],
+  "snapshot": {
+   "fields.json": {
+    "size": 2822,
+    "md5": "ed8d897801fdc52fecce6ce9a2119828",
+    "mtime": "2026-09-30T07:13:43"
+   },
+   "文书.docx": {
+    "size": 37318,
+    "md5": "7a4aaba7577ce17c02f4b8ce7c4b2b85",
+    "mtime": "2026-09-30T07:13:43"
+   }
+  }
+ },
+ "run2": {
+  "cmd": "C:\\Program Files\\Python312\\python.exe D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-templates\\oracle\\oracle.py --template 会议通知 --data D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-templates\\oracle\\inputs\\会议通知\\case1.json --outdir D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-templates\\tests\\ab\\ab5-determinism-layout-selfeval\\arm-a\\rep1\\_work\\oracle-run1",
+  "exit": 0,
+  "stdout_tail": "OK template=会议通知 docx=D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-templates\\tests\\ab\\ab5-determinism-layout-selfeval\\arm-a\\rep1\\_work\\oracle-run1\\文书.docx fields=D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-templates\\tests\\ab\\ab5-determinism-layout-selfeval\\arm-a\\rep1\\_work\\oracle-run1\\fields.json filled=11 missing=0 missing_required=0",
+  "dir_listing": [
+   "fields.json",
+   "文书.docx"
+  ],
+  "snapshot": {
+   "fields.json": {
+    "size": 2822,
+    "md5": "ed8d897801fdc52fecce6ce9a2119828",
+    "mtime": "2026-09-30T07:13:45"
+   },
+   "文书.docx": {
+    "size": 37318,
+    "md5": "3125cb943fb84e406752cca57c021f19",
+    "mtime": "2026-09-30T07:13:45"
+   }
+  }
+ }
+}

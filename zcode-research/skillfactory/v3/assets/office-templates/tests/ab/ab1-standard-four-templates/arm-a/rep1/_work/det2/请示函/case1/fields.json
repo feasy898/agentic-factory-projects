@@ -1,0 +1,85 @@
+{
+  "template": "请示函",
+  "title": "关于采购评测用 GPU 服务器的请示",
+  "filled_fields": [
+    "请示事由",
+    "主送机关",
+    "请示缘由",
+    "请示事项",
+    "请示单位",
+    "联系人",
+    "联系电话",
+    "成文日期"
+  ],
+  "missing_fields": [],
+  "fields": [
+    {
+      "name": "请示事由",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "采购评测用 GPU 服务器"
+    },
+    {
+      "name": "主送机关",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "公司总经理办公会"
+    },
+    {
+      "name": "请示缘由",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "因评测规模扩大，现有设备无法满足批量推理需求，评测周期被迫拉长。"
+    },
+    {
+      "name": "请示事项",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "申请采购 V100S 服务器 2 台，预算 12 万元，本月内完成到货验收。"
+    },
+    {
+      "name": "请示单位",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "评测技术部"
+    },
+    {
+      "name": "联系人",
+      "required": false,
+      "kind": "text",
+      "status": "filled",
+      "value": "李工"
+    },
+    {
+      "name": "联系电话",
+      "required": false,
+      "kind": "text",
+      "status": "filled",
+      "value": "010-88886666"
+    },
+    {
+      "name": "成文日期",
+      "required": false,
+      "kind": "text",
+      "status": "filled",
+      "value": "2026年9月28日"
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "filled": 8,
+    "missing": 0,
+    "missing_required": 0,
+    "missing_required_names": [],
+    "unknown_keys": []
+  },
+  "outputs": {
+    "docx": "tests\\ab\\ab1-standard-four-templates\\arm-a\\rep1\\_work\\det2\\请示函\\case1\\文书.docx",
+    "fields_json": "tests\\ab\\ab1-standard-four-templates\\arm-a\\rep1\\_work\\det2\\请示函\\case1\\fields.json"
+  }
+}

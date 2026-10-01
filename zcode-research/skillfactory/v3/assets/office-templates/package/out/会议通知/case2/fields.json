@@ -1,0 +1,121 @@
+{
+  "template": "会议通知",
+  "title": "关于召开____的通知",
+  "filled_fields": [
+    "召开单位",
+    "主送对象",
+    "会议时间",
+    "参会人员",
+    "发文日期"
+  ],
+  "missing_fields": [
+    "会议名称",
+    "会议地点",
+    "会议议题",
+    "会议要求",
+    "联系人",
+    "联系电话"
+  ],
+  "fields": [
+    {
+      "name": "会议名称",
+      "required": true,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "以____占位"
+    },
+    {
+      "name": "召开单位",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "评测技术部"
+    },
+    {
+      "name": "主送对象",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "各部门"
+    },
+    {
+      "name": "会议时间",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "2026年10月16日（周五）10:00"
+    },
+    {
+      "name": "会议地点",
+      "required": true,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "以____占位"
+    },
+    {
+      "name": "参会人员",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "全体评测组成员"
+    },
+    {
+      "name": "会议议题",
+      "required": false,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "留空（渲染为空字符串）"
+    },
+    {
+      "name": "会议要求",
+      "required": false,
+      "kind": "list",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "省略该条目/小节"
+    },
+    {
+      "name": "联系人",
+      "required": false,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "留空（渲染为空字符串）"
+    },
+    {
+      "name": "联系电话",
+      "required": false,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "留空（渲染为空字符串）"
+    },
+    {
+      "name": "发文日期",
+      "required": false,
+      "kind": "text",
+      "status": "filled",
+      "value": "2026年9月30日"
+    }
+  ],
+  "summary": {
+    "total": 11,
+    "filled": 5,
+    "missing": 6,
+    "missing_required": 2,
+    "missing_required_names": [
+      "会议名称",
+      "会议地点"
+    ],
+    "unknown_keys": [
+      "备注"
+    ]
+  },
+  "outputs": {
+    "docx": "package\\out\\会议通知\\case2\\文书.docx",
+    "fields_json": "package\\out\\会议通知\\case2\\fields.json"
+  }
+}

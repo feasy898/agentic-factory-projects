@@ -1,0 +1,10 @@
+{
+  "platform": "xhs",
+  "topic": "Excel函数",
+  "points": [
+    "XLOOKUP一招替代VLOOKUP+IF嵌套",
+    "TEXTSPLIT一键拆分混杂文本",
+    "SUBTOTAL做筛选后动态求和"
+  ],
+  "note": "样例1：满3条卖点。本字段仅为说明，不进产物。"
+}

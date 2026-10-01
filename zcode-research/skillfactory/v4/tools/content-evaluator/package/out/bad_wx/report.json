@@ -1,0 +1,75 @@
+{
+  "tool": "evaluate.py 1.0.0",
+  "input": "D:\\workspace\\zcode研究\\skillfactory\\v4\\tools\\content-evaluator\\package\\fixtures\\bad_wx.md",
+  "platform": "wx",
+  "platform_label": "微信公众号",
+  "generated_at": "2026-09-30T11:29:54+0800",
+  "summary": {
+    "applied": 9,
+    "pass": 6,
+    "fail": 3,
+    "warn": 1
+  },
+  "score": {
+    "passed": 6,
+    "applied": 9,
+    "ratio": 0.6667,
+    "text": "6/9"
+  },
+  "checks": [
+    {
+      "name": "title_length",
+      "pass": true,
+      "warning": false,
+      "detail": "标题 20 字，在区间 [10, 64] 内"
+    },
+    {
+      "name": "emoji_density",
+      "pass": true,
+      "warning": true,
+      "detail": "emoji 共 22 个，超出软上限 20（仅警告，不计失败）"
+    },
+    {
+      "name": "body_length",
+      "pass": true,
+      "warning": false,
+      "detail": "正文 526 字，在区间 [300, 3000] 内"
+    },
+    {
+      "name": "paragraph_max",
+      "pass": false,
+      "warning": false,
+      "detail": "最长段落 422 字，超出单段上限 350"
+    },
+    {
+      "name": "tag_count",
+      "pass": true,
+      "warning": false,
+      "detail": "标签 0 个，在区间 [0, 8] 内"
+    },
+    {
+      "name": "banned_words",
+      "pass": false,
+      "warning": false,
+      "detail": "命中 6 个极限词（共 6 次）：100%×1、国家级×1、完美×1、最全×1、最好×1、立竿见影×1"
+    },
+    {
+      "name": "structure_hook",
+      "pass": true,
+      "warning": false,
+      "detail": "首段含钩子词「为什么」"
+    },
+    {
+      "name": "structure_cta",
+      "pass": false,
+      "warning": false,
+      "detail": "正文未含 CTA 引导词（词表 21 词）"
+    },
+    {
+      "name": "structure_para",
+      "pass": true,
+      "warning": false,
+      "detail": "段落 4 段，达到最少 3 段"
+    }
+  ]
+}

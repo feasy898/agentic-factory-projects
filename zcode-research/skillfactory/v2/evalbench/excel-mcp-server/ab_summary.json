@@ -1,0 +1,33 @@
+{
+  "slug": "excel-mcp-server",
+  "name": "excel-mcp-server（haris-musa）",
+  "tasks": 3,
+  "baselineMean": 9,
+  "treatmentMean": 9.666666666666666,
+  "delta": 0.6666666666666666,
+  "winRate": 0.6666666666666666,
+  "accepted": false,
+  "verdicts": [
+    {
+      "task": "excel-mcp-server-t1",
+      "baseline": 9,
+      "treatment": 9,
+      "winner": "tie",
+      "note": "两份产物均完整命中 rubric 全部四条，且均经本裁判独立核实有真实实测支撑，正确性无差异。【条1 序列】甲（OUT."
+    },
+    {
+      "task": "excel-mcp-server-t2",
+      "baseline": 9,
+      "treatment": 10,
+      "winner": "treatment",
+      "note": "两份产物均命中 rubric 全部四条，判定与理由无错误；差距在实机验证与交付完整度。【条1 拦截识别】甲 OUT.md"
+    },
+    {
+      "task": "excel-mcp-server-t3",
+      "baseline": 9,
+      "treatment": 10,
+      "winner": "treatment",
+      "note": "两份产物的分页数学与边界识别全部正确，无任何计算错误；差异在与真实工具接口的适配深度。【分页边界】甲"
+    }
+  ]
+}

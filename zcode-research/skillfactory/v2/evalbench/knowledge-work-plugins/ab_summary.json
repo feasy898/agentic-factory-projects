@@ -1,0 +1,33 @@
+{
+  "slug": "knowledge-work-plugins",
+  "name": "anthropics/knowledge-work-plugins（11 职能官方插件包）",
+  "tasks": 3,
+  "baselineMean": 9,
+  "treatmentMean": 9,
+  "delta": 0,
+  "winRate": 0,
+  "accepted": false,
+  "verdicts": [
+    {
+      "task": "knowledge-work-plugins-t1",
+      "baseline": 9,
+      "treatment": 9,
+      "winner": "tie",
+      "note": "我实际运行 Python 复算全部数值：阶段汇总 接触8/提案27/方案55/谈判158/总额248，占比3.2%/10"
+    },
+    {
+      "task": "knowledge-work-plugins-t2",
+      "baseline": 9,
+      "treatment": 9,
+      "winner": "tie",
+      "note": "我实际运行脚本复算全部判定：A 等待2.5h<时限一半4h且无触发词→不升级，B 等待20.5h>12h→条件②升级，C"
+    },
+    {
+      "task": "knowledge-work-plugins-t3",
+      "baseline": 9,
+      "treatment": 9,
+      "winner": "tie",
+      "note": "Rubric 五项经逐项核对与脚本验证双方全部达标：(1) Q3 边界题双方均判「政策未覆盖"
+    }
+  ]
+}

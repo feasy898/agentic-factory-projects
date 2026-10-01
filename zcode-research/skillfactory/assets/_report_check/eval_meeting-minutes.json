@@ -1,0 +1,105 @@
+{
+  "ok": true,
+  "checks": [
+    {
+      "name": "case1/docx_opens_with_three_sections",
+      "pass": true,
+      "detail": "三节标题齐全（一/二/三）"
+    },
+    {
+      "name": "case1/todo_is_table_with_owner_deadline_columns",
+      "pass": true,
+      "detail": "待办表格表头=['事项', '负责人', '期限']（共 2 数据行）"
+    },
+    {
+      "name": "case1/summary_counts_match_docx",
+      "pass": true,
+      "detail": "json={\"决议事项\": 2, \"待办事项\": 2, \"风险与关注\": 3, \"合计\": 7} 与 docx 实际一致（决议 2 段、待办 2 行、风险 3 段）"
+    },
+    {
+      "name": "case1/no_fabricated_entries",
+      "pass": true,
+      "detail": "共 7 条目全部可在 D:\\workspace\\zcode研究\\skillfactory\\assets\\meeting-minutes\\oracle\\inputs\\case1.txt 中逐字溯源（含时间+说话人）"
+    },
+    {
+      "name": "case1/entry_counts_within_tolerance_of_reference",
+      "pass": true,
+      "detail": "各类与合计差值均 ≤2: {\"决议事项\": 0, \"待办事项\": 0, \"风险与关注\": 0, \"合计\": 0}"
+    },
+    {
+      "name": "case2/docx_opens_with_three_sections",
+      "pass": true,
+      "detail": "三节标题齐全（一/二/三）"
+    },
+    {
+      "name": "case2/todo_is_table_with_owner_deadline_columns",
+      "pass": true,
+      "detail": "待办表格表头=['事项', '负责人', '期限']（共 3 数据行）"
+    },
+    {
+      "name": "case2/summary_counts_match_docx",
+      "pass": true,
+      "detail": "json={\"决议事项\": 3, \"待办事项\": 3, \"风险与关注\": 3, \"合计\": 9} 与 docx 实际一致（决议 3 段、待办 3 行、风险 3 段）"
+    },
+    {
+      "name": "case2/no_fabricated_entries",
+      "pass": true,
+      "detail": "共 9 条目全部可在 D:\\workspace\\zcode研究\\skillfactory\\assets\\meeting-minutes\\oracle\\inputs\\case2.txt 中逐字溯源（含时间+说话人）"
+    },
+    {
+      "name": "case2/entry_counts_within_tolerance_of_reference",
+      "pass": true,
+      "detail": "各类与合计差值均 ≤2: {\"决议事项\": 0, \"待办事项\": 0, \"风险与关注\": 0, \"合计\": 0}"
+    },
+    {
+      "name": "case3/docx_opens_with_three_sections",
+      "pass": true,
+      "detail": "三节标题齐全（一/二/三）"
+    },
+    {
+      "name": "case3/todo_is_table_with_owner_deadline_columns",
+      "pass": true,
+      "detail": "待办表格表头=['事项', '负责人', '期限']（共 3 数据行）"
+    },
+    {
+      "name": "case3/summary_counts_match_docx",
+      "pass": true,
+      "detail": "json={\"决议事项\": 2, \"待办事项\": 3, \"风险与关注\": 1, \"合计\": 6} 与 docx 实际一致（决议 2 段、待办 3 行、风险 1 段）"
+    },
+    {
+      "name": "case3/no_fabricated_entries",
+      "pass": true,
+      "detail": "共 6 条目全部可在 D:\\workspace\\zcode研究\\skillfactory\\assets\\meeting-minutes\\oracle\\inputs\\case3.txt 中逐字溯源（含时间+说话人）"
+    },
+    {
+      "name": "case3/entry_counts_within_tolerance_of_reference",
+      "pass": true,
+      "detail": "各类与合计差值均 ≤2: {\"决议事项\": 0, \"待办事项\": 0, \"风险与关注\": 0, \"合计\": 0}"
+    },
+    {
+      "name": "case4/docx_opens_with_three_sections",
+      "pass": true,
+      "detail": "三节标题齐全（一/二/三）"
+    },
+    {
+      "name": "case4/todo_is_table_with_owner_deadline_columns",
+      "pass": true,
+      "detail": "待办表格表头=['事项', '负责人', '期限']（共 0 数据行）"
+    },
+    {
+      "name": "case4/summary_counts_match_docx",
+      "pass": true,
+      "detail": "json={\"决议事项\": 0, \"待办事项\": 0, \"风险与关注\": 0, \"合计\": 0} 与 docx 实际一致（决议 0 段、待办 0 行、风险 0 段）"
+    },
+    {
+      "name": "case4/no_fabricated_entries",
+      "pass": true,
+      "detail": "共 0 条目全部可在 D:\\workspace\\zcode研究\\skillfactory\\assets\\meeting-minutes\\oracle\\inputs\\case4.txt 中逐字溯源（含时间+说话人）"
+    },
+    {
+      "name": "case4/entry_counts_within_tolerance_of_reference",
+      "pass": true,
+      "detail": "各类与合计差值均 ≤2: {\"决议事项\": 0, \"待办事项\": 0, \"风险与关注\": 0, \"合计\": 0}"
+    }
+  ]
+}

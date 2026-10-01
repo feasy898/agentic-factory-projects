@@ -1,0 +1,33 @@
+{
+  "slug": "wshobson-commands",
+  "name": "wshobson/commands（57 个生产就绪 slash 命令）",
+  "tasks": 3,
+  "baselineMean": 8.333333333333334,
+  "treatmentMean": 8,
+  "delta": -0.3333333333333333,
+  "winRate": 0.3333333333333333,
+  "accepted": false,
+  "verdicts": [
+    {
+      "task": "wshobson-commands-t1",
+      "baseline": 9,
+      "treatment": 7,
+      "winner": "baseline",
+      "note": "查库核验（本会话实际执行）：GitHub API 实测 wshobson/commands main 分支 tools/"
+    },
+    {
+      "task": "wshobson-commands-t2",
+      "baseline": 7,
+      "treatment": 9,
+      "winner": "treatment",
+      "note": "查库核验（本会话实际执行）：重新下载库内 4 个参照文件（tools/deploy-checklist.md、workf"
+    },
+    {
+      "task": "wshobson-commands-t3",
+      "baseline": 9,
+      "treatment": 8,
+      "winner": "baseline",
+      "note": "查库核验（本会话实际执行）：重新下载并逐行核对了两臂引用的关键文件（tools/issue"
+    }
+  ]
+}

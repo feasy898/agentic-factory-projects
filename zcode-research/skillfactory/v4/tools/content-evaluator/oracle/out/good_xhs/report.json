@@ -1,0 +1,75 @@
+{
+  "tool": "evaluate.py 1.0.0",
+  "input": "D:\\workspace\\zcode研究\\skillfactory\\v4\\tools\\content-evaluator\\oracle\\fixtures\\good_xhs.md",
+  "platform": "xhs",
+  "platform_label": "小红书",
+  "generated_at": "2026-09-30T09:14:14+0800",
+  "summary": {
+    "applied": 9,
+    "pass": 9,
+    "fail": 0,
+    "warn": 0
+  },
+  "score": {
+    "passed": 9,
+    "applied": 9,
+    "ratio": 1.0,
+    "text": "9/9"
+  },
+  "checks": [
+    {
+      "name": "title_length",
+      "pass": true,
+      "warning": false,
+      "detail": "标题 16 字，在区间 [8, 20] 内：救命！这家咖啡馆也太治愈了吧☕️"
+    },
+    {
+      "name": "emoji_density",
+      "pass": true,
+      "warning": false,
+      "detail": "emoji 共 5 个，在区间 [2, 15] 内"
+    },
+    {
+      "name": "body_length",
+      "pass": true,
+      "warning": false,
+      "detail": "正文 198 字（去空白），在区间 [100, 800]"
+    },
+    {
+      "name": "paragraph_max",
+      "pass": true,
+      "warning": false,
+      "detail": "共 7 段，最长第 3 段 40 字（上限 160）：靠窗的位置能看到一整面墙的绿植🌿，下午三点后的阳光刚好斜进来，随手一拍都是壁纸。"
+    },
+    {
+      "name": "tag_count",
+      "pass": true,
+      "warning": false,
+      "detail": "#标签 共 7 个，在区间 [3, 10]"
+    },
+    {
+      "name": "banned_words",
+      "pass": true,
+      "warning": false,
+      "detail": "未命中 44 词内置极限词表"
+    },
+    {
+      "name": "structure_hook",
+      "pass": true,
+      "warning": false,
+      "detail": "有钩子（救命、标题带emoji）：姐妹们！我发现了一家宝藏咖啡馆，真的会一直回头的那种！！"
+    },
+    {
+      "name": "structure_cta",
+      "pass": true,
+      "warning": false,
+      "detail": "有 CTA（码住、评论、评论区、蹲一个）"
+    },
+    {
+      "name": "structure_para",
+      "pass": true,
+      "warning": false,
+      "detail": "正文分 7 段，≥ 最少要求 3 段"
+    }
+  ]
+}

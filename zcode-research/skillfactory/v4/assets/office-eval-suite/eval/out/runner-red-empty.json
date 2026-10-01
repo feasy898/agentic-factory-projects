@@ -1,0 +1,49 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v4/assets/office-eval-suite/eval",
+  "candidate": "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\oes_red_fx_ogv93l_v/empty",
+  "reference": "oracle",
+  "candidate_layout": "none",
+  "resolved_via": "none",
+  "reference_resolved_via": "direct",
+  "self_eval": false,
+  "sampled_ids": [],
+  "ok": false,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 0,
+      "failed": 4
+    },
+    "items": 0,
+    "domains": {},
+    "checks_in_suite": 0,
+    "identical_vs_reference": null,
+    "exported_items_v1": null
+  },
+  "checks": [
+    {
+      "name": "validate_all_green",
+      "passed": false,
+      "detail": "前置失败：被测产物根未解析出 suite.json + validate.py + export_legacy.py；已尝试: C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\oes_red_fx_ogv93l_v\\empty\\suite.json; C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\oes_red_fx_ogv93l_v\\empty\\validate.py; C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\oes_red_fx_ogv93l_v\\empty\\export_legacy.py; C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\oes_red_fx_ogv93l_v\\empty\\package\\suite.json; C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\oes_red_fx_ogv93l_v\\empty\\package\\validate.py; C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\oes_red_fx_ogv93l_v\\empty\\package\\export_legacy.py",
+      "candidate_layout": "none",
+      "resolved_via": "none"
+    },
+    {
+      "name": "ratio_difficulty_per_spec",
+      "passed": false,
+      "detail": "前置失败：suite.json 无法加载或无 items",
+      "domains": {}
+    },
+    {
+      "name": "no_dup_vs_reference",
+      "passed": false,
+      "detail": "前置失败：被测 suite.json 无法加载"
+    },
+    {
+      "name": "legacy_export_v1_green",
+      "passed": false,
+      "detail": "前置失败：被测产物根未解析出 suite.json + export_legacy.py"
+    }
+  ]
+}

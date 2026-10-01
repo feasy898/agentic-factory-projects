@@ -1,0 +1,4 @@
+test contact list
+zhangsan mobile 13812345678
+lisi id-number 110101199003074258
+wangwu landline 010-62771234 (must not hit)

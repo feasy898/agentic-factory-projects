@@ -1,0 +1,199 @@
+{
+  "oracle": "office-guard-hooks",
+  "generated_at": "2026-09-30T08:11:26",
+  "python": "3.12.10",
+  "platform": "win32",
+  "fixtures": [
+    "bad_empty.txt",
+    "bad_encoding.txt",
+    "clean.docx",
+    "corrupt.docx",
+    "good.txt",
+    "pii.txt"
+  ],
+  "cases": [
+    {
+      "suite": "validate_output",
+      "case": "good.txt passes",
+      "fixture": "good.txt",
+      "expect_exit": 0,
+      "actual_exit": 0,
+      "exit_ok": true,
+      "stderr_fragments_expected": [
+        "OK"
+      ],
+      "stderr_fragments_missing": [],
+      "stderr": "[validate_output] OK good.txt (102 bytes, ext=.txt)",
+      "pass": true
+    },
+    {
+      "suite": "validate_output",
+      "case": "clean.docx passes (python-docx opens, nested path schema)",
+      "fixture": "clean.docx",
+      "expect_exit": 0,
+      "actual_exit": 0,
+      "exit_ok": true,
+      "stderr_fragments_expected": [
+        "OK"
+      ],
+      "stderr_fragments_missing": [],
+      "stderr": "[validate_output] OK clean.docx (36661 bytes, ext=.docx)",
+      "pass": true
+    },
+    {
+      "suite": "validate_output",
+      "case": "pii.txt passes structure (PII is pii_guard's job)",
+      "fixture": "pii.txt",
+      "expect_exit": 0,
+      "actual_exit": 0,
+      "exit_ok": true,
+      "stderr_fragments_expected": [
+        "OK"
+      ],
+      "stderr_fragments_missing": [],
+      "stderr": "[validate_output] OK pii.txt (124 bytes, ext=.txt)",
+      "pass": true
+    },
+    {
+      "suite": "validate_output",
+      "case": "bad_empty.txt blocked (0 bytes)",
+      "fixture": "bad_empty.txt",
+      "expect_exit": 2,
+      "actual_exit": 2,
+      "exit_ok": true,
+      "stderr_fragments_expected": [
+        "FAIL",
+        "empty"
+      ],
+      "stderr_fragments_missing": [],
+      "stderr": "[validate_output] FAIL: file is empty (0 bytes): D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-guard-hooks\\oracle\\tests\\fixtures\\bad_empty.txt",
+      "pass": true
+    },
+    {
+      "suite": "validate_output",
+      "case": "bad_encoding.txt blocked (not UTF-8)",
+      "fixture": "bad_encoding.txt",
+      "expect_exit": 2,
+      "actual_exit": 2,
+      "exit_ok": true,
+      "stderr_fragments_expected": [
+        "FAIL",
+        "UTF-8"
+      ],
+      "stderr_fragments_missing": [],
+      "stderr": "[validate_output] FAIL: not decodable as UTF-8 (48 bytes; bad byte range 0:1)",
+      "pass": true
+    },
+    {
+      "suite": "validate_output",
+      "case": "corrupt.docx blocked (python-docx cannot open)",
+      "fixture": "corrupt.docx",
+      "expect_exit": 2,
+      "actual_exit": 2,
+      "exit_ok": true,
+      "stderr_fragments_expected": [
+        "FAIL",
+        "python-docx"
+      ],
+      "stderr_fragments_missing": [],
+      "stderr": "[validate_output] FAIL: .docx cannot be opened by python-docx: PackageNotFoundError: Package not found at 'D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-guard-hooks\\oracle\\tests\\fixtures\\corrupt.docx'",
+      "pass": true
+    },
+    {
+      "suite": "validate_output",
+      "case": "missing file blocked",
+      "fixture": null,
+      "expect_exit": 2,
+      "actual_exit": 2,
+      "exit_ok": true,
+      "stderr_fragments_expected": [
+        "FAIL",
+        "does not exist"
+      ],
+      "stderr_fragments_missing": [],
+      "stderr": "[validate_output] FAIL: file does not exist: D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-guard-hooks\\oracle\\tests\\fixtures\\does-not-exist.txt (tool_name=Write)",
+      "pass": true
+    },
+    {
+      "suite": "pii_guard",
+      "case": "pii.txt blocked with line numbers 2 and 3",
+      "fixture": "pii.txt",
+      "expect_exit": 2,
+      "actual_exit": 2,
+      "exit_ok": true,
+      "stderr_fragments_expected": [
+        ":2:",
+        ":3:",
+        "[phone]",
+        "[cn-id]"
+      ],
+      "stderr_fragments_missing": [],
+      "stderr": "[pii_guard] BLOCK: 2 PII hit(s) in D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-guard-hooks\\oracle\\tests\\fixtures\\pii.txt:\r\n  D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-guard-hooks\\oracle\\tests\\fixtures\\pii.txt:2: [phone] 138****5678\r\n  D:\\workspace\\zcode研究\\skillfactory\\v3\\assets\\office-guard-hooks\\oracle\\tests\\fixtures\\pii.txt:3: [cn-id] 1101**********4258",
+      "pass": true
+    },
+    {
+      "suite": "pii_guard",
+      "case": "good.txt clean",
+      "fixture": "good.txt",
+      "expect_exit": 0,
+      "actual_exit": 0,
+      "exit_ok": true,
+      "stderr_fragments_expected": [
+        "OK",
+        "no PII"
+      ],
+      "stderr_fragments_missing": [],
+      "stderr": "[pii_guard] OK good.txt: no PII hits (2 lines scanned)",
+      "pass": true
+    },
+    {
+      "suite": "pii_guard",
+      "case": "clean.docx skipped (binary)",
+      "fixture": "clean.docx",
+      "expect_exit": 0,
+      "actual_exit": 0,
+      "exit_ok": true,
+      "stderr_fragments_expected": [
+        "skipped"
+      ],
+      "stderr_fragments_missing": [],
+      "stderr": "[pii_guard] skipped binary/office file clean.docx, exit 0",
+      "pass": true
+    },
+    {
+      "suite": "pii_guard",
+      "case": "bad_encoding.txt not scanned -> non-blocking exit 0",
+      "fixture": "bad_encoding.txt",
+      "expect_exit": 0,
+      "actual_exit": 0,
+      "exit_ok": true,
+      "stderr_fragments_expected": [
+        "WARNING",
+        "not scanned"
+      ],
+      "stderr_fragments_missing": [],
+      "stderr": "[pii_guard] WARNING: bad_encoding.txt is not UTF-8 text (byte 0); not scanned, exit 0 (structure issues are validate_output's job)",
+      "pass": true
+    },
+    {
+      "suite": "pii_guard",
+      "case": "bad_empty.txt nothing to scan",
+      "fixture": "bad_empty.txt",
+      "expect_exit": 0,
+      "actual_exit": 0,
+      "exit_ok": true,
+      "stderr_fragments_expected": [
+        "empty file"
+      ],
+      "stderr_fragments_missing": [],
+      "stderr": "[pii_guard] empty file bad_empty.txt; nothing to scan, exit 0",
+      "pass": true
+    }
+  ],
+  "summary": {
+    "total": 12,
+    "passed": 12,
+    "failed": 0,
+    "ok": true
+  }
+}

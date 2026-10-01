@@ -1,0 +1,5 @@
+[oracle] source: eval/ab_briefs/weekly-report-brief.md
+[oracle] title: 能力简报：生成周报骨架（A/B 任务材料 · ab-002）
+[oracle] stats: lines=17 chars=400 h1=1 h2=3 h3=0 h4plus=0 headings=4 lists=6 unordered=6 ordered=0 code_blocks=0 code_lines=0 tables=0
+[oracle] wrote: tests/ab/ab-002-weekly-report/treatment/skeleton-repeat\outline.json
+[oracle] wrote: tests/ab/ab-002-weekly-report/treatment/skeleton-repeat\draft_skill\SKILL.md

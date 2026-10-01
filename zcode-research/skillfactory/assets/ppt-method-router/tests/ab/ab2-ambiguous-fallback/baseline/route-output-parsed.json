@@ -1,0 +1,8 @@
+{
+  "method": "editable_pptx",
+  "confidence": 0.4,
+  "reasons": [
+    "未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个",
+    "按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行"
+  ]
+}

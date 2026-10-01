@@ -1,0 +1,205 @@
+{
+  "mcpServers": {
+    "filesystem": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${OFFICEPACK_FILES_ROOT}"],
+      "env": {},
+      "secret_env": [],
+      "description": "MCP 官方参考 Filesystem server：仅授权目录内可读写/建目录/移动/搜索，目录外一律拒绝",
+      "enabled": true,
+      "scenario": "文件（本地目录沙箱内 Office 文件与普通文件的读写管理）",
+      "catalog": {
+        "record_url": "https://github.com/modelcontextprotocol/servers",
+        "form": "GitHub 官方参考实现（npm 包 @modelcontextprotocol/server-filesystem，stdio 分发）",
+        "section": "A4.1 参考实现与框架",
+        "catalog_line": "skillfactory/v2/CATALOG.md:187"
+      },
+      "doc": "docs/filesystem.md"
+    },
+    "excel": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["excel-mcp-server", "stdio"],
+      "env": {
+        "EXCEL_FILES_PATH": "${OFFICEPACK_EXCEL_DIR}"
+      },
+      "secret_env": [],
+      "description": "haris-musa 版 Excel MCP（openpyxl 系）：公式读写/大表分页/格式/条件格式/图表，危险公式拦截+目录沙箱",
+      "enabled": true,
+      "scenario": "Excel（.xlsx 工作簿深度读写：公式、格式、图表、条件格式）",
+      "catalog": {
+        "record_url": "https://github.com/haris-musa/excel-mcp-server",
+        "form": "GitHub 社区实现（PyPI excel-mcp-server，uvx 分发，stdio 子命令）",
+        "section": "A4.3 任务域 server·办公协同",
+        "catalog_line": "skillfactory/v2/CATALOG.md:198"
+      },
+      "doc": "docs/excel.md"
+    },
+    "word": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "office-word-mcp-server", "word_mcp_server"],
+      "env": {},
+      "secret_env": [],
+      "description": "GongRzhe Office-Word-MCP-Server：python-docx 系 .docx 全功能处理（段落/表格/图片/查找替换/合并/转 PDF/批注）",
+      "enabled": true,
+      "scenario": "Word（.docx 文档创建与编辑：样式、表格、图片、批注、合并）",
+      "catalog": {
+        "record_url": "https://github.com/GongRzhe/Office-Word-MCP-Server",
+        "form": "GitHub 社区实现（PyPI office-word-mcp-server，uvx --from 分发；上游 2026-03-03 归档、PyPI 仍可装）",
+        "section": "A4.3 任务域 server·办公协同",
+        "catalog_line": "skillfactory/v2/CATALOG.md:200"
+      },
+      "doc": "docs/word.md"
+    },
+    "powerpoint": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["--from", "office-powerpoint-mcp-server", "--with", "mcp<2", "ppt_mcp_server"],
+      "env": {},
+      "secret_env": [],
+      "description": "GongRzhe Office-PowerPoint-MCP-Server：37 工具 .pptx 处理（幻灯片增删/文本/图片/表格图表/模板母版/文本提取）",
+      "enabled": true,
+      "scenario": "PPT（.pptx 幻灯片生成与编辑：版式、模板、母版、图表）",
+      "catalog": {
+        "record_url": "https://github.com/GongRzhe/Office-PowerPoint-MCP-Server",
+        "form": "GitHub 社区实现（PyPI office-powerpoint-mcp-server，uvx --from 分发；--with \"mcp<2\" 钉依赖避坑）",
+        "section": "A4.3 任务域 server·办公协同",
+        "catalog_line": "skillfactory/v2/CATALOG.md:201"
+      },
+      "doc": "docs/powerpoint.md"
+    },
+    "google-workspace": {
+      "type": "stdio",
+      "command": "uvx",
+      "args": ["workspace-mcp"],
+      "env": {
+        "GOOGLE_OAUTH_CLIENT_ID": "${GOOGLE_OAUTH_CLIENT_ID}",
+        "GOOGLE_OAUTH_CLIENT_SECRET": "${GOOGLE_OAUTH_CLIENT_SECRET}"
+      },
+      "secret_env": ["GOOGLE_OAUTH_CLIENT_ID", "GOOGLE_OAUTH_CLIENT_SECRET"],
+      "description": "taylorwilsdon google_workspace_mcp：Gmail/Docs/Sheets/Slides/Drive 一体化 120 工具，OAuth 2.1 PKCE 多用户",
+      "enabled": true,
+      "scenario": "办公协同（Gmail 邮件 + Google 云端文档/表格/演示一体化，OAuth 2.1 多用户）",
+      "catalog": {
+        "record_url": "https://github.com/taylorwilsdon/google_workspace_mcp",
+        "form": "GitHub 社区实现（PyPI workspace-mcp，uvx 分发；冷拉包可达数分钟）",
+        "section": "A4.3 任务域 server·办公协同",
+        "catalog_line": "skillfactory/v2/CATALOG.md:202"
+      },
+      "doc": "docs/google-workspace.md"
+    },
+    "gmail-official": {
+      "type": "http",
+      "url": "https://gmailmcp.googleapis.com/mcp/v1",
+      "env": {},
+      "secret_env": [],
+      "description": "Google 官方远程 Gmail MCP（Developer Preview）：9 工具只读+草稿，匿名 initialize 可达，OAuth 在工具调用层",
+      "enabled": true,
+      "scenario": "邮件（Gmail 官方托管端点，读信与草稿，Developer Preview 资格受限）",
+      "catalog": {
+        "record_url": "https://developers.google.com/workspace/gmail/api/guides/configure-mcp-server",
+        "form": "官方远程托管（Streamable HTTP 端点，无需本地安装；OAuth 2.0 于工具调用层）",
+        "section": "A4.3 任务域 server·办公协同",
+        "catalog_line": "skillfactory/v2/CATALOG.md:203"
+      },
+      "doc": "docs/gmail-official.md"
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "env": {},
+      "secret_env": [],
+      "description": "微软官方 Playwright MCP：经结构化无障碍快照驱动网页操作（导航/点击/填表/截图），免视觉模型",
+      "enabled": true,
+      "scenario": "浏览器（网页自动化：导航、点击、填表、快照，办公网页端操作）",
+      "catalog": {
+        "record_url": "https://github.com/microsoft/playwright-mcp",
+        "form": "GitHub 官方实现（npm @playwright/mcp，stdio 分发；可加 --headless/--isolated）",
+        "section": "A4.4 任务域 server·浏览器/文档/电商",
+        "catalog_line": "skillfactory/v2/CATALOG.md:215"
+      },
+      "doc": "docs/playwright.md"
+    },
+    "excel-npm": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "@negokaz/excel-mcp-server"],
+      "env": {},
+      "secret_env": [],
+      "description": "negokaz 版 Excel MCP（Go+npm 分发）：读重型互补选择，分页读（默认 4000 格）/写值公式/建表/工作表截图；无目录白名单参数（与 haris-musa 版差异）",
+      "enabled": true,
+      "scenario": "Excel（npm 系轻量工作簿访问：分页读取、写值、区域样式、表格截图）",
+      "catalog": {
+        "record_url": "https://github.com/negokaz/excel-mcp-server",
+        "form": "GitHub 社区实现（npm @negokaz/excel-mcp-server scope 包，stdio 分发；勿与无 scope 同名包混淆）",
+        "section": "A4.3 任务域 server·办公协同",
+        "catalog_line": "skillfactory/v2/CATALOG.md:199"
+      },
+      "doc": "docs/excel-npm.md"
+    },
+    "tavily": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "tavily-mcp@latest"],
+      "env": {
+        "TAVILY_API_KEY": "${TAVILY_API_KEY}"
+      },
+      "secret_env": ["TAVILY_API_KEY"],
+      "description": "Tavily 官方 MCP：实时 web 搜索/内容抽取/站点映射/爬取 5 工具；服务本体按量计费",
+      "enabled": true,
+      "scenario": "搜索（联网实时搜索与网页内容抽取，调研素材获取）",
+      "catalog": {
+        "record_url": "https://github.com/tavily-ai/tavily-mcp",
+        "form": "GitHub 官方实现（npm tavily-mcp，stdio 分发；API key 走 ${TAVILY_API_KEY} 占位）",
+        "section": "A4.4 任务域 server·浏览器/文档/电商",
+        "catalog_line": "skillfactory/v2/CATALOG.md:214"
+      },
+      "doc": "docs/tavily.md"
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "env": {},
+      "secret_env": [],
+      "description": "Upstash Context7 远程 MCP：resolve-library-id + query-docs 拉最新库文档注入提示词，防 API 幻觉",
+      "enabled": true,
+      "scenario": "文档检索（Office 脚本/宏/VBA/Office.js 开发时的库文档实时查询）",
+      "catalog": {
+        "record_url": "https://github.com/upstash/context7",
+        "form": "官方远程托管（Streamable HTTP 端点 mcp.context7.com，免装免密钥）",
+        "section": "A4.4 任务域 server·浏览器/文档/电商",
+        "catalog_line": "skillfactory/v2/CATALOG.md:209"
+      },
+      "doc": "docs/context7.md"
+    }
+  },
+  "_meta": {
+    "pack": "mcp-office-pack",
+    "version": "1.0.0",
+    "target": "Claude Code .mcp.json 的 mcpServers 模板（Windows 优先；npx/uvx 需在 PATH）",
+    "comment": "办公场景 MCP 精选配置包：文件/Excel/Word/PPT/浏览器/搜索六格全覆盖 + 办公协同/邮件/文档检索三条补充；选型同源 skillfactory/v2/CATALOG.md（2026-09-30 时点），全部 10 条经 stdio 握手 / http initialize 实测可达",
+    "placeholder_policy": "密钥零真值：secret_env 声明的键一律 ${VAR_NAME} 占位，真值只在启用方环境变量中注入；*_DIR/*_PATH/*_ROOT 结尾变量为本地目录占位，启用时替换为真实存在的目录",
+    "catalog_source": "skillfactory/v2/CATALOG.md（2026-09-30 时点；行号见各条目 catalog.catalog_line）",
+    "scenario_scope": ["文件", "Excel", "Word", "PPT", "浏览器", "搜索"],
+    "verified": {
+      "date": "2026-09-30",
+      "method": "MCP initialize(2025-03-26) 协议握手 + tools/list（stdio）；POST initialize（http）",
+      "environment": "Windows x64 / Python 3.12.10 / Node v22.23.2 / npm 10.9.8 / uvx 0.12.15",
+      "results": {
+        "filesystem": "secure-filesystem-server 0.2.0，14 工具",
+        "excel": "excel-mcp-server 1.1.1，26 工具（stdio 子命令启动）",
+        "word": "Word Document Server 4.0.10，54 工具（--from office-word-mcp-server word_mcp_server 启动）",
+        "powerpoint": "ppt-mcp-server 1.30.0，37 工具（--with \"mcp<2\" 钉依赖）",
+        "google-workspace": "google_workspace 4.0.10，120 工具（哑值 OAuth 占位启动）",
+        "gmail-official": "HTTP 200 StatelessServer/ESF（匿名 initialize 可达）",
+        "playwright": "Playwright 1.64.0-alpha，25 工具",
+        "excel-npm": "excel-mcp-server 0.12.0-SNAPSHOT，7 工具",
+        "tavily": "tavily-mcp 0.2.22，5 工具（哑值 API key 握手）",
+        "context7": "HTTP 200 Context7 4.1.1（匿名 initialize 可达）"
+      }
+    }
+  }
+}

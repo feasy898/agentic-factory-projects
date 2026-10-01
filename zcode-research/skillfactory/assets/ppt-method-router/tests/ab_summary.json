@@ -1,0 +1,30 @@
+{
+  "tasks": 3,
+  "baselineMean": 8.666666666666666,
+  "treatmentMean": 8.666666666666666,
+  "delta": 0,
+  "winRate": 0.3333333333333333,
+  "verdicts": [
+    {
+      "task": "ab1-clear-single-category",
+      "baselineScore": 9,
+      "treatmentScore": 8,
+      "better": "baseline",
+      "reason": "两份产物对 rubric 4 项均 PASS，且经我亲自运行 `python package/scripts/route.py --input oracle/inputs/case9.txt` 独立证实：returncode=0，stdout 258 字节、恰 1 个换行、stderr 0 字节，JSON 可解析且键恰为 [confidence, method, reasons]，method=visual_report（与 oracle/out/labels.json index 8 的 case9 条目一致，我亲读核对），confidence=0.8（float，∈[0,1]），reasons 2 条非空且第 1 条点名「海报」、第 2 条披露置信度公式；3 次重跑逐字节一致。差异在证据完备性与报告结构：乙（baseline，9 分）三轮运行的 9 份原始捕获（stdout.txt/raw_stdout.txt/route-stdout.txt 各 258B、三份 stderr 各 0B）全部留存，我逐字节比对均与我实跑一致，复现性证据可独立复核；经 compare_case9.py 与 labels.json 程序化逐字段对照，并在 compare_result_run3.json 中诚实记录 match_reasons=false、all_three_match=false 且附注说明 rubric 不要求逐字一致（与我实测吻合，未掩盖）；content.md §六对 ask 三问有专门逐问回答；用任务材料参照值自校验所取 oracle 条目（oracle_method_equals_reference_visual_report=true）。甲（treatment，8 分）报告精炼准确，§3 逐字段对照表双侧原文并排最直观，裁定依据解读最深——其引用的 route.py:79-85（R3 单类命中分支，含 0.80+0.05×(命中词数−1) 公式）经我亲读属实，「醒目」不在词表经 grep 证实（0 次命中），oracle reasons 引用与原文逐字相符；但其声明的 3 次确定性重跑临时文件已清理（content.md §2.3 自述），复现性在产物内不可独立复核，仅留存 1 份捕获，且无对 ask 三问的专门回答节，§2.3「CRLF×1、LF×1」表述含糊（实测 1 个 \n，结论「恰一行」正确）。综上乙的可复核证据链更完整、对任务三问回应更直接，判乙更好。"
+    },
+    {
+      "task": "ab2-ambiguous-fallback",
+      "baselineScore": 8,
+      "treatmentScore": 9,
+      "better": "treatment",
+      "reason": "rubric 5 项双方均 PASS，经我亲自运行 `python package/scripts/route.py --input oracle/inputs/case11.txt`（3 次）独立证实：returncode 全 0，stdout 404 字节恰 1 行可解析 JSON、stderr 0 字节；method=editable_pptx（兜底，与 oracle/out/labels.json index 10 的 case11 条目一致，我亲读核对）；confidence=0.4（float，∈[0,1]，≤0.6）；reasons 2 条非空，含「未命中任何类别关键词（无信号）」与「按无信号兜底默认裁定…不代表有正向证据」，无任何非否定式命中声明，输出不含「产品介绍/团队情况」。双方留存输出与我实跑逐字节一致。乙（treatment，9 分）证据维度最多：独立复算 16 个信号词（route.py:28-35 词表 4+6+6，我亲读证实）命中=[]，从机制上证明确实无信号；verify_result.json 恰 24 项 checks 全过（我点数核实），含正文与 json.dumps 逐字节一致的契约验证及 0.4<R3 下限 0.80 的梯度论证；引用的 route.py:37-38/61-72/75/81 与 labels.json:91-98 经我亲读全部属实；5 份落盘 stdout 的完整 sha256 3a006ba7…744 与报告声称逐字符吻合；额外证实单条路由与 package/out/labels.json 批量产物一致。小瑕疵：§2「4 次运行」与 §6「第 1 次+4 次重跑」共 5 次的口径稍含糊。甲（baseline，8 分）最突出的是对任务重点「稳定」的论证——跨 3 个会话约 3.5 小时的 6 次执行，5 份跨代落盘 stdout 经我逐字节比对全部与我实跑一致；黑盒纪律下对「不读 oracle vs 需对照 labels.json」的限制冲突做了方法论讨论（§3/§9，含上一代更严格做法的如实披露）；verdict.json 的 positive_hit_occurrences=[] 与普通词专项检查直接回应 rubric 第 2、4 项。扣分：capture_record.json 保留其 _run_capture.py 内嵌 labels 提取失败痕迹（labels_case11_entry_only=null），提取靠事后 _extract_label.py 补做，content.md §8 对该脚本「含 case11 单条提取」的描述未提失败；且黑盒下无「确实无信号」的正向复算，证据深度较乙浅。乙以机制级验证与零错误引用胜出。"
+    },
+    {
+      "task": "ab3-mixed-priority",
+      "baselineScore": 9,
+      "treatmentScore": 9,
+      "better": "tie",
+      "reason": "rubric 5 项双方均 PASS，经我亲自运行 `python package/scripts/route.py --input oracle/inputs/case15.txt`（3 次）独立证实：returncode 全 0，stdout 599 字节恰 1 行可解析 JSON、stderr 0 字节；method=template_fill（与 oracle/out/labels.json case15 一致，我亲读）；confidence=0.65（float，∈[0,1]，≤0.75）；reasons 4 条同时披露两类命中（r0 命中[template_fill]关键词：品牌、r1 命中[visual_report]关键词：海报、一页）、含完整优先级链「template_fill > editable_pptx > visual_report 裁定为 template_fill」及冲突说明与人工复核建议。双方留存 stdout（treatment/stdout.raw、baseline/route-output-raw.txt）均与我实跑逐字节一致。甲（treatment，9 分）：verify_result.json 恰 28 项 checks 全过（我点数核实），含 16 信号词独立复算证明命中恰为品牌+海报+一页（无遗漏无编造，直接支撑任务重点「完整披露」）、公式复算 min(0.75, 0.60+0.05×(3−2))=0.65、reasons_no_fabricated_editable_hits；引用的 route.py:30/32/34/88/90 经我亲读源码全部属实；content.md §3 将 oracle reasons 4 条与 package 输出并排对照并如实指出 r3 措辞不同语义等价。弱点：复跑证据仅断言记录未落盘独立文件；confidence 低于清晰情形用公式论证（0.65<下限 0.80，数学上成立）而非实验实证。乙（baseline，9 分）：8 项机检 + labels-compare 6/6 true 全过；用自拟清晰输入做对照实验实证冲突压低置信度（template_fill/0.85 > 0.65，我复跑成功且留存文件与我复跑一致）；发现并隔离目录内遗留的上一轮自建 route.py/case15.txt 副本，4 个 sha256（遗留 e14f0e22…/5d20a28d… vs 权威 ce6c8fe2…/c180ebd4…）经我逐一复核全部属实，run-log.json 溯源哈希含本轮 stdout ff24f14f… 与我实跑完全一致；遗留 selftest 输出确系旧自建实现未被混用。弱点：本轮主命令仅单次运行（稳定性靠历史旁证）；机检较甲少、报告内无 oracle reasons 逐条并排。双方零引用错误、rubric 全过、各有一项对方不具备的实质强项（甲：任务重点的机制级证明+当场复跑；乙：rubric 第 4 项实验实证+溯源隔离），判 tie。"
+    }
+  ]
+}

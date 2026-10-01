@@ -1,0 +1,36 @@
+# run.log — 本次（当前代）执行记录
+日期：2026-09-29 · 本机 windev-01 · Python 3.12.10 · 工作目录 = skillfactory/assets/ppt-method-router
+
+## 命令与结果（按执行顺序）
+
+1) 任务指定命令（stdout/stderr 重定向落盘到本目录，保证产物与判定同源）：
+   $ python package/scripts/route.py --input oracle/inputs/case11.txt  > baseline/stdout.raw 2> baseline/stderr.txt
+   → EXIT_CODE=0
+   → stdout.raw = 404 字节 / 1 行；stderr.txt = 0 字节（空）
+
+2) rubric 校验（verify.py，只读取 stdout.raw，不触碰 package/ 与 oracle/）：
+   $ python baseline/verify.py  > baseline/verify.log
+   → VERIFY_EXIT=0，11/11 项 PASS（ALL_PASS），明细见 verify.log
+
+3) 复跑（稳定性确认）：
+   $ python package/scripts/route.py --input oracle/inputs/case11.txt > baseline/stdout.rerun 2>&1
+   → RERUN_EXIT=0
+   $ diff baseline/stdout.raw baseline/stdout.rerun
+   → 输出为空，RERUN_IDENTICAL=yes（两次运行 404 字节逐字节一致）
+
+4) 副产物排查（route.py 是否在工作目录留下文件）：
+   $ find . -maxdepth 1 -type f -mmin -5
+   → 无任何输出：route.py 未产生 docx/pptx/xlsx 或其他中间文件，仅输出一行 JSON 裁定
+
+5) 普通词误报检查（直接在输出原文上 grep 计数）：
+   产品介绍 = 0 次；团队情况 = 0 次；看着办 = 0 次
+   → 输出中根本未出现这些词，更未将其报为任何类别关键词命中
+
+6) 与上一代运行的对照（本目录曾有一份 2026-09-29 04:15 的先前尝试产物，已备份至 previous-attempt/）：
+   $ diff previous-attempt/route-stdout.txt stdout.raw
+   → 逐字节一致：两次独立运行（间隔约 1.5 小时）结果完全相同，进一步支持「稳定落到兜底」
+
+## 公平性限制的执行情况
+
+- 未读取 package/、oracle/、spec.md 的任何文件内容（仅按任务指定命令执行其中的脚本与输入）。
+- oracle/out/labels.json 未读取；对照所用的参照判定（editable_pptx / 0.4 兜底）取自任务材料原文。

@@ -1,0 +1,48 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v3/assets/prompt-regression/eval",
+  "candidate": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\pr_negatives\\red_empty",
+  "reference": "skillfactory/v3/assets/prompt-regression/oracle",
+  "candidate_layout": "none",
+  "resolved_via": "none",
+  "reference_resolved_via": "direct",
+  "self_eval": false,
+  "sampled_ids": [],
+  "ok": false,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 0,
+      "failed": 4
+    },
+    "items": 0,
+    "domains": {},
+    "checks_in_golden": 0,
+    "identical_vs_reference": null
+  },
+  "checks": [
+    {
+      "name": "validate_all_green",
+      "passed": false,
+      "detail": "前置失败：被测产物根未解析出 validate.py + golden.json；已尝试: C:\\Users\\Administrator\\AppData\\Local\\Temp\\pr_negatives\\red_empty\\golden.json; C:\\Users\\Administrator\\AppData\\Local\\Temp\\pr_negatives\\red_empty\\validate.py; C:\\Users\\Administrator\\AppData\\Local\\Temp\\pr_negatives\\red_empty\\package\\golden.json; C:\\Users\\Administrator\\AppData\\Local\\Temp\\pr_negatives\\red_empty\\package\\validate.py",
+      "candidate_layout": "none",
+      "resolved_via": "none"
+    },
+    {
+      "name": "domain_coverage_per_spec",
+      "passed": false,
+      "detail": "前置失败：golden.json 无法加载或无 items",
+      "domains": {}
+    },
+    {
+      "name": "no_duplicate_vs_reference",
+      "passed": false,
+      "detail": "前置失败：被测 golden.json 无法加载"
+    },
+    {
+      "name": "sampled_checks_decidable",
+      "passed": false,
+      "detail": "前置失败：被测 golden.json 无法加载"
+    }
+  ]
+}

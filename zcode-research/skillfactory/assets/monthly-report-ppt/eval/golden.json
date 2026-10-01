@@ -1,0 +1,70 @@
+{
+  "skill": "monthly-report-ppt（月度汇报生成器：Excel 台账进、3 张图表 + 4 页 PPT + summary.json 出，确定性可复现）",
+  "eval_inputs": [
+    {
+      "case": "case1",
+      "input": "oracle/inputs/case1.xlsx",
+      "output": "oracle/out/case1"
+    },
+    {
+      "case": "case2",
+      "input": "oracle/inputs/case2.xlsx",
+      "output": "oracle/out/case2"
+    },
+    {
+      "case": "case3",
+      "input": "oracle/inputs/case3.xlsx",
+      "output": "oracle/out/case3"
+    }
+  ],
+  "ab_tasks": [
+    {
+      "id": "ab1-dirty-dedup-cleaning",
+      "instruction": "A/B 对照清洗口径：让被测技能与参照实现分别处理 oracle/inputs/case2.xlsx（脏数据最重的一份：22 条数据中含 5 条完全重复行、1 条空行、字符串日期 2026/07/18 与 2026年7月25日、不可解析日期「待定」、数量为字符串 \"6\"、缺失类别/状态各 1 行），得到两份 汇报.pptx 与 summary.json，逐项对照两边的清洗口径与关键数字，判定被测产物是否与参照同口径、可否替代参照交付。",
+      "input": "oracle/inputs/case2.xlsx",
+      "rubric": [
+        "summary.json 四项行数一致：原始行数=21、重复行数=5、空行数=1、去重后行数=16（被测与参照一致，数值容差 5% 内视为一致）",
+        "重复行判定正确：字符串日期 2026/07/18 与日期单元格 2026-07-18 的同名同行只计 1 条（可解析日期在去重键中被归一化），未把重复行二次计入合计",
+        "数量口径正确：字符串 \"6\" 按 6 计入，数量合计=67，缺失数量行数=0；不可解析日期「待定」行不计入月度合计（缺失日期行数=2）",
+        "缺失归桶正确：缺失类别归「未分类」、缺失状态归「未知」，且两者出现在类别明细表格/状态占比图中，完成率=56.2%（9/16）",
+        "两份产物各 5 个文件齐全，PPT 页数≥4 且含月度趋势/类别分布图表，中文字体无乱码方块"
+      ]
+    },
+    {
+      "id": "ab2-small-negative-sample",
+      "instruction": "A/B 对照小样本与负数场景：让被测技能与参照实现分别处理 oracle/inputs/case3.xlsx（仅 9 条数据、去重后 7 条，含 -3 负数数量与 2 条重复行），对照两边图表对负数/小样本的渲染质量与文案数字准确性，判定哪份产物可直接用于汇报。",
+      "input": "oracle/inputs/case3.xlsx",
+      "rubric": [
+        "关键数字正确：数量合计=22（负数 -3 参与求和而非被丢弃或报警中断）、月份数=2（2026-08、2026-09）、去重后 7 条、完成率=57.1%（4/7）",
+        "月度趋势图负数渲染正常：坐标轴负号不是乱码方块（axes.unicode_minus 已关闭），数据点数值标注与月度数量合计（2026-08=6、2026-09=16）一致",
+        "并列类别排序口径一致：需求开发与线上运维并列 2 条时，按（条数降序、名称升序）取第一为「线上运维」",
+        "PPT 结论页数字与 summary.json 完全一致（有效 7 条、完成率 57.1%），不出现编造或四舍五入链路错误的数字",
+        "两份产物均 5 个文件齐全、图表中文无乱码，任一方缺文件或数字对不上即判该方不合格"
+      ]
+    },
+    {
+      "id": "ab3-determinism-structure",
+      "instruction": "A/B 对照确定性与结构完整性：让被测技能与参照实现分别处理 oracle/inputs/case1.xlsx 并各连续运行两遍，对照两边的产物确定性（同输入两遍是否逐字节一致）与 PPT 结构完整性，判定被测技能是否满足「可分发资产」的确定性交付要求。",
+      "input": "oracle/inputs/case1.xlsx",
+      "rubric": [
+        "确定性：同输入连续运行两遍，5 个产物文件的 md5 逐字节一致（PPT 内不得含当前时间、随机内容等不可复现源）",
+        "PPT 结构：16:9、恰 4 页，语义依次为 封面（含数据来源与统计区间 2026-07 ~ 2026-09）/数据概览（内嵌月度趋势图）/类别明细（4 列表格含合计行 + 内嵌类别分布图）/结论与下月计划（左右两栏）",
+        "summary.json 与独立重算一致：原始 25、重复 3、去重 22、数量合计 78、完成率 63.6%、条目最多类别「线上运维」（并列 7/7 时按名称序取第一）",
+        "缺失值口径如实呈现：缺失日期 1 行未计入月度趋势（月度合计和 74 < 数量合计 78）、缺失数量 1 行按 0 计，结论页数据质量条目写明",
+        "三张图表 PNG（月度趋势/类别分布/状态占比）齐全且中文渲染正常，状态占比饼图百分比标注与状态条目数一致"
+      ]
+    },
+    {
+      "id": "ab4-deliverable-layout-selfeval",
+      "instruction": "A/B 对照交付布局与自评（v1.1 新增，针对\"只交脚本、从未运行\"失败模式）：要求被测技能以 package/scripts/monthly_report.py 为唯一入口，在资产根目录下对 oracle/inputs/case1.xlsx、case2.xlsx、case3.xlsx 三个输入逐个实际运行（--outdir 依次为 package/out/case1、package/out/case2、package/out/case3，单元目录名与参照 oracle/out 下同名），随后运行 python eval/runner.py package/out oracle/out 做确定性评测；参照实现产物已在 oracle/out 预置。判定被测交付是否满足 spec §12 V1–V5（交付三件套齐全、脚本真实跑通、单元布局正确、自评 exit 0）。",
+      "input": "oracle/inputs/case1.xlsx",
+      "rubric": [
+        "被测产物按 case 分目录齐全：package/out/case1、case2、case3 三个目录各恰含 5 个冻结名产物（月度趋势.png/类别分布.png/状态占比.png/汇报.pptx/summary.json），直接位于单元目录下无更深嵌套；被测目录为空、缺目录或产物嵌套导致 runner units_found=false 即判不合格",
+        "三个单元目录名与参照 oracle/out 的 case1/case2/case3 一一同名配对，python eval/runner.py package/out oracle/out 输出 ok=true 且 exit 0，五类检查对每个单元全部 pass=true",
+        "三个 case 的 summary.json 分别与 runner 独立重算一致（容差 5%），并与 spec §7 期望表逐项相符（case1 原始25/重复3/合计78；case2 原始21/重复5/空行1/合计67；case3 原始9/重复2/合计22）",
+        "被测技能为真实运行产物而非人工拼装：package/scripts/monthly_report.py 可通过 python -m py_compile，且能以 contract §2 命令行（--input/--outdir）直接运行成功退出码 0；package/ 三件套（SKILL.md、scripts/monthly_report.py、requirements.txt）齐全",
+        "评测基准未被污染：oracle/ 目录（inputs 与 out）在评测前后内容不变，被测产物全部位于 package/out 之下"
+      ]
+    }
+  ]
+}

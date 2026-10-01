@@ -1,0 +1,79 @@
+{
+  "recordedAt": "2026-09-28T11:39:07.504Z",
+  "recordRaw": false,
+  "command": "reset-status",
+  "dryRun": false,
+  "request": {
+    "method": "GET",
+    "url": "https://zcode.z.ai/api/v1/coding-plan/reset/status",
+    "headers": {
+      "User-Agent": "ZCode/3.14.3",
+      "HTTP-Referer": "https://zcode.z.ai",
+      "X-Title": "Z Code@electron",
+      "X-ZCode-App-Version": "3.14.3",
+      "X-Platform": "win32-x64",
+      "X-Os-Category": "windows",
+      "X-Client-Language": "unknown",
+      "X-Client-Timezone": "Asia/Shanghai",
+      "x-request-id": "24aa0234-cfed-412c-9e41-d82ed8de30cb",
+      "Authorization": "Bearer eyJh…(211 chars, masked)",
+      "X-Bigmodel-Authorization": "eyJhbGciOiJ…(335 chars, masked)",
+      "Bigmodel-Target-Type": "PERSONAL"
+    }
+  },
+  "response": {
+    "status": 200,
+    "requestId": "2026092811390711cd2affa193e0f3d3db",
+    "body": {
+      "code": 0,
+      "msg": "success",
+      "data": {
+        "available_five_hour_resets": [
+          {
+            "expire_at": 1790596970000
+          },
+          {
+            "expire_at": 1792320591000
+          },
+          {
+            "expire_at": 1793156762000
+          },
+          {
+            "expire_at": 1793156762000
+          },
+          {
+            "expire_at": 1793156762000
+          },
+          {
+            "expire_at": 1793156762000
+          }
+        ],
+        "available_week_resets": [
+          {
+            "expire_at": 1792316991000
+          },
+          {
+            "expire_at": 1793156762000
+          },
+          {
+            "expire_at": 1793156762000
+          },
+          {
+            "expire_at": 1793156762000
+          },
+          {
+            "expire_at": 1793156762000
+          }
+        ],
+        "latest_five_hour_reset_history": {
+          "used_at": 1789879373000
+        },
+        "latest_week_reset_history": {
+          "used_at": 1790053820000
+        },
+        "has_unread_history": false
+      },
+      "logid": "2026092811390711cd2affa193e0f3d3db"
+    }
+  }
+}

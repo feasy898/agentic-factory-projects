@@ -1,0 +1,93 @@
+{
+  "template": "请示函",
+  "title": "关于延期举办季度评审会的请示",
+  "filled_fields": [
+    "请示事由",
+    "请示缘由",
+    "请示单位",
+    "联系人"
+  ],
+  "missing_fields": [
+    "主送机关",
+    "请示事项",
+    "联系电话",
+    "成文日期"
+  ],
+  "fields": [
+    {
+      "name": "请示事由",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "延期举办季度评审会"
+    },
+    {
+      "name": "主送机关",
+      "required": true,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "以____占位"
+    },
+    {
+      "name": "请示缘由",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "因关键评审人出差，原定会议时间无法保证评审质量。"
+    },
+    {
+      "name": "请示事项",
+      "required": true,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "以____占位"
+    },
+    {
+      "name": "请示单位",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "评测技术部"
+    },
+    {
+      "name": "联系人",
+      "required": false,
+      "kind": "text",
+      "status": "filled",
+      "value": "李工"
+    },
+    {
+      "name": "联系电话",
+      "required": false,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "留空（渲染为空字符串）"
+    },
+    {
+      "name": "成文日期",
+      "required": false,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "留空（渲染为空字符串）"
+    }
+  ],
+  "summary": {
+    "total": 8,
+    "filled": 4,
+    "missing": 4,
+    "missing_required": 2,
+    "missing_required_names": [
+      "主送机关",
+      "请示事项"
+    ],
+    "unknown_keys": []
+  },
+  "outputs": {
+    "docx": "oracle\\out\\请示函\\case2\\文书.docx",
+    "fields_json": "oracle\\out\\请示函\\case2\\fields.json"
+  }
+}

@@ -1,0 +1,3 @@
+usage: gen.py [-h] --platform {dy,video,wx,xhs} --topic TOPIC --points POINTS
+              --outdir OUTDIR
+gen.py: error: argument --platform: invalid choice: 'bilibili' (choose from dy, video, wx, xhs)

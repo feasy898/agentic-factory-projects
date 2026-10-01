@@ -1,0 +1,12 @@
+[PASS] stdout is exactly 1 line  |  line count = 1
+[PASS] stdout parses as JSON  |  keys = ['confidence', 'method', 'reasons']
+[PASS] method == editable_pptx  |  method = 'editable_pptx'
+[PASS] confidence is numeric in [0,1]  |  confidence = 0.4 (type float)
+[PASS] confidence <= 0.6 (low, below clear-signal cases)  |  confidence = 0.4
+[PASS] reasons non-empty list of non-empty strings  |  2 reason(s)
+[PASS] reasons state no keyword hit / no signal  |  contains 未命中 + 无信号
+[PASS] reasons state fallback default verdict  |  contains 兜底 + editable_pptx
+[PASS] no positive keyword-hit claim (no fabricated hits)  |  suspects: none
+[PASS] ordinary words 产品介绍/团队情况 not reported as category-keyword hits  |  产品介绍/团队情况 appear only as the input being described, never as a hit
+[PASS] no matched/keywords field asserting hits  |  top-level keys = ['confidence', 'method', 'reasons']
+ALL_PASS

@@ -1,0 +1,144 @@
+{
+  "command": "python.exe package\\scripts\\route.py --input oracle\\inputs\\case11.txt",
+  "cwd": "skillfactory/assets/ppt-method-router/",
+  "runs": 4,
+  "stdout": {
+    "method": "editable_pptx",
+    "confidence": 0.4,
+    "reasons": [
+      "未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个",
+      "按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行"
+    ]
+  },
+  "oracle_case11": {
+    "case": "case11",
+    "method": "editable_pptx",
+    "confidence": 0.4,
+    "reasons": [
+      "未命中任何类别关键词（无信号），按兜底规则默认裁定 editable_pptx(数据驱动可编辑汇报)，置信度低"
+    ]
+  },
+  "checks": [
+    {
+      "check": "exit_code_0",
+      "passed": true,
+      "detail": "run1 returncode=0（run2-4 亦全为 0）"
+    },
+    {
+      "check": "stdout_one_line",
+      "passed": true,
+      "detail": "行数=1，以恰一个 LF 结尾=True，stdout 字节数=404"
+    },
+    {
+      "check": "stdout_parseable_json",
+      "passed": true,
+      "detail": "json.loads ok"
+    },
+    {
+      "check": "stdout_is_exactly_one_json_line",
+      "passed": true,
+      "detail": "正文与单行 JSON 逐字节一致=True，行终止符=b'\\r\\n'（Windows os.linesep），恰 1 个行终止符=True"
+    },
+    {
+      "check": "stderr_empty",
+      "passed": true,
+      "detail": "run1 stderr 字节数=0"
+    },
+    {
+      "check": "fallback_stable_across_reruns",
+      "passed": true,
+      "detail": "4 次运行 stdout sha256 全部一致: 3a006ba77732a9063b7e588a1445ed39fab58c8751ca6326450e168156f13744"
+    },
+    {
+      "check": "method_is_editable_pptx",
+      "passed": true,
+      "detail": "method='editable_pptx'"
+    },
+    {
+      "check": "method_in_enum",
+      "passed": true,
+      "detail": "method 属于三值枚举"
+    },
+    {
+      "check": "confidence_in_0_1",
+      "passed": true,
+      "detail": "confidence=0.4（数值型，在 [0,1] 内）"
+    },
+    {
+      "check": "confidence_le_0.6",
+      "passed": true,
+      "detail": "confidence=0.4 <= 0.6（rubric 低置信线）"
+    },
+    {
+      "check": "confidence_below_single_hit_floor",
+      "passed": true,
+      "detail": "0.4 < R3 单类命中下限 0.80（package/scripts/route.py:81）"
+    },
+    {
+      "check": "confidence_equals_r5_fallback",
+      "passed": true,
+      "detail": "confidence 恰为 R5 无信号兜底固定值 0.4（SKILL.md §4 规则3 / route.py:38）"
+    },
+    {
+      "check": "reasons_non_empty_strings",
+      "passed": true,
+      "detail": "reasons=2 条且均为非空字符串"
+    },
+    {
+      "check": "reasons_state_no_signal",
+      "passed": true,
+      "detail": "reasons 含「未命中任何类别关键词」「无信号」表述"
+    },
+    {
+      "check": "reasons_state_fallback",
+      "passed": true,
+      "detail": "reasons 含「兜底默认裁定 editable_pptx」表述"
+    },
+    {
+      "check": "reasons_no_fabricated_hit_lines",
+      "passed": true,
+      "detail": "reasons 中不存在「命中[类别]关键词：…」行（route.py:75 格式）"
+    },
+    {
+      "check": "keyword_table_matches_implementation",
+      "passed": true,
+      "detail": "独立复算所用 16 词表与 route.py:28-35 的 RULES 完全一致=True"
+    },
+    {
+      "check": "independent_recompute_zero_hits",
+      "passed": true,
+      "detail": "对 case11 文本独立复算 16 个信号词子串匹配，命中=[]"
+    },
+    {
+      "check": "plain_words_not_keywords",
+      "passed": true,
+      "detail": "「产品介绍/团队情况」等普通词均不在 route.py 关键词表内（route.py:30-34），误入=[]"
+    },
+    {
+      "check": "plain_words_not_claimed_as_hits",
+      "passed": true,
+      "detail": "reasons 未把普通词报为任何类别关键词的命中，误报=[]"
+    },
+    {
+      "check": "oracle_method_match",
+      "passed": true,
+      "detail": "package='editable_pptx' oracle='editable_pptx'（oracle/out/labels.json case11）"
+    },
+    {
+      "check": "oracle_confidence_match",
+      "passed": true,
+      "detail": "package=0.4 oracle=0.4"
+    },
+    {
+      "check": "oracle_reasons_semantics",
+      "passed": true,
+      "detail": "oracle case11 reasons 同样写明无信号与兜底"
+    },
+    {
+      "check": "package_batch_consistent",
+      "passed": true,
+      "detail": "单条路由与 package 批量产物 case11 均为 editable_pptx / 0.4"
+    }
+  ],
+  "all_passed": true
+}

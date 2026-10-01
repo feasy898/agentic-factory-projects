@@ -1,0 +1,486 @@
+{
+  "unit_a": "tests\\ab\\ab5-determinism-layout-selfeval\\arm-a\\rep2\\_work\\run1\\会议通知\\case1",
+  "unit_b": "tests\\ab\\ab5-determinism-layout-selfeval\\arm-a\\rep2\\_work\\run2\\会议通知\\case1",
+  "fields_raw_identical": true,
+  "fields_raw_sha256": [
+    "f21e402b9a8962c10cab3b90874d887246e49fc4ed4eb52b274f70b4e0feb266",
+    "f21e402b9a8962c10cab3b90874d887246e49fc4ed4eb52b274f70b4e0feb266"
+  ],
+  "fields_no_outputs_identical": true,
+  "fields_outputs": [
+    {
+      "docx": "package\\out\\会议通知\\case1\\文书.docx",
+      "fields_json": "package\\out\\会议通知\\case1\\fields.json"
+    },
+    {
+      "docx": "package\\out\\会议通知\\case1\\文书.docx",
+      "fields_json": "package\\out\\会议通知\\case1\\fields.json"
+    }
+  ],
+  "docx_semantic_signature_identical": true,
+  "docx_signature_sha256": [
+    "f101014658b30c93ddb9bf94c53d1b5815c4ee8dfee44d86ca8f4ead44a02bd1",
+    "f101014658b30c93ddb9bf94c53d1b5815c4ee8dfee44d86ca8f4ead44a02bd1"
+  ],
+  "zip_entry_names_identical": true,
+  "zip_entry_timestamps_identical": false,
+  "docx_raw_identical": false,
+  "signature_a": {
+    "geometry": {
+      "page_w_cm": 21.001,
+      "page_h_cm": 29.7,
+      "top_cm": 3.701,
+      "bottom_cm": 3.5,
+      "left_cm": 2.799,
+      "right_cm": 2.6
+    },
+    "n_paras": 12,
+    "paragraphs": [
+      {
+        "text": "关于召开三季度质量评审会的通知",
+        "align": "CENTER",
+        "firstLineChars": "",
+        "right_char_twips": null,
+        "line": null,
+        "lineRule": null,
+        "runs": [
+          {
+            "text": "关于召开三季度质量评审会的通知",
+            "eastAsia": "黑体",
+            "ascii": "黑体",
+            "hAnsi": "黑体",
+            "size_pt": 22.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "各部门、各项目组：",
+        "align": "None",
+        "firstLineChars": "",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "各部门、各项目组：",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "会议时间：2026年10月9日（周五）14:00",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "会议时间：2026年10月9日（周五）14:00",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "会议地点：3 号楼 501 会议室",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "会议地点：3 号楼 501 会议室",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "参会人员：各部门负责人、各项目组 PM",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "参会人员：各部门负责人、各项目组 PM",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "会议议题：三季度评测结果复盘与四季度计划",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "会议议题：三季度评测结果复盘与四季度计划",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "一、会议要求",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "一、会议要求",
+            "eastAsia": "黑体",
+            "ascii": "黑体",
+            "hAnsi": "黑体",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "1．会前提交本部门质量简报",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "1．会前提交本部门质量简报",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "2．迟到 10 分钟以上按缺席处理",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "2．迟到 10 分钟以上按缺席处理",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "联系人：李工　　联系电话：010-88886666",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "联系人：李工　　联系电话：010-88886666",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "评测技术部",
+        "align": "RIGHT",
+        "firstLineChars": "",
+        "right_char_twips": 640,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "评测技术部",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "2026年9月28日",
+        "align": "RIGHT",
+        "firstLineChars": "",
+        "right_char_twips": 640,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "2026年9月28日",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      }
+    ]
+  },
+  "signature_b": {
+    "geometry": {
+      "page_w_cm": 21.001,
+      "page_h_cm": 29.7,
+      "top_cm": 3.701,
+      "bottom_cm": 3.5,
+      "left_cm": 2.799,
+      "right_cm": 2.6
+    },
+    "n_paras": 12,
+    "paragraphs": [
+      {
+        "text": "关于召开三季度质量评审会的通知",
+        "align": "CENTER",
+        "firstLineChars": "",
+        "right_char_twips": null,
+        "line": null,
+        "lineRule": null,
+        "runs": [
+          {
+            "text": "关于召开三季度质量评审会的通知",
+            "eastAsia": "黑体",
+            "ascii": "黑体",
+            "hAnsi": "黑体",
+            "size_pt": 22.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "各部门、各项目组：",
+        "align": "None",
+        "firstLineChars": "",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "各部门、各项目组：",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "会议时间：2026年10月9日（周五）14:00",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "会议时间：2026年10月9日（周五）14:00",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "会议地点：3 号楼 501 会议室",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "会议地点：3 号楼 501 会议室",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "参会人员：各部门负责人、各项目组 PM",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "参会人员：各部门负责人、各项目组 PM",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "会议议题：三季度评测结果复盘与四季度计划",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "会议议题：三季度评测结果复盘与四季度计划",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "一、会议要求",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "一、会议要求",
+            "eastAsia": "黑体",
+            "ascii": "黑体",
+            "hAnsi": "黑体",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "1．会前提交本部门质量简报",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "1．会前提交本部门质量简报",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "2．迟到 10 分钟以上按缺席处理",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "2．迟到 10 分钟以上按缺席处理",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "联系人：李工　　联系电话：010-88886666",
+        "align": "None",
+        "firstLineChars": "200",
+        "right_char_twips": null,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "联系人：李工　　联系电话：010-88886666",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "评测技术部",
+        "align": "RIGHT",
+        "firstLineChars": "",
+        "right_char_twips": 640,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "评测技术部",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      },
+      {
+        "text": "2026年9月28日",
+        "align": "RIGHT",
+        "firstLineChars": "",
+        "right_char_twips": 640,
+        "line": "560",
+        "lineRule": "exact",
+        "runs": [
+          {
+            "text": "2026年9月28日",
+            "eastAsia": "仿宋",
+            "ascii": "Times New Roman",
+            "hAnsi": "Times New Roman",
+            "size_pt": 16.0,
+            "bold": null
+          }
+        ]
+      }
+    ]
+  }
+}

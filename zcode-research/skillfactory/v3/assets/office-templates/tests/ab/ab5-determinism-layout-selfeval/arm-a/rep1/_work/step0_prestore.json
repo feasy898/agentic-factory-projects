@@ -1,0 +1,18 @@
+{
+ "files_present": [
+  "fields.json",
+  "文书.docx"
+ ],
+ "state": {
+  "fields.json": {
+   "size": 2594,
+   "md5": "596379276c096786b4329c0b998f49e9",
+   "mtime": "2026-09-30T05:04:19"
+  },
+  "文书.docx": {
+   "size": 37200,
+   "md5": "8b409d27c4a6bfcf547573891cf8283b",
+   "mtime": "2026-09-30T05:04:19"
+  }
+ }
+}

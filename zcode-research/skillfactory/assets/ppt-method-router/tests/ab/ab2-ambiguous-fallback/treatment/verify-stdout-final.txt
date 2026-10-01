@@ -1,0 +1,31 @@
+command: package\scripts\route.py --input oracle\inputs\case11.txt（cwd=资产根）
+stdout(1 行): {"method": "editable_pptx", "confidence": 0.4, "reasons": ["未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个", "按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行"]}
+exit=0 stderr_bytes=0
+checks: 24/24 passed
+
+[PASS] exit_code_0 — run1 returncode=0（run2-4 亦全为 0）
+[PASS] stdout_one_line — 行数=1，以恰一个 LF 结尾=True，stdout 字节数=404
+[PASS] stdout_parseable_json — json.loads ok
+[PASS] stdout_is_exactly_one_json_line — 正文与单行 JSON 逐字节一致=True，行终止符=b'\r\n'（Windows os.linesep），恰 1 个行终止符=True
+[PASS] stderr_empty — run1 stderr 字节数=0
+[PASS] fallback_stable_across_reruns — 4 次运行 stdout sha256 全部一致: 3a006ba77732a9063b7e588a1445ed39fab58c8751ca6326450e168156f13744
+[PASS] method_is_editable_pptx — method='editable_pptx'
+[PASS] method_in_enum — method 属于三值枚举
+[PASS] confidence_in_0_1 — confidence=0.4（数值型，在 [0,1] 内）
+[PASS] confidence_le_0.6 — confidence=0.4 <= 0.6（rubric 低置信线）
+[PASS] confidence_below_single_hit_floor — 0.4 < R3 单类命中下限 0.80（package/scripts/route.py:81）
+[PASS] confidence_equals_r5_fallback — confidence 恰为 R5 无信号兜底固定值 0.4（SKILL.md §4 规则3 / route.py:38）
+[PASS] reasons_non_empty_strings — reasons=2 条且均为非空字符串
+[PASS] reasons_state_no_signal — reasons 含「未命中任何类别关键词」「无信号」表述
+[PASS] reasons_state_fallback — reasons 含「兜底默认裁定 editable_pptx」表述
+[PASS] reasons_no_fabricated_hit_lines — reasons 中不存在「命中[类别]关键词：…」行（route.py:75 格式）
+[PASS] keyword_table_matches_implementation — 独立复算所用 16 词表与 route.py:28-35 的 RULES 完全一致=True
+[PASS] independent_recompute_zero_hits — 对 case11 文本独立复算 16 个信号词子串匹配，命中=[]
+[PASS] plain_words_not_keywords — 「产品介绍/团队情况」等普通词均不在 route.py 关键词表内（route.py:30-34），误入=[]
+[PASS] plain_words_not_claimed_as_hits — reasons 未把普通词报为任何类别关键词的命中，误报=[]
+[PASS] oracle_method_match — package='editable_pptx' oracle='editable_pptx'（oracle/out/labels.json case11）
+[PASS] oracle_confidence_match — package=0.4 oracle=0.4
+[PASS] oracle_reasons_semantics — oracle case11 reasons 同样写明无信号与兜底
+[PASS] package_batch_consistent — 单条路由与 package 批量产物 case11 均为 editable_pptx / 0.4
+
+all_passed: True

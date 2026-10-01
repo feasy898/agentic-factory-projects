@@ -1,0 +1,33 @@
+{
+  "slug": "langgpt",
+  "name": "LangGPT（结构化提示词方法论）",
+  "tasks": 3,
+  "baselineMean": 8.666666666666666,
+  "treatmentMean": 8.666666666666666,
+  "delta": 0,
+  "winRate": 0.3333333333333333,
+  "accepted": false,
+  "verdicts": [
+    {
+      "task": "langgpt-t1",
+      "baseline": 9,
+      "treatment": 8,
+      "winner": "baseline",
+      "note": "两份产物均实际读取。结构：甲（arm-a/OUT.md）含 Role/Profile/Goal/Skills/Rules"
+    },
+    {
+      "task": "langgpt-t2",
+      "baseline": 8,
+      "treatment": 9,
+      "winner": "treatment",
+      "note": "两份产物均实际读取。①分支顺序与裁决：甲 Workflow 第 34 行「先查优先级 1 关键词，再查优先级 2，依序向"
+    },
+    {
+      "task": "langgpt-t3",
+      "baseline": 9,
+      "treatment": 9,
+      "winner": "tie",
+      "note": "两份产物均实际读取，甲的引用经我运行命令逐条核实（ls 确认 ASSET-DOC.md 与 _raw/skill_pkg"
+    }
+  ]
+}

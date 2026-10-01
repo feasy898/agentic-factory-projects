@@ -1,0 +1,41 @@
+{
+  "all_passed": true,
+  "checks": [
+    {
+      "id": "C1",
+      "desc": "stdout 恰一行可解析 JSON、无多余日志",
+      "passed": true,
+      "detail": "bytes=258, utf8_ok=True, bom=False, newline_count=1, ends_single_newline=True, content='{\"method\": \"visual_report\", \"confidence\": 0.8, \"reasons\": [\"命中[visual_report(图文海报/信息图)]关键词：海报\", \"仅单一类别命中、无信号冲突；置信度 = 0.80 + 0.05×(命中词数−1) 上限 0.95，本条命中 1 词 → 0.8\"]}\\r\\n'"
+    },
+    {
+      "id": "C2",
+      "desc": "JSON 可解析且恰含 method/confidence/reasons 三字段",
+      "passed": true,
+      "detail": "parse_ok=True, parse_err=None, keys=['confidence', 'method', 'reasons']"
+    },
+    {
+      "id": "C3",
+      "desc": "method 与 oracle case9 参照判定一致",
+      "passed": true,
+      "detail": "package_method='visual_report', oracle_case9_method='visual_report' (期望 visual_report), oracle_case9_confidence=0.8"
+    },
+    {
+      "id": "C4",
+      "desc": "confidence 为 [0,1] 内数值",
+      "passed": true,
+      "detail": "confidence=0.8, type=float, is_number=True, in_range=True"
+    },
+    {
+      "id": "C5",
+      "desc": "reasons 非空且明确提到命中关键词「海报」",
+      "passed": true,
+      "detail": "reasons_count=2, all_nonempty_str=True, mentions_haibao=True, reasons=['命中[visual_report(图文海报/信息图)]关键词：海报', '仅单一类别命中、无信号冲突；置信度 = 0.80 + 0.05×(命中词数−1) 上限 0.95，本条命中 1 词 → 0.8']"
+    },
+    {
+      "id": "EX",
+      "desc": "stderr 为空（无日志泄漏迹象）",
+      "passed": true,
+      "detail": "stderr_bytes=0"
+    }
+  ]
+}

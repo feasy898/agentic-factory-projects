@@ -1,0 +1,70 @@
+{
+  "slug": "hooks-mastery",
+  "name": "disler/claude-code-hooks-mastery（hooks 实战教学库）",
+  "assetType": "hook",
+  "tasks": 5,
+  "baselineMean": 9.1,
+  "treatmentMean": 9.8,
+  "delta": 0.7000000000000011,
+  "winRate": 0.6,
+  "reverseTasks": 0,
+  "accepted": false,
+  "driftNote": "抽检分差≤2，裁判一致",
+  "taskAggs": [
+    {
+      "id": "t1",
+      "baseMean": 9,
+      "treatMean": 10,
+      "majority": "treatment",
+      "repNotes": [
+        "rep1: 已实际核验：两份 JSON 片段均合法且结构满足 rubric（hooks.PreToolUse 为",
+        "rep2: 已实际核验（curl 上游仓库、uv run 端到端、python 正则/JSON 校验、sed 行"
+      ]
+    },
+    {
+      "id": "t2",
+      "baseMean": 9.5,
+      "treatMean": 9.5,
+      "majority": "tie",
+      "repNotes": [
+        "rep1: 已实际核验（sed 行号核对、curl 上游脚本、WebFetch 官方文档、python JSON",
+        "rep2: 已实际核验（python 解析两份配置、find 确认脚本不在本地、sed 逐行核对乙的全部行号引用"
+      ]
+    },
+    {
+      "id": "t3",
+      "baseMean": 9,
+      "treatMean": 10,
+      "majority": "treatment",
+      "repNotes": [
+        "rep1: 已实际核验（sed 逐行核对甲 14 处新行号引用、WebFetch code.claude.com",
+        "rep2: 已实际核验（sed 核对甲的 :322-325/:356-362 及此前各 ask 已验证的其余行号"
+      ]
+    },
+    {
+      "id": "t4",
+      "baseMean": 9,
+      "treatMean": 9.5,
+      "majority": "tie",
+      "repNotes": [
+        "rep1: 已实际核验（sed 行号核对、亲手复现 uv spawn 失败行为、WebFetch 六处官方文档原",
+        "rep2: 已实际核验（grep check.sh、shell 展开顺序实证、官方文档引用比对、上游脚本行号核对"
+      ]
+    },
+    {
+      "id": "t5",
+      "baseMean": 9,
+      "treatMean": 10,
+      "majority": "treatment",
+      "repNotes": [
+        "rep1: 已实际核验（sed 核对甲全部 12+ 处行号引用；亲手运行版本 A/B、修复版与防护版四个片段独立",
+        "rep2: 已实际核验（sed 核对甲新增引用 :455-459/:394-397/:569；亲手运行甲留在 v"
+      ]
+    }
+  ],
+  "correction": {
+    "corrected": true,
+    "date": "2026-09-30",
+    "reason": "v0.2 首测脚本 majority 计算把甲乙判反（(better==='a')!==swap 应为 ===swap）：均值与 delta 未受影响，majority/winRate/reverseTasks/accepted 原值全部反演；本文件按留档 taskAggs 逐任务翻转 majority 后确定性重算。"
+  }
+}

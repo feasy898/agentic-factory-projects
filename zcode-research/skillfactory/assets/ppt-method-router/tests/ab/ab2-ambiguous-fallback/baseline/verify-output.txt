@@ -1,0 +1,25 @@
+== AB2 case11 baseline verification ==
+command: python package/scripts/route.py --input oracle/inputs/case11.txt
+exit_code(first run / rerun): 0 / 0
+stdout bytes: 404 encoding: utf-8
+rerun bytes identical: True
+parsed: {"method": "editable_pptx", "confidence": 0.4, "reasons": ["未命中任何类别关键词（无信号）：意图文本中未出现 template_fill / editable_pptx / visual_report 三组信号词中的任何一个", "按无信号兜底默认裁定为 editable_pptx（数据驱动可编辑汇报），置信度固定低值 0.4，不代表有正向证据；建议先向用户澄清用途再进入执行"]}
+checks:
+  [PASS] rerun_exit_code_0
+  [PASS] rerun_bytes_identical_to_first_run
+  [PASS] stdout_single_line
+  [PASS] stdout_ends_with_single_trailing_newline
+  [PASS] stdout_parses_as_json
+  [PASS] keys_exactly_method_confidence_reasons
+  [PASS] stderr_empty
+  [PASS] method_matches_reference_editable_pptx
+  [PASS] method_in_contract_enum
+  [PASS] confidence_numeric_not_bool
+  [PASS] confidence_in_0_1
+  [PASS] confidence_low_le_0_6
+  [PASS] confidence_equals_reference_0_4
+  [PASS] reasons_nonempty_array
+  [PASS] reasons_state_no_keyword_hit_or_no_signal
+  [PASS] reasons_state_fallback_default
+  [PASS] reasons_no_fabricated_hit_claim
+OVERALL: PASS

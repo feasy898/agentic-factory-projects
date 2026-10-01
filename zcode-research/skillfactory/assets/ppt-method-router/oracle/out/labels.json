@@ -1,0 +1,194 @@
+[
+  {
+    "case": "case1",
+    "method": "editable_pptx",
+    "confidence": 0.95,
+    "reasons": [
+      "命中[editable_pptx(数据驱动可编辑汇报)]关键词：数据、表格、图表、汇报",
+      "仅命中单一类别信号，裁定为 editable_pptx(数据驱动可编辑汇报)，置信度随命中关键词数量递增"
+    ]
+  },
+  {
+    "case": "case2",
+    "method": "editable_pptx",
+    "confidence": 0.9,
+    "reasons": [
+      "命中[editable_pptx(数据驱动可编辑汇报)]关键词：数据、台账、月报",
+      "仅命中单一类别信号，裁定为 editable_pptx(数据驱动可编辑汇报)，置信度随命中关键词数量递增"
+    ]
+  },
+  {
+    "case": "case3",
+    "method": "template_fill",
+    "confidence": 0.85,
+    "reasons": [
+      "命中[template_fill(套用既有公司模板)]关键词：模板、品牌",
+      "仅命中单一类别信号，裁定为 template_fill(套用既有公司模板)，置信度随命中关键词数量递增"
+    ]
+  },
+  {
+    "case": "case4",
+    "method": "template_fill",
+    "confidence": 0.85,
+    "reasons": [
+      "命中[template_fill(套用既有公司模板)]关键词：模板、套用",
+      "仅命中单一类别信号，裁定为 template_fill(套用既有公司模板)，置信度随命中关键词数量递增"
+    ]
+  },
+  {
+    "case": "case5",
+    "method": "visual_report",
+    "confidence": 0.95,
+    "reasons": [
+      "命中[visual_report(图文海报/信息图)]关键词：海报、一页、朋友圈、转发",
+      "仅命中单一类别信号，裁定为 visual_report(图文海报/信息图)，置信度随命中关键词数量递增"
+    ]
+  },
+  {
+    "case": "case6",
+    "method": "visual_report",
+    "confidence": 0.85,
+    "reasons": [
+      "命中[visual_report(图文海报/信息图)]关键词：信息图、视觉",
+      "仅命中单一类别信号，裁定为 visual_report(图文海报/信息图)，置信度随命中关键词数量递增"
+    ]
+  },
+  {
+    "case": "case7",
+    "method": "editable_pptx",
+    "confidence": 0.9,
+    "reasons": [
+      "命中[editable_pptx(数据驱动可编辑汇报)]关键词：数据、图表、汇报",
+      "仅命中单一类别信号，裁定为 editable_pptx(数据驱动可编辑汇报)，置信度随命中关键词数量递增"
+    ]
+  },
+  {
+    "case": "case8",
+    "method": "template_fill",
+    "confidence": 0.85,
+    "reasons": [
+      "命中[template_fill(套用既有公司模板)]关键词：模板、公司VI",
+      "仅命中单一类别信号，裁定为 template_fill(套用既有公司模板)，置信度随命中关键词数量递增"
+    ]
+  },
+  {
+    "case": "case9",
+    "method": "visual_report",
+    "confidence": 0.8,
+    "reasons": [
+      "命中[visual_report(图文海报/信息图)]关键词：海报",
+      "仅命中单一类别信号，裁定为 visual_report(图文海报/信息图)，置信度随命中关键词数量递增"
+    ]
+  },
+  {
+    "case": "case10",
+    "method": "editable_pptx",
+    "confidence": 0.4,
+    "reasons": [
+      "未命中任何类别关键词（无信号），按兜底规则默认裁定 editable_pptx(数据驱动可编辑汇报)，置信度低"
+    ]
+  },
+  {
+    "case": "case11",
+    "method": "editable_pptx",
+    "confidence": 0.4,
+    "reasons": [
+      "未命中任何类别关键词（无信号），按兜底规则默认裁定 editable_pptx(数据驱动可编辑汇报)，置信度低"
+    ]
+  },
+  {
+    "case": "case12",
+    "method": "editable_pptx",
+    "confidence": 0.6,
+    "reasons": [
+      "命中[editable_pptx(数据驱动可编辑汇报)]关键词：数据",
+      "命中[visual_report(图文海报/信息图)]关键词：视觉",
+      "多类信号同时出现（editable_pptx > visual_report），按优先级 template_fill > editable_pptx > visual_report 裁定为 editable_pptx(数据驱动可编辑汇报)",
+      "冲突说明：visual_report(图文海报/信息图) 信号同样存在但优先级较低；若实际以该方式为准，建议人工复核"
+    ]
+  },
+  {
+    "case": "case13",
+    "method": "template_fill",
+    "confidence": 0.65,
+    "reasons": [
+      "命中[template_fill(套用既有公司模板)]关键词：模板",
+      "命中[editable_pptx(数据驱动可编辑汇报)]关键词：数据、月报",
+      "多类信号同时出现（template_fill > editable_pptx），按优先级 template_fill > editable_pptx > visual_report 裁定为 template_fill(套用既有公司模板)",
+      "冲突说明：editable_pptx(数据驱动可编辑汇报) 信号同样存在但优先级较低；若实际以该方式为准，建议人工复核"
+    ]
+  },
+  {
+    "case": "case14",
+    "method": "editable_pptx",
+    "confidence": 0.7,
+    "reasons": [
+      "命中[editable_pptx(数据驱动可编辑汇报)]关键词：数据、台账",
+      "命中[visual_report(图文海报/信息图)]关键词：海报、朋友圈",
+      "多类信号同时出现（editable_pptx > visual_report），按优先级 template_fill > editable_pptx > visual_report 裁定为 editable_pptx(数据驱动可编辑汇报)",
+      "冲突说明：visual_report(图文海报/信息图) 信号同样存在但优先级较低；若实际以该方式为准，建议人工复核"
+    ]
+  },
+  {
+    "case": "case15",
+    "method": "template_fill",
+    "confidence": 0.65,
+    "reasons": [
+      "命中[template_fill(套用既有公司模板)]关键词：品牌",
+      "命中[visual_report(图文海报/信息图)]关键词：海报、一页",
+      "多类信号同时出现（template_fill > visual_report），按优先级 template_fill > editable_pptx > visual_report 裁定为 template_fill(套用既有公司模板)",
+      "冲突说明：visual_report(图文海报/信息图) 信号同样存在但优先级较低；若实际以该方式为准，建议人工复核"
+    ]
+  },
+  {
+    "case": "case16",
+    "method": "template_fill",
+    "confidence": 0.65,
+    "reasons": [
+      "命中[template_fill(套用既有公司模板)]关键词：模板、套用",
+      "命中[editable_pptx(数据驱动可编辑汇报)]关键词：图表",
+      "多类信号同时出现（template_fill > editable_pptx），按优先级 template_fill > editable_pptx > visual_report 裁定为 template_fill(套用既有公司模板)",
+      "冲突说明：editable_pptx(数据驱动可编辑汇报) 信号同样存在但优先级较低；若实际以该方式为准，建议人工复核"
+    ]
+  },
+  {
+    "case": "case17",
+    "method": "editable_pptx",
+    "confidence": 0.65,
+    "reasons": [
+      "命中[editable_pptx(数据驱动可编辑汇报)]关键词：汇报",
+      "命中[visual_report(图文海报/信息图)]关键词：信息图、视觉",
+      "多类信号同时出现（editable_pptx > visual_report），按优先级 template_fill > editable_pptx > visual_report 裁定为 editable_pptx(数据驱动可编辑汇报)",
+      "冲突说明：visual_report(图文海报/信息图) 信号同样存在但优先级较低；若实际以该方式为准，建议人工复核"
+    ]
+  },
+  {
+    "case": "case18",
+    "method": "editable_pptx",
+    "confidence": 0.7,
+    "reasons": [
+      "命中[editable_pptx(数据驱动可编辑汇报)]关键词：月报",
+      "命中[visual_report(图文海报/信息图)]关键词：一页、朋友圈、转发",
+      "多类信号同时出现（editable_pptx > visual_report），按优先级 template_fill > editable_pptx > visual_report 裁定为 editable_pptx(数据驱动可编辑汇报)",
+      "冲突说明：visual_report(图文海报/信息图) 信号同样存在但优先级较低；若实际以该方式为准，建议人工复核"
+    ]
+  },
+  {
+    "case": "case19",
+    "method": "template_fill",
+    "confidence": 0.8,
+    "reasons": [
+      "命中[template_fill(套用既有公司模板)]关键词：品牌",
+      "仅命中单一类别信号，裁定为 template_fill(套用既有公司模板)，置信度随命中关键词数量递增"
+    ]
+  },
+  {
+    "case": "case20",
+    "method": "editable_pptx",
+    "confidence": 0.9,
+    "reasons": [
+      "命中[editable_pptx(数据驱动可编辑汇报)]关键词：数据、表格、汇报",
+      "仅命中单一类别信号，裁定为 editable_pptx(数据驱动可编辑汇报)，置信度随命中关键词数量递增"
+    ]
+  }
+]

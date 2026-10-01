@@ -1,0 +1,61 @@
+{
+  "tool": "validate.py",
+  "asset": "skillfactory/v3/assets/prompt-regression/oracle",
+  "golden": "golden.json",
+  "generated_at": "2026-09-29T20:08:49+00:00",
+  "ok": true,
+  "summary": {
+    "validator_checks": {
+      "total": 7,
+      "passed": 7,
+      "failed": 0
+    },
+    "items": 25,
+    "domains": {
+      "doc-writing": 6,
+      "table-data": 5,
+      "meeting-minutes": 3,
+      "ppt-outline": 3,
+      "email-comm": 4,
+      "process-spec": 4
+    },
+    "checks_in_golden": 125
+  },
+  "checks": [
+    {
+      "name": "load_json",
+      "passed": true,
+      "detail": "JSON 解析成功（golden.json）"
+    },
+    {
+      "name": "schema_top",
+      "passed": true,
+      "detail": "顶层结构合法（version=1.0，items=25 条）"
+    },
+    {
+      "name": "schema_items",
+      "passed": true,
+      "detail": "全部 25 题字段与类型合法（id/domain/instruction/checks）"
+    },
+    {
+      "name": "ids_unique",
+      "passed": true,
+      "detail": "25 个 id 全局唯一"
+    },
+    {
+      "name": "domain_coverage",
+      "passed": true,
+      "detail": "域覆盖: 文档写作=6/6、表格数据=5/5、会议纪要=3/3、PPT要点=3/3、邮件沟通=4/4、流程规范=4/4，共 25 题"
+    },
+    {
+      "name": "instruction_quality",
+      "passed": true,
+      "detail": "25 题 instruction 长度均在 [80,2000] 且含材料标记（min=128, max=313 字符）"
+    },
+    {
+      "name": "checks_shape",
+      "passed": true,
+      "detail": "每题 checks 数量区间 [5,5]，共 125 条 check，全部结构可判定（name/desc 唯一且合法，contains/regex 均带可编译 value）"
+    }
+  ]
+}

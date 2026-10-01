@@ -1,0 +1,112 @@
+{
+  "template": "会议通知",
+  "title": "关于召开三季度质量评审会的通知",
+  "filled_fields": [
+    "会议名称",
+    "召开单位",
+    "主送对象",
+    "会议时间",
+    "会议地点",
+    "参会人员",
+    "会议议题",
+    "会议要求",
+    "联系人",
+    "联系电话",
+    "发文日期"
+  ],
+  "missing_fields": [],
+  "fields": [
+    {
+      "name": "会议名称",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "三季度质量评审会"
+    },
+    {
+      "name": "召开单位",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "评测技术部"
+    },
+    {
+      "name": "主送对象",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "各部门、各项目组"
+    },
+    {
+      "name": "会议时间",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "2026年10月9日（周五）14:00"
+    },
+    {
+      "name": "会议地点",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "3 号楼 501 会议室"
+    },
+    {
+      "name": "参会人员",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "各部门负责人、各项目组 PM"
+    },
+    {
+      "name": "会议议题",
+      "required": false,
+      "kind": "text",
+      "status": "filled",
+      "value": "三季度评测结果复盘与四季度计划"
+    },
+    {
+      "name": "会议要求",
+      "required": false,
+      "kind": "list",
+      "status": "filled",
+      "value": [
+        "会前提交本部门质量简报",
+        "迟到 10 分钟以上按缺席处理"
+      ]
+    },
+    {
+      "name": "联系人",
+      "required": false,
+      "kind": "text",
+      "status": "filled",
+      "value": "李工"
+    },
+    {
+      "name": "联系电话",
+      "required": false,
+      "kind": "text",
+      "status": "filled",
+      "value": "010-88886666"
+    },
+    {
+      "name": "发文日期",
+      "required": false,
+      "kind": "text",
+      "status": "filled",
+      "value": "2026年9月28日"
+    }
+  ],
+  "summary": {
+    "total": 11,
+    "filled": 11,
+    "missing": 0,
+    "missing_required": 0,
+    "missing_required_names": [],
+    "unknown_keys": []
+  },
+  "outputs": {
+    "docx": "tests\\ab\\ab1-standard-four-templates\\arm-a\\rep1\\_work\\det1\\会议通知\\case1\\文书.docx",
+    "fields_json": "tests\\ab\\ab1-standard-four-templates\\arm-a\\rep1\\_work\\det1\\会议通知\\case1\\fields.json"
+  }
+}

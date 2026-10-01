@@ -1,0 +1,48 @@
+[A] outdir 清单: ['fields.json', '文书.docx']  恰2文件=True
+[B] outdir 清单: ['fields.json', '文书.docx']  恰2文件=True
+[基线] outdir 清单: ['fields.json', '文书.docx']  恰2文件=True
+fields A vs B（忽略outputs）   : 一致(0差异)
+fields A vs 基线（忽略outputs）: 一致(0差异)
+fields B vs 基线（忽略outputs）: 一致(0差异)
+docx 段落文本 A vs B    : 不一致
+docx 段落文本 A vs 基线 : 不一致
+  --- A 段落序列 ---
+   0: '研发部工作周报'
+   1: '填报人：王小明\u3000\u3000周期：2026-09-21 至 2026-09-27'
+   2: '一、本周工作内容'
+   3: '1．完成打分器 v0.9 与评测台联调'
+   4: '2．修复评测集 3 处标注不一致问题'
+   5: '二、下周工作计划'
+   6: '1．启动回归测试全量跑批'
+   7: '2．输出周度质量报告初稿'
+   8: '三、问题与需协调事项'
+   9: '1．测试机资源紧张，需协调一台 GPU 机器'
+   10: '报送日期：2026-09-28'
+  --- B 段落序列 ---
+   0: '研发部工作周报'
+   1: '填报人：王小明\u3000\u3000部门：研发部\u3000\u3000周期：2026-09-21 至 2026-09-27'
+   2: '一、本周工作内容'
+   3: '1．完成打分器 v0.9 与评测台联调'
+   4: '2．修复评测集 3 处标注不一致问题'
+   5: '二、下周工作计划'
+   6: '1．启动回归测试全量跑批'
+   7: '2．输出周度质量报告初稿'
+   8: '三、问题与需协调事项'
+   9: '1．测试机资源紧张，需协调一台 GPU 机器'
+   10: '报送日期：2026-09-28'
+verify.py [A]: rc=0
+PASS control\周报\case1
+
+共 1 份产物: PASS=1 FAIL=0
+verify.py [B]: rc=0
+PASS control\周报\case1
+
+共 1 份产物: PASS=1 FAIL=0
+sha256[A/文书.docx] = 87460c161f2aa6ef
+sha256[A/fields.json] = 0a3fdbf289e05b78
+sha256[B/文书.docx] = 00144f34e9f7b912
+sha256[B/fields.json] = 99e6829aa765b82b
+sha256[基线/文书.docx] = f0d11dc26c79961f
+sha256[基线/fields.json] = 3f657d4347b6f017
+[A] fields 顶层键=['fields', 'filled_fields', 'missing_fields', 'outputs', 'summary', 'template', 'title'] summary键=['filled', 'missing', 'missing_required', 'missing_required_names', 'total', 'unknown_keys']
+[B] fields 顶层键=['fields', 'filled_fields', 'missing_fields', 'outputs', 'summary', 'template', 'title'] summary键=['filled', 'missing', 'missing_required', 'missing_required_names', 'total', 'unknown_keys']

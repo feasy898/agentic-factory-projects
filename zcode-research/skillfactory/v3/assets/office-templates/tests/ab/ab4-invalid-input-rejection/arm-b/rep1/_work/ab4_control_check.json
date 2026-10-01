@@ -1,0 +1,144 @@
+{
+  "files_A": {
+    "files": [
+      "fields.json",
+      "文书.docx"
+    ],
+    "exactly_two": true
+  },
+  "files_B": {
+    "files": [
+      "fields.json",
+      "文书.docx"
+    ],
+    "exactly_two": true
+  },
+  "files_基线": {
+    "files": [
+      "fields.json",
+      "文书.docx"
+    ],
+    "exactly_two": true
+  },
+  "fields_diff_A_vs_B": [],
+  "fields_diff_A_vs_baseline": [],
+  "fields_diff_B_vs_baseline": [],
+  "docx_paras_A_vs_B": {
+    "A": [
+      "研发部工作周报",
+      "填报人：王小明　　周期：2026-09-21 至 2026-09-27",
+      "一、本周工作内容",
+      "1．完成打分器 v0.9 与评测台联调",
+      "2．修复评测集 3 处标注不一致问题",
+      "二、下周工作计划",
+      "1．启动回归测试全量跑批",
+      "2．输出周度质量报告初稿",
+      "三、问题与需协调事项",
+      "1．测试机资源紧张，需协调一台 GPU 机器",
+      "报送日期：2026-09-28"
+    ],
+    "B": [
+      "研发部工作周报",
+      "填报人：王小明　　部门：研发部　　周期：2026-09-21 至 2026-09-27",
+      "一、本周工作内容",
+      "1．完成打分器 v0.9 与评测台联调",
+      "2．修复评测集 3 处标注不一致问题",
+      "二、下周工作计划",
+      "1．启动回归测试全量跑批",
+      "2．输出周度质量报告初稿",
+      "三、问题与需协调事项",
+      "1．测试机资源紧张，需协调一台 GPU 机器",
+      "报送日期：2026-09-28"
+    ]
+  },
+  "docx_paras_A_vs_baseline": {
+    "A": [
+      "研发部工作周报",
+      "填报人：王小明　　周期：2026-09-21 至 2026-09-27",
+      "一、本周工作内容",
+      "1．完成打分器 v0.9 与评测台联调",
+      "2．修复评测集 3 处标注不一致问题",
+      "二、下周工作计划",
+      "1．启动回归测试全量跑批",
+      "2．输出周度质量报告初稿",
+      "三、问题与需协调事项",
+      "1．测试机资源紧张，需协调一台 GPU 机器",
+      "报送日期：2026-09-28"
+    ],
+    "B": [
+      "研发部工作周报",
+      "填报人：王小明　　部门：研发部　　周期：2026-09-21 至 2026-09-27",
+      "一、本周工作内容",
+      "1．完成打分器 v0.9 与评测台联调",
+      "2．修复评测集 3 处标注不一致问题",
+      "二、下周工作计划",
+      "1．启动回归测试全量跑批",
+      "2．输出周度质量报告初稿",
+      "三、问题与需协调事项",
+      "1．测试机资源紧张，需协调一台 GPU 机器",
+      "报送日期：2026-09-28"
+    ]
+  },
+  "verify_A": {
+    "rc": 0,
+    "out": "PASS control\\周报\\case1\n\n共 1 份产物: PASS=1 FAIL=0"
+  },
+  "verify_B": {
+    "rc": 0,
+    "out": "PASS control\\周报\\case1\n\n共 1 份产物: PASS=1 FAIL=0"
+  },
+  "sha256_16": {
+    "A/文书.docx": "87460c161f2aa6ef",
+    "A/fields.json": "0a3fdbf289e05b78",
+    "B/文书.docx": "00144f34e9f7b912",
+    "B/fields.json": "99e6829aa765b82b",
+    "基线/文书.docx": "f0d11dc26c79961f",
+    "基线/fields.json": "3f657d4347b6f017"
+  },
+  "keys_A": {
+    "top": [
+      "fields",
+      "filled_fields",
+      "missing_fields",
+      "outputs",
+      "summary",
+      "template",
+      "title"
+    ],
+    "summary": [
+      "filled",
+      "missing",
+      "missing_required",
+      "missing_required_names",
+      "total",
+      "unknown_keys"
+    ],
+    "outputs_ignored_paths": [
+      "docx",
+      "fields_json"
+    ]
+  },
+  "keys_B": {
+    "top": [
+      "fields",
+      "filled_fields",
+      "missing_fields",
+      "outputs",
+      "summary",
+      "template",
+      "title"
+    ],
+    "summary": [
+      "filled",
+      "missing",
+      "missing_required",
+      "missing_required_names",
+      "total",
+      "unknown_keys"
+    ],
+    "outputs_ignored_paths": [
+      "docx",
+      "fields_json"
+    ]
+  }
+}

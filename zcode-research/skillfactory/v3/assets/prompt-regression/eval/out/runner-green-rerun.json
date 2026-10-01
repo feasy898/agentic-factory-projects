@@ -1,0 +1,213 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v3/assets/prompt-regression/eval",
+  "candidate": "oracle",
+  "reference": "oracle",
+  "candidate_layout": "root",
+  "resolved_via": "direct",
+  "reference_resolved_via": "direct",
+  "self_eval": true,
+  "sampled_ids": [
+    "ppt-001",
+    "meeting-002",
+    "email-004"
+  ],
+  "ok": true,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0
+    },
+    "items": 25,
+    "domains": {
+      "doc-writing": 6,
+      "table-data": 5,
+      "meeting-minutes": 3,
+      "ppt-outline": 3,
+      "email-comm": 4,
+      "process-spec": 4
+    },
+    "checks_in_golden": 125,
+    "identical_vs_reference": 25
+  },
+  "checks": [
+    {
+      "name": "validate_all_green",
+      "passed": true,
+      "detail": "被测校验器全绿：7/7 项通过，items=25，checks_in_golden=125",
+      "candidate_layout": "root",
+      "resolved_via": "direct"
+    },
+    {
+      "name": "domain_coverage_per_spec",
+      "passed": true,
+      "detail": "域配比: 文档写作=6/6、表格数据=5/5、会议纪要=3/3、PPT要点=3/3、邮件沟通=4/4、流程规范=4/4，共 25 题（与 spec 一致）",
+      "domains": {
+        "doc-writing": 6,
+        "table-data": 5,
+        "meeting-minutes": 3,
+        "ppt-outline": 3,
+        "email-comm": 4,
+        "process-spec": 4
+      }
+    },
+    {
+      "name": "no_duplicate_vs_reference",
+      "passed": true,
+      "detail": "自评模式（被测黄金集与参照黄金集为同一文件）: 内部唯一性通过（25 条归一化唯一）；跨集查重按 spec §4.3 E2.3 豁免；相似度审计 max=1.0000",
+      "self_eval": true,
+      "identical_vs_reference": 25,
+      "identical_ids": [
+        "doc-001",
+        "doc-002",
+        "doc-003",
+        "doc-004",
+        "doc-005",
+        "doc-006",
+        "table-001",
+        "table-002",
+        "table-003",
+        "table-004",
+        "table-005",
+        "meeting-001",
+        "meeting-002",
+        "meeting-003",
+        "ppt-001",
+        "ppt-002",
+        "ppt-003",
+        "email-001",
+        "email-002",
+        "email-003",
+        "email-004",
+        "process-001",
+        "process-002",
+        "process-003",
+        "process-004"
+      ],
+      "max_similarity_vs_reference": 1.0,
+      "mean_similarity_vs_reference": 1.0
+    },
+    {
+      "name": "sampled_checks_decidable",
+      "passed": true,
+      "detail": "抽样 3 题（['ppt-001', 'meeting-002', 'email-004']）共 15 条 check 全部可判（种子 20260930；人工复核脚本化，明细见 samples 字段）",
+      "samples": [
+        {
+          "id": "ppt-001",
+          "domain": "ppt-outline",
+          "ok": true,
+          "question_problems": [],
+          "checks": [
+            {
+              "name": "structure",
+              "type": "semantic",
+              "ok": true,
+              "note": "semantic 判据具体可执行"
+            },
+            {
+              "name": "kpi",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "target",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "priorities",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "bullet-style",
+              "type": "semantic",
+              "ok": true,
+              "note": "semantic 判据具体可执行"
+            }
+          ]
+        },
+        {
+          "id": "meeting-002",
+          "domain": "meeting-minutes",
+          "ok": true,
+          "question_problems": [],
+          "checks": [
+            {
+              "name": "demand",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "commitment",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "deadline",
+              "type": "contains",
+              "ok": true,
+              "note": "contains 可判"
+            },
+            {
+              "name": "risk",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "three-sections",
+              "type": "semantic",
+              "ok": true,
+              "note": "semantic 判据具体可执行"
+            }
+          ]
+        },
+        {
+          "id": "email-004",
+          "domain": "email-comm",
+          "ok": true,
+          "question_problems": [],
+          "checks": [
+            {
+              "name": "effective-date",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "steps",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "consequence",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "support",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            },
+            {
+              "name": "subject",
+              "type": "regex",
+              "ok": true,
+              "note": "正向 regex 可判"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

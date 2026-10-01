@@ -1,0 +1,38 @@
+{
+  "tool": "healthcheck.py 1.0.0",
+  "target": "D:\\workspace\\zcode研究\\skillfactory\\dist\\meeting-minutes-skill",
+  "generated_at": "2026-09-30T08:44:54+0800",
+  "summary": {
+    "total": 5,
+    "pass": 5,
+    "fail": 0
+  },
+  "rating": "A",
+  "checks": [
+    {
+      "name": "skill_md_exists",
+      "pass": true,
+      "detail": "SKILL.md 存在（6605 字节）"
+    },
+    {
+      "name": "front_matter_fields",
+      "pass": true,
+      "detail": "front-matter 五字段齐全（name/version/license/description/permissions 均非空）"
+    },
+    {
+      "name": "eval_present",
+      "pass": true,
+      "detail": "eval/ 目录存在"
+    },
+    {
+      "name": "eval_smoke",
+      "pass": true,
+      "detail": "smoke exit=0 | cmd: python eval/runner.py reference/out reference/out | stdout 摘要: { \"ok\": true, \"checks\": [ { \"name\": \"case1/docx_opens_with_three_sections\", \"pass\": true, \"detail\": \"三节标题齐全（一/二/三）\" }, { \"name\": \"case1/todo_is_table_with_owner_deadline_columns\", \"pass\": true, \"detail\": \"待办表格表头=['事项', '负责人', '期限']（共 2 数据行）\" }, { \"name\": \"case1/summary_counts_match_docx\", \"pass\": true, \"detail\": \"json={\\\"决议事项\\\": 2, \\\"待办事项\\\": 2, \\\"风险与关注\\\": 3, \\\"合计\\\": 7} 与 docx 实际一致（决议 2 段、待办 2 行、风险…"
+    },
+    {
+      "name": "scripts_syntax",
+      "pass": true,
+      "detail": "scripts/ 下 2 个 *.py 全部语法可编译: scripts/gen_docx.py, scripts/minutes.py"
+    }
+  ]
+}

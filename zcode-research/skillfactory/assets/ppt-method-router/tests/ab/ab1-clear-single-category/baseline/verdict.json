@@ -1,0 +1,22 @@
+{
+  "case": "case9",
+  "command": "python package/scripts/route.py --input oracle/inputs/case9.txt",
+  "cwd": "skillfactory/assets/ppt-method-router",
+  "stdout": "{\"method\": \"visual_report\", \"confidence\": 0.8, \"reasons\": [\"命中[visual_report(图文海报/信息图)]关键词：海报\", \"仅单一类别命中、无信号冲突；置信度 = 0.80 + 0.05×(命中词数−1) 上限 0.95，本条命中 1 词 → 0.8\"]}\r\n",
+  "stderr": "",
+  "reference_from_task_brief": {
+    "method": "visual_report",
+    "confidence": 0.8
+  },
+  "checks": {
+    "stdout_is_single_parseable_json_line": true,
+    "keys_are_method_confidence_reasons": true,
+    "method_matches_reference_visual_report": true,
+    "confidence_is_numeric_in_0_1": true,
+    "confidence_equals_reference_0_8": true,
+    "reasons_nonempty": true,
+    "reasons_mention_poster_keyword": true,
+    "stderr_empty": true
+  },
+  "overall": "PASS"
+}

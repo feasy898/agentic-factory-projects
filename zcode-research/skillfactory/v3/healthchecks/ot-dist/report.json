@@ -1,0 +1,38 @@
+{
+  "tool": "healthcheck.py 1.0.0",
+  "target": "D:\\workspace\\zcode研究\\skillfactory\\dist\\office-templates-skill",
+  "generated_at": "2026-09-30T08:45:31+0800",
+  "summary": {
+    "total": 5,
+    "pass": 5,
+    "fail": 0
+  },
+  "rating": "A",
+  "checks": [
+    {
+      "name": "skill_md_exists",
+      "pass": true,
+      "detail": "SKILL.md 存在（10796 字节）"
+    },
+    {
+      "name": "front_matter_fields",
+      "pass": true,
+      "detail": "front-matter 五字段齐全（name/version/license/description/permissions 均非空）"
+    },
+    {
+      "name": "eval_present",
+      "pass": true,
+      "detail": "eval/ 目录存在"
+    },
+    {
+      "name": "eval_smoke",
+      "pass": true,
+      "detail": "smoke exit=0 | cmd: python eval/runner.py reference/out reference/out | stdout 摘要: { \"ok\": true, \"tested\": \"reference\\\\out\", \"reference\": \"reference\\\\out\", \"checks\": [ { \"name\": \"units_found\", \"pass\": true, \"detail\": \"8 个期望单元齐全: 周报/case1, 周报/case2, 请示函/case1, 请示函/case2, 会议通知/case1, 会议通知/case2, 工作总结/case1, 工作总结/case2\" }, { \"name\": \"products_exact\", \"pass\": true, \"detail\": \"每个单元目录恰含 文书.docx + fields.json\" }, { \"name\": \"reference_dir_has_units\", \"pass\": true, \"detail\": \"参照根 referen…"
+    },
+    {
+      "name": "scripts_syntax",
+      "pass": true,
+      "detail": "scripts/ 下 1 个 *.py 全部语法可编译: scripts/gen_doc.py"
+    }
+  ]
+}

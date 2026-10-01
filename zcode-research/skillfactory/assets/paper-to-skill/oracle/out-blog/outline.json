@@ -1,0 +1,76 @@
+{
+  "generator": "oracle.py",
+  "generator_version": "1.0.0",
+  "deterministic": true,
+  "source": "D:\\workspace\\zcode研究\\skillfactory\\assets\\paper-to-skill\\oracle\\inputs\\source-blog.md",
+  "source_url": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+  "source_title": "Equipping agents for the real world with Agent Skills (summary)",
+  "stats": {
+    "line_count": 54,
+    "char_count": 3943,
+    "h1_count": 1,
+    "h2_count": 6,
+    "h3_count": 1,
+    "h4_to_h6_count": 0,
+    "heading_count": 8,
+    "list_item_count": 14,
+    "unordered_list_item_count": 7,
+    "ordered_list_item_count": 7,
+    "code_block_count": 0,
+    "code_line_count": 0,
+    "code_block_languages": {},
+    "table_row_count": 0
+  },
+  "outline": [
+    {
+      "level": 1,
+      "text": "Equipping agents for the real world with Agent Skills (summary)",
+      "line": 2,
+      "children": [
+        {
+          "level": 2,
+          "text": "What Skills are",
+          "line": 6,
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "Structure of a skill",
+          "line": 10,
+          "children": [
+            {
+              "level": 3,
+              "text": "How it plays out in the context window",
+              "line": 21,
+              "children": []
+            }
+          ]
+        },
+        {
+          "level": 2,
+          "text": "Skills and code execution",
+          "line": 28,
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "Best practices for authoring and evaluating",
+          "line": 32,
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "Security considerations",
+          "line": 39,
+          "children": []
+        },
+        {
+          "level": 2,
+          "text": "Availability and roadmap",
+          "line": 43,
+          "children": []
+        }
+      ]
+    }
+  ]
+}

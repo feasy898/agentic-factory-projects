@@ -1,0 +1,198 @@
+{
+  "samples": [
+    {
+      "name": "filesystem",
+      "type": "stdio",
+      "status": "pass",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\officepack-samples-wel0d4a2"
+      ],
+      "server_info": {
+        "name": "secure-filesystem-server",
+        "version": "0.2.0"
+      },
+      "protocol_version": "2025-03-26",
+      "tool_count": 14,
+      "elapsed_s": 25.2,
+      "verdict": "stdio 握手成功（initialize 2025-03-26）"
+    },
+    {
+      "name": "excel",
+      "type": "stdio",
+      "status": "pass",
+      "command": [
+        "uvx",
+        "excel-mcp-server",
+        "stdio"
+      ],
+      "server_info": {
+        "description": "Create, read and edit Excel workbooks without Microsoft Excel.",
+        "name": "excel-mcp-server",
+        "title": "Excel MCP Server",
+        "version": "1.1.1",
+        "websiteUrl": "https://github.com/haris-musa/excel-mcp-server"
+      },
+      "protocol_version": "2025-03-26",
+      "tool_count": 26,
+      "elapsed_s": 19.2,
+      "verdict": "stdio 握手成功（initialize 2025-03-26）"
+    },
+    {
+      "name": "word",
+      "type": "stdio",
+      "status": "pass",
+      "command": [
+        "uvx",
+        "--from",
+        "office-word-mcp-server",
+        "word_mcp_server"
+      ],
+      "server_info": {
+        "name": "Word Document Server",
+        "version": "4.0.10"
+      },
+      "protocol_version": "2025-03-26",
+      "tool_count": 54,
+      "elapsed_s": 34.5,
+      "verdict": "stdio 握手成功（initialize 2025-03-26）"
+    },
+    {
+      "name": "powerpoint",
+      "type": "stdio",
+      "status": "pass",
+      "command": [
+        "uvx",
+        "--from",
+        "office-powerpoint-mcp-server",
+        "--with",
+        "mcp<2",
+        "ppt_mcp_server"
+      ],
+      "server_info": {
+        "name": "ppt-mcp-server",
+        "version": "1.30.0"
+      },
+      "protocol_version": "2025-03-26",
+      "tool_count": 37,
+      "elapsed_s": 16.5,
+      "verdict": "stdio 握手成功（initialize 2025-03-26）"
+    },
+    {
+      "name": "google-workspace",
+      "type": "stdio",
+      "status": "pass",
+      "command": [
+        "uvx",
+        "workspace-mcp"
+      ],
+      "server_info": {
+        "name": "google_workspace",
+        "version": "4.0.10"
+      },
+      "protocol_version": "2025-03-26",
+      "tool_count": 120,
+      "elapsed_s": 44.4,
+      "verdict": "stdio 握手成功（initialize 2025-03-26）"
+    },
+    {
+      "name": "gmail-official",
+      "type": "http",
+      "status": "pass",
+      "url": "https://gmailmcp.googleapis.com/mcp/v1",
+      "http_status": 200,
+      "content_type": "application/json; charset=UTF-8",
+      "server_info": {
+        "name": "StatelessServer",
+        "version": "ESF"
+      },
+      "protocol_version": "2025-03-26",
+      "verdict": "HTTP 200 + 合法 initialize result（匿名可达）",
+      "elapsed_s": 1.5
+    },
+    {
+      "name": "playwright",
+      "type": "stdio",
+      "status": "pass",
+      "command": [
+        "npx",
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "server_info": {
+        "name": "Playwright",
+        "version": "1.64.0-alpha-1790635538000"
+      },
+      "protocol_version": "2025-03-26",
+      "tool_count": 25,
+      "elapsed_s": 14.9,
+      "verdict": "stdio 握手成功（initialize 2025-03-26）"
+    },
+    {
+      "name": "excel-npm",
+      "type": "stdio",
+      "status": "pass",
+      "command": [
+        "npx",
+        "-y",
+        "@negokaz/excel-mcp-server"
+      ],
+      "server_info": {
+        "name": "excel-mcp-server",
+        "version": "0.12.0-SNAPSHOT-1ff4340"
+      },
+      "protocol_version": "2025-03-26",
+      "tool_count": 7,
+      "elapsed_s": 15.2,
+      "verdict": "stdio 握手成功（initialize 2025-03-26）"
+    },
+    {
+      "name": "tavily",
+      "type": "stdio",
+      "status": "pass",
+      "command": [
+        "npx",
+        "-y",
+        "tavily-mcp@latest"
+      ],
+      "server_info": {
+        "name": "tavily-mcp",
+        "version": "0.2.22"
+      },
+      "protocol_version": "2025-03-26",
+      "tool_count": 5,
+      "elapsed_s": 18.6,
+      "verdict": "stdio 握手成功（initialize 2025-03-26）"
+    },
+    {
+      "name": "context7",
+      "type": "http",
+      "status": "pass",
+      "url": "https://mcp.context7.com/mcp",
+      "http_status": 200,
+      "content_type": "text/event-stream",
+      "server_info": {
+        "name": "Context7",
+        "version": "4.1.1",
+        "websiteUrl": "https://context7.com",
+        "description": "Context7 provides up-to-date documentation and code examples for libraries and frameworks.",
+        "icons": [
+          {
+            "src": "https://context7.com/context7-icon-green.png",
+            "mimeType": "image/png"
+          }
+        ]
+      },
+      "protocol_version": "2025-03-26",
+      "verdict": "HTTP 200 + 合法 initialize result（匿名可达）",
+      "elapsed_s": 0.9
+    }
+  ],
+  "summary": {
+    "total": 10,
+    "passed": 10,
+    "failed": 0
+  }
+}

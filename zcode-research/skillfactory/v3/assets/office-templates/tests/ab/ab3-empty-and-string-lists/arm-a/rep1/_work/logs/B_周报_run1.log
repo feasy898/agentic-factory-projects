@@ -1,0 +1,6 @@
+$ C:\Program Files\Python312\python.exe D:\workspace\zcode研究\skillfactory\v3\assets\office-templates\oracle\oracle.py --template 周报 --data D:\workspace\zcode研究\skillfactory\v3\assets\office-templates\oracle\inputs\周报\case2.json --outdir D:\workspace\zcode研究\skillfactory\v3\assets\office-templates\tests\ab\ab3-empty-and-string-lists\arm-a\rep1\_work\B\run1\周报\case2
+--- exit=0 ---
+--- stdout ---
+OK template=周报 docx=D:\workspace\zcode研究\skillfactory\v3\assets\office-templates\tests\ab\ab3-empty-and-string-lists\arm-a\rep1\_work\B\run1\周报\case2\文书.docx fields=D:\workspace\zcode研究\skillfactory\v3\assets\office-templates\tests\ab\ab3-empty-and-string-lists\arm-a\rep1\_work\B\run1\周报\case2\fields.json filled=3 missing=4 missing_required=3
+
+--- stderr ---

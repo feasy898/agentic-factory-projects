@@ -1,0 +1,488 @@
+{
+ "groups": [
+  {
+   "group": "tested_run1_vs_run2",
+   "fields": {
+    "raw_bytes_equal": true,
+    "md5_a": "596379276c096786b4329c0b998f49e9",
+    "md5_b": "596379276c096786b4329c0b998f49e9",
+    "minus_outputs_equal": true
+   },
+   "docx": {
+    "raw_bytes_equal": false,
+    "md5_a": "c98151eb40bf81b12c4a201851490463",
+    "md5_b": "4e6b28a21f40f4f0832d6e7f1f5fa3cb",
+    "size_a": 37200,
+    "size_b": 37200,
+    "semantic_signature_equal": true,
+    "pgSz_equal": true,
+    "pgMar_equal": true,
+    "n_paragraphs": 12
+   },
+   "zip": {
+    "namelist_equal": true,
+    "n_entries": 17,
+    "content_identical_all_entries": true,
+    "entries_content_diff": [],
+    "entries_timestamp_diff": [
+     "[Content_Types].xml",
+     "_rels/.rels",
+     "docProps/core.xml",
+     "docProps/app.xml",
+     "word/document.xml",
+     "word/_rels/document.xml.rels",
+     "word/styles.xml",
+     "word/stylesWithEffects.xml",
+     "word/settings.xml",
+     "word/webSettings.xml",
+     "word/fontTable.xml",
+     "word/theme/theme1.xml",
+     "customXml/item1.xml",
+     "customXml/_rels/item1.xml.rels",
+     "customXml/itemProps1.xml",
+     "word/numbering.xml",
+     "docProps/thumbnail.jpeg"
+    ],
+    "sample_timestamps": {
+     "[Content_Types].xml": {
+      "a": [
+       2026,
+       9,
+       30,
+       7,
+       11,
+       16
+      ],
+      "b": [
+       2026,
+       9,
+       30,
+       7,
+       11,
+       32
+      ]
+     },
+     "_rels/.rels": {
+      "a": [
+       2026,
+       9,
+       30,
+       7,
+       11,
+       16
+      ],
+      "b": [
+       2026,
+       9,
+       30,
+       7,
+       11,
+       32
+      ]
+     }
+    }
+   }
+  },
+  {
+   "group": "oracle_run1_vs_run2",
+   "fields": {
+    "raw_bytes_equal": true,
+    "md5_a": "ed8d897801fdc52fecce6ce9a2119828",
+    "md5_b": "ed8d897801fdc52fecce6ce9a2119828",
+    "minus_outputs_equal": true
+   },
+   "docx": {
+    "raw_bytes_equal": false,
+    "md5_a": "7a4aaba7577ce17c02f4b8ce7c4b2b85",
+    "md5_b": "3125cb943fb84e406752cca57c021f19",
+    "size_a": 37318,
+    "size_b": 37318,
+    "semantic_signature_equal": true,
+    "pgSz_equal": true,
+    "pgMar_equal": true,
+    "n_paragraphs": 12
+   },
+   "zip": {
+    "namelist_equal": true,
+    "n_entries": 17,
+    "content_identical_all_entries": true,
+    "entries_content_diff": [],
+    "entries_timestamp_diff": [
+     "[Content_Types].xml",
+     "_rels/.rels",
+     "docProps/core.xml",
+     "docProps/app.xml",
+     "word/document.xml",
+     "word/_rels/document.xml.rels",
+     "word/styles.xml",
+     "word/stylesWithEffects.xml",
+     "word/settings.xml",
+     "word/webSettings.xml",
+     "word/fontTable.xml",
+     "word/theme/theme1.xml",
+     "customXml/item1.xml",
+     "customXml/_rels/item1.xml.rels",
+     "customXml/itemProps1.xml",
+     "word/numbering.xml",
+     "docProps/thumbnail.jpeg"
+    ],
+    "sample_timestamps": {
+     "[Content_Types].xml": {
+      "a": [
+       2026,
+       9,
+       30,
+       7,
+       13,
+       42
+      ],
+      "b": [
+       2026,
+       9,
+       30,
+       7,
+       13,
+       44
+      ]
+     },
+     "_rels/.rels": {
+      "a": [
+       2026,
+       9,
+       30,
+       7,
+       13,
+       42
+      ],
+      "b": [
+       2026,
+       9,
+       30,
+       7,
+       13,
+       44
+      ]
+     }
+    }
+   }
+  }
+ ],
+ "cross_impl_layout_vs_oracle_out": {
+  "pgSz": {
+   "tested": {
+    "w": "11906",
+    "h": "16838"
+   },
+   "ref": {
+    "w": "11906",
+    "h": "16838"
+   },
+   "equal": true
+  },
+  "pgMar": {
+   "tested": {
+    "top": "2098",
+    "bottom": "1984",
+    "left": "1587",
+    "right": "1474"
+   },
+   "ref": {
+    "top": "2098",
+    "bottom": "1984",
+    "left": "1587",
+    "right": "1474"
+   },
+   "equal": true
+  },
+  "n_paragraphs": {
+   "tested": 12,
+   "ref": 12
+  },
+  "paragraphs": [
+   {
+    "idx": 0,
+    "tested_text": "关于召开三季度质量评审会的通知",
+    "ref_text": "关于召开三季度质量评审会的通知",
+    "tested": {
+     "jc": "center",
+     "firstLineChars": null,
+     "line": null,
+     "lineRule": null,
+     "right_tw": null,
+     "before": null,
+     "after": null
+    },
+    "ref": {
+     "jc": "center",
+     "firstLineChars": null,
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    }
+   },
+   {
+    "idx": 1,
+    "tested_text": "各部门、各项目组：",
+    "ref_text": "各部门、各项目组：",
+    "tested": {
+     "jc": null,
+     "firstLineChars": null,
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    },
+    "ref": {
+     "jc": null,
+     "firstLineChars": null,
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    }
+   },
+   {
+    "idx": 2,
+    "tested_text": "会议时间：2026年10月9日（周五）14:00",
+    "ref_text": "经研究，决定召开三季度质量评审会。现将有关事项通知如下：",
+    "tested": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    },
+    "ref": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    }
+   },
+   {
+    "idx": 3,
+    "tested_text": "会议地点：3 号楼 501 会议室",
+    "ref_text": "一、会议时间：2026年10月9日（周五）14:00",
+    "tested": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    },
+    "ref": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    }
+   },
+   {
+    "idx": 4,
+    "tested_text": "参会人员：各部门负责人、各项目组 PM",
+    "ref_text": "二、会议地点：3 号楼 501 会议室",
+    "tested": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    },
+    "ref": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    }
+   },
+   {
+    "idx": 5,
+    "tested_text": "会议议题：三季度评测结果复盘与四季度计划",
+    "ref_text": "三、参会人员：各部门负责人、各项目组 PM",
+    "tested": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    },
+    "ref": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    }
+   },
+   {
+    "idx": 6,
+    "tested_text": "一、会议要求",
+    "ref_text": "四、会议议题：三季度评测结果复盘与四季度计划",
+    "tested": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    },
+    "ref": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    }
+   },
+   {
+    "idx": 7,
+    "tested_text": "1．会前提交本部门质量简报",
+    "ref_text": "五、会议要求：会前提交本部门质量简报；迟到 10 分钟以上按缺席处理。",
+    "tested": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    },
+    "ref": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    }
+   },
+   {
+    "idx": 8,
+    "tested_text": "2．迟到 10 分钟以上按缺席处理",
+    "ref_text": "特此通知。",
+    "tested": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    },
+    "ref": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    }
+   },
+   {
+    "idx": 9,
+    "tested_text": "联系人：李工　　联系电话：010-88886666",
+    "ref_text": "联系人：李工　　联系电话：010-88886666",
+    "tested": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    },
+    "ref": {
+     "jc": null,
+     "firstLineChars": "200",
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": null,
+     "before": "0",
+     "after": "0"
+    }
+   },
+   {
+    "idx": 10,
+    "tested_text": "评测技术部",
+    "ref_text": "评测技术部",
+    "tested": {
+     "jc": "right",
+     "firstLineChars": null,
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": 640,
+     "before": "0",
+     "after": "0"
+    },
+    "ref": {
+     "jc": "right",
+     "firstLineChars": null,
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": 640,
+     "before": "0",
+     "after": "0"
+    }
+   },
+   {
+    "idx": 11,
+    "tested_text": "2026年9月28日",
+    "ref_text": "2026年9月28日",
+    "tested": {
+     "jc": "right",
+     "firstLineChars": null,
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": 640,
+     "before": "0",
+     "after": "0"
+    },
+    "ref": {
+     "jc": "right",
+     "firstLineChars": null,
+     "line": "560",
+     "lineRule": "exact",
+     "right_tw": 640,
+     "before": "0",
+     "after": "0"
+    }
+   }
+  ]
+ },
+ "field_agreement_vs_oracle_out": {
+  "matched": 11,
+  "total": 11,
+  "rate": 1.0,
+  "mismatch": [],
+  "title_equal": true,
+  "title": "关于召开三季度质量评审会的通知"
+ }
+}

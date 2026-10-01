@@ -1,0 +1,82 @@
+[
+  {
+    "id": "t1",
+    "instruction": "你是飞书效率助手，面向的用户已在本机安装 lark-cli 并完成认证（`auth status` 正常）。请产出一份可按序直接执行的 lark-cli 命令清单（文档 id 等返回值用占位符并注明取自哪一步），每条命令附一句理由。不要编造命令或 flag；拿不准的用法按「先 --help / schema 核实」的口径写明。\n\n【操作目标】用户的《移动端 3.8 迭代复盘》文档：https://xx.feishu.cn/docx/V3mQ8xYzAbCdEfGh 。今天复审会刚结束，需要：\n1. 读取该文档当前全文，并同时把全文保存为本地文件 ./replay-backup.md；\n2. 统计该文档正文字数；\n3. 在文档末尾追加一节「复审会决议（2026-10-09）」，内容只能来自下面的【复审会要点】，逐条如实写入、不得增删：结论一条、待办两条、风险一条（风险要求醒目高亮呈现）；\n4. 追加完成后回查一次，确认写入完整。\n\n【复审会要点（原始记录，2026-10-09 站会）】\n结论：3.8 灰度放量节奏由 5% 调整为 10%，其余结论维持不变。\n待办一：小何，10/14 前更新埋点文档。\n待办二：小郑，10/16 前给出崩溃率专项报告。\n风险：Android 低端机 OOM 率仍高于 0.5% 阈值，需持续盯盘。",
+    "rubric": [
+      "场景路由与命令真实：读取/另存全文用 `docs +fetch`（`--output` 指向相对路径 ./replay-backup.md），字数统计用 `docs +script`（或官方等价能力），末尾追加用 `docs +update` 的追加指令（append 或官方等价）；未用「+fetch 拉全文再 +create 重建文档」这一被官方明确禁止的复制方式；命令与 flag 无编造。",
+      "身份与路径安全：文档操作显式带 `--as user`；所有本地文件参数均为相对路径，未出现绝对路径传参（绝对路径会报 unsafe file path）。",
+      "内容保真：追加小节与要点逐条一致——灰度 5%→10% 其余维持；小何 10/14 前更新埋点文档；小郑 10/16 前崩溃率专项报告；风险「Android 低端机 OOM 率仍高于 0.5%」以高亮/callout 类块醒目呈现；无增删与编造内容。",
+      "判定与流程：明确按 `ok == true`（或退出码 0）判定成功，不按 `code == 0`；步骤顺序为 读→统计→追加→回查，末次回查一次且目的明确。"
+    ]
+  },
+  {
+    "id": "t2",
+    "instruction": "你是数据录入助手，用户的 lark-cli 已安装并完成认证。请产出可按序直接执行的命令清单（含完整的 fields 定义 JSON 与待写入记录 JSON），每条命令附一句理由；不编造命令/flag。\n\n【操作目标】为「移动端 3.8 缺陷看板」一次性新建一个多维表格（Base）和首表「缺陷清单」，字段如下：\n- 缺陷标题：文本\n- 严重度：单选，选项 P0 / P1 / P2\n- 状态：单选，选项 待处理 / 处理中 / 已修复\n- 负责人：文本\n- 截止日期：日期\n- 修复指引：文本（存链接）\n\n建好后把下列 12 条记录全部写入（列序：缺陷标题｜严重度｜状态｜负责人｜截止日期｜修复指引）：\n1 | 登录页验证码不刷新 | P0 | 处理中 | 小何 | 2026-10-12 | https://xx.feishu.cn/docx/FixCaptcha01\n2 | 首页轮播图偶发白屏 | P1 | 待处理 | 小郑 | 2026-10-15 | https://xx.feishu.cn/docx/FixBanner02\n3 | 消息推送延迟超 30 秒 | P1 | 处理中 | 小周 | 2026-10-13 | https://xx.feishu.cn/docx/FixPush03\n4 | 订单金额四舍五入错误 | P0 | 已修复 | 小何 | 2026-10-08 | https://xx.feishu.cn/docx/FixAmount04\n5 | 深色模式按钮不可见 | P2 | 待处理 | 小王 | 2026-10-20 | https://xx.feishu.cn/docx/FixDark05\n6 | 表单可重复提交 | P1 | 处理中 | 小周 | 2026-10-14 | https://xx.feishu.cn/docx/FixForm06\n7 | 头像上传裁剪失真 | P2 | 已修复 | 小郑 | 2026-10-09 | https://xx.feishu.cn/docx/FixAvatar07\n8 | iOS 下拉刷新卡顿 | P2 | 待处理 | 小王 | 2026-10-18 | https://xx.feishu.cn/docx/FixPull08\n9 | 支付回调偶发超时 | P0 | 处理中 | 小何 | 2026-10-11 | https://xx.feishu.cn/docx/FixPay09\n10 | 空状态文案错别字 | P2 | 已修复 | 小郑 | 2026-10-07 | https://xx.feishu.cn/docx/FixCopy10\n11 | 分享链接签名过期 | P1 | 待处理 | 小周 | 2026-10-16 | https://xx.feishu.cn/docx/FixSign11\n12 | 夜间模式耗电异常 | P1 | 处理中 | 小王 | 2026-10-17 | https://xx.feishu.cn/docx/FixBattery12\n\n【要求】日期与单选的写入格式按多维表格 CellValue 规范；写入方式与单批规模合规；并说明写入后的可见性注意事项（立即读取能否看到全部记录）。",
+    "rubric": [
+      "建表正确：用 `base +base-create --name … --table-name 缺陷清单 --fields '<field-array>'`（或官方等价）一次建 Base+首表；fields 中两个单选字段带给定选项数组、截止日期为日期字段；未把文本/日期列误设为公式、自动编号等只读类型。",
+      "写入合规与格式正确：用 `base +record-batch-create`（或官方等价）写入且单批不超过 200 条（12 条一批即可）；单选值写成数组形式（如 [\"P0\"]）；日期用「带时区 ISO / 毫秒时间戳 / 不带时区字符串」之一且全表一致；修复指引写裸 URL 或 Markdown 链接；未给只读字段赋值。",
+      "并发与异步注意：说明同一 Table 串行写入（避免 1254291 并发冲突）；说明批量写入异步生效、立即读取可能看不到最新记录，若安排回读校验须注明该前提。",
+      "身份与判定：全程 `--as user`；写入前确认意图或用 --dry-run 预览（如命令支持）；按 `ok == true`（或退出码 0）判定成功。"
+    ]
+  },
+  {
+    "id": "t3",
+    "instruction": "你是数据分析助手，用户的 lark-cli 已安装并完成认证。请产出可按序直接执行的命令清单，每条（步）附一句理由；不编造命令/flag。\n\n【数据源】用户的「需求池」多维表格，链接：https://xx.feishu.cn/base/K2qbA1bC3dE4fGh?table=tblReq9Mon 。表内约 4600 条记录，字段：\n- 需求标题：文本\n- 状态：单选（待处理 / 处理中 / 已完成 / 已拒绝）\n- 负责人：文本\n- 提交时间：日期\n- 预估工时：数字\n\n【任务】导出 2026 年 9 月 1 日至 9 月 30 日提交、且状态为「待处理」或「处理中」的全部记录，只保留 需求标题、负责人、提交时间 三个字段，保存为本地 ndjson 文件 ./sep-open-reqs.ndjson；随后统计各负责人的未完结（即这两种状态）条数，给出数量前 3 名。统计用本地 jq/Python 完成，不需要写回飞书。注意记录量超过单次拉取上限，方案必须保证取全。",
+    "rubric": [
+      "前置解析：先用 `base +url-resolve --url … --as user`（或官方等价）从链接解析 app_token / table_id，未按名称猜测 token。",
+      "筛选下推与取全：用 `--filter-json` 做服务端过滤（状态 intersects [待处理, 处理中]；提交时间限定在 2026-09-01 至 2026-09-30 区间，且未使用日期筛选不支持的 `>=` 写法、用等价的边界表达）；因约 4600 条超过单次上限 2000，带 `--page-all`（或明确按 has_more 翻页取全），并指出只有 has_more=false 才是完整结果。",
+      "导出与聚合分工：导出用 `--format ndjson --output ./sep-open-reqs.ndjson`（相对路径），只保留三个字段（在导出参数或本地裁剪均可）；分组计数与 Top3 统计在本地 jq/Python 完成，未把聚合混进 CLI 筛选参数。",
+      "只读安全与判定：全程 `--as user` 且方案中不含任何写命令；按 `ok == true`（或退出码 0）判定成功。"
+    ]
+  },
+  {
+    "id": "t4",
+    "instruction": "你是部门助理 agent，通过一个已授权的飞书机器人（bot）执行通知任务。请产出可按序直接执行的命令清单（返回值用占位符并注明来源），每条命令附一句理由；不编造命令/flag。\n\n【操作目标】灰度计划变更，需要向以下 3 个群各发一条内容一致的卡片消息：\n- 群「3.8 迭代同步群」 chat_id: oc_aaa111\n- 群「测试环境通知群」 chat_id: oc_bbb222\n- 群「灰度值班群」 chat_id: oc_ccc333\n\n【卡片内容（三群一致）】\n标题：3.8 灰度计划变更\n正文：原定 10/12 的灰度推迟至 10/14 10:00 开始，放量范围由 5% 调整为 10%，请各值班同学按新窗口盯盘。\n按钮：文字「查看灰度方案」，跳转 https://xx.feishu.cn/docx/GrayPlanV38\n\n【要求】发送前先做一次不真正发送的预览；确认无误后逐群发送；发送完成后直接向用户汇报结果，不做多余查询。卡片消息的 payload 必须按官方卡片工作流生成，不得凭空手写结构。",
+    "rubric": [
+      "身份正确：以 bot 身份发送（`--as bot`），目标用 `--chat-id oc_xxx` 分别指定三个群；未用 user 身份代替 bot 执行本任务。",
+      "卡片工作流合规：明确先读 lark-im 卡片参考（references/card/lark-im-card-create.md）并按其工作流生成 payload，未手写/臆造卡片 JSON 结构；按钮跳转原样使用给定文档 URL，未拆改或拼接链接。",
+      "预览与安全：正式发送前用 `--dry-run`（或官方等价预览方式）预览请求；命令与输出中不含 appSecret / token 明文。",
+      "执行与判定：三个群各发一次（3 条命令或循环说明）；按 `ok == true`（或退出码 0）判定成功而非 `code == 0`；完成后直接汇报、未安排多余回查。"
+    ]
+  },
+  {
+    "id": "t5",
+    "instruction": "你是群运营助手，用户的 lark-cli 已安装并以 user 身份完成认证。下面是从「10/15 团建报名群」（chat_id: oc_reg42）拉取消息的命令输出（JSON 已做简化格式化，字段语义不变）：\n\n$ lark-cli im +chat-messages-list --chat-id oc_reg42 --format json\n{\n  \"ok\": true,\n  \"identity\": \"user\",\n  \"data\": {\n    \"items\": [\n      {\"message_id\":\"om_9001\",\"sender\":{\"id\":\"ou_u1\",\"name\":\"阿岚\"},\"msg_type\":\"text\",\"body\":\"报名：参加，忌口香菜\",\"create_time\":\"1759000101000\"},\n      {\"message_id\":\"om_9002\",\"sender\":{\"id\":\"ou_u2\",\"name\":\"阿荔\"},\"msg_type\":\"text\",\"body\":\"报名：参加，无忌口\",\"create_time\":\"1759000155000\"},\n      {\"message_id\":\"om_9003\",\"sender\":{\"id\":\"ou_u3\",\"name\":\"阿松\"},\"msg_type\":\"text\",\"body\":\"报名：参加，忌口海鲜\",\"create_time\":\"1759000222000\"},\n      {\"message_id\":\"om_9004\",\"sender\":{\"id\":\"ou_u4\",\"name\":\"阿玫\"},\"msg_type\":\"text\",\"body\":\"不参加，当天有出差\",\"create_time\":\"1759000300000\"},\n      {\"message_id\":\"om_9005\",\"sender\":{\"id\":\"ou_u3\",\"name\":\"阿松\"},\"msg_type\":\"text\",\"body\":\"更正：忌口海鲜改为忌口花生\",\"create_time\":\"1759000450000\"},\n      {\"message_id\":\"om_9006\",\"sender\":{\"id\":\"ou_bot\",\"name\":\"团建小助手\"},\"msg_type\":\"text\",\"body\":\"报名 10/10 24:00 截止\",\"create_time\":\"1759000500000\"}\n    ],\n    \"meta\": {\"has_more\": false}\n  }\n}\n\n【部门名单（共 8 人）】阿岚、阿荔、阿松、阿玫、阿柏、阿棠、阿榆、阿桂。\n\n【任务】产出：\n① 一句判断：上述输出是否已覆盖群内全部相关消息，依据是什么；\n② 从消息中整理每个人的报名结果（以群内最新消息为准），形如「姓名｜参加与否｜忌口」的清单；\n③ 对照名单列出尚未回复的成员；\n④ 给出把汇总（报名清单 + 未回复名单）作为一条文本消息发回该群的命令。\n每步附一句理由。",
+    "rubric": [
+      "分页判断正确：依据 `meta.has_more: false`（结合 items 内容）判定已取全并正确解释信封语义，不凭空假设还有缺漏消息。",
+      "提取结果正确：阿岚 参加/忌口香菜；阿荔 参加/无忌口；阿松 参加/忌口花生（以其第二条更正消息为准，不保留海鲜）；阿玫 不参加（当天出差）；bot 的截止提示不计入个人报名；未回复名单恰为 阿柏、阿棠、阿榆、阿桂。",
+      "回发命令正确：用 `im +messages-send --chat-id oc_reg42`（或官方等价）发送文本消息，`--text` 内容与汇总一致且转义正确；身份与读取阶段一致（user）并说明理由。",
+      "判定与安全：按 `ok == true`（或退出码 0）判定发送成功；汇总内容全部来自给定输出与名单，无编造数据。"
+    ]
+  },
+  {
+    "id": "t6",
+    "instruction": "你是自动化脚本的维护者，负责解读 lark-cli 的输出并决定后续动作。以下是你脚本日志里连续 5 次调用（A–E）的输出摘录（已注明写入 stdout 还是 stderr、以及退出码）：\n\nA（stdout，退出码 0）\n{\"ok\":true,\"identity\":\"user\",\"data\":{\"guid\":\"docx#V3mQ8x\"},\"meta\":{\"count\":1}}\n\nB（stderr，退出码 3）\n{\"ok\":false,\"identity\":\"user\",\"error\":{\"type\":\"authorization\",\"subtype\":\"missing_scope\",\"code\":99991679,\"message\":\"permission denied\",\"hint\":\"guide user to grant missing scopes\",\"missing_scopes\":[\"base:record:create\"]}}\n\nC（stderr，退出码 4）\n{\"ok\":false,\"identity\":\"user\",\"error\":{\"type\":\"network\",\"message\":\"dial tcp 1.2.3.4:443: connect refused\",\"retryable\":true,\"retry_after_seconds\":2}}\n\nD（stderr，退出码 10）\n{\"ok\":false,\"identity\":\"user\",\"error\":{\"type\":\"confirmation\",\"message\":\"high-risk action needs --yes\",\"action\":\"delete view vewFGH and its config\",\"risk\":\"irreversible deletion\",\"hint\":\"append --yes to the end of your original argv after explicit user consent\"}}\n\nE（stderr，退出码 2）\n{\"ok\":false,\"identity\":\"user\",\"error\":{\"type\":\"validation\",\"subtype\":\"command_unavailable\",\"message\":\"command not available in this distribution\"}}\n\n【任务】逐条回答：① 该次调用成功还是失败，依据哪个字段/退出码；② 下一步动作（如：无需处理 / 读取什么字段并做什么 / 是否可重试及依据 / 是否需要用户确认、确认后如何重试 / 是否上报）。\n最后回答两道概念题：\nⅠ. 为什么「用 code == 0 判断成功」是危险的？\nⅡ. 退出码 10 意味着什么，标准处理流程是什么？",
+    "rubric": [
+      "A/B 判定与处置正确：A 依据 ok==true 且退出码 0 判成功，并指出成功信封没有顶层 code/msg 字段；B 判为缺授权，读取 missing_scopes（base:record:create）引导用户补充对应 scope 后重试，而非盲目重试或换命令硬绕。",
+      "C/D 判定与处置正确：C 为网络错误，依据 type=network 与 retryable/retry_after_seconds 判定可安全重试；D 是高风险确认门禁而非普通错误——先停下向用户确认，取得同意后把 `--yes` 追加到原始 argv 末尾重试，绝不静默加 flag 绕过。",
+      "E 判定正确：command_unavailable 表示该能力不在当前分发版中，不应误判为登录/授权失败，也不尝试绕过。",
+      "概念题正确：`code` 仅出现在错误信封内、是上游 OpenAPI 数字码，按旧惯例判断会把成功误判为失败（答出核心即可）；message/hint/log_id 属 informational、不可用于分支判断（至少答出其一）；退出码 10 = 高风险操作需确认的门禁。"
+    ]
+  },
+  {
+    "id": "t7",
+    "instruction": "你是日程助理，用户的 lark-cli 已安装并完成认证。请产出可按序直接执行的命令清单（返回值用占位符并注明来源），每条命令附一句理由；不编造命令/flag。\n\n【排会需求】在 2026-10-12（周一）至 2026-10-16（周五）的工作时间内，为 4 位参会人安排一场 60 分钟的「3.9 需求评审会」，需要一间可容纳 6 人的会议室，时区 Asia/Shanghai。\n参会人 open_id：ou_wang001、ou_li002、ou_zhao003、ou_sun004。\n会议议程（写入日程描述）：\n1) 3.9 需求范围确认；\n2) 接口依赖评审；\n3) 排期确认。\n\n【要求】先确定大家共同有空的时间（并说明为什么定推荐时段要用时间建议命令、仅查忙闲不够）；再在确定的时间块内找会议室（说明这个顺序为何不能反）；创建日程时把 4 位参会人与会议室一并带上；创建成功后直接向用户反馈结果。所有时间换算（北京时间→时间戳）说明用什么方式完成、要注意什么坑。",
+    "rubric": [
+      "流程与前置正确：第一步明确查阅排会/会议室参考（lark-calendar-schedule-meeting.md）或用 --help 核实用法，再依次：共同空闲→推荐时段→固定时间块→找会议室→创建日程；会议室作为日程的 resource 参与人随日程创建，未单独「预定」会议室。",
+      "命令选择正确：推荐时段用 `calendar +suggestion`（说明 +freebusy 只回答哪些区间空闲、不能直接给推荐）；`+room-find` 在确定时间块之后调用；创建用 `calendar +create`（或官方等价）并带 4 位参会人与会议室。",
+      "时间处理正确：北京时间→时间戳用系统工具显式转换，并指出依赖容器默认 UTC 时区会造成 8 小时偏移的风险；候选时间均落在给定工作日窗口内且为未来时间。",
+      "细节合规：日程描述按 Markdown 写入议程；正确使用或说明 `--attendee-ids` 同类型之间为 OR（并集）语义；创建成功后直接反馈、未安排多余二次查询；未把日程分享链接当作会议链接拼接。"
+    ]
+  },
+  {
+    "id": "t8",
+    "instruction": "你是行政助手，用户的 lark-cli 已安装并完成认证。请产出可按序直接执行的命令清单（返回值用占位符并注明来源），每条命令附一句理由；不编造命令/flag（拿不准的用法按「先 --help / schema 核实」口径说明）。\n\n【操作目标】把下列 9 月加班餐费台账录入飞书电子表格（spreadsheet，不是多维表格），最后导出 CSV 给财务：\n工号 | 姓名 | 部门 | 加班次数 | 餐费合计（元）\n00183 | 阿岚 | 研发 | 12 | 360\n00241 | 阿荔 | 设计 | 7 | 210\n00377 | 阿松 | 研发 | 15 | 450\n00410 | 阿玫 | 市场 | 3 | 90\n00526 | 阿柏 | 研发 | 9 | 270\n00638 | 阿棠 | 财务 | 5 | 150\n\n【要求】\n① 新建名为《9 月加班餐费台账》的电子表格并写入表头与 6 行数据；工号列必须保留前导 0（如 00183），说明按什么格式写入；次数与金额按数值写入。\n② 在数据末尾追加一行合计（A 列写「合计」）：加班次数总和、餐费总和（给出正确数字），不得重写已有 6 行。\n③ 把该表导出为 CSV 保存到本地 ./sep-meal.csv（注意本地文件参数的路径规则）。",
+    "rubric": [
+      "用对产品与命令：使用 lark-sheets 官方能力（lark-cli sheets …）完成新建/写入/追加/导出，命令真实存在于该 skill 描述的能力范围（创建、读取、写入、追加、查找、导出），未误用多维表格（base）或文档（docs）命令。",
+      "格式保真：工号按文本写入并明确说明保留前导 0 的处理方式；加班次数与金额按数值写入；合计数字正确（合计 51 次、1530 元）。",
+      "追加与导出：合计行以追加方式写入、不覆盖已有 6 行；导出 CSV 的输出路径为相对路径 ./sep-meal.csv，未用绝对路径。",
+      "身份与判定：全程 `--as user`；按 `ok == true`（或退出码 0）判定成功；命令与 flag 无编造。"
+    ]
+  }
+]

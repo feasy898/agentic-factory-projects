@@ -1,0 +1,113 @@
+{
+  "meta": {
+    "task": "hot-templates 爆款内容骨架生成 · ab-004 / arm-a / rep2",
+    "generated_at": "2026-09-30",
+    "generator_note": "hot-templates 技能源码位于 skillfactory/（任务书禁读，本次未读取任何技能文件）；按任务书内联给出的冻结规格生成：6镜45秒分镜表（时间轴/画面/口播/字幕）",
+    "frozen_template": {
+      "name": "6镜45秒分镜表",
+      "shot_count": 6,
+      "total_duration_s": 45,
+      "columns": ["时间轴", "画面", "口播", "字幕"],
+      "columns_map": { "时间轴": "time", "画面": "visual", "口播": "voiceover", "字幕": "subtitle" }
+    }
+  },
+  "input": {
+    "platform": "video",
+    "topic": "居家哑铃入门",
+    "points": ["用装满水的矿泉箱代替哑铃做划船"],
+    "points_count": 1,
+    "test_intent": "仅提供1条要点，验证缺失槽位处理"
+  },
+  "slot_resolution": {
+    "platform": { "status": "provided", "value": "video" },
+    "topic": { "status": "provided", "value": "居家哑铃入门" },
+    "points[0]": { "status": "provided", "value": "用装满水的矿泉箱代替哑铃做划船", "carried_by_shot": 3, "note": "镜2做道具等价铺垫，镜3承载动作教学，原文逐字标注于镜3画面" },
+    "points[1..]": { "status": "missing", "resolution": "不虚构新『给定要点』；由 topic 派生补位：镜4=入门常见错误，镜5=训练处方" },
+    "audience": { "status": "missing", "default_applied": "居家健身零基础新手" },
+    "tone": { "status": "missing", "default_applied": "口语化、干货直给、快节奏卡点" },
+    "cta": { "status": "missing", "default_applied": "评论打卡＋收藏＋关注看下期（镜6承载）" },
+    "duration": { "status": "template_fixed", "value_s": 45 }
+  },
+  "structure": {
+    "total_duration_s": 45,
+    "shot_count": 6,
+    "shots": [
+      {
+        "no": 1,
+        "time": "00:00-00:03",
+        "start_s": 0,
+        "end_s": 3,
+        "duration_s": 3,
+        "role": "开场钩子",
+        "visual": "怼脸近景起手，单手拎起一箱矿泉水甩入画；花字大标题弹出，节奏卡点",
+        "voiceover": "先别买哑铃！看看你脚边这箱水",
+        "subtitle": "大字：0元『哑铃』在家练背 ｜ 小字：居家哑铃入门·第1招",
+        "slot_source": "hook（模板固定）+ topic"
+      },
+      {
+        "no": 2,
+        "time": "00:03-00:10",
+        "start_s": 3,
+        "end_s": 10,
+        "duration_s": 7,
+        "role": "道具等价换算（矿泉箱=可调哑铃）",
+        "visual": "中景俯拍：从整箱抽出1瓶→再双手拎起整箱掂重；角标弹出重量字幕",
+        "voiceover": "一箱装满水的矿泉水，就是你的可调哑铃：1瓶1斤出头，整箱20多斤，重量随练随调",
+        "subtitle": "1瓶≈1.1斤｜整箱≈26斤｜重量可调",
+        "slot_source": "points[0] 前置铺垫（矿泉箱=哑铃替代）"
+      },
+      {
+        "no": 3,
+        "time": "00:10-00:20",
+        "start_s": 10,
+        "end_s": 20,
+        "duration_s": 10,
+        "role": "核心教学：矿泉箱划船",
+        "visual": "★给定要点·原文：用装满水的矿泉箱代替哑铃做划船。侧机位全景：屈髋45°、背绷平，新手单手拎1瓶先定动作，进阶双手各1瓶或抱整箱加重；慢放：手肘贴身拉向腰侧、肩胛夹紧，箭头高亮背阔肌发力线",
+        "voiceover": "划船这么做：屈髋45度，后背绷平，拎水自然下垂；肩胛发力，把手肘拉向腰侧，顶峰夹紧1秒，再慢放回去",
+        "subtitle": "屈髋45°｜背绷平｜肘找腰｜夹1秒慢放",
+        "slot_source": "provided: points[0]"
+      },
+      {
+        "no": 4,
+        "time": "00:20-00:30",
+        "start_s": 20,
+        "end_s": 30,
+        "duration_s": 10,
+        "role": "常见错误对比",
+        "visual": "左右分屏：弓背／耸肩／甩腰借力依次打红叉，正确示范打绿勾；脊柱中立位线条动画",
+        "voiceover": "三个错别踩：弓背，腰在代偿；耸肩，斜方肌抢戏；靠惯性甩，背没感觉。全程沉肩、核心绷住，只让背收缩",
+        "subtitle": "❌弓背 ❌耸肩 ❌甩劲 ✅沉肩+绷核心",
+        "slot_source": "topic_derived（缺失槽位补位：入门避坑）"
+      },
+      {
+        "no": 5,
+        "time": "00:30-00:38",
+        "start_s": 30,
+        "end_s": 38,
+        "duration_s": 8,
+        "role": "训练处方",
+        "visual": "字板动效列训练处方；真人练完一组起身手摸后背，背阔肌位置高亮",
+        "voiceover": "剂量抄作业：每侧12到15次、3到4组，组间歇1分钟，每周2到3次；练完该酸的是后背，不是腰和脖子",
+        "subtitle": "12–15次×3–4组｜歇60s｜每周2–3次｜酸在背=练对了",
+        "slot_source": "topic_derived（缺失槽位补位：入门剂量）"
+      },
+      {
+        "no": 6,
+        "time": "00:38-00:45",
+        "start_s": 38,
+        "end_s": 45,
+        "duration_s": 7,
+        "role": "CTA收尾",
+        "visual": "怼脸收尾＋整箱水再次入镜；关注按钮、收藏图标动效；下期预告字卡",
+        "voiceover": "今晚就用水箱练组划船，评论区打卡；关注我，下期讲居家哑铃的进阶安排",
+        "subtitle": "收藏防走丢｜关注看下期",
+        "slot_source": "default_cta（缺失槽位默认值）"
+      }
+    ]
+  },
+  "traceability": {
+    "given_point_verbatim": "用装满水的矿泉箱代替哑铃做划船",
+    "appears_in": ["shots[2].visual（原文逐字）", "shots[1]-shots[3]（内容承载）"]
+  }
+}

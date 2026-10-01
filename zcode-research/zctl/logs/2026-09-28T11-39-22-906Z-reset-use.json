@@ -1,0 +1,41 @@
+{
+  "recordedAt": "2026-09-28T11:39:22.906Z",
+  "recordRaw": false,
+  "command": "reset-use",
+  "dryRun": false,
+  "request": {
+    "method": "POST",
+    "url": "https://zcode.z.ai/api/v1/coding-plan/reset/use",
+    "headers": {
+      "User-Agent": "ZCode/3.14.3",
+      "HTTP-Referer": "https://zcode.z.ai",
+      "X-Title": "Z Code@electron",
+      "X-ZCode-App-Version": "3.14.3",
+      "X-Platform": "win32-x64",
+      "X-Os-Category": "windows",
+      "X-Client-Language": "unknown",
+      "X-Client-Timezone": "Asia/Shanghai",
+      "x-request-id": "3cf2ff5f-bb6f-4590-8b97-e0698b484dc6",
+      "Authorization": "Bearer eyJh…(211 chars, masked)",
+      "X-Bigmodel-Authorization": "eyJhbGciOiJ…(335 chars, masked)",
+      "Bigmodel-Target-Type": "PERSONAL",
+      "content-type": "application/json"
+    },
+    "body": {
+      "idempotency_key": "2802114c-8287-413a-b483-6da574c66079",
+      "reset_type": "FIVE_HOUR"
+    }
+  },
+  "response": {
+    "status": 200,
+    "requestId": "20260928113922ad62750506f54b0cf2a8",
+    "body": {
+      "code": 0,
+      "msg": "success",
+      "data": {
+        "used": true
+      },
+      "logid": "20260928113922ad62750506f54b0cf2a8"
+    }
+  }
+}

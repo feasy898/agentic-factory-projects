@@ -1,0 +1,51 @@
+# skills.manifest — OFFICE-KIT 技能索引（唯一权威；路径以本文件所在目录=kit 根为基准）
+# 纪律：状态字段忠实转录自盘内验收记录（report/DELIVERY.md §三、v2/leaderboard/LEADERBOARD.md），状态变化须升 kit 版本。
+kit: OFFICE-KIT
+kit_version: 0.1.0
+updated: 2026-09-29
+
+skills:
+  - name: meeting-minutes
+    role: 主力（必装）
+    path: ../../assets/meeting-minutes/package
+    version: 1.0.0
+    status: accepted
+    status_evidence: "DELIVERY.md §三：evalPassed=true，Δ=4.33（5.67→10），胜率 1.0，3 任务全胜；† 注：五门复检未完成，复检通过前不可入库分发"
+    entry: scripts/minutes.py
+    usage: |
+      python <本包目录>/scripts/minutes.py --input <转写.txt> --outdir <输出目录>
+      产物 = <输出目录>/纪要.docx + summary.json；成功判据 = 退出码 0 且两产物回读真实存在（写后回读三态）。
+      分类/红线/gotchas 以包内 SKILL.md 为准（调用前通读，重点：逐字引用、抓不到负责人/期限填「待定」、
+      11 关键词三段式判定、summary 四键名精确）。
+    when_to_use: 用户提供 `[hh:mm] 说话人: 内容` 格式会议转写，要三段式纪要（决议/待办/风险）时
+    when_not_to_use: 音频转文字；叙事式会议新闻稿；自由摘要写作
+
+  - name: ppt-method-router
+    role: 选装（路由参考）
+    path: ../../assets/ppt-method-router/package
+    version: 1.0.0
+    status: deterministic-pass-blind-failed
+    status_evidence: "DELIVERY.md §三：确定性门过（复跑 exit 0，路由与 oracle 一致率 20/20）；盲评 Δ=0（8.67→8.67）、胜率 0.33，判「不接受（盲评未达线）」"
+    entry: scripts/route.py
+    usage: |
+      对一条 PPT 制作意图文本输出 method（editable_pptx/template_fill/visual_report）+ confidence + reasons。
+      只做路由决策，不执行制作；兜底判定（confidence 0.4）时先澄清用途再重跑；
+      路由结论与 reasons 必须随产物披露（证据留存）。
+    when_to_use: 用户提出做 PPT/海报/信息图类需求，需要先决定制作路径时
+    when_not_to_use: 已明确指定制作方式（如「套公司模板」）时无需路由
+
+  - name: monthly-report-ppt
+    role: 选装（实验性，禁入正式交付）
+    path: ../../assets/monthly-report-ppt/package
+    version: 1.0.0
+    status: rework
+    status_evidence: "DELIVERY.md §三：evalPassed=false（确定性门未过，判返工）；盘内存量产物复跑 exit 0(16/16) 属另一轮产物，复裁前以任务下发口径为准"
+    entry: scripts/monthly_report.py
+    usage: |
+      python <本包目录>/scripts/monthly_report.py --input <台账.xlsx> --outdir <输出目录>
+      ⚠ 仅限用户明确要求的试验；产物首行必须加「实验性·未验收资产产出」水印行；数字仍须与 summary.json 自洽。
+    when_to_use: 用户明确要求「Excel 台账出图表+PPT」且接受实验性标注时
+    when_not_to_use: 一切正式交付；用户未明确点名月度汇报时
+
+# 选件决策记录（KIT-SPEC §3 步骤 2）：办公文档域存在重复程序性套路（转写→纪要）→ 技能件必配；
+# 主力取验收状态最好者（meeting-minutes，全厂唯一 accepted）；另两件入册但按状态降级使用。

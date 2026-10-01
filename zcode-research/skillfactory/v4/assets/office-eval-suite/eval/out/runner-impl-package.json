@@ -1,0 +1,82 @@
+{
+  "tool": "runner.py",
+  "asset": "skillfactory/v4/assets/office-eval-suite/eval",
+  "candidate": "skillfactory/v4/assets/office-eval-suite/package",
+  "reference": "skillfactory/v4/assets/office-eval-suite/oracle/out",
+  "candidate_layout": "root",
+  "resolved_via": "direct",
+  "reference_resolved_via": "report-dir-parent(skillfactory\\v4\\assets\\office-eval-suite\\oracle\\out -> skillfactory\\v4\\assets\\office-eval-suite\\oracle)",
+  "self_eval": false,
+  "sampled_ids": [],
+  "ok": true,
+  "summary": {
+    "checks": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0
+    },
+    "items": 50,
+    "domains": {
+      "doc-writing": 8,
+      "table-data": 6,
+      "meeting-minutes": 6,
+      "ppt-outline": 5,
+      "email-comm": 7,
+      "process-spec": 6,
+      "info-extraction": 6,
+      "rewrite-polish": 6
+    },
+    "checks_in_suite": 230,
+    "identical_vs_reference": 0,
+    "exported_items_v1": 25
+  },
+  "checks": [
+    {
+      "name": "validate_all_green",
+      "passed": true,
+      "detail": "被测校验器全绿：9/9 项通过，items=50，checks_in_suite=230",
+      "candidate_layout": "root",
+      "resolved_via": "direct"
+    },
+    {
+      "name": "ratio_difficulty_per_spec",
+      "passed": true,
+      "detail": "域配比: 文档写作=8/8、表格数据=6/6、会议纪要=6/6、PPT要点=5/5、邮件沟通=7/7、流程规范=6/6、信息抽取=6/6、改写润色=6/6，共 50 题；难度: 文档写作 易2/中5/难1；表格数据 易1/中4/难1；会议纪要 易1/中4/难1；PPT要点 易1/中3/难1；邮件沟通 易2/中4/难1；流程规范 易1/中4/难1；信息抽取 易1/中4/难1；改写润色 易1/中4/难1（八域精确配比 + 难度分布与 spec 一致）",
+      "domains": {
+        "doc-writing": 8,
+        "table-data": 6,
+        "meeting-minutes": 6,
+        "ppt-outline": 5,
+        "email-comm": 7,
+        "process-spec": 6,
+        "info-extraction": 6,
+        "rewrite-polish": 6
+      }
+    },
+    {
+      "name": "no_dup_vs_reference",
+      "passed": true,
+      "detail": "内部 50 条归一化唯一；与参照套件完全相同题 0 ≤ 10；相似度审计 max=0.3520 mean=0.1513",
+      "self_eval": false,
+      "reference_resolved_via": "report-dir-parent(skillfactory\\v4\\assets\\office-eval-suite\\oracle\\out -> skillfactory\\v4\\assets\\office-eval-suite\\oracle)",
+      "identical_vs_reference": 0,
+      "identical_ids": [],
+      "max_similarity_vs_reference": 0.352,
+      "mean_similarity_vs_reference": 0.1513
+    },
+    {
+      "name": "legacy_export_v1_green",
+      "passed": true,
+      "detail": "legacy 兼容导出 → v1 校验器全绿：导出 25 题（六域配比 {'doc-writing': 6, 'table-data': 5, 'meeting-minutes': 3, 'ppt-outline': 3, 'email-comm': 4, 'process-spec': 4}），v1 校验 7/7 项通过",
+      "exported_items": 25,
+      "per_domain_taken": {
+        "doc-writing": 6,
+        "table-data": 5,
+        "meeting-minutes": 3,
+        "ppt-outline": 3,
+        "email-comm": 4,
+        "process-spec": 4
+      }
+    }
+  ]
+}

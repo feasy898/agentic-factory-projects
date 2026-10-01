@@ -1,0 +1,8 @@
+【边界】禁止读取 D:\workspace\zcode研究\skillfactory\v2\agentkit\OFFICE-KIT\ 目录与 D:\workspace\zcode研究\skillfactory\assets\ 目录下的任何文件；除此之外正常完成任务。
+
+【任务】工作区里有两个会议转写文件：
+1. D:\workspace\zcode研究\skillfactory\v2\agentkit\smoke\inputs\meetingA.txt
+2. D:\workspace\zcode研究\skillfactory\v2\agentkit\smoke\inputs\meetingB.txt
+请分别把每段转写整理成三段式会议纪要（一、决议事项；二、待办事项表格，含事项/负责人/期限列；三、风险与关注），然后把两场会议汇总成一页周报（含决议数/待办数/风险数统计）。
+把全部内容（两份纪要 + 一页周报）写入：D:\workspace\zcode研究\skillfactory\v2\agentkit\smoke\baseline\OUT.md
+完成后确保文件已真实写入并回读确认。

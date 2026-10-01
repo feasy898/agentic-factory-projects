@@ -1,0 +1,71 @@
+{
+  "stdout_encoding": "utf-8",
+  "stdout_raw_single_line": "{\"method\": \"visual_report\", \"confidence\": 0.8, \"reasons\": [\"命中[visual_report(图文海报/信息图)]关键词：海报\", \"仅单一类别命中、无信号冲突；置信度 = 0.80 + 0.05×(命中词数−1) 上限 0.95，本条命中 1 词 → 0.8\"]}",
+  "stderr_bytes": 0,
+  "parsed": {
+    "method": "visual_report",
+    "confidence": 0.8,
+    "reasons": [
+      "命中[visual_report(图文海报/信息图)]关键词：海报",
+      "仅单一类别命中、无信号冲突；置信度 = 0.80 + 0.05×(命中词数−1) 上限 0.95，本条命中 1 词 → 0.8"
+    ]
+  },
+  "reference_from_ask": {
+    "method": "visual_report",
+    "confidence": 0.8
+  },
+  "field_by_field": {
+    "method": {
+      "stdout": "visual_report",
+      "reference": "visual_report",
+      "match": true
+    },
+    "confidence": {
+      "stdout": 0.8,
+      "reference": 0.8,
+      "in_[0,1]": true,
+      "equals_reference": true
+    },
+    "reasons": {
+      "stdout": [
+        "命中[visual_report(图文海报/信息图)]关键词：海报",
+        "仅单一类别命中、无信号冲突；置信度 = 0.80 + 0.05×(命中词数−1) 上限 0.95，本条命中 1 词 → 0.8"
+      ],
+      "non_empty": true,
+      "mentions_keyword_海报": true
+    }
+  },
+  "checks": [
+    {
+      "check": "stdout_恰为单行",
+      "pass": true,
+      "detail": "非空行数=1, 总行数=1"
+    },
+    {
+      "check": "stdout_为可解析JSON",
+      "pass": true,
+      "detail": "json.loads 成功, 顶层类型=dict"
+    },
+    {
+      "check": "JSON含method/confidence/reasons三字段",
+      "pass": true,
+      "detail": "含三字段=True, 多余键=无"
+    },
+    {
+      "check": "method与参照一致(visual_report)",
+      "pass": true,
+      "detail": "实际='visual_report', 参照='visual_report'"
+    },
+    {
+      "check": "confidence为[0,1]数值",
+      "pass": true,
+      "detail": "实际=0.8(类型=float), 是否数值=True, 是否在[0,1]=True"
+    },
+    {
+      "check": "reasons非空且提到命中词「海报」",
+      "pass": true,
+      "detail": "reasons条数=2, 全部非空字符串=True, 含「海报」=True"
+    }
+  ],
+  "all_pass": true
+}

@@ -1,0 +1,40 @@
+{
+  "stdout_bytes": 258,
+  "stdout_newline_count": 1,
+  "stdout_nonempty_line_count": 1,
+  "stdout_single_line": true,
+  "json_parseable": true,
+  "stdout_top_level_type": "dict",
+  "stdout_keys": [
+    "confidence",
+    "method",
+    "reasons"
+  ],
+  "has_exactly_three_fields": true,
+  "my_method": "visual_report",
+  "method_is_str": true,
+  "my_confidence": 0.8,
+  "confidence_is_number": true,
+  "confidence_in_0_1": true,
+  "my_reasons": [
+    "命中[visual_report(图文海报/信息图)]关键词：海报",
+    "仅单一类别命中、无信号冲突；置信度 = 0.80 + 0.05×(命中词数−1) 上限 0.95，本条命中 1 词 → 0.8"
+  ],
+  "reasons_nonempty": true,
+  "reasons_mention_haibao": true,
+  "reasons_total_len": 97,
+  "labels_entry_found": true,
+  "labels_key_used": "list_index_8",
+  "oracle_entry_fields": [
+    "case",
+    "confidence",
+    "method",
+    "reasons"
+  ],
+  "oracle_method_equals_reference_visual_report": true,
+  "oracle_confidence_equals_reference_0_8": true,
+  "match_method": true,
+  "match_confidence": true,
+  "match_reasons": false,
+  "all_three_match": false
+}

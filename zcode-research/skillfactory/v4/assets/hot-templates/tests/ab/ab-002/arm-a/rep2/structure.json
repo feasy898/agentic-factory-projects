@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "generator": "hot-templates 冻结模板 · 小红书图文爆款内容骨架",
+    "generated_at": "2026-09-30",
+    "note": "hot-templates 技能文件未读取（任务禁止读取 skillfactory/ 任何文件）；骨架依据任务自含材料（platform/topic/5条points）与任务内联冻结模板规则生成"
+  },
+  "platform": "xhs",
+  "topic": "租房避坑指南",
+  "template": {
+    "name": "xhs-viral-skeleton",
+    "frozen_rules": ["标题带数字", "emoji规则", "正文分块", "标签组"]
+  },
+  "points_source": [
+    "签约前查房东房产证与身份证一致性",
+    "押金条款写明退还条件与时限",
+    "入住当天拍照录像留档",
+    "水电燃气表底数写进合同附件",
+    "转租条款提前约定违约金"
+  ],
+  "title": {
+    "main": "🔥租房避坑｜签约前必查的5个细节",
+    "char_count": 16,
+    "xhs_title_limit": 20,
+    "contains_number": true,
+    "number": 5,
+    "emoji": "🔥",
+    "alternates": [
+      { "text": "🏠第一次租房？这5个坑千万别踩", "char_count": 15 },
+      { "text": "📋租房避坑：押金保卫战5步走", "char_count": 14 }
+    ]
+  },
+  "emoji_rules": {
+    "title": "开头1枚高注意力emoji，不堆砌",
+    "block_anchor": "每个正文块1枚主题emoji作视觉锚点（🚨✅💰📸⚡🔄💬）",
+    "inline": "情绪/动作处点缀（😭👇🌟✔️⚠️），每块≤3枚",
+    "cover": "封面大字与正文锚点emoji保持一致"
+  },
+  "body_blocks": [
+    {
+      "id": 1,
+      "role": "hook",
+      "anchor_emoji": "🚨",
+      "name": "开头钩子",
+      "max_chars": 50,
+      "function": "共情痛点+清单承诺，3秒留人",
+      "example": "姐妹们！押金被扣、水电刺客、假房东跑路…租房的坑我替你们踩完了😭签约前照着这5步做，躲掉90%的坑👇"
+    },
+    {
+      "id": 2,
+      "role": "point",
+      "point_index": 1,
+      "anchor_emoji": "✅",
+      "name": "假房东跑路",
+      "source_point": "签约前查房东房产证与身份证一致性",
+      "bullets": [
+        "查房产证原件+身份证原件，姓名必须一致",
+        "名字对不上：要房东亲笔委托书+双方身份证复印件",
+        "中介话术不算数，见原件才算数"
+      ]
+    },
+    {
+      "id": 3,
+      "role": "point",
+      "point_index": 2,
+      "anchor_emoji": "💰",
+      "name": "押金乱扣",
+      "source_point": "押金条款写明退还条件与时限",
+      "bullets": [
+        "合同写死三件事：退还条件、退还时限、退还金额",
+        "示例表述：无损坏、无欠费，退租后X日内全额退还",
+        "口头承诺=没有承诺，白纸黑字才算数"
+      ]
+    },
+    {
+      "id": 4,
+      "role": "point",
+      "point_index": 3,
+      "anchor_emoji": "📸",
+      "name": "退租扯皮",
+      "source_point": "入住当天拍照录像留档",
+      "bullets": [
+        "入住当天全屋拍照+录像：墙面、地板、家具、家电逐个过",
+        "重点拍已有破损特写，视频带时间水印",
+        "云端备份一份，手机丢了也有证据"
+      ]
+    },
+    {
+      "id": 5,
+      "role": "point",
+      "point_index": 4,
+      "anchor_emoji": "⚡",
+      "name": "水电刺客",
+      "source_point": "水电燃气表底数写进合同附件",
+      "bullets": [
+        "入住当天当面抄三表：水表、电表、燃气表",
+        "底数写进合同附件，双方签字确认",
+        "顺手问清：民用价还是商用价？谁代缴？"
+      ]
+    },
+    {
+      "id": 6,
+      "role": "point",
+      "point_index": 5,
+      "anchor_emoji": "🔄",
+      "name": "转租被困",
+      "source_point": "转租条款提前约定违约金",
+      "bullets": [
+        "提前写清：能不能转租、要不要房东同意、违约金多少",
+        "长租约必加这条，中途搬家不被动",
+        "没这条的合同，违约金=房东说了算"
+      ]
+    },
+    {
+      "id": 7,
+      "role": "cta",
+      "anchor_emoji": "💬",
+      "name": "结尾互动引导",
+      "max_chars": 60,
+      "function": "提问引评论+引导收藏，拉互动权重",
+      "example": "你租房踩过最深的坑是什么？评论区抱团避雷👇先收藏🌟，签约前逐条打勾✔️"
+    }
+  ],
+  "tags": {
+    "count": 8,
+    "items": ["租房避坑", "租房攻略", "租房合同", "毕业生租房", "押金", "水电费", "租房日记", "避雷"],
+    "layers": {
+      "泛流量": ["租房攻略", "租房日记", "避雷"],
+      "精准场景": ["租房避坑", "租房合同", "押金", "水电费"],
+      "人群": ["毕业生租房"]
+    },
+    "rendered": "#租房避坑 #租房攻略 #租房合同 #毕业生租房 #押金 #水电费 #租房日记 #避雷"
+  },
+  "images": [
+    { "index": 1, "content": "封面大字报：租房避坑·5个细节（与主标题同款emoji🔥）" },
+    { "index": 2, "content": "要点卡：✅假房东跑路（锚点emoji+坑名+2条要点）" },
+    { "index": 3, "content": "要点卡：💰押金乱扣" },
+    { "index": 4, "content": "要点卡：📸退租扯皮" },
+    { "index": 5, "content": "要点卡：⚡水电刺客" },
+    { "index": 6, "content": "要点卡：🔄转租被困" },
+    { "index": 7, "content": "尾图：互动引导+标签组" }
+  ]
+}
