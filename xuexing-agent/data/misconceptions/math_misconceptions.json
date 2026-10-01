@@ -1,0 +1,9 @@
+{
+  "misconceptions": [
+    {"id": "mc_sign_neg", "kp_id": "kp_rational_add", "description": "有理数运算符号法则错误：忽略负号或同号异号判断错", "hint": "先定符号，再算绝对值：同号相加取相同符号，异号相加取绝对值大者的符号。", "signature": ["8", "-2", "5", "6"]},
+    {"id": "mc_abs_drop", "kp_id": "kp_absvalue", "description": "绝对值概念错误：认为|−a|=−a", "hint": "绝对值表示到原点的距离，距离不可能是负数。", "signature": ["-5"]},
+    {"id": "mc_move_sign", "kp_id": "kp_eq_solve", "description": "移项不变号：把+3移到右边仍写成+3", "hint": "移项要变号：方程两边同减3，右边变为11-3。", "signature": ["7"]},
+    {"id": "mc_combine_unlike", "kp_id": "kp_like_terms", "description": "合并非同类项：把3a+2b算成5ab", "hint": "字母不同的项不是同类项，不能合并系数。", "signature": ["5ab"]},
+    {"id": "mc_power_sign", "kp_id": "kp_power", "description": "乘方符号错误：把(−2)²算成−4，或混淆−2²与(−2)²", "hint": "先看底数是谁：括号里的负号才参与乘方。", "signature": ["-4"]}
+  ]
+}

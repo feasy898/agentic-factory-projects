@@ -1,0 +1,173 @@
+{
+ "subject": "math",
+ "grade_band": [
+  4
+ ],
+ "standard": "义务教育数学课程标准（2022年版）第二学段·数与代数/图形与几何/统计与概率/综合与实践",
+ "knowledge_points": [
+  {
+   "id": "kp_p4_bignum_read",
+   "name": "大数的认识",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "数与运算",
+   "description": "认识万级亿级的数，能读写含两级的数并比较大数",
+   "standard_ref": "2022课标第二学段·数与运算：在具体情境中认识万以上的数，能正确读、写含两级的数，会用“万”“亿”作单位表示大数"
+  },
+  {
+   "id": "kp_p4_hectare",
+   "name": "公顷和平方千米",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "图形与几何",
+   "description": "认识公顷和平方千米，会简单换算，发展量感",
+   "standard_ref": "2022课标第二学段·图形与几何：认识公顷和平方千米，知道它们与平方米之间的进率，能进行简单的换算",
+   "prereqs": [
+    "kp_p3_area"
+   ]
+  },
+  {
+   "id": "kp_p4_angle_measure",
+   "name": "线与角",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "图形与几何",
+   "description": "认识线段射线直线，会量角画角，知道角的分类",
+   "standard_ref": "2022课标第二学段·图形与几何：认识线段、射线和直线，认识角的度量单位，会用量角器量角、画指定度数的角，知道锐角、钝角、平角、周角"
+  },
+  {
+   "id": "kp_p4_mult_3x2digit",
+   "name": "三位数乘两位数",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "数与运算",
+   "description": "掌握三位数乘两位数笔算，会用估算判断结果合理性",
+   "standard_ref": "2022课标第二学段·数与运算：探索并掌握三位数乘两位数的乘法，能选择合适的估算方法判断结果是否合理",
+   "prereqs": [
+    "kp_p3_mult_2x2digit"
+   ]
+  },
+  {
+   "id": "kp_p4_div_2digit",
+   "name": "除数是两位数的除法",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "数与运算",
+   "description": "掌握试商调商方法，会笔算并验算有余数的除法",
+   "standard_ref": "2022课标第二学段·数与运算：探索并掌握除数是两位数的除法，经历试商、调商的过程，会用乘法验算除法",
+   "prereqs": [
+    "kp_p3_div_1digit",
+    "kp_p4_mult_3x2digit"
+   ]
+  },
+  {
+   "id": "kp_p4_quad_shape",
+   "name": "平行四边形和梯形",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "图形与几何",
+   "description": "认识平行四边形和梯形的特征，会画底边上的高",
+   "standard_ref": "2022课标第二学段·图形与几何：认识平行四边形和梯形，知道它们的基本特征，会画底边上的高",
+   "prereqs": [
+    "kp_p4_angle_measure"
+   ]
+  },
+  {
+   "id": "kp_p4_barchart",
+   "name": "条形统计图",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "统计与概率",
+   "description": "认识条形统计图，知道1格可表示多个单位并会分析",
+   "standard_ref": "2022课标第二学段·统计与概率：认识条形统计图，知道1格可以表示1个或多个单位，能根据数据绘制条形统计图并进行简单分析",
+   "prereqs": [
+    "kp_p3_stats_table"
+   ]
+  },
+  {
+   "id": "kp_p4_arith_order",
+   "name": "四则混合运算",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "数与运算",
+   "description": "掌握含括号的四则混合运算顺序并能正确计算",
+   "standard_ref": "2022课标第二学段·数与运算：掌握四则混合运算的顺序（先乘除后加减，有括号先算括号里的），能正确进行整数四则混合运算",
+   "prereqs": [
+    "kp_p3_addsub_3digit",
+    "kp_p3_div_1digit"
+   ]
+  },
+  {
+   "id": "kp_p4_operation_laws",
+   "name": "运算律与简便运算",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "数与运算",
+   "description": "了解五大运算律，能运用运算律进行简便计算",
+   "standard_ref": "2022课标第二学段·数与运算：探索并了解加法交换律、结合律和乘法交换律、结合律、分配律，能运用运算律进行简便运算",
+   "prereqs": [
+    "kp_p4_arith_order"
+   ]
+  },
+  {
+   "id": "kp_p4_decimal_meaning",
+   "name": "小数的意义和性质",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "数与运算",
+   "description": "理解小数意义与计数单位，掌握小数性质与名数改写",
+   "standard_ref": "2022课标第二学段·数与运算：结合具体情境理解小数的意义，认识小数的计数单位，掌握小数的性质，能进行简单的名数改写",
+   "prereqs": [
+    "kp_p3_decimal_intro"
+   ]
+  },
+  {
+   "id": "kp_p4_decimal_addsub",
+   "name": "小数加减法",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "数与运算",
+   "description": "掌握小数点对齐的小数加减法并能解决简单问题",
+   "standard_ref": "2022课标第二学段·数与运算：掌握小数加减法的计算方法，理解“小数点对齐”的道理，能解决相关的简单实际问题",
+   "prereqs": [
+    "kp_p4_decimal_meaning"
+   ]
+  },
+  {
+   "id": "kp_p4_triangle",
+   "name": "三角形",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "图形与几何",
+   "description": "掌握三边关系与内角和，能按角给三角形分类",
+   "standard_ref": "2022课标第二学段·图形与几何：认识三角形，知道三角形任意两边之和大于第三边、内角和是180°，能按角对三角形分类",
+   "prereqs": [
+    "kp_p4_angle_measure"
+   ]
+  },
+  {
+   "id": "kp_p4_compound_bar",
+   "name": "复式条形统计图",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "统计与概率",
+   "description": "认识复式条形统计图，能比较分析两组数据",
+   "standard_ref": "2022课标第二学段·统计与概率：认识复式条形统计图，能根据图例读取两组数据并进行比较分析",
+   "prereqs": [
+    "kp_p4_barchart"
+   ]
+  },
+  {
+   "id": "kp_p4_jituitonglong",
+   "name": "鸡兔同笼",
+   "subject": "math",
+   "grade": 4,
+   "cluster": "综合与实践",
+   "description": "会用列表法、假设法解决鸡兔同笼问题，体会假设思想",
+   "standard_ref": "2022课标第二学段·综合与实践：在解决鸡兔同笼等问题的活动中，经历列表、尝试与调整的过程，体会假设的思想方法",
+   "prereqs": [
+    "kp_p4_arith_order"
+   ]
+  }
+ ]
+}

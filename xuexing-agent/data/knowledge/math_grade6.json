@@ -1,0 +1,22 @@
+{
+  "subject": "math",
+  "grade_band": [6],
+  "standard": "义务教育数学课程标准（2022年版）第三学段·数与代数/图形与几何/统计与概率/综合与实践",
+  "knowledge_points": [
+    {"id": "kp_p6_fraction_mul", "name": "分数乘法", "subject": "math", "grade": 6, "cluster": "数与运算", "description": "掌握分数乘整数的意义与计算方法，理解分数乘分数的算理，能先约分再计算。", "standard_ref": "2022课标第三学段：理解分数乘法的算理，能正确计算分数乘整数和分数乘分数。", "prereqs": ["kp_p5_fraction_add_sub"]},
+    {"id": "kp_p6_fraction_div", "name": "分数除法", "subject": "math", "grade": 6, "cluster": "数与运算", "description": "理解倒数的意义，知道除以一个不为0的数等于乘这个数的倒数，能正确计算分数除法。", "standard_ref": "2022课标第三学段：理解倒数的意义，掌握分数除法的计算方法，能正确进行分数除法运算。", "prereqs": ["kp_p6_fraction_mul"]},
+    {"id": "kp_p6_negative_numbers", "name": "负数的初步认识", "subject": "math", "grade": 6, "cluster": "数与运算", "description": "理解用正负数表示相反意义的量，能正确读写正负数，会简单比较正负数的大小。", "standard_ref": "2022课标第三学段：结合生活情境了解负数的意义，会用正负数表示相反意义的量。"},
+    {"id": "kp_p6_percent", "name": "百分数的意义与互化", "subject": "math", "grade": 6, "cluster": "数与运算", "description": "理解百分数的意义，掌握百分数与小数、分数的互化方法，了解常见百分率的含义。", "standard_ref": "2022课标第三学段：结合具体情境理解百分数的意义，能进行百分数与小数、分数的互化。", "prereqs": ["kp_p5_fraction_meaning", "kp_p5_decimal_meaning"]},
+    {"id": "kp_p6_fraction_problem", "name": "分数乘除法实际问题", "subject": "math", "grade": 6, "cluster": "数量关系", "description": "掌握求一个数的几分之几、已知一个数的几分之几求这个数、比一个数多或少几分之几的数量关系。", "standard_ref": "2022课标第三学段：能运用分数乘、除法的意义解决求一个数的几分之几等简单的实际问题。", "prereqs": ["kp_p6_fraction_mul", "kp_p6_fraction_div"]},
+    {"id": "kp_p6_ratio", "name": "比的意义与基本性质", "subject": "math", "grade": 6, "cluster": "数量关系", "description": "理解比的意义，会求比值，知道比与分数、除法的关系，能运用比的基本性质化简比。", "standard_ref": "2022课标第三学段：结合具体情境认识比，知道比与分数、除法的关系，会求比值并能化简比。", "prereqs": ["kp_p6_fraction_div"]},
+    {"id": "kp_p6_ratio_distribution", "name": "按比分配", "subject": "math", "grade": 6, "cluster": "数量关系", "description": "理解按比分配的意义，掌握把总量按一定比分成几部分的解题方法。", "standard_ref": "2022课标第三学段：能解决按比分配的简单实际问题。", "prereqs": ["kp_p6_ratio"]},
+    {"id": "kp_p6_percent_application", "name": "百分数的应用", "subject": "math", "grade": 6, "cluster": "数量关系", "description": "理解折扣、成数、税率、利率的含义，能运用百分数知识解决相关的简单实际问题。", "standard_ref": "2022课标第三学段：能解决折扣、利率等百分数的简单实际问题。", "prereqs": ["kp_p6_percent"]},
+    {"id": "kp_p6_proportion", "name": "比例的意义与基本性质", "subject": "math", "grade": 6, "cluster": "数量关系", "description": "理解比例的意义，认识内项、外项，掌握比例的基本性质，能解比例，了解比例尺的含义。", "standard_ref": "2022课标第三学段：了解比例的意义和基本性质，能利用解比例解决简单实际问题。", "prereqs": ["kp_p6_ratio"]},
+    {"id": "kp_p6_proportional", "name": "正比例关系", "subject": "math", "grade": 6, "cluster": "数量关系", "description": "理解相关联的量，认识比值一定的两个量成正比例关系，能根据正比例关系解决简单问题。", "standard_ref": "2022课标第三学段：结合具体情境认识成正比的量（正比例关系），能根据正比例关系解决简单实际问题。", "prereqs": ["kp_p6_ratio"]},
+    {"id": "kp_p6_circle", "name": "圆的周长与面积", "subject": "math", "grade": 6, "cluster": "图形与几何", "description": "认识圆心、半径、直径，理解圆周率的意义，掌握圆的周长和面积公式，能计算半圆的周长。", "standard_ref": "2022课标第三学段：认识圆，掌握圆的周长和面积计算公式，体会化曲为直的转化思想。"},
+    {"id": "kp_p6_cylinder_cone", "name": "圆柱与圆锥", "subject": "math", "grade": 6, "cluster": "图形与几何", "description": "认识圆柱和圆锥的特征，掌握圆柱表面积、体积的计算方法，理解等底等高圆锥体积是圆柱的三分之一。", "standard_ref": "2022课标第三学段：认识圆柱和圆锥，掌握圆柱的表面积与体积、圆锥体积的计算公式。", "prereqs": ["kp_p6_circle", "kp_p5_cuboid_volume"]},
+    {"id": "kp_p6_position_direction", "name": "位置与方向", "subject": "math", "grade": 6, "cluster": "图形与几何", "description": "能根据方向（角度）和距离确定物体的位置，能描述并分析简单的路线。", "standard_ref": "2022课标第三学段：能根据方向和距离确定物体的位置，会描述简单的路线图。", "prereqs": ["kp_p5_coord_pairs"]},
+    {"id": "kp_p6_pie_chart", "name": "扇形统计图", "subject": "math", "grade": 6, "cluster": "统计与概率", "description": "认识扇形统计图的特点，能读懂扇形统计图，能根据需要选择合适的统计图表示数据。", "standard_ref": "2022课标第三学段：认识扇形统计图，能根据需要选择合适的统计图表示数据。", "prereqs": ["kp_p5_line_graph"]},
+    {"id": "kp_p6_number_shape", "name": "数与形", "subject": "math", "grade": 6, "cluster": "综合与实践", "description": "经历数形结合找规律的过程，理解正方形数、连续奇数和等规律，能用图形直观帮助理解计算。", "standard_ref": "2022课标第三学段：经历数与形结合探索规律的过程，体会数形结合思想。", "prereqs": ["kp_p5_tree_planting"]}
+  ]
+}

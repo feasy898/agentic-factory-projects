@@ -1,0 +1,9 @@
+{
+  "strategies": [
+    {"id": "s_worked_example", "name": "样例学习+引导支架", "description": "低掌握度学习者先研习带完整解答的样例，再做渐退支架练习", "priority": 10, "evidence": "Mayer CTML(2024)；expertise reversal (Tetzlaff et al. 2025)", "effect_size": 0.45, "mastery_lt": 0.4},
+    {"id": "s_retrieval", "name": "提取练习+即时反馈", "description": "中等掌握度学习者以答题-反馈循环巩固，短间隔重复", "priority": 8, "evidence": "Visible Learning MetaX practice testing d=0.49", "effect_size": 0.49, "mastery_gte": 0.4, "mastery_lt": 0.65},
+    {"id": "s_interleave", "name": "交错练习", "description": "高掌握度学习者混合不同题型以提升辨别能力", "priority": 6, "evidence": "Rohrer et al. interleaved mathematics practice", "effect_size": 0.42, "mastery_gte": 0.65},
+    {"id": "s_gamified", "name": "游戏化练习", "description": "低龄学习者用游戏化形式维持动机（认知增益有限，重在动机）", "priority": 12, "evidence": "DragonBox RCT N=1850 g=0.269", "effect_size": 0.269, "mastery_lt": 0.5, "grade_max": 6},
+    {"id": "s_guided_practice", "name": "引导练习（兜底）", "description": "教师/系统引导下的常规练习", "priority": 1, "evidence": "Kulik(1990) mastery learning d≈0.2-0.5", "effect_size": 0.3}
+  ]
+}

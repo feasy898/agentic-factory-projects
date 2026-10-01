@@ -1,0 +1,49 @@
+{
+  "subject": "math",
+  "grade_band": [9],
+  "standard": "义务教育数学课程标准（2022年版）第四学段·数与代数/图形与几何/统计与概率",
+  "knowledge_points": [
+    {"id": "kp_qe_concept", "name": "一元二次方程的概念", "subject": "math", "grade": 9, "cluster": "一元二次方程", "description": "一元二次方程 ax²+bx+c=0（a≠0）的概念与一般形式，识别二次项系数、一次项系数与常数项", "standard_ref": "2022课标：能根据实际问题中的数量关系列出一元二次方程，体会方程是刻画现实世界数量关系的有效模型", "prereqs": ["kp_eq_concept", "kp_monomial"]},
+    {"id": "kp_qe_complete", "name": "开平方法与配方法", "subject": "math", "grade": 9, "cluster": "一元二次方程", "description": "直接开平方法解 x²=p 型方程；配方法：二次项系数化为1后，加上一次项系数一半的平方化为 (x+n)²=p 再开平方求解", "standard_ref": "2022课标：能用配方法解数字系数的一元二次方程", "prereqs": ["kp_qe_concept", "kp_eq_solve", "kp_mul_formula"]},
+    {"id": "kp_qe_formula", "name": "公式法与根的判别式", "subject": "math", "grade": 9, "cluster": "一元二次方程", "description": "由配方法推导求根公式 x=(-b±√(b²-4ac))/(2a)；判别式 Δ=b²-4ac：Δ>0 两个不相等实根，Δ=0 两个相等实根，Δ<0 无实根", "standard_ref": "2022课标：能用公式法解数字系数的一元二次方程，会用根的判别式判断方程根的情况", "prereqs": ["kp_qe_complete", "kp_radical_ops"]},
+    {"id": "kp_qe_factor", "name": "因式分解法解一元二次方程", "subject": "math", "grade": 9, "cluster": "一元二次方程", "description": "用提公因式法、平方差公式等将方程一边化为零、另一边分解因式，实现降次求解", "standard_ref": "2022课标：能用因式分解法解数字系数的一元二次方程", "prereqs": ["kp_qe_concept", "kp_factoring"]},
+    {"id": "kp_qe_vieta", "name": "根与系数的关系", "subject": "math", "grade": 9, "cluster": "一元二次方程", "description": "当 Δ≥0 时，若两根为 x₁、x₂，则 x₁+x₂=-b/a，x₁·x₂=c/a；不解方程求两根的和与积及相关对称式的值", "standard_ref": "2022课标：了解一元二次方程的根与系数的关系", "prereqs": ["kp_qe_formula"]},
+    {"id": "kp_qe_apply", "name": "一元二次方程的实际应用", "subject": "math", "grade": 9, "cluster": "一元二次方程", "description": "增长率、面积、传播等实际问题中列一元二次方程并求解，检验根的实际意义并舍去不合题意的根", "standard_ref": "2022课标：能根据实际问题列一元二次方程并求解", "prereqs": ["kp_qe_formula", "kp_qe_factor", "kp_eq_apply"]},
+
+    {"id": "kp_qf_concept", "name": "二次函数的概念", "subject": "math", "grade": 9, "cluster": "二次函数", "description": "从实际问题中抽象出二次函数 y=ax²+bx+c（a≠0），识别其解析式特征与自变量取值范围", "standard_ref": "2022课标：通过对实际问题的分析，体会二次函数的意义", "prereqs": ["kp_function_concept", "kp_power"]},
+    {"id": "kp_qf_graph", "name": "二次函数的图象与性质", "subject": "math", "grade": 9, "cluster": "二次函数", "description": "用描点法画 y=ax² 的抛物线；一般式中 a 决定开口方向与开口大小，对称轴 x=-b/(2a)，顶点坐标，并以对称轴为界讨论增减性与最大（小）值（需平面直角坐标系基础）", "standard_ref": "2022课标：能画二次函数的图象，根据图象和表达式探索其性质，知道 a>0（或 a<0）时图象有最小值（最大值）", "prereqs": ["kp_qf_concept", "kp_linear_graph"]},
+    {"id": "kp_qf_vertex", "name": "配方法与图象的平移", "subject": "math", "grade": 9, "cluster": "二次函数", "description": "用配方法将 y=ax²+bx+c 化为 y=a(x-h)²+k，得出顶点（h,k）与对称轴；掌握 y=ax² 经上下、左右平移得 y=a(x-h)²+k 的规律", "standard_ref": "2022课标：会用配方法将数字系数的二次函数的表达式化为 y=a(x-h)²+k 的形式，并能由此得到图象的顶点坐标、开口方向和对称轴", "prereqs": ["kp_qf_graph", "kp_qe_complete"]},
+    {"id": "kp_qf_zeros", "name": "二次函数与一元二次方程的关系", "subject": "math", "grade": 9, "cluster": "二次函数", "description": "抛物线 y=ax²+bx+c 与 x 轴交点的横坐标即方程 ax²+bx+c=0 的根；Δ 的符号决定交点个数（2个/1个/0个），会利用图象估计方程的近似解", "standard_ref": "2022课标：知道二次函数与一元二次方程之间的联系，会利用二次函数的图象求一元二次方程的近似解", "prereqs": ["kp_qf_graph", "kp_qe_formula"]},
+    {"id": "kp_qf_apply", "name": "二次函数的实际应用", "subject": "math", "grade": 9, "cluster": "二次函数", "description": "抛物线形问题（拱桥、投篮轨迹）与利润最值问题：建立坐标系或列出函数关系式，利用顶点求最值并注意自变量取值范围", "standard_ref": "2022课标：能用二次函数解决简单的实际问题", "prereqs": ["kp_qf_vertex"]},
+
+    {"id": "kp_rotation", "name": "图形的旋转", "subject": "math", "grade": 9, "cluster": "旋转", "description": "旋转三要素（旋转中心、旋转方向、旋转角）；旋转的性质：对应点到旋转中心的距离相等，对应点与旋转中心连线所成的角彼此相等（等于旋转角），旋转前后的图形全等", "standard_ref": "2022课标：通过具体实例认识平面图形关于旋转中心的旋转，探索旋转的基本性质", "prereqs": ["kp_geometry_basic", "kp_angles"]},
+    {"id": "kp_central_sym", "name": "中心对称与中心对称图形", "subject": "math", "grade": 9, "cluster": "旋转", "description": "中心对称是旋转180°的特例；成中心对称的两个图形中对应点连线经过对称中心且被对称中心平分；识别中心对称图形（如平行四边形、圆）；关于原点对称的两点坐标互为相反数", "standard_ref": "2022课标：了解中心对称、中心对称图形的概念，探索它们的基本性质", "prereqs": ["kp_rotation", "kp_axis_symmetry"]},
+
+    {"id": "kp_circle_basic", "name": "圆的有关概念", "subject": "math", "grade": 9, "cluster": "圆", "description": "圆、弦、直径、弧（优弧与劣弧）、等弧、圆心角、圆周角的概念；圆是轴对称图形也是中心对称图形；同圆或等圆中圆心角、弧、弦之间的关系", "standard_ref": "2022课标：理解圆、弧、弦、圆心角、圆周角的概念，了解圆心角与弧、弦之间的关系", "prereqs": ["kp_lines_rays", "kp_angles"]},
+    {"id": "kp_circle_position", "name": "点、直线与圆的位置关系", "subject": "math", "grade": 9, "cluster": "圆", "description": "点与圆的位置关系由点到圆心距离 d 与半径 r 比较判定；直线与圆相离（d>r）、相切（d=r）、相交（d<r）的判定与图形表示", "standard_ref": "2022课标：了解点和圆、直线和圆的位置关系", "prereqs": ["kp_circle_basic"]},
+    {"id": "kp_circle_perp_chord", "name": "垂径定理", "subject": "math", "grade": 9, "cluster": "圆", "description": "垂直于弦的直径平分弦，并且平分弦所对的弧；结合半径、弦心距、半弦长构成直角三角形进行计算（弦长计算需勾股定理这一前置变形能力）", "standard_ref": "2022课标：探索垂径定理及其推论", "prereqs": ["kp_circle_basic", "kp_pythagorean"]},
+    {"id": "kp_circle_inscribed", "name": "圆周角定理", "subject": "math", "grade": 9, "cluster": "圆", "description": "同弧或等弧所对的圆周角相等，且等于所对圆心角的一半；直径所对的圆周角是直角，90°的圆周角所对的弦是直径", "standard_ref": "2022课标：探索圆周角与圆心角及其所对的弧之间的关系，知道同弧（等弧）所对的圆周角相等，直径所对的圆周角是直角", "prereqs": ["kp_circle_basic"]},
+    {"id": "kp_circle_tangent", "name": "切线的判定与性质", "subject": "math", "grade": 9, "cluster": "圆", "description": "切线的判定（经过半径外端并且垂直于这条半径的直线是圆的切线）与性质（切线垂直于过切点的半径）；切线长定理：过圆外一点的两条切线长相等，圆心与该点连线平分两切线的夹角", "standard_ref": "2022课标：掌握切线的概念，探索切线与过切点的半径之间的关系，探索切线长定理", "prereqs": ["kp_circle_position"]},
+    {"id": "kp_circle_poly", "name": "正多边形与圆", "subject": "math", "grade": 9, "cluster": "圆", "description": "正多边形（各边相等、各角相等）的概念，正多边形的半径、边心距、中心角，利用等分圆周画圆内接正多边形", "standard_ref": "2022课标：了解正多边形的概念及正多边形与圆的关系", "prereqs": ["kp_circle_basic"]},
+    {"id": "kp_circle_arc", "name": "弧长与扇形面积", "subject": "math", "grade": 9, "cluster": "圆", "description": "弧长公式 l=nπR/180 与扇形面积公式 S=nπR²/360（及 S=½lR）；圆锥的侧面展开图为扇形，其侧面积为 πrl（r 为底面半径，l 为母线长）", "standard_ref": "2022课标：会计算圆的弧长、扇形的面积", "prereqs": ["kp_circle_basic"]},
+
+    {"id": "kp_re_concept", "name": "随机事件与概率的意义", "subject": "math", "grade": 9, "cluster": "概率初步", "description": "必然事件、不可能事件与随机事件的识别；概率是对随机事件发生可能性大小的数值度量，0≤P(A)≤1", "standard_ref": "2022课标：在具体情境中了解概率的意义，体会概率是对随机事件发生可能性大小的度量", "prereqs": []},
+    {"id": "kp_re_list", "name": "列表法与树状图法求概率", "subject": "math", "grade": 9, "cluster": "概率初步", "description": "对两步（或可分步）的等可能试验，用列表或画树状图列出所有等可能结果，用 P(A)=m/n 计算概率（注意有放回与不放回的区别）", "standard_ref": "2022课标：能通过列表、画树状图等方法列出简单随机事件所有可能的结果，能获得随机事件发生的概率", "prereqs": ["kp_re_concept"]},
+    {"id": "kp_re_frequency", "name": "用频率估计概率", "subject": "math", "grade": 9, "cluster": "概率初步", "description": "大量重复试验中事件发生的频率逐渐稳定，可用稳定频率估计概率；理解频率（试验值）与概率（理论值）的联系与区别", "standard_ref": "2022课标：知道通过大量的重复试验，可以用频率估计概率", "prereqs": ["kp_re_concept"]},
+
+    {"id": "kp_if_concept", "name": "反比例函数的概念", "subject": "math", "grade": 9, "cluster": "反比例函数", "description": "从实际问题中抽象出反比例函数 y=k/x（k≠0），等价形式 xy=k，识别其解析式特征与自变量取值范围（k≠0）", "standard_ref": "2022课标：能根据实际问题的条件确定反比例函数的表达式，体会反比例函数的意义", "prereqs": ["kp_function_concept", "kp_eq_solve"]},
+    {"id": "kp_if_graph", "name": "反比例函数的图象与性质", "subject": "math", "grade": 9, "cluster": "反比例函数", "description": "用描点法画双曲线；k>0 时图象在第一、三象限，k<0 时在第二、四象限，且在每个象限内 y 随 x 增大而减小（k>0）或增大（k<0）；图象上任一点向两坐标轴作垂线所围矩形面积为 |k|（需平面直角坐标系基础）", "standard_ref": "2022课标：能画反比例函数的图象，根据图象和表达式 y=k/x（k≠0）探索并理解 k>0 和 k<0 时图象的变化情况", "prereqs": ["kp_if_concept", "kp_linear_graph"]},
+    {"id": "kp_if_apply", "name": "反比例函数的实际应用", "subject": "math", "grade": 9, "cluster": "反比例函数", "description": "压强与体积、浓度、工程等实际问题中确定 k 并利用图象与性质求解，注意自变量取值范围与图象只在某一分支上取值", "standard_ref": "2022课标：能用反比例函数解决简单的实际问题", "prereqs": ["kp_if_graph"]},
+
+    {"id": "kp_ratio_prop", "name": "比例线段与比例的基本性质", "subject": "math", "grade": 9, "cluster": "相似", "description": "两条线段的比、成比例线段的概念；比例的基本性质：a/b=c/d 等价于 ad=bc；合比、等比性质的简单应用", "standard_ref": "2022课标：了解比例的基本性质、线段的比、成比例的线段", "prereqs": ["kp_lines_rays"]},
+    {"id": "kp_parallel_ratio", "name": "平行线分线段成比例", "subject": "math", "grade": 9, "cluster": "相似", "description": "两条直线被一组平行线所截，所得的对应线段成比例；在三角形中（A字形、8字形）的应用", "standard_ref": "2022课标：两条直线被一组平行线所截，所得的对应线段成比例", "prereqs": ["kp_ratio_prop"]},
+    {"id": "kp_similar_judge", "name": "相似三角形的判定", "subject": "math", "grade": 9, "cluster": "相似", "description": "相似三角形的概念与预备定理（平行于三角形一边的直线截其他两边，所得三角形与原三角形相似）；判定定理：两角分别相等、两边成比例且夹角相等、三边成比例", "standard_ref": "2022课标：了解相似三角形的判定定理：两角分别相等的两个三角形相似；两边成比例且夹角相等的两个三角形相似；三边成比例的两个三角形相似", "prereqs": ["kp_parallel_ratio", "kp_angles", "kp_congruence_concept"]},
+    {"id": "kp_similar_props", "name": "相似三角形的性质与应用", "subject": "math", "grade": 9, "cluster": "相似", "description": "相似三角形对应角相等、对应边成比例；对应高、中线、角平分线之比与周长之比都等于相似比，面积之比等于相似比的平方；利用相似测量与计算实际问题", "standard_ref": "2022课标：了解相似三角形的性质定理，能用相似三角形的有关知识解决一些简单的实际问题", "prereqs": ["kp_similar_judge"]},
+    {"id": "kp_homothety", "name": "位似", "subject": "math", "grade": 9, "cluster": "相似", "description": "位似图形的概念与位似中心、位似比；在平面直角坐标系中以原点为位似中心时，对应点坐标为 (kx, ky) 或 (-kx, -ky)，会利用位似将图形放大或缩小（需平面直角坐标系基础）", "standard_ref": "2022课标：了解图形的位似，能够利用位似将一个图形放大或缩小", "prereqs": ["kp_similar_judge"]},
+
+    {"id": "kp_trig_def", "name": "锐角三角函数的定义", "subject": "math", "grade": 9, "cluster": "锐角三角函数", "description": "在直角三角形中，利用相似（比值不变）认识锐角三角函数：sin A=对边/斜边，cos A=邻边/斜边，tan A=对边/邻边", "standard_ref": "2022课标：利用相似的直角三角形，探索并认识锐角三角函数（sin A、cos A、tan A）", "prereqs": ["kp_angles", "kp_similar_judge"]},
+    {"id": "kp_trig_special", "name": "特殊角的三角函数值", "subject": "math", "grade": 9, "cluster": "锐角三角函数", "description": "30°、45°、60° 角的正弦、余弦、正切值及其应用，含简单的互余关系 sin A=cos(90°-A) 的运用", "standard_ref": "2022课标：知道 30°、45°、60° 角的三角函数值", "prereqs": ["kp_trig_def"]},
+    {"id": "kp_rta_solve", "name": "解直角三角形", "subject": "math", "grade": 9, "cluster": "锐角三角函数", "description": "已知直角三角形的两个元素（至少一个是边），利用勾股关系、两锐角互余及边角关系（三角函数）求出其余元素", "standard_ref": "2022课标：能用锐角三角函数解直角三角形", "prereqs": ["kp_trig_def", "kp_trig_special", "kp_pythagorean"]},
+    {"id": "kp_rta_apply", "name": "解直角三角形的实际应用", "subject": "math", "grade": 9, "cluster": "锐角三角函数", "description": "仰角与俯角、坡度与坡角、方位角等问题：把实际问题抽象为直角三角形模型，选择恰当的三角函数求解", "standard_ref": "2022课标：能用锐角三角函数解直角三角形，能用相关知识解决一些简单的实际问题", "prereqs": ["kp_rta_solve"]}
+  ]
+}

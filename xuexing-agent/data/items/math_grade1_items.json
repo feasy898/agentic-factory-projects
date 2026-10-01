@@ -1,0 +1,1125 @@
+{
+  "items": [
+    {
+      "id": "p1_001",
+      "item_type": "choice",
+      "stem": "小兔有15根胡萝卜，15读作（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p1_num20"
+      ],
+      "difficulty": 0.2,
+      "solution": "15的十位是1、个位是5，读作十五。",
+      "source": "llm_generated",
+      "options": [
+        "A. 十五",
+        "B. 五十一",
+        "C. 五十",
+        "D. 五十五"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_002",
+      "item_type": "fill",
+      "stem": "按顺序数数：10、11、12、13、____",
+      "answer": "14",
+      "kps": [
+        "kp_p1_num20"
+      ],
+      "difficulty": 0.1,
+      "solution": "13后面一个一个数是14。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_003",
+      "item_type": "choice",
+      "stem": "下面最大的数是（　）",
+      "answer": "B",
+      "kps": [
+        "kp_p1_num20"
+      ],
+      "difficulty": 0.2,
+      "solution": "12、18、15、11中18最大。",
+      "source": "llm_generated",
+      "options": [
+        "A. 12",
+        "B. 18",
+        "C. 15",
+        "D. 11"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_004",
+      "item_type": "fill",
+      "stem": "1个十和8个一合起来是____",
+      "answer": "18",
+      "kps": [
+        "kp_p1_num20"
+      ],
+      "difficulty": 0.2,
+      "solution": "1个十是10，8个一是8，合起来是18。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_005",
+      "item_type": "fill",
+      "stem": "小丽有7块糖，吃了2块，还剩____块",
+      "answer": "5",
+      "kps": [
+        "kp_p1_addsub10"
+      ],
+      "difficulty": 0.1,
+      "solution": "7-2=5（块）。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_006",
+      "item_type": "fill",
+      "stem": "草地上有4只小鸡，又来了3只，现在有____只",
+      "answer": "7",
+      "kps": [
+        "kp_p1_addsub10"
+      ],
+      "difficulty": 0.1,
+      "solution": "4+3=7（只）。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_007",
+      "item_type": "choice",
+      "stem": "小明有9本故事书，借给小红3本，还剩几本？正确算式是（　）",
+      "answer": "B",
+      "kps": [
+        "kp_p1_addsub10"
+      ],
+      "difficulty": 0.2,
+      "solution": "从9本里去掉3本，用减法9-3。",
+      "source": "llm_generated",
+      "options": [
+        "A. 9+3",
+        "B. 9-3",
+        "C. 3-9",
+        "D. 9+9"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_008",
+      "item_type": "fill",
+      "stem": "3和____合起来是10",
+      "answer": "7",
+      "kps": [
+        "kp_p1_addsub10"
+      ],
+      "difficulty": 0.2,
+      "solution": "10可以分成3和7。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_009",
+      "item_type": "fill",
+      "stem": "9+4=____",
+      "answer": "13",
+      "kps": [
+        "kp_p1_carry20"
+      ],
+      "difficulty": 0.3,
+      "solution": "把4分成1和3，9加1凑成10，再加3得13。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p1_carry_forget_rem"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_010",
+      "item_type": "fill",
+      "stem": "8+5=____",
+      "answer": "13",
+      "kps": [
+        "kp_p1_carry20"
+      ],
+      "difficulty": 0.3,
+      "solution": "把5分成2和3，8加2凑成10，再加3得13。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p1_carry_forget_rem"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_011",
+      "item_type": "choice",
+      "stem": "用凑十法计算9+6，第一步把6分成（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p1_carry20"
+      ],
+      "difficulty": 0.3,
+      "solution": "9缺1凑成10，所以把6分成1和5。",
+      "source": "llm_generated",
+      "options": [
+        "A. 1和5",
+        "B. 2和4",
+        "C. 3和3",
+        "D. 4和2"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_012",
+      "item_type": "fill",
+      "stem": "文具店有9支铅笔，又运来6支，现在有____支",
+      "answer": "15",
+      "kps": [
+        "kp_p1_carry20"
+      ],
+      "difficulty": 0.3,
+      "solution": "9+6：9加1凑成10，再加5得15（支）。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p1_carry_concat"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_013",
+      "item_type": "fill",
+      "stem": "15-9=____",
+      "answer": "6",
+      "kps": [
+        "kp_p1_borrow20"
+      ],
+      "difficulty": 0.3,
+      "solution": "破十法：10-9=1，1加个位的5得6。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p1_borrow_forget_add"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_014",
+      "item_type": "fill",
+      "stem": "13-8=____",
+      "answer": "5",
+      "kps": [
+        "kp_p1_borrow20"
+      ],
+      "difficulty": 0.4,
+      "solution": "破十法：10-8=2，2加个位的3得5。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p1_borrow_forget_add"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_015",
+      "item_type": "choice",
+      "stem": "用破十法计算14-9，第一步应该（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p1_borrow20"
+      ],
+      "difficulty": 0.3,
+      "solution": "把14分成10和4，先算10-9=1。",
+      "source": "llm_generated",
+      "options": [
+        "A. 把14分成10和4",
+        "B. 把9分成4和5",
+        "C. 把14分成9和5",
+        "D. 把9分成1和8"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_016",
+      "item_type": "fill",
+      "stem": "一共有16个苹果，吃了9个，还剩____个",
+      "answer": "7",
+      "kps": [
+        "kp_p1_borrow20"
+      ],
+      "difficulty": 0.4,
+      "solution": "16-9：10-9=1，1加6得7（个）。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p1_borrow_reverse"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_017",
+      "item_type": "fill",
+      "stem": "3个十和7个一合起来是____",
+      "answer": "37",
+      "kps": [
+        "kp_p1_num100"
+      ],
+      "difficulty": 0.2,
+      "solution": "3个十是30，7个一是7，合起来是37。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_018",
+      "item_type": "fill",
+      "stem": "在○里填上＞或＜：38○45，○里填____",
+      "answer": "＜",
+      "kps": [
+        "kp_p1_num100"
+      ],
+      "difficulty": 0.3,
+      "solution": "先比十位：3比4小，所以38＜45。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p1_num100_ones_only"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_019",
+      "item_type": "fill",
+      "stem": "按规律填数：28、29、____",
+      "answer": "30",
+      "kps": [
+        "kp_p1_num100"
+      ],
+      "difficulty": 0.2,
+      "solution": "29再数一个数是30。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_020",
+      "item_type": "choice",
+      "stem": "和39相邻的两个数是（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p1_num100"
+      ],
+      "difficulty": 0.2,
+      "solution": "39前面是38，后面是40。",
+      "source": "llm_generated",
+      "options": [
+        "A. 38和40",
+        "B. 37和38",
+        "C. 40和41",
+        "D. 39和40"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_021",
+      "item_type": "fill",
+      "stem": "30+40=____",
+      "answer": "70",
+      "kps": [
+        "kp_p1_addsub100"
+      ],
+      "difficulty": 0.2,
+      "solution": "3个十加4个十是7个十，是70。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_022",
+      "item_type": "fill",
+      "stem": "35+2=____",
+      "answer": "37",
+      "kps": [
+        "kp_p1_addsub100"
+      ],
+      "difficulty": 0.2,
+      "solution": "先算5+2=7，再合上30是37。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_023",
+      "item_type": "choice",
+      "stem": "小丽有46颗珠子，用去5颗，还剩多少颗？（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p1_addsub100"
+      ],
+      "difficulty": 0.3,
+      "solution": "46-5：先算6-5=1，是41颗。",
+      "source": "llm_generated",
+      "options": [
+        "A. 41颗",
+        "B. 51颗",
+        "C. 42颗",
+        "D. 40颗"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_024",
+      "item_type": "choice",
+      "stem": "1张1元和1张5角合起来是（　）",
+      "answer": "C",
+      "kps": [
+        "kp_p1_money"
+      ],
+      "difficulty": 0.2,
+      "solution": "1元加5角是1元5角。",
+      "source": "llm_generated",
+      "options": [
+        "A. 1元",
+        "B. 6角",
+        "C. 1元5角",
+        "D. 10元5角"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_025",
+      "item_type": "fill",
+      "stem": "1元=____角",
+      "answer": "10",
+      "kps": [
+        "kp_p1_money"
+      ],
+      "difficulty": 0.1,
+      "solution": "1元=10角。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p1_money_rate"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_026",
+      "item_type": "fill",
+      "stem": "买6元的文具付了10元，应找回____元",
+      "answer": "4",
+      "kps": [
+        "kp_p1_money"
+      ],
+      "difficulty": 0.2,
+      "solution": "10-6=4（元）。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p1_money_change_add"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_027",
+      "item_type": "choice",
+      "stem": "分针指着12，时针指着8，这时是（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p1_clock"
+      ],
+      "difficulty": 0.2,
+      "solution": "分针指12是整时，时针指8就是8时。",
+      "source": "llm_generated",
+      "options": [
+        "A. 8时",
+        "B. 12时",
+        "C. 8时半",
+        "D. 4时"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_028",
+      "item_type": "fill",
+      "stem": "分针指着6，时针走过3还没到4，现在是____（写作几时半）",
+      "answer": "3时半",
+      "kps": [
+        "kp_p1_clock"
+      ],
+      "difficulty": 0.3,
+      "solution": "时针走过3不到4，分针指6，是3时半。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p1_clock_next_hour"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_029",
+      "item_type": "choice",
+      "stem": "分针指着6，时针在5和6中间，这时是（　）",
+      "answer": "B",
+      "kps": [
+        "kp_p1_clock"
+      ],
+      "difficulty": 0.3,
+      "solution": "时针刚走过5，分针指6，是5时半。",
+      "source": "llm_generated",
+      "options": [
+        "A. 5时",
+        "B. 5时半",
+        "C. 6时",
+        "D. 6时半"
+      ],
+      "misconceptions": [
+        "mc_p1_clock_half_read6"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_030",
+      "item_type": "fill",
+      "stem": "草地上有5只白羊和3只黑羊，一共有____只羊",
+      "answer": "8",
+      "kps": [
+        "kp_p1_wordprob"
+      ],
+      "difficulty": 0.2,
+      "solution": "求一共用加法：5+3=8（只）。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_031",
+      "item_type": "fill",
+      "stem": "一共有9个气球，飞走了2个，还剩____个",
+      "answer": "7",
+      "kps": [
+        "kp_p1_wordprob"
+      ],
+      "difficulty": 0.2,
+      "solution": "求剩下用减法：9-2=7（个）。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_032",
+      "item_type": "choice",
+      "stem": "树上原来有9只小鸟，又飞来4只，求一共几只，正确算式是（　）",
+      "answer": "B",
+      "kps": [
+        "kp_p1_wordprob"
+      ],
+      "difficulty": 0.3,
+      "solution": "原来的加上又来的：9+4。",
+      "source": "llm_generated",
+      "options": [
+        "A. 9-4",
+        "B. 9+4",
+        "C. 4-9",
+        "D. 9+4+4"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_033",
+      "item_type": "fill",
+      "stem": "找规律填数：2、4、6、8、____",
+      "answer": "10",
+      "kps": [
+        "kp_p1_pattern"
+      ],
+      "difficulty": 0.2,
+      "solution": "每次多2，8再添2是10。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_034",
+      "item_type": "choice",
+      "stem": "按“红、红、蓝”的顺序重复串珠子，第7颗是（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p1_pattern"
+      ],
+      "difficulty": 0.4,
+      "solution": "三个一组：第4颗红、第7颗和第1颗一样，是红。",
+      "source": "llm_generated",
+      "options": [
+        "A. 红",
+        "B. 蓝",
+        "C. 绿",
+        "D. 黄"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_035",
+      "item_type": "fill",
+      "stem": "找规律填数：15、13、11、____",
+      "answer": "9",
+      "kps": [
+        "kp_p1_pattern"
+      ],
+      "difficulty": 0.3,
+      "solution": "每次少2，11减2是9。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_036",
+      "item_type": "choice",
+      "stem": "小兔有4根胡萝卜，小猴有6根胡萝卜，谁的胡萝卜多？（　）",
+      "answer": "B",
+      "kps": [
+        "kp_p1_compare"
+      ],
+      "difficulty": 0.2,
+      "solution": "6比4大，小猴的胡萝卜多。",
+      "source": "llm_generated",
+      "options": [
+        "A. 小兔多",
+        "B. 小猴多",
+        "C. 一样多",
+        "D. 不能比"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_037",
+      "item_type": "fill",
+      "stem": "跳格子比赛中，小鹿跳了9格，小猴跳了6格，小松鼠跳了8格，跳得最远的是____",
+      "answer": "小鹿",
+      "kps": [
+        "kp_p1_compare"
+      ],
+      "difficulty": 0.2,
+      "solution": "9格最多，小鹿跳得最远。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_038",
+      "item_type": "choice",
+      "stem": "比高矮：小明比小红高，小刚比小明还高，从矮到高排对的是（　）",
+      "answer": "B",
+      "kps": [
+        "kp_p1_compare"
+      ],
+      "difficulty": 0.4,
+      "solution": "小刚＞小明＞小红，从矮到高是小红、小明、小刚。",
+      "source": "llm_generated",
+      "options": [
+        "A. 小明、小红、小刚",
+        "B. 小红、小明、小刚",
+        "C. 小刚、小明、小红",
+        "D. 小红、小刚、小明"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_039",
+      "item_type": "choice",
+      "stem": "魔方是什么形状？（　）",
+      "answer": "B",
+      "kps": [
+        "kp_p1_3dshapes"
+      ],
+      "difficulty": 0.1,
+      "solution": "魔方每个面都是正方形，是正方体。",
+      "source": "llm_generated",
+      "options": [
+        "A. 长方体",
+        "B. 正方体",
+        "C. 圆柱",
+        "D. 球"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_040",
+      "item_type": "choice",
+      "stem": "关于球，下面说法对的是（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p1_3dshapes"
+      ],
+      "difficulty": 0.2,
+      "solution": "球没有平平的面，放不住，容易滚动。",
+      "source": "llm_generated",
+      "options": [
+        "A. 容易滚动",
+        "B. 有平平的面",
+        "C. 能堆得很高",
+        "D. 有尖尖的角"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_041",
+      "item_type": "choice",
+      "stem": "下面哪种物品的形状是圆柱？（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p1_3dshapes"
+      ],
+      "difficulty": 0.2,
+      "solution": "易拉罐上下一样粗，两个面是圆的，是圆柱。",
+      "source": "llm_generated",
+      "options": [
+        "A. 易拉罐",
+        "B. 魔方",
+        "C. 红领巾",
+        "D. 足球"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_042",
+      "item_type": "choice",
+      "stem": "红领巾是什么形状？（　）",
+      "answer": "C",
+      "kps": [
+        "kp_p1_2dshapes"
+      ],
+      "difficulty": 0.1,
+      "solution": "红领巾有3条边3个角，是三角形。",
+      "source": "llm_generated",
+      "options": [
+        "A. 长方形",
+        "B. 正方形",
+        "C. 三角形",
+        "D. 圆"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_043",
+      "item_type": "choice",
+      "stem": "一元硬币的面是什么形状？（　）",
+      "answer": "D",
+      "kps": [
+        "kp_p1_2dshapes"
+      ],
+      "difficulty": 0.1,
+      "solution": "硬币的面圆圆的，是圆。",
+      "source": "llm_generated",
+      "options": [
+        "A. 长方形",
+        "B. 正方形",
+        "C. 三角形",
+        "D. 圆"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_044",
+      "item_type": "fill",
+      "stem": "数学课本的封面是____形",
+      "answer": "长方",
+      "kps": [
+        "kp_p1_2dshapes"
+      ],
+      "difficulty": 0.1,
+      "solution": "课本封面长长方方的，是长方形。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_045",
+      "item_type": "choice",
+      "stem": "把书放在桌子上，书在桌子的（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p1_position"
+      ],
+      "difficulty": 0.2,
+      "solution": "书压在桌面上，在桌子的上面。",
+      "source": "llm_generated",
+      "options": [
+        "A. 上面",
+        "B. 下面",
+        "C. 前面",
+        "D. 后面"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_046",
+      "item_type": "fill",
+      "stem": "排队做操，从前往后数小刚排第5，他后面还有3人，一共有____人",
+      "answer": "8",
+      "kps": [
+        "kp_p1_position"
+      ],
+      "difficulty": 0.3,
+      "solution": "小刚前面有4人，加小刚和他后面3人：4+1+3=8（人）。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_047",
+      "item_type": "choice",
+      "stem": "你和同桌面对面坐着，你举右手，同桌对着你的那只手也举起来，他举的是（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p1_position"
+      ],
+      "difficulty": 0.4,
+      "solution": "面对面时左右正好相反，你的右手对面是他的左手。",
+      "source": "llm_generated",
+      "options": [
+        "A. 左手",
+        "B. 右手",
+        "C. 双手",
+        "D. 无法知道"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_048",
+      "item_type": "choice",
+      "stem": "把苹果、香蕉、白菜、萝卜分成两类，分类标准是（　）",
+      "answer": "C",
+      "kps": [
+        "kp_p1_sort"
+      ],
+      "difficulty": 0.3,
+      "solution": "苹果香蕉是水果，白菜萝卜是蔬菜，按水果和蔬菜分。",
+      "source": "llm_generated",
+      "options": [
+        "A. 按颜色分",
+        "B. 按大小分",
+        "C. 按水果和蔬菜分",
+        "D. 按味道分"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_049",
+      "item_type": "fill",
+      "stem": "积木筐里有5块长方体积木和3块正方体积木，按形状分完类，一共有____块积木",
+      "answer": "8",
+      "kps": [
+        "kp_p1_sort"
+      ],
+      "difficulty": 0.2,
+      "solution": "5块加3块，一共8块。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p1_050",
+      "item_type": "choice",
+      "stem": "下面不同类的是（　）",
+      "answer": "C",
+      "kps": [
+        "kp_p1_sort"
+      ],
+      "difficulty": 0.2,
+      "solution": "苹果、香蕉、葡萄是水果，文具盒是文具。",
+      "source": "llm_generated",
+      "options": [
+        "A. 苹果",
+        "B. 香蕉",
+        "C. 文具盒",
+        "D. 葡萄"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    }
+  ]
+}

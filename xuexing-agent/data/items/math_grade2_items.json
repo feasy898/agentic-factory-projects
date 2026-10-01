@@ -1,0 +1,1052 @@
+{
+  "items": [
+    {
+      "id": "p2_001",
+      "item_type": "fill",
+      "stem": "小明有27颗糖，又买了15颗，27+15=____",
+      "answer": "42",
+      "kps": [
+        "kp_p2_addsub_written"
+      ],
+      "difficulty": 0.3,
+      "solution": "个位7+5=12写2进1，十位2+1加进上来的1是4，得42。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p2_carry_forget"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_002",
+      "item_type": "fill",
+      "stem": "小丽有45元，买文具花了18元，45-18=____",
+      "answer": "27",
+      "kps": [
+        "kp_p2_addsub_written"
+      ],
+      "difficulty": 0.4,
+      "solution": "个位5减8不够，向十位借1当10：15-8=7，十位3-1=2，得27。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p2_borrow_flip"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_003",
+      "item_type": "choice",
+      "stem": "用竖式计算36+28，个位6+8=14，接下来应该（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p2_addsub_written"
+      ],
+      "difficulty": 0.2,
+      "solution": "个位满十向十位进1，个位写4。",
+      "source": "llm_generated",
+      "options": [
+        "A. 个位写4，向十位进1",
+        "B. 个位写14",
+        "C. 个位写4，向个位进1",
+        "D. 把14都写在十位"
+      ],
+      "misconceptions": [
+        "mc_p2_carry_forget"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_004",
+      "item_type": "fill",
+      "stem": "图书角有58本故事书和25本漫画书，一共有____本",
+      "answer": "83",
+      "kps": [
+        "kp_p2_addsub_written"
+      ],
+      "difficulty": 0.4,
+      "solution": "个位8+5=13写3进1，十位5+2加进上来的1是8，得83（本）。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_005",
+      "item_type": "choice",
+      "stem": "3+3+3+3+3+3改写成乘法算式是（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p2_mul_meaning"
+      ],
+      "difficulty": 0.2,
+      "solution": "6个3相加，写成3×6。",
+      "source": "llm_generated",
+      "options": [
+        "A. 3×6",
+        "B. 3+6",
+        "C. 6×6",
+        "D. 3×3"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_006",
+      "item_type": "choice",
+      "stem": "每盘放2个苹果，放了4盘，算式4×2表示（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p2_mul_meaning"
+      ],
+      "difficulty": 0.2,
+      "solution": "4×2表示4个2相加。",
+      "source": "llm_generated",
+      "options": [
+        "A. 4个2相加",
+        "B. 2个4相加",
+        "C. 4和2合起来",
+        "D. 4个2相乘"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_007",
+      "item_type": "fill",
+      "stem": "每盘有5个苹果，放了3盘，一共有____个苹果",
+      "answer": "15",
+      "kps": [
+        "kp_p2_mul_meaning"
+      ],
+      "difficulty": 0.2,
+      "solution": "3个5相加：5×3=15（个）。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p2_mul_as_add"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_008",
+      "item_type": "fill",
+      "stem": "6×7=____",
+      "answer": "42",
+      "kps": [
+        "kp_p2_mul_table"
+      ],
+      "difficulty": 0.1,
+      "solution": "口诀：六七四十二。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p2_table_slip"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_009",
+      "item_type": "fill",
+      "stem": "4×9=____",
+      "answer": "36",
+      "kps": [
+        "kp_p2_mul_table"
+      ],
+      "difficulty": 0.1,
+      "solution": "口诀：四九三十六。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p2_table_slip"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_010",
+      "item_type": "fill",
+      "stem": "7×7=____",
+      "answer": "49",
+      "kps": [
+        "kp_p2_mul_table"
+      ],
+      "difficulty": 0.2,
+      "solution": "口诀：七七四十九。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p2_table_slip"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_011",
+      "item_type": "choice",
+      "stem": "口诀“三七二十一”对应的算式是（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p2_mul_table"
+      ],
+      "difficulty": 0.1,
+      "solution": "三七二十一：3×7=21。",
+      "source": "llm_generated",
+      "options": [
+        "A. 3×7=21",
+        "B. 7×3=23",
+        "C. 3×7=23",
+        "D. 7×3=31"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_012",
+      "item_type": "fill",
+      "stem": "12个苹果，每3个放一盘，可以放____盘",
+      "answer": "4",
+      "kps": [
+        "kp_p2_div_meaning"
+      ],
+      "difficulty": 0.2,
+      "solution": "12里有4个3，可以放4盘。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_013",
+      "item_type": "choice",
+      "stem": "把15颗糖平均分给3个小朋友，分法对的是（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p2_div_meaning"
+      ],
+      "difficulty": 0.2,
+      "solution": "平均分要每人分得同样多，只有每人都5颗符合。",
+      "source": "llm_generated",
+      "options": [
+        "A. 每人5颗、5颗、5颗",
+        "B. 6颗、6颗、3颗",
+        "C. 7颗、4颗、4颗",
+        "D. 8颗、4颗、3颗"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_014",
+      "item_type": "fill",
+      "stem": "15颗糖平均分给3个小朋友，每人分____颗",
+      "answer": "5",
+      "kps": [
+        "kp_p2_div_meaning"
+      ],
+      "difficulty": 0.2,
+      "solution": "15÷3=5（颗）。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_015",
+      "item_type": "fill",
+      "stem": "18÷6=____",
+      "answer": "3",
+      "kps": [
+        "kp_p2_div_quotient"
+      ],
+      "difficulty": 0.1,
+      "solution": "想（三）六十八，商是3。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p2_div_once_sub"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_016",
+      "item_type": "fill",
+      "stem": "56÷8=____",
+      "answer": "7",
+      "kps": [
+        "kp_p2_div_quotient"
+      ],
+      "difficulty": 0.2,
+      "solution": "想七（八）五十六，商是7。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p2_div_once_sub"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_017",
+      "item_type": "choice",
+      "stem": "计算24÷4，想口诀（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p2_div_quotient"
+      ],
+      "difficulty": 0.2,
+      "solution": "想4乘几得24：四六二十四。",
+      "source": "llm_generated",
+      "options": [
+        "A. 四六二十四",
+        "B. 四九三十六",
+        "C. 三八二十四",
+        "D. 四四十六"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_018",
+      "item_type": "fill",
+      "stem": "24个小朋友排队，每6人分一排，可以分____排",
+      "answer": "4",
+      "kps": [
+        "kp_p2_div_quotient"
+      ],
+      "difficulty": 0.4,
+      "solution": "24÷6=4（排）。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p2_div_share_parts"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_019",
+      "item_type": "fill",
+      "stem": "3个千和5个百合起来是____",
+      "answer": "3500",
+      "kps": [
+        "kp_p2_num10000"
+      ],
+      "difficulty": 0.2,
+      "solution": "3个千是3000，5个百是500，合起来3500。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_020",
+      "item_type": "choice",
+      "stem": "比一比，下面最大的数是（　）",
+      "answer": "B",
+      "kps": [
+        "kp_p2_num10000"
+      ],
+      "difficulty": 0.2,
+      "solution": "千位相同比百位：3990的百位是9，最大。",
+      "source": "llm_generated",
+      "options": [
+        "A. 3099",
+        "B. 3990",
+        "C. 3900",
+        "D. 3009"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_021",
+      "item_type": "fill",
+      "stem": "“一千零二十”写作____",
+      "answer": "1020",
+      "kps": [
+        "kp_p2_num10000"
+      ],
+      "difficulty": 0.4,
+      "solution": "千位1、百位0、十位2、个位0：1020。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_022",
+      "item_type": "choice",
+      "stem": "从右边起，数位顺序的第三位是（　）",
+      "answer": "C",
+      "kps": [
+        "kp_p2_num10000"
+      ],
+      "difficulty": 0.1,
+      "solution": "右边起第一位个位、第二位十位、第三位百位。",
+      "source": "llm_generated",
+      "options": [
+        "A. 个位",
+        "B. 十位",
+        "C. 百位",
+        "D. 千位"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_023",
+      "item_type": "fill",
+      "stem": "时针走过2还没到3，分针指着6，现在是几时几分？____",
+      "answer": "2时30分",
+      "kps": [
+        "kp_p2_time"
+      ],
+      "difficulty": 0.3,
+      "solution": "时针刚过2是2时多，分针指6是30分：2时30分。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p2_hour_next"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_024",
+      "item_type": "choice",
+      "stem": "1时=（　）分",
+      "answer": "B",
+      "kps": [
+        "kp_p2_time"
+      ],
+      "difficulty": 0.1,
+      "solution": "1时=60分。",
+      "source": "llm_generated",
+      "options": [
+        "A. 10",
+        "B. 60",
+        "C. 100",
+        "D. 50"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_025",
+      "item_type": "fill",
+      "stem": "钟面上分针指着9，表示____分",
+      "answer": "45",
+      "kps": [
+        "kp_p2_time"
+      ],
+      "difficulty": 0.3,
+      "solution": "分针每大格5分，9大格是45分。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p2_minute_as_num"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_026",
+      "item_type": "choice",
+      "stem": "一个西瓜约重4（　）",
+      "answer": "B",
+      "kps": [
+        "kp_p2_mass"
+      ],
+      "difficulty": 0.2,
+      "solution": "西瓜较重，用千克作单位。",
+      "source": "llm_generated",
+      "options": [
+        "A. 克",
+        "B. 千克",
+        "C. 米",
+        "D. 厘米"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_027",
+      "item_type": "fill",
+      "stem": "1千克=____克",
+      "answer": "1000",
+      "kps": [
+        "kp_p2_mass"
+      ],
+      "difficulty": 0.1,
+      "solution": "1千克=1000克。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_028",
+      "item_type": "choice",
+      "stem": "小明重30千克，小红重25千克，小刚重28千克，谁最重？（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p2_mass"
+      ],
+      "difficulty": 0.2,
+      "solution": "30＞28＞25，小明最重。",
+      "source": "llm_generated",
+      "options": [
+        "A. 小明",
+        "B. 小红",
+        "C. 小刚",
+        "D. 一样重"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_029",
+      "item_type": "fill",
+      "stem": "统计喜欢的运动：喜欢跳绳的有8人，喜欢踢毽的比跳绳的多3人，喜欢踢毽的有____人",
+      "answer": "11",
+      "kps": [
+        "kp_p2_stats"
+      ],
+      "difficulty": 0.2,
+      "solution": "8+3=11（人）。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_030",
+      "item_type": "choice",
+      "stem": "统计人数时，下面记录数据常用的方法是（　）",
+      "answer": "B",
+      "kps": [
+        "kp_p2_stats"
+      ],
+      "difficulty": 0.1,
+      "solution": "一个“正”字5画，是统计记录的常用方法。",
+      "source": "llm_generated",
+      "options": [
+        "A. 画小圆圈",
+        "B. 画“正”字",
+        "C. 写日记",
+        "D. 画满格子"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_031",
+      "item_type": "choice",
+      "stem": "班级书角：故事书45本，漫画书38本，科技书52本，哪种书最多？（　）",
+      "answer": "C",
+      "kps": [
+        "kp_p2_stats"
+      ],
+      "difficulty": 0.2,
+      "solution": "52＞45＞38，科技书最多。",
+      "source": "llm_generated",
+      "options": [
+        "A. 故事书",
+        "B. 漫画书",
+        "C. 科技书",
+        "D. 一样多"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_032",
+      "item_type": "choice",
+      "stem": "盒子里只有红、黄、蓝三种球，小红拿的不是红球也不是黄球，她拿的是（　）",
+      "answer": "C",
+      "kps": [
+        "kp_p2_reasoning"
+      ],
+      "difficulty": 0.3,
+      "solution": "三种球里去掉红和黄，只剩蓝球。",
+      "source": "llm_generated",
+      "options": [
+        "A. 红球",
+        "B. 黄球",
+        "C. 蓝球",
+        "D. 绿球"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_033",
+      "item_type": "fill",
+      "stem": "按3、6、9的规律往下数，下一个数是____",
+      "answer": "12",
+      "kps": [
+        "kp_p2_reasoning"
+      ],
+      "difficulty": 0.2,
+      "solution": "每次多3，9再添3是12。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_034",
+      "item_type": "choice",
+      "stem": "小明比小红高，小红比小刚高，谁最高？（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p2_reasoning"
+      ],
+      "difficulty": 0.3,
+      "solution": "小明＞小红＞小刚，小明最高。",
+      "source": "llm_generated",
+      "options": [
+        "A. 小明",
+        "B. 小红",
+        "C. 小刚",
+        "D. 无法确定"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_035",
+      "item_type": "fill",
+      "stem": "1米=____厘米",
+      "answer": "100",
+      "kps": [
+        "kp_p2_length"
+      ],
+      "difficulty": 0.1,
+      "solution": "1米=100厘米。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_036",
+      "item_type": "choice",
+      "stem": "课桌的高约70（　）",
+      "answer": "B",
+      "kps": [
+        "kp_p2_length"
+      ],
+      "difficulty": 0.2,
+      "solution": "课桌比1米矮一点，用厘米作单位。",
+      "source": "llm_generated",
+      "options": [
+        "A. 米",
+        "B. 厘米",
+        "C. 元",
+        "D. 时"
+      ],
+      "misconceptions": [
+        "mc_p2_cm_m_confuse"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_037",
+      "item_type": "fill",
+      "stem": "纸条一端对准刻度1，另一端对准刻度6，纸条长____厘米",
+      "answer": "5",
+      "kps": [
+        "kp_p2_length"
+      ],
+      "difficulty": 0.4,
+      "solution": "从刻度1到刻度6是6-1=5（厘米）。",
+      "source": "llm_generated",
+      "misconceptions": [
+        "mc_p2_scale_from_one"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_038",
+      "item_type": "choice",
+      "stem": "关于角的组成，说法对的是（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p2_angle"
+      ],
+      "difficulty": 0.1,
+      "solution": "角有一个顶点和两条边。",
+      "source": "llm_generated",
+      "options": [
+        "A. 角有1个顶点和2条边",
+        "B. 角有2个顶点和1条边",
+        "C. 角有1个顶点和1条边",
+        "D. 角有2个顶点和2条边"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_039",
+      "item_type": "fill",
+      "stem": "一块三角尺上有____个直角",
+      "answer": "1",
+      "kps": [
+        "kp_p2_angle"
+      ],
+      "difficulty": 0.2,
+      "solution": "一块三角尺上只有1个直角。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_040",
+      "item_type": "choice",
+      "stem": "下面说法对的是（　）",
+      "answer": "B",
+      "kps": [
+        "kp_p2_angle"
+      ],
+      "difficulty": 0.2,
+      "solution": "直角比锐角大，钝角比直角大，角的大小与边的长短无关。",
+      "source": "llm_generated",
+      "options": [
+        "A. 角的大小与边的长短有关",
+        "B. 直角比锐角大",
+        "C. 钝角比直角小",
+        "D. 锐角比直角大"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_041",
+      "item_type": "choice",
+      "stem": "观察同一个长方体，从不同位置看到的形状（　）",
+      "answer": "C",
+      "kps": [
+        "kp_p2_view"
+      ],
+      "difficulty": 0.2,
+      "solution": "从前后看可能相同，从侧面看不同，所以可能相同也可能不同。",
+      "source": "llm_generated",
+      "options": [
+        "A. 一定相同",
+        "B. 一定不同",
+        "C. 可能相同也可能不同",
+        "D. 只有从前面和后面看才相同"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_042",
+      "item_type": "fill",
+      "stem": "站在书包的前面看，看到的是书包的____面",
+      "answer": "前",
+      "kps": [
+        "kp_p2_view"
+      ],
+      "difficulty": 0.2,
+      "solution": "站在哪面就看哪面，站前面看到前面。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_043",
+      "item_type": "choice",
+      "stem": "观察一个长方体纸盒，一次最多能看到（　）个面",
+      "answer": "B",
+      "kps": [
+        "kp_p2_view"
+      ],
+      "difficulty": 0.3,
+      "solution": "从一个角度最多同时看到3个面。",
+      "source": "llm_generated",
+      "options": [
+        "A. 2",
+        "B. 3",
+        "C. 4",
+        "D. 6"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_044",
+      "item_type": "choice",
+      "stem": "下面属于平移现象的是（　）",
+      "answer": "A",
+      "kps": [
+        "kp_p2_motion"
+      ],
+      "difficulty": 0.2,
+      "solution": "拉抽屉是沿直线移动，是平移；其余都是旋转。",
+      "source": "llm_generated",
+      "options": [
+        "A. 拉抽屉",
+        "B. 风扇转动",
+        "C. 陀螺旋转",
+        "D. 钟表指针走动"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_045",
+      "item_type": "choice",
+      "stem": "下面属于旋转现象的是（　）",
+      "answer": "C",
+      "kps": [
+        "kp_p2_motion"
+      ],
+      "difficulty": 0.2,
+      "solution": "风车绕中心转动，是旋转；其余是平移。",
+      "source": "llm_generated",
+      "options": [
+        "A. 推拉窗",
+        "B. 电梯升降",
+        "C. 风车转动",
+        "D. 滑滑梯"
+      ],
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    },
+    {
+      "id": "p2_046",
+      "item_type": "fill",
+      "stem": "填“是”或“不是”：汉字“中”____轴对称图形",
+      "answer": "是",
+      "kps": [
+        "kp_p2_motion"
+      ],
+      "difficulty": 0.4,
+      "solution": "“中”沿中间竖线对折，两边正好重合。",
+      "source": "llm_generated",
+      "verification": {
+        "agents": [
+          "p12-editor-20260930",
+          "step-p12-blind-20260930"
+        ],
+        "answers_agree": true
+      }
+    }
+  ]
+}

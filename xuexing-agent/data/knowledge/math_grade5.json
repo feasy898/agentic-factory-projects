@@ -1,0 +1,23 @@
+{
+  "subject": "math",
+  "grade_band": [5],
+  "standard": "义务教育数学课程标准（2022年版）第三学段·数与代数/图形与几何/统计与概率/综合与实践",
+  "knowledge_points": [
+    {"id": "kp_p5_decimal_meaning", "name": "小数的意义与性质", "subject": "math", "grade": 5, "cluster": "数与运算", "description": "理解小数意义，掌握数位顺序与计数单位0.1、0.01、0.001，明确小数性质，会比较大小、取近似数。", "standard_ref": "2022课标第三学段：理解小数的意义，掌握小数的性质，能比较小数大小，会用四舍五入法求小数的近似数。"},
+    {"id": "kp_p5_decimal_add_sub", "name": "小数加减法", "subject": "math", "grade": 5, "cluster": "数与运算", "description": "掌握小数加减法计算方法，理解小数点对齐即相同数位对齐，能正确计算并解决实际问题。", "standard_ref": "2022课标第三学段：理解小数加减法的算理，掌握计算方法，能正确进行小数加减法运算。", "prereqs": ["kp_p5_decimal_meaning"]},
+    {"id": "kp_p5_decimal_mul", "name": "小数乘法", "subject": "math", "grade": 5, "cluster": "数与运算", "description": "理解小数乘法算理，掌握小数乘整数、乘小数的计算方法，能正确求积的近似值。", "standard_ref": "2022课标第三学段：理解小数乘法的算理，掌握计算方法，能正确计算小数乘法并求积的近似值。", "prereqs": ["kp_p5_decimal_meaning"]},
+    {"id": "kp_p5_decimal_div", "name": "小数除法", "subject": "math", "grade": 5, "cluster": "数与运算", "description": "掌握小数除以整数、除数是小数的除法计算方法，理解商的近似值，初步认识循环小数。", "standard_ref": "2022课标第三学段：理解小数除法的算理，掌握计算方法，能求商的近似值，初步认识循环小数。", "prereqs": ["kp_p5_decimal_mul"]},
+    {"id": "kp_p5_mixed_ops", "name": "小数四则混合运算与运算律", "subject": "math", "grade": 5, "cluster": "数与运算", "description": "掌握小数四则混合运算顺序，理解运算律在小数运算中的推广，能进行简便计算。", "standard_ref": "2022课标第三学段：掌握小数四则混合运算的顺序，理解运算律在小数运算中的应用，能进行简便计算。", "prereqs": ["kp_p5_decimal_add_sub", "kp_p5_decimal_mul", "kp_p5_decimal_div"]},
+    {"id": "kp_p5_factor_multiple", "name": "因数与倍数", "subject": "math", "grade": 5, "cluster": "数与运算", "description": "理解因数与倍数的意义，掌握2、3、5的倍数特征，认识奇数偶数、质数合数的概念。", "standard_ref": "2022课标第三学段：理解因数与倍数的意义，掌握2、3、5的倍数特征，能区分奇数、偶数、质数、合数。"},
+    {"id": "kp_p5_fraction_meaning", "name": "分数的意义与基本性质", "subject": "math", "grade": 5, "cluster": "数与运算", "description": "理解分数意义与分数单位，掌握分数基本性质，会约分通分，能进行分数与小数互化。", "standard_ref": "2022课标第三学段：理解分数的意义，掌握分数的基本性质，能进行约分、通分，会互化分数与小数。", "prereqs": ["kp_p5_factor_multiple"]},
+    {"id": "kp_p5_fraction_add_sub", "name": "分数加减法", "subject": "math", "grade": 5, "cluster": "数与运算", "description": "掌握同分母、异分母分数加减法计算方法，理解通分原理，计算结果能约成最简分数。", "standard_ref": "2022课标第三学段：理解分数加减法的算理，掌握计算方法，能正确计算同分母、异分母分数加减法。", "prereqs": ["kp_p5_fraction_meaning"]},
+    {"id": "kp_p5_polygon_area", "name": "多边形的面积", "subject": "math", "grade": 5, "cluster": "图形与几何", "description": "掌握平行四边形、三角形、梯形面积公式，理解转化推导过程，能计算简单组合图形的面积。", "standard_ref": "2022课标第三学段：探索并掌握平行四边形、三角形、梯形的面积公式，能计算组合图形的面积。"},
+    {"id": "kp_p5_cuboid_volume", "name": "长方体与正方体", "subject": "math", "grade": 5, "cluster": "图形与几何", "description": "掌握长方体、正方体的特征，理解表面积、体积、容积的概念，掌握计算方法与体积单位换算。", "standard_ref": "2022课标第三学段：探索并掌握长方体、正方体的表面积、体积、容积的计算方法，理解体积单位换算。"},
+    {"id": "kp_p5_coord_pairs", "name": "用数对确定位置", "subject": "math", "grade": 5, "cluster": "图形与几何", "description": "理解列与行的表示规则，掌握数对表示位置的方法，能在方格纸上用数对确定位置。", "standard_ref": "2022课标第三学段：理解数对的意义，能用数对表示物体在方格纸上的位置。"},
+    {"id": "kp_p5_graph_motion", "name": "图形的运动", "subject": "math", "grade": 5, "cluster": "图形与几何", "description": "掌握平移、旋转、轴对称的基本特征，能按要求在方格纸上作图，补全简单的轴对称图形。", "standard_ref": "2022课标第三学段：理解平移、旋转、轴对称的特征，能在方格纸上画出平移、旋转后的图形，补全轴对称图形。"},
+    {"id": "kp_p5_line_graph", "name": "折线统计图", "subject": "math", "grade": 5, "cluster": "统计与概率", "description": "了解折线统计图的特点，能读懂折线统计图，分析数据的变化趋势。", "standard_ref": "2022课标第三学段：认识折线统计图，能读懂折线统计图，体会其能反映数据变化趋势的特点。"},
+    {"id": "kp_p5_possibility", "name": "可能性", "subject": "math", "grade": 5, "cluster": "统计与概率", "description": "理解随机现象，能定性比较事件发生可能性的大小，能列举简单随机事件的所有可能结果。", "standard_ref": "2022课标第三学段：感受随机现象，能定性描述事件发生的可能性大小，能列举简单随机现象的所有可能结果。"},
+    {"id": "kp_p5_letter_number", "name": "用字母表示数", "subject": "math", "grade": 5, "cluster": "数量关系", "description": "理解用字母表示数的意义，掌握含字母式子的简写规则，能代入求值，会用字母表示运算律。", "standard_ref": "2022课标第三学段：在具体情境中探索用字母表示数的方法，能用字母表示数、数量关系和一般规律，会代入求值。", "prereqs": ["kp_p5_mixed_ops"]},
+    {"id": "kp_p5_tree_planting", "name": "植树问题", "subject": "math", "grade": 5, "cluster": "综合与实践", "description": "理解间隔数与棵数的关系，掌握两端都栽、一端栽、两端不栽及封闭图形上的植树规律。", "standard_ref": "2022课标第三学段：经历用间隔数与棵数的关系解决植树等实际问题的探究过程，体会数学模型思想。", "prereqs": ["kp_p5_mixed_ops"]}
+  ]
+}

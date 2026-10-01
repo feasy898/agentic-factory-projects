@@ -1,0 +1,138 @@
+{
+  "misconceptions": [
+    {
+      "id": "mc_p2_table_slip",
+      "kp_id": "kp_p2_mul_table",
+      "description": "口诀相邻句串用（如6×8误用“六七四十二”写42；7×8误用“七九六十三”写63）",
+      "signature": [
+        "42",
+        "63"
+      ],
+      "hint": "背口诀时用手指着数一数是第几句，别让邻居家的口诀跑到你家来哦。"
+    },
+    {
+      "id": "mc_p2_mul_as_add",
+      "kp_id": "kp_p2_mul_table",
+      "description": "把乘法当加法算（3×4算成3+4=7）",
+      "signature": [
+        "7"
+      ],
+      "hint": "乘号是“几个几”的缩写，3×4是4个3相加，再数一数试试？"
+    },
+    {
+      "id": "mc_p2_div_share_parts",
+      "kp_id": "kp_p2_div_quotient",
+      "description": "份数与每份数混淆（12个苹果每3个一盘问能装几盘，答成3盘）",
+      "signature": [
+        "3盘",
+        "3份"
+      ],
+      "hint": "先把问题圈出来：问的是“装几盘”还是“每盘装几个”？想清楚再写算式哦。"
+    },
+    {
+      "id": "mc_p2_div_once_sub",
+      "kp_id": "kp_p2_div_quotient",
+      "description": "把除法当成只减一次（12÷3写成12-3=9）",
+      "signature": [
+        "9",
+        "12"
+      ],
+      "hint": "除法是把数一份一份分完，试试连着减，看能减几个3才分完？"
+    },
+    {
+      "id": "mc_p2_borrow_flip",
+      "kp_id": "kp_p2_addsub_written",
+      "description": "退位减时个位倒着减（52-38个位算成8-2=6，十位5-3=2，写26）",
+      "signature": [
+        "26",
+        "47"
+      ],
+      "hint": "个位不够减时要向十位借1当10再用，倒着减会把答案算反哦。"
+    },
+    {
+      "id": "mc_p2_carry_forget",
+      "kp_id": "kp_p2_addsub_written",
+      "description": "进位加忘加进上来的1（37+25个位满十进1后十位只加3+2，写52）",
+      "signature": [
+        "52",
+        "63"
+      ],
+      "hint": "个位满十送了个小1到十位，十位相加时记得把它加回来呀。"
+    },
+    {
+      "id": "mc_p2_cm_m_confuse",
+      "kp_id": "kp_p2_length",
+      "description": "厘米米乱用（铅笔长约18，填“米”）",
+      "signature": [
+        "米"
+      ],
+      "hint": "1米要张开手臂这么长，铅笔比它短多啦，量小东西试试用厘米。"
+    },
+    {
+      "id": "mc_p2_scale_from_one",
+      "kp_id": "kp_p2_length",
+      "description": "纸条一端对准刻度1量长，直接读末端刻度（刻度1到刻度6读成6厘米，实际5厘米）",
+      "signature": [
+        "6厘米",
+        "7厘米"
+      ],
+      "hint": "量的是两头之间的那段，用末端的数减掉起点的数才对哦。"
+    },
+    {
+      "id": "mc_p2_minute_as_num",
+      "kp_id": "kp_p2_time",
+      "description": "分针指着几就当几分（分针指7把7时35分读成7时7分）",
+      "signature": [
+        "7时7分"
+      ],
+      "hint": "分针每走一大格是5分钟，指着7就是7个5分，算算是多少分呀？"
+    },
+    {
+      "id": "mc_p2_hour_next",
+      "kp_id": "kp_p2_time",
+      "description": "时针快走到下一个数就按下一个数读（8时55分读成9时55分）",
+      "signature": [
+        "9时55分"
+      ],
+      "hint": "时针还没真正走到9呢，快到但没到，还得算前一个数哦。"
+    }
+  ],
+  "exemptions": [
+    {
+      "kp_id": "kp_p2_mul_meaning",
+      "reason": "意义理解错误（乘加不分）已由表内乘法条目覆盖，本知识点暂无独立的稳定笔误形态。"
+    },
+    {
+      "kp_id": "kp_p2_div_meaning",
+      "reason": "平均分理解错误在纸笔作答中多以算式错误呈现（已由求商条目覆盖），操作层错误难以用文字题稳定采样，暂缺。"
+    },
+    {
+      "kp_id": "kp_p2_num10000",
+      "reason": "含0读写错误形态已知（如一千零二十写成120），尚未固化为带signature的条目，待下一批误解库建设补充。"
+    },
+    {
+      "kp_id": "kp_p2_angle",
+      "reason": "角的辨认以直观判断为主，错误多与摆放方位有关，signature 不稳定，暂缺。"
+    },
+    {
+      "kp_id": "kp_p2_view",
+      "reason": "观察物体的错误高度依赖实物图示，纯文字题库暂无法稳定采样错误形态。"
+    },
+    {
+      "kp_id": "kp_p2_motion",
+      "reason": "平移旋转辨认错误与生活经验强相关，个体差异大，暂无稳定 signature。"
+    },
+    {
+      "kp_id": "kp_p2_stats",
+      "reason": "读表错误多为随机看串行；记录方法错误暂未采样到稳定笔误样本，暂缺。"
+    },
+    {
+      "kp_id": "kp_p2_mass",
+      "reason": "轻重单位选用错误的根因（量的单位感缺失）与长度条目同型，独立形态待学情数据补充，暂缺。"
+    },
+    {
+      "kp_id": "kp_p2_reasoning",
+      "reason": "推理错误表现为排除不彻底，答案随情境变化，暂无稳定的书面错误形态。"
+    }
+  ]
+}

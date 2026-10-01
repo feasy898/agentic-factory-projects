@@ -1,0 +1,176 @@
+{
+  "subject": "math",
+  "grade_band": [
+    2
+  ],
+  "standard": "义务教育数学课程标准（2022年版）第一学段（1~2年级）·二年级",
+  "knowledge_points": [
+    {
+      "id": "kp_p2_addsub_written",
+      "name": "100以内的加减法（笔算）",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "列竖式计算100以内加减法，掌握进位加与退位减",
+      "standard_ref": "2022课标第一学段：能计算100以内数的加减法，探索笔算的算理与算法，能进行简单的整数四则运算",
+      "prereqs": [
+        "kp_p1_addsub100",
+        "kp_p1_borrow20"
+      ]
+    },
+    {
+      "id": "kp_p2_mul_meaning",
+      "name": "乘法的初步认识",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "理解乘法是求几个相同加数和的简便运算，认识算式各部分名称",
+      "standard_ref": "2022课标第一学段：结合具体情境理解乘法是求几个相同加数和的简便运算，认识乘法算式各部分的名称",
+      "prereqs": [
+        "kp_p1_addsub100"
+      ]
+    },
+    {
+      "id": "kp_p2_mul_table",
+      "name": "表内乘法",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "熟记1-9乘法口诀，熟练口算表内乘法",
+      "standard_ref": "2022课标第一学段：熟记乘法口诀，能熟练地口算表内乘法",
+      "prereqs": [
+        "kp_p2_mul_meaning"
+      ]
+    },
+    {
+      "id": "kp_p2_div_meaning",
+      "name": "平均分与除法的初步认识",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "结合平均分操作理解除法意义，认识除法算式各部分名称",
+      "standard_ref": "2022课标第一学段：结合平均分的具体操作理解除法的意义，认识除法算式各部分的名称",
+      "prereqs": [
+        "kp_p1_num100"
+      ]
+    },
+    {
+      "id": "kp_p2_div_quotient",
+      "name": "用乘法口诀求商",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "运用乘法口诀求商，熟练计算表内除法",
+      "standard_ref": "2022课标第一学段：能运用乘法口诀求商，熟练计算表内除法",
+      "prereqs": [
+        "kp_p2_div_meaning",
+        "kp_p2_mul_table"
+      ]
+    },
+    {
+      "id": "kp_p2_num10000",
+      "name": "万以内数的认识",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "认识千与万，掌握数位顺序，会读写、组成与比大小",
+      "standard_ref": "2022课标第一学段：认识万以内的数，理解数位的意义与顺序，能认、读、写万以内的数并比较大小",
+      "prereqs": [
+        "kp_p1_num100"
+      ]
+    },
+    {
+      "id": "kp_p2_time",
+      "name": "认识时间",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "认识时、分，知道1时=60分，会认读几时几分",
+      "standard_ref": "2022课标第一学段：认识时间单位时、分，知道1时=60分，能认读几时几分",
+      "prereqs": [
+        "kp_p1_clock"
+      ]
+    },
+    {
+      "id": "kp_p2_length",
+      "name": "厘米和米",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "图形与几何",
+      "description": "认识厘米和米，会测量线段与物体长度，能估测与选择单位",
+      "standard_ref": "2022课标第一学段：结合实际认识厘米和米，能选用适当的长度单位，能用刻度尺测量线段和物体的长度，能进行估测",
+      "prereqs": [
+        "kp_p1_num100"
+      ]
+    },
+    {
+      "id": "kp_p2_angle",
+      "name": "角的初步认识",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "图形与几何",
+      "description": "认识角的组成，直观辨认直角、锐角和钝角",
+      "standard_ref": "2022课标第一学段：结合生活情境认识角，知道角有一个顶点和两条边，能直观辨认直角、锐角和钝角",
+      "prereqs": [
+        "kp_p1_2dshapes"
+      ]
+    },
+    {
+      "id": "kp_p2_view",
+      "name": "观察物体",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "图形与几何",
+      "description": "辨认从不同角度观察简单物体所看到的形状",
+      "standard_ref": "2022课标第一学段：能根据具体事物、照片或直观图，辨认从不同角度观察简单物体所得到的形状",
+      "prereqs": [
+        "kp_p1_3dshapes"
+      ]
+    },
+    {
+      "id": "kp_p2_motion",
+      "name": "图形的运动初步",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "图形与几何",
+      "description": "感知轴对称、平移、旋转等现象",
+      "standard_ref": "2022课标第一学段：通过观察和操作，感知平移、旋转、轴对称等图形运动的现象",
+      "prereqs": [
+        "kp_p1_2dshapes"
+      ]
+    },
+    {
+      "id": "kp_p2_stats",
+      "name": "数据的收集与整理",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "统计与概率",
+      "description": "经历简单数据收集整理过程，能用简单统计表呈现与分析",
+      "standard_ref": "2022课标第一学段：经历简单的数据收集和整理过程，能用简单统计表整理数据并作简单分析",
+      "prereqs": [
+        "kp_p1_sort"
+      ]
+    },
+    {
+      "id": "kp_p2_mass",
+      "name": "克和千克",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数与运算",
+      "description": "认识克和千克，知道1千克=1000克，能估计物品轻重",
+      "standard_ref": "2022课标第一学段：结合具体情境认识克和千克，知道1千克=1000克，能估计常见物品的轻重",
+      "prereqs": [
+        "kp_p1_num100"
+      ]
+    },
+    {
+      "id": "kp_p2_reasoning",
+      "name": "简单推理",
+      "subject": "math",
+      "grade": 2,
+      "cluster": "数量关系",
+      "description": "在简单情境中尝试分析和推理，有序表达思考过程",
+      "standard_ref": "2022课标第一学段：在解决简单问题的过程中，尝试进行简单的分析和推理，感受推理的作用"
+    }
+  ]
+}
