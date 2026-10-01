@@ -1,0 +1,144 @@
+{
+  "_note": "舀取扫参配置（B2 仿真预扫，cs_sim.scoop_sweep 消费）。食物集合以 cs_schema.constants.DEFAULT_DISH_REGISTRY 为准，本文件不得私设。全部流变/几何系数为工程先验（未实测，provenance 逐项登记）；由此产出的成功率为仿真预扫结论（解析捕获模型，非物理仿真、非真机），只用于 D4 真机盲扫的初值排序，不代表开发指令 §5.9 通过线达标。spoon_tip_drop_m 与 food_fill_depth_m 为假设值，D4 装臂实测后覆盖，推荐入勺深度随之同向平移。",
+  "version": "1.0",
+  "food_set_source": "cs_schema.constants.DEFAULT_DISH_REGISTRY",
+  "spoon_geometry": {
+    "spoon_bowl_radius_m": 0.035,
+    "spoon_bowl_depth_m": 0.012,
+    "spoon_tip_drop_m": 0.045,
+    "bowl_interior_radius_m": 0.055,
+    "bowl_rim_offset_m": 0.05,
+    "food_fill_depth_m": 0.03,
+    "min_food_ratio": 0.15,
+    "full_spoon_mask_ratio": 0.55
+  },
+  "grid": {
+    "dip_offset_m": [
+      0.052,
+      0.06,
+      0.068
+    ],
+    "tilt_deg": [
+      0.0,
+      12.0,
+      24.0
+    ],
+    "approach_speed_mps": [
+      0.03,
+      0.06,
+      0.09
+    ],
+    "retract_speed_mps": [
+      0.03,
+      0.06,
+      0.09
+    ],
+    "bowl_rim_scrape": [
+      false,
+      true
+    ]
+  },
+  "search": {
+    "trials_per_food": 200,
+    "max_attempts": 3,
+    "seed": 20261002,
+    "entry_lateral_correction_m": 0.012
+  },
+  "foods": {
+    "芋泥": {
+      "display_name": "芋泥",
+      "rheology": "viscous_paste",
+      "hsv_detectable": true,
+      "hsv_note": "紫红色系，config/food_hsv.json 区间 4（H 130-165，参考色 140,150,170）覆盖",
+      "fill_factor": 0.85,
+      "push_speed_mps": 0.08,
+      "retention_speed_mps": 0.08,
+      "tilt_knee_deg": 30.0,
+      "tilt_fail_deg": 65.0,
+      "scrape_extra_ml": 3.0,
+      "surface_jitter_m": 0.004,
+      "entry_lateral_error_m": 0.015,
+      "bowl_place_error_m": 0.006,
+      "closed_loop_gain": 0.35,
+      "provenance": "工程先验（未实测）：黏稠内聚/耐较快入勺，开发指令 §9 回退表点名食物；D4 真机实测覆盖"
+    },
+    "南瓜粥": {
+      "display_name": "南瓜粥",
+      "rheology": "thin_porridge",
+      "hsv_detectable": true,
+      "hsv_note": "橙黄色系，config/food_hsv.json 区间 1（H 5-35，参考色 20,180,200）覆盖",
+      "fill_factor": 0.6,
+      "push_speed_mps": 0.045,
+      "retention_speed_mps": 0.05,
+      "tilt_knee_deg": 12.0,
+      "tilt_fail_deg": 40.0,
+      "scrape_extra_ml": 1.5,
+      "surface_jitter_m": 0.006,
+      "entry_lateral_error_m": 0.015,
+      "bowl_place_error_m": 0.006,
+      "closed_loop_gain": 0.35,
+      "provenance": "工程先验（未实测）：稀薄易推易洒，入勺/回撤须慢；开发指令 §9 回退表点名食物；D4 真机实测覆盖"
+    },
+    "椰子冻": {
+      "display_name": "椰子冻",
+      "rheology": "solid_gel",
+      "hsv_detectable": false,
+      "hsv_note": "白色低饱和系，纯 HSV 与白瓷碗/不锈钢勺不可分（cs_food spec 已知边界，缺省区间不覆盖）→ 勺上检查不可靠，仿真按反事实变体（扩展 HSV 或延后分类器接手）计分",
+      "fill_factor": 0.75,
+      "push_speed_mps": 0.12,
+      "retention_speed_mps": 0.15,
+      "tilt_knee_deg": 35.0,
+      "tilt_fail_deg": 70.0,
+      "scrape_extra_ml": 2.0,
+      "surface_jitter_m": 0.003,
+      "entry_lateral_error_m": 0.015,
+      "bowl_place_error_m": 0.006,
+      "closed_loop_gain": 0.35,
+      "provenance": "工程先验（未实测）：凝胶块状耐快入勺、回撤稳；D4 真机实测覆盖"
+    }
+  },
+  "recommended": {
+    "芋泥": {
+      "dip_offset_m": 0.052,
+      "tilt_deg": 0.0,
+      "approach_speed_mps": 0.03,
+      "retract_speed_mps": 0.06,
+      "bowl_rim_scrape": false,
+      "sim_first_attempt_rate": 0.955,
+      "sim_final_success_rate": 1.0,
+      "sim_trials": 200,
+      "sim_attempts_per_trial": 3,
+      "source_report": "reports/scoop_sweep.json",
+      "feasible_combos": 162,
+      "grid_size": 162
+    },
+    "南瓜粥": {
+      "dip_offset_m": 0.052,
+      "tilt_deg": 0.0,
+      "approach_speed_mps": 0.03,
+      "retract_speed_mps": 0.03,
+      "bowl_rim_scrape": false,
+      "sim_first_attempt_rate": 0.955,
+      "sim_final_success_rate": 1.0,
+      "sim_trials": 200,
+      "sim_attempts_per_trial": 3,
+      "source_report": "reports/scoop_sweep.json",
+      "feasible_combos": 162,
+      "grid_size": 162
+    },
+    "椰子冻": {
+      "dip_offset_m": 0.052,
+      "tilt_deg": 0.0,
+      "approach_speed_mps": 0.03,
+      "retract_speed_mps": 0.09,
+      "bowl_rim_scrape": false,
+      "sim_first_attempt_rate": 0.955,
+      "sim_final_success_rate": 1.0,
+      "sim_trials": 200,
+      "sim_attempts_per_trial": 3,
+      "source_report": "reports/scoop_sweep.json",
+      "feasible_combos": 162,
+      "grid_size": 162
+    }
+  }
+}
