@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+dist/
+build/
+.vite/
+
+# Env & secrets
+.env
+.env.*
+*.key
+secrets/
+
+# Data & models (large artifacts)；GPU 冒烟/部署报告为小体积交付物，显式入库
+data/*
+!data/gpu_smoke_report.json
+!data/asr_align_deploy_report.json
+models/
+*.onnx
+*.pt
+*.ckpt
+*.safetensors
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local artifacts
+*.log
+tmp/
+out/
+
+# 每集工作区与运行时数据库（不入公开仓；默认位置在仓库上级目录）
+jobs/
+*.db
+.mimosa/
+
+# 重生成试验目录（实体在上仓库级 D:\workspace\澄迈8项目\_regen2，此处仅为 junction，勿入库）
+/_regen2/

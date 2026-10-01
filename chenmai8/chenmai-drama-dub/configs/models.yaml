@@ -1,0 +1,411 @@
+# ============================================================================
+# 组件注册表（configs/models.yaml）—— T1 冻结字段结构
+# 命名纪律：本文件只使用中性内部名；上游对应关系仅存于内部台账，不入公开仓。
+#
+# ---- 部署矩阵：服务 → venv → torch → transformers（B1 冻结 2026-09-28）----
+#   服务/批次                  | 解释器              | torch       | transformers | 组件
+#   -------------------------- | ------------------- | ----------- | ------------ | ----
+#   asr_align(:9001, B1/M4)    | /data/xdng/venv-asr | 2.5.1+cu118 | 5.13.0       | asr-core, align-core, emo-tag
+#   tts(:9002, T12/M7)         | /data/xdng/venv     | 2.5.1+cu118 | 4.52.1       | dub-tts（fp32 常驻 cuda:0）；alt-tts-b 懒加载 cuda:1
+#   mt(:9004, T12/M6)          | /data/xdng/venv     | 2.5.1+cu118 | 4.52.x(T12 核实钉版；不兼容则照 venv-asr 的 .pth 复用法另建 venv-mt) | mt-core
+#   lip(:9003, T16/M10)        | /data/xdng/venv     | 2.5.1+cu118 | 4.52.1       | lip-fast（fp16 常驻物理 cuda:1，另需 diffusers/mmpose/mmcv/face-detection）
+#   本机 windev（CPU，OCR 等） | <repo>/.venv        | 2.14.0(cpu) | 无（paddle 组）| cap-ocr, facemesh, cap-clean
+#   两组 transformers（4.52.x 与 5.13）不可共存于同一解释器；安装脚本：
+#   gpu/setup_gpu.sh（主 venv）/ gpu/setup_asr_venv.sh（venv-asr）。
+#   显存：B1 仅 asr_align 三模型常驻 cuda:0（32GB 充裕）；B2 起 #1 需预算表 +
+#   互斥规则（lip-pro 约 18GB 独占 #1，lip-pro 起来时 alt-tts-b 必须退出）。
+#
+# 字段说明：
+#   task          组件职责
+#   langs         支持语种（ISO 639-1；multi=多语）
+#   device        部署设备：cpu | cuda:0 | cuda:1（两卡分工：#0=识别/翻译/合成，#1=口型）
+#   precision     推理精度。GPU 机为 Volta 架构（sm_70）：有 fp16、无 bf16，
+#                 全部推理不依赖重型服务化运行时，注意力实现固定 sdpa
+#   weights       权重缓存相对路径（models/ 不入公开仓；公开版只留占位+校验和）
+#   version       版本/commit 固化位 —— D1 冒烟后回填（以内部台账为准）
+#   fallback      按序降级链；为空 [] 表示无降级，失败如实记 FAIL
+#   volta_status  Volta 实测结论：pending | ok | degraded | fail（D1 冒烟回填）
+# ============================================================================
+
+schema_version: 1
+
+routing:
+  # 语种 → 合成引擎链（按序尝试）
+  tts:
+    en: [dub-tts, dub-tts-base, alt-tts-a, alt-tts-b]
+    es: [dub-tts, alt-tts-a, alt-tts-b]
+    ar: [dub-tts, alt-tts-b]
+  # 语种 → 翻译后端链
+  mt:
+    en: [mt-core, mt-api]
+    es: [mt-core, mt-api]
+    ar: [mt-core, mt-api]
+  # 字级对齐策略（主对齐器不含阿语 → 阿语走字符比例估算，MVP 内置）
+  align:
+    default: align-core
+    ar: align-proportional
+  # 人声/背景分离设备路由（M3）：cpu=本机默认（分块）；cuda=GPU 路径（可选）
+  separation:
+    default: audiosplit
+    cuda: audiosplit-cuda
+  # 口型分流（与 pipeline.yaml lip 参数配合；不合格镜头 none=原画）
+  lip:
+    default: none
+    frontal_closeup: lip-fast
+    top10pct: lip-pro
+
+components:
+  # ---- 识别 / 对齐 / 情绪 ----
+  asr-core:
+    task: asr-transcribe
+    langs: [zh]
+    device: cuda:0
+    precision: fp16
+    attn: sdpa
+    weights: models/asr-core/
+    version: "2026-09-28 (snapshot bcd2b5b7)"   # D1 冒烟通过：fp16 转写 1 句 OK（2.3s，复跑热身值）
+    fallback: [asr-multi-fb]
+    volta_status: ok                            # 注意：本组件需 transformers>=5.13（原生架构支持），
+                                                # 与 TTS/口型引擎的 4.52.x 不同 —— 部署需独立 venv 或分组安装
+  asr-multi-fb:
+    task: asr-transcribe
+    langs: [multi]
+    device: cpu
+    precision: fp32
+    weights: models/asr-multi-fb/
+    version: TBD
+    fallback: []
+    volta_status: pending
+  align-core:
+    task: word-align
+    langs: [zh, en, yue, fr, de, it, ja, ko, pt, ru, es]
+    device: cuda:0
+    precision: fp16
+    attn: sdpa
+    weights: models/align-core/
+    version: "2026-09-28 (snapshot 00568245ceca5af1)"  # T5 服务化部署（transformers 原生 token 分类头路径）
+    fallback: [align-proportional]
+    volta_status: ok            # T5 实测：中文 12 字全字级时间戳，fp16+sdpa，与识别同卡共存（7.0G/32G）；
+                                # 与 asr-core 同组依赖（transformers>=5.13），同驻 venv-asr
+  align-proportional:
+    task: word-align
+    langs: [ar]
+    device: cpu
+    precision: fp32
+    weights: null              # 内置算法（字符比例线性内插），无权重
+    version: builtin
+    fallback: []
+    volta_status: ok
+  emo-tag:
+    task: emotion-events       # 7 类情绪 + 声音事件（哭/笑/掌声/叹气）
+    langs: [zh, yue, en, ja, ko]
+    device: cuda:0
+    precision: fp32            # 框架默认 fp32 装载（模型小，未暴露 fp16 开关）；Volta 无 bf16 不涉及
+    weights: models/emo-tag/
+    version: "2026-09-28 (snapshot 833ca2dcfdf8ec91)"  # T5 服务化部署
+    fallback: []
+    volta_status: ok           # T5 实测：富文本情绪/事件 token 解析正常（0.1s/句），与识别/对齐同卡共存
+
+  # ---- 说话人 / 视觉 ----
+  voxdia:
+    task: speaker-embedding    # 说话人嵌入 + 谱聚类（声纹嵌入系中文优化，免注册）
+    langs: [zh]
+    device: cpu                # T7 实测：本机 CPU 路径为默认（192 维嵌入，8 线程 0.25s/7.4s 句）
+    precision: fp32            # CPU 推理 fp32；GPU 路径未启用
+    weights: models/voxdia/
+    version: "2026-09-29 (T7 本机 CPU 验收; bin sha256 3388cf5f…)"  # ModelScope 直下，不入公开仓
+    fallback: []
+    volta_status: ok           # CPU 组件，无 Volta 依赖
+    runtime_notes: >-
+      前端为 kaldi 口径 fbank(80mel/25ms/10ms/povey/CMN) 的纯 torch 复刻
+      （pipeline/_voxdia_net.py；torchaudio 官方轮子止于 2.11 与本仓 torch 2.14
+      不兼容），数值对拍 GPU 机 torchaudio 2.5.1 参照实现 max_abs≈2e-4（T7 实测，
+      fixtures/fbank_ref.npy 固化为回归参照）；torch 线程帽 8（64 核默认全开
+      互踩：7.4s 句嵌入 49.6s → 8 线程 0.25s，同 m3 threads=16 教训）；
+      说话人数= kNN 稀疏图特征值间隙估计，上限=登记角色数+1。
+  actspk:
+    task: active-speaker       # 每镜头在说话人判定
+    langs: [multi]
+    device: cpu                # T7 起为 facemesh 嘴部开合运动打分（MVP 口径）
+    precision: fp32
+    weights: null              # MVP 无独立权重（复用 facemesh 轨迹）；模型化 ASD 待后续批次
+    version: "2026-09-29 (T7 MVP: 嘴动打分)"
+    fallback: []
+    volta_status: ok           # CPU 组件，无 Volta 依赖
+    runtime_notes: >-
+      MVP 口径=facemesh 内唇距/脸高在说话窗内的均值打分（单轨迹直接绑定、
+      多轨迹取嘴动最大者）；合成静帧无人脸信号时如实退化为"无在说话人脸"。
+      模型化 ASD（论文系轻量网络 + AVA 权重，约 4.2MB，权重页已核实可直下）
+      集成列后续批次（T7 记录）。
+  facemesh:
+    task: head-pose            # 正脸判定（俯仰/偏航阈值见 pipeline.yaml）
+    langs: [multi]
+    device: cpu
+    precision: fp32
+    weights: models/facemesh/
+    version: "2026-09-29 (T7 实测; 运行时 1.0.1 + face_landmarker task 包)"
+    fallback: []
+    volta_status: ok
+    runtime_notes: >-
+      真名与安装源只登记 requirements.txt 依赖记录（公开文本零真名，运行时经
+      拼接构造动态加载）；头部姿态=478 点几何代理 ∨ 4x4 姿态矩阵 RQDecomp3x3
+      欧拉（逐轴取 |较大| 者：矩阵法对整图透视编辑过钝，T7 实测 45° 错切后
+      矩阵 yaw 仅 ~12°）；Windows 运行时 C++ 层打不开非 ASCII 模型路径
+      （T7 实测 FileNotFoundError）→ _facemesh_face 复制到 %TEMP% ASCII 路径
+      装载；cv2.imread 同样不支持非 ASCII 路径（消费方注意，VideoCapture 不受影响）。
+  shot-cut:
+    task: shot-detection
+    langs: [multi]
+    device: cpu                # T7 实测：本机 CPU 路径为默认（1500 帧块前向）
+    precision: fp32
+    weights: models/shot-cut/
+    version: "2026-09-29 (T7 本机 CPU 验收; pth sha256 834b10f2…)"  # HF 镜像直下，不入公开仓
+    fallback: []
+    volta_status: ok           # CPU 组件，无 Volta 依赖
+    runtime_notes: >-
+      官方推理口径：帧 48x27 RGB uint8、末帧重复补齐 100 帧倍数、单前向全片
+      概率、>0.5 局部峰为切点、最小镜头 0.8s 守卫；架构实现经 pipeline/_scdet_net.py
+      中性名装载（state_dict 键严格对应，strict=True）。
+
+  # ---- 文字 ----
+  cap-ocr:
+    task: subtitle-ocr         # 硬字幕检测识别（CPU 可跑）
+    langs: [zh]
+    device: cpu
+    precision: fp32
+    weights: models/cap-ocr/
+    version: 3.7.0             # T6 实测回填（2026-09-28，windev 本机 .venv 运行时）
+    model_det: PP-OCRv6_medium_det   # 引擎默认模型；本机官方仓缓存（~/.paddlex），离线可用
+    model_rec: PP-OCRv6_medium_rec
+    fallback: []
+    volta_status: ok           # CPU 组件，无 Volta 依赖
+    runtime_notes: >-
+      推理必须 enable_mkldnn=False（PIR/oneDNN 执行器不支持，T0 实测）；
+      同进程 torch 必须先于本引擎导入（libiomp5md.dll 冲突，T0 实测）；
+      字幕带 0.5 降采样推理 1.7s/帧（全尺寸 5.5s/帧），0.5 档识别质量不降（T6 实测）。
+  cap-clean:
+    task: subtitle-erase       # 字幕擦除；修复算法默认 lama（备选待条款复核后登记）
+    langs: [multi]
+    device: cpu
+    precision: fp32
+    inpaint: lama
+    weights: models/cap-clean/
+    version: TBD
+    fallback: []
+    volta_status: pending
+    runtime_notes: >-
+      T8（2026-09-29）：重型擦除后端（cap-clean 权重与 CLI）**接口预留未安装**——
+      pipeline/m11_subs.py 的 vsr 后端选中即如实报错，不静默降级；M11 实际生产
+      走轻量双路径：delogo（ffmpeg delogo 时间窗插值，默认；擦除基带用无损
+      x264，擦除带外像素零改动，label_zone 哈希可判定）与 inpaint（cv2
+      TELEA 逐帧修复，质量高一档速度慢）。bbox=cap-ocr（M2）ocr_merged 行
+      外扩 erase_band.expand_px 并经 label_zone 排除后分时间窗逐条擦除。
+
+  # ---- 音频 ----
+  audiosplit:
+    task: vocal-bgm-separation # 人声/背景分离（卡拉OK系分离模型为默认）
+    langs: [multi]
+    device: cpu                # --device cuda 可选（路由见上 separation 段）
+    precision: fp32
+    model: mel_band_roformer_karaoke_aufr33_viperx_sdr_10.1956.ckpt  # karaoke 系 mel-band roformer（标称 SDR 12.98）
+    chunk_s: 120               # CPU 默认分块秒数（防内存膨胀；cuda 路径整轨）
+    threads: 16                # torch intra-op 线程（windev-01 实测定值：单窗 65s@64thr → 11.2s@16thr，
+                               # 默认全核反而线程互踩；eval ③ 60s 素材 CPU ≈6.5 分钟 < 10 分钟通过线）
+    weights: models/audiosplit/
+    version: "2026-09-28 (ckpt 913096801B, sha256 1de20d45…9813; T4 CPU 验收)"  # 权重不入公开仓
+    fallback: []
+    volta_status: pending      # GPU 路径（audiosplit-cuda）未实测；CPU 路径 T4 已验收
+  audiosplit-cuda:
+    task: vocal-bgm-separation # 同一模型 GPU 路径（--device cuda）；待 GPU 机冒烟
+    langs: [multi]
+    device: cuda:0
+    precision: fp32
+    model: mel_band_roformer_karaoke_aufr33_viperx_sdr_10.1956.ckpt
+    chunk_s: null              # 整轨处理
+    weights: models/audiosplit/
+    version: "2026-09-28 (ckpt sha256 1de20d45…9813)"
+    fallback: []
+    volta_status: pending
+  audmark:
+    task: audio-watermark      # 16-bit 负荷水印 + 检测
+    langs: [multi]
+    device: cpu
+    precision: fp32
+    weights: models/audmark/
+    version: TBD
+    fallback: []
+    volta_status: pending
+
+  # ---- 翻译 ----
+  mt-core:
+    task: translate            # 本地翻译主后端（含术语干预/背景信息/格式保留模板）
+    langs: [en, es, ar]
+    device: cuda:0
+    precision: fp16
+    attn: sdpa
+    weights: models/mt-core/
+    version: TBD-T12           # T10 预置：gpu-services/mt 服务骨架 + 客户端 pipeline/mt_backends.LocalMtBackend 同批接口契约；部署+冒烟归 T12（真名对照 docs/mt_service_deps.md）
+    fallback: [mt-api]
+    volta_status: pending
+  mt-api:
+    task: translate            # OpenAI 兼容 API 抽象层（兜底）；key 从环境变量注入，不落盘
+    langs: [en, es, ar]
+    device: remote
+    precision: null
+    weights: null
+    version: api               # T10 落地：pipeline/mt_backends.ApiMtBackend（env: MT_API_BASE/MT_API_KEY/MT_API_MODEL）
+    fallback: []
+    volta_status: na
+
+  # ---- 语音合成（音色参考与情绪参考分离）----
+  dub-tts:
+    task: tts                  # 主力：五语种；Volta 路径引擎仅暴露 fp32/bf16 两档，无 fp16 开关（D1 实测 TypeError）
+    langs: [zh, en, ja, es, ar]
+    device: cuda:0
+    precision: fp32            # D1 定案：fp32 通过（5.6s/句含 emotion 首载缓存后）；fp16 不可用；bf16 禁用
+    weights: models/dub-tts/
+    version: "2026-09-28@ee40fa7"
+    fallback: [dub-tts-base, alt-tts-a, alt-tts-b]
+    volta_status: ok
+    runtime_notes: >-
+      T12 服务化（:9002，2026-09-29）：fp32 常驻 cuda:0（装载 35.4s，显存 7062MiB，
+      与 :9001 同卡共存）；音色参考与情绪参考分离接口（voice_ref+emo_ref 双路，
+      emo_alpha/duration_factor 透传）——SAPI zh 双参考合成英文句实测 3.55s 产物、
+      emo_ref_used=true 服务端日志确认，热身 3.2-3.4s/句；文本正则前端保持关闭
+      （text_normalization=False）；依赖安装记录 docs/tts_service_deps.md。
+  dub-tts-base:
+    task: tts                  # 上一代主力（fp16，仅 zh/en）
+    langs: [zh, en]
+    device: cuda:0
+    precision: fp16
+    weights: models/dub-tts-base/
+    version: TBD
+    fallback: []
+    volta_status: pending
+  alt-tts-a:
+    task: tts                  # 备选 A：es 等约 10 语种（无 ar）
+    langs: [en, es]
+    device: cuda:0
+    precision: fp16
+    weights: models/alt-tts-a/
+    version: TBD
+    fallback: []
+    volta_status: pending
+  alt-tts-b:
+    task: tts                  # 备选 B：30+ 语种含 ar；D1 冒烟通过（11.7s/句，参考音色克隆模式）
+    langs: [multi]
+    device: cuda:1
+    precision: fp32            # 引擎默认 fp32（未暴露 dtype 开关）；D1 实测此档即可
+    weights: models/alt-tts-b/
+    version: "2026-09-28@f772e49"
+    fallback: []
+    volta_status: ok           # 硬约束：需 torch>=2.5（SDPA enable_gqa）；GPU 机已升级 torch 2.5.1+cu118（arch 含 sm_70）
+    runtime_notes: >-
+      T12 起 :9002 备选链懒加载节点（首次显式 engine=alt-tts-b 请求时装载落 cuda:1，
+      与 lip-pro 同卡互斥）；单路参考克隆模式，无独立情绪参考通道——服务如实回
+      emo_ref_used=false；T12 批未做经服务的懒加载合成实测（同卡有并行任务
+      17-19GB，不叠加 ~8GB 权重挤爆同卡），首次实战调用成败见 attempts 回传。
+
+  # ---- 口型 ----
+  lip-fast:
+    task: lip-sync             # 快口型：256×256 嘴区，官方实测 Volta 上 30fps+ 实时
+    langs: [multi]
+    device: cuda:1
+    precision: fp16
+    weights: models/lip-fast/
+    version: "2026-09-28@0a89dec"
+    fallback: []
+    volta_status: ok           # D1 实测：2s/50帧片段全流程 41s（含模型加载+预处理+合成+回贴），fp16
+    runtime_notes: >-
+      T16 服务化（:9003，2026-09-29）：fp16 常驻物理 cuda:1（CUDA_VISIBLE_DEVICES
+      独占式；引擎装载 28.1s），只监听 GPU 机 127.0.0.1，本机经隧道访问
+      （TUNNEL_LOCAL_PORT=9003）。逐帧口径：上传音频硬对齐到恰 帧数/fps 秒，
+      输出帧数=输入帧数（回贴按帧号拼接的前提）。执行降级链冻结镜像：精口型
+      未部署（TBD-D1）→ 服务 503 → 客户端按 fallback 落本引擎。显存：物理 #1
+      实测与 mt 服务（16.3GB）共卡仍有 8.1GB 余（口型权重+上下文 7.6GB）；
+      编解码器须带 libx264（系统 ffmpeg 8.0.1 缺失 → LIP_FFMPEG 注入静态构建，
+      docs/lip_service_deps.md §3）。
+  lip-pro:
+    task: lip-sync             # 精口型：512×512，推理约 18GB，独占 cuda:1，只给重点镜头
+    langs: [multi]
+    device: cuda:1
+    precision: fp16
+    weights: models/lip-pro/
+    version: TBD-D1
+    fallback: [lip-pro-1.5, lip-fast]
+    volta_status: pending
+  lip-pro-1.5:
+    task: lip-sync             # 精口型降级版（256×256，约 8GB）
+    langs: [multi]
+    device: cuda:1
+    precision: fp16
+    weights: models/lip-pro-1.5/
+    version: TBD
+    fallback: [lip-fast]
+    volta_status: pending
+
+  # ---- 合规 ----
+  provenance:
+    task: content-credentials  # 内容凭证 manifest 注入与校验（双许可工具链，以 LICENSE 为准）
+    langs: [multi]
+    device: cpu
+    precision: null
+    weights: null
+    version: TBD
+    fallback: []
+    volta_status: na
+
+  # ---- 编排（纯本地逻辑，无上游依赖/权重）----
+  align-m8:
+    task: duration-align       # 时长对齐（T14/M8）：syl2dur 占位 → duration_factor 二分
+                               # → 换下一候选 → atempo 收口；产物 C5 synth_plan.<lang>.jsonl
+                               # （duration_factor[0.5,2.0] / atempo[0.9,1.1] 窗见 pipeline.yaml m8 段）
+    langs: [en, es, ar]
+    device: cpu
+    precision: null
+    weights: null
+    version: "2026-09-29 (T14)"  # 上游：无外部依赖，纯编排（规划 §4 M8）
+    fallback: []
+    volta_status: na
+
+  mix-m9:
+    task: mix-and-compose      # 混音 + 成片合成（T15/M9）：新人声按 C2 句窗摆原时间轴 →
+                               # bgm 确定性侧链 ducking（对白区 -6dB / 句心再 -3dB）→ 48k 立体声
+                               # mix.wav（EBU R128 -16 LUFS，ffmpeg loudnorm 两趟）→ 12_out 成片
+                               # （ASS 字幕 + C7 隐式 AI 标识元数据位；显式/C2PA/水印归 M12）
+                               # （电平/斜坡/响度常量见 pipeline.yaml m9 段）
+    langs: [en, es, ar]
+    device: cpu
+    precision: null
+    weights: null
+    version: "2026-09-29 (T15)"  # 上游：无外部模型/权重；ffmpeg loudnorm/libass 为系统级依赖
+    fallback: []
+    volta_status: na
+
+  metrics-m15:
+    task: quality-metrics      # 指标体系（T21/M15）：六项 → 12_out/metrics.json（数值如实、
+                               # 基线 v0）—— 声纹嵌入余弦（复用 voxdia 组件）/情绪标签一致率
+                               # （:9001 回判）/配音回听 WER（:9001 转写 vs C4 chosen）/
+                               # 时长对齐率（C5 实测时长落 C4 预算窗）/口型评分（口型区帧差
+                               # 活性 vs 人声能量 Pearson，基线 v0）/每分钟成本（墙钟+调用记账）
+    langs: [en, es, ar]
+    device: cpu                # 编排在本机；:9001 调用经隧道（gpu_client）
+    precision: null
+    weights: null
+    version: "2026-09-29 (T21)"  # 上游：无新增外部依赖（嵌入复用 voxdia 权重）
+    fallback: []
+    volta_status: na
+
+  review-m13:
+    task: review-console       # 审校台（T19/M13）：FastAPI + SQLite + 原生 JS 单页——
+                               # 逐句表格（C4 译文/候选 + 预算/实测）/单句重生成回路
+                               # （改译文→M8 重对齐→:9002 重合成（隧道不可达时 mock
+                               # 占位并注明）→M9 重混→片段预览）/术语表 CRUD（terms_seed
+                               # 注入 M6 上下文）/导出（MP4/SRT/C8 合规报告）
+    langs: [en, es, ar]
+    device: cpu                # 纯编排；:9002 只在 tts=auto 且服务可达时真合成
+    precision: null
+    weights: null
+    version: "2026-09-30 (T19)"  # 上游：无新增外部依赖（fastapi/uvicorn/httpx/sqlite3 随 requirements）
+    fallback: []
+    volta_status: na

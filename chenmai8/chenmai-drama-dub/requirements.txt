@@ -1,0 +1,55 @@
+# 短剧多国出海本地化引擎 —— windev 本机 CPU 依赖（T0 冻结，2026-09-28）
+# Python 3.12.10 / Windows Server 2022 / 安装源: 阿里云 PyPI 镜像
+#   （T4 实测修订：清华镜像对本机 IP 拒绝访问，换
+#   pip install -r requirements.txt -i https://mirrors.aliyun.com/pypi/simple/ ）
+#
+# ⚠ 两条硬性使用约束（详见 docs/setup_windev.md）：
+# 1) 同进程同时用 torch 与 paddle 时，必须先 import torch 再 import paddle/paddleocr
+#    （两者捆绑的 libiomp5md.dll 冲突，paddle 先加载会导致 torch shm.dll WinError 127）。
+# 2) paddleocr 推理必须传 enable_mkldnn=False
+#    （paddle 3.3.1 PIR/oneDNN 执行器报 ConvertPirAttribute2RuntimeAttribute not support）。
+
+# 深度学习（CPU 版；Windows 平台 PyPI 的 torch 轮子即 CPU 构建）
+torch==2.14.0
+paddlepaddle==3.3.1
+paddleocr==3.7.0          # 依赖 paddlex 3.7.2 / opencv-contrib-python 4.10.0.84，随装
+
+# Web / 服务
+fastapi==0.141.1
+uvicorn==0.54.0
+httpx==0.28.1
+python-multipart==0.0.20   # GPU 服务 multipart 上传解析（本机调试 gpu-services 时需要）
+
+# 数据 / 音频
+pydantic==2.13.5
+numpy==2.3.5              # paddle 依赖约束所钉，勿单独升级
+librosa==1.0.0
+soundfile==0.14.0         # librosa 已自带，显式钉出版本
+
+# 分离（M3，audiosplit 组件引擎）—— 本文件为依赖安装记录，用真实 PyPI 发行名
+# （不在中性名扫描范围，见 scripts/gate_b0.py SCOPE_EXCLUDES）
+audio-separator==0.47.0   # 实测连带: pydub(引擎内部用，业务代码不碰)/onnx-weekly/onnx2torch 等
+onnxruntime==1.30.0       # 引擎 import 期硬依赖（CPU EP；GPU 路径装机换对应版）
+audioread==3.1.0          # 引擎 uvr_lib 兼容层 import 期硬依赖（librosa 1.0 未连带）
+
+# 视觉（M5，facemesh/shot-cut/voxdia 组件）—— 真实发行名只在本文件登记
+# （公开文本零上游名；运行时/架构经 pipeline/_facemesh_face.py、_scdet_net.py、
+# _voxdia_net.py 中性名动态装载/自实现，T7 冻结）
+mediapipe==1.0.1          # facemesh 运行时（仅 tasks API；连带 matplotlib/sounddevice/
+                          # contourpy/cycler/fonttools/kiwisolver/pyparsing，随装）
+scikit-learn==1.9.1       # 谱聚类（SpectralClustering）；m5 直接 import，显式钉版
+scipy==1.18.1             # 特征值间隙（scipy.linalg.eigh）；m5 直接 import，显式钉版
+                          # （audio-separator 链曾连带，现由 m5 直接依赖升为显式）
+
+# 工具
+# ffmpeg/ffprobe 为系统级依赖（6.1.1 essentials，含 libass/fribidi/harfbuzz），
+# 不走 pip —— B1 修订：此处不再写 `ffmpeg==系统安装`/`pydub==不使用` 等非 pip 行
+# （会令 `pip install -r requirements.txt` 无法重放）；可用性检查用
+# `python scripts/check_ffmpeg.py`（gate_b0 ① 对 pytest 子进程另有 PATH 断言）。
+# pydub 按设计不引入（直接调 ffmpeg）。
+
+# 测试（各模块 eval 为 pytest 脚本）
+pytest==9.1.1
+
+# 偏差说明：原计划"PaddleOCR 若无 py3.12 轮子则降级 rapidocr-onnxruntime"，
+# 实测 paddlepaddle 3.3.1 提供 cp312 win_amd64 轮子，未触发降级，无需 rapidocr。
