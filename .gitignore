@@ -23,6 +23,8 @@ __pycache__/
 *.tar.gz
 *.tgz
 *.zip.orig
+# ---- 工具状态（Mimosa 安全扫描钩子）----
+.mimosa/
 # ---- OS/编辑器 ----
 .DS_Store
 Thumbs.db

@@ -51,3 +51,20 @@
   out/ 已忽略。交接：`chenmai-bean-eye/docs/交接-实时标注与SO101联调.md`（明晨摄像头
   USB/IP 实测操作单 + SO-101 上电联调步骤）。下一步：明晨摄像头两路实测 → SO-101 到货后
   上电联调回填 configs/sort.yaml 占位值 → 生豆到货（WAITING_EVENT 不变）。
+
+- 2026-10-02（凌晨补账）交接文档 rev.2：试读者按 rev.1 照做复验提出 10 项，逐条实跑核实
+  后全部采纳修订。实证：`python -m beaneye.app` 确报 No module named
+  beaneye.app.__main__（包缺 __main__.py，`__init__.py` 的 `__main__` 块不被 -m 执行）
+  → 补 2 行 shim `beaneye/app/__main__.py` 使全仓 6 处 `-m` 引用成真，-m 起服务后
+  /demo=200、synth 流 200 自停，test_app+test_realtime_app **18 passed** 复验；
+  合成帧自带四角 ArUco（sources.py:12,:266）→ 演示实跑统计「毫米标定 : 有效（ArUco）」，
+  rev.1「无码伪毫米」预期写反已纠正；存图口径从代码核实（--save-frames 与已落盘文件数
+  比较、每次写 1 对 2 件，N=3 实存 2 对 4 件）并实测一致；sort_sim 复跑行程 21709.7mm
+  一致但耗时口径应为 summary.json 的 run_s≈0.5s/total_s≈5-7s（rev.1 的 7.3s 无口径出处，
+  已改写）；状态码实测 /demo=200、downscale=5→400、ip 缺 url→400、width=abc→422、
+  usb index=61→503；SessionEstopError 拼写纠正为 SessionEStopError（session.py:70）。
+  文档补齐三处可照抄代码：总线扫描命令（pyserial 枚举可靠 + lerobot 两种布局入口，
+  未装 lerobot 如实标注未验）、外参拍摄+calibrate 片段、假豆真机循环改两段式
+  （.venv 检测规划→targets.json→.venv-arm 执行；A 段合成帧 20 粒→严格包络 4 步/
+  跳过 16 实跑验证，B 段未验如实标注）；`--list-cams` 裸 python 改 .venv 解释器。
+  同步修 docs/SO101联调手册.md §3/§4A/§5。
