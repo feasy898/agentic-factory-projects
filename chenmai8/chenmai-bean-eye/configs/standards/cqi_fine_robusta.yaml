@@ -4,11 +4,22 @@
 # schema 见开发指令 §3.3；由 beaneye/standards/loader.py 加载与校验，
 # beaneye/standards/engine.py 按本文件定级——换标准 = 换本 YAML，不改代码。
 #
-# 阈值来源：Fine 级 primary_max=0 / secondary_full_max=5 / sample_g=350
-# 为开发指令 §3.3 给定基线；尚未对照标准原文人工复核 → verified: false，
-# 护照页脚将显示"标准阈值核对中"角标。核对后回填数值并置 true。
+# 阈值来源（2026-10-02 公开口径回填，来源标协议名；原文全文尚未逐条人工
+# 对照 → verified 保持 false，护照页脚显示"标准阈值核对中"角标）：
+# - 样品基量 350 g（绿样）；
+# - 精品（Fine）= 0 严重缺陷（主缺陷）+ 次缺陷 ≤5 粒 / 350 g；
+# - 优质（Premium 档，Fine 下一档）= 总缺陷 ≤12 粒——v0 引擎按双轴各自
+#   ≤12 近似（primary_max/secondary_full_max 各 12，轴和上限本 schema
+#   表达不了，精确口径待原文核对）；
+# - 奎克豆（烘焙后）：烘焙样 100 g，精品 ≤3 / 优质 ≤5——v0 管线无烘焙样
+#   与杯测，不进判定式，仅记录于 notes；
+# - 筛目参考 16 号（乌干达实施口径）——落点 metrology.sieve_targets.
+#   min_screen（M8 sieve_pass 基准，verified:false），Fine 级本身不设
+#   sieve_min（乌干达口径为实施参考而非协议硬条款）。
+# 口径经 2026-10-02 公开检索复核一致（350 g、0/≤5、Premium ≤12 总缺陷、
+# 奎克 ≤3/≤5），对照记录见 docs/standards_matrix.md §5。
 #
-# v0 判定语义（字段语义，待原文核对）：
+# v0 判定语义（字段语义）：
 #   grades 从最优到最差排列；定级取第一个满足全部条件的级别。
 #   primary_max        本级允许的主缺陷粒数上限（全样累计，每粒只计一次）
 #   secondary_full_max 本级允许的次缺陷粒数上限（全样累计；peaberry 计量
@@ -29,7 +40,7 @@ display:
   zh: CQI 精品罗布斯塔
   en: CQI Fine Robusta
   vi: CQI Robusta tinh khiết
-sample_g: 350                       # 抽样基量（克），开发指令 §3.3 基线
+sample_g: 350                       # 协议抽样基量 350 g（绿样）
 count_rule: most_severe_per_bean
 severity_order: [normal, broken, faded, brocade, immature, peaberry, shell, elephant, insect, dried, sour, mold, black]
 
@@ -50,16 +61,23 @@ defect_classes:
 
 grades:                             # 从最优到最差排列
   - name: Fine
-    primary_max: 0                  # 主缺陷 0 粒（开发指令 §3.3 基线）
-    secondary_full_max: 5           # 次缺陷全样累计 ≤5 粒（同上）
-    sieve_min: null                 # v0 不设筛目条件（待原文核对）
-    verified: false                 # 待标准原文人工核对后置 true
+    primary_max: 0                  # 精品 = 0 严重缺陷（协议公开口径）
+    secondary_full_max: 5           # + 次缺陷 ≤5 粒 / 350 g（同上）
+    sieve_min: null                 # 协议硬条款不设筛目；筛目 16 号为实施参考
+                                    # （乌干达口径，见 metrology.sieve_targets）
+    verified: false                 # 待协议原文逐条人工对照后置 true（数值与
+                                    # 公开口径一致；旗标语义=原文核对，见文件头）
+  - name: 优质
+    primary_max: 12                 # Premium 档：总缺陷 ≤12 的 v0 双轴近似
+    secondary_full_max: 12          # （两轴各自 ≤12，轴和上限 schema 表达不了，
+    sieve_min: null                 #  精确口径待原文核对，见文件头）
+    verified: true                  # 简报给定公开口径（Premium ≤12 总缺陷）
 
 fail_grade: 未达 Fine
 
 metrology:
   sieve_targets:
-    min_screen: 13                  # 整盘基准目数（screen = round(mm/25.4*64)）
+    min_screen: 16                  # 筛目参考 16 号（乌干达实施口径；M8 sieve_pass 基准）
     verified: false                 # 待实盘标定核对
   reference_lab: [55, -12, 22]      # 精品罗豆参考色（0-255 标度；实测后回填）
   reference_lab_verified: false
@@ -69,3 +87,10 @@ weight:
   model: area_linear
   g_per_mm2: 0.00042                # 到货后用蓝牙秤标定回填
   verified: false
+
+notes:
+  - 奎克豆口径（烘焙样 100 g：精品 ≤3 / 优质 ≤5）不进 v0 判定式（管线无
+    烘焙样与杯测），贸易分层参考见 beaneye/standards/premium.py。
+  - 精品/普通贸易分层（premium_or_commercial）默认以本标准最优级为阈值
+    来源（0 严重 + 次缺陷等效 ≤5）。
+

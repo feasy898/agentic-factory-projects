@@ -30,7 +30,17 @@ opencv-python==4.10.0.84）；本脚本按 roboflow==1.5.1（Apache-2.0）的私
     .venv/Scripts/python.exe scripts/download_datasets.py --only dcv --key K --dry-run     # 只解析不落盘
     .venv/Scripts/python.exe scripts/download_datasets.py --only usk --usk-archive <zip路径或URL>
     .venv/Scripts/python.exe scripts/download_datasets.py --only usk              # 打印人工表单步骤
+    .venv/Scripts/python.exe scripts/download_datasets.py --only universe \
+        --universe <workspace>/<project> --out data/datasets/<中性代号> [--format coco]
     .venv/Scripts/python.exe scripts/download_datasets.py --selftest              # 本机自检（含真实网络探针）
+
+通用 Universe 模式（--only universe，数据集入库线 W-扩展）：
+    与 dcv 主源同一条 REST/导出轮询/安全解包链路，但目标项目由 --universe
+    workspace/project 指定、落盘目录由 --out 指定（必须给**中性代号**目录名，
+    如 data/datasets/ext-rseg）。中性名纪律：该模式写出的 manifest.json 只含
+    中性代号（internal_name=--out 目录名），不写上游 workspace/project/URL——
+    真实来源坐标只登记在本机外部文件（C:/devsetup/dataset_sources.txt，不入库）。
+    检测框数据集用 --format coco（bbox），分割数据集用 --format coco-segmentation。
 
 退出码：0 成功；1 运行失败；2 用法错误；3 需要人工步骤（缺 key / 缺 USK 包）。
 """
@@ -73,7 +83,12 @@ USK_FORM_URL = "https://forms.gle/4QSchCETdWrWrtfA8"
 
 READ_CHUNK = 1 << 20  # 1 MiB
 POLL_INTERVAL_S = 3
-TOOL_ID = "scripts/download_datasets.py v1"
+TOOL_ID = "scripts/download_datasets.py v2"
+# 通用 Universe 模式的中性来源登记指引（真实 URL/许可页只写外部文件，不入库）
+EXTERNAL_SOURCE_REGISTRY_NOTE = (
+    "真实来源坐标（URL/workspace/project/许可页）只登记在本机外部登记文件 "
+    "C:/devsetup/dataset_sources.txt（不入库）；本 manifest 仅持中性代号"
+)
 
 # key 传递方式在 header 与 query 间自动回退后记忆（首次 401 时各试一次）
 _AUTH_USE_QUERY = False
@@ -202,7 +217,8 @@ def resolve_version(project_payload: dict, version_arg: str) -> int:
 
 
 def wait_version_ready(
-    client: httpx.Client, ws: str, proj: str, version: int, key: str, wait_s: float
+    client: httpx.Client, ws: str, proj: str, version: int, key: str, wait_s: float,
+    label: str = "DCV",
 ) -> dict:
     """等待数据集版本本身处于可用状态（导出大版本时版本可能仍在生成）。"""
     url = f"{API_URL}/{ws}/{proj}/{version}?nocache=true"
@@ -214,7 +230,7 @@ def wait_version_ready(
         if not generating:
             return vobj
         progress = float(vobj.get("progress") or 0.0) * 100
-        print(f"\r[DCV] 版本 v{version} 生成中 {progress:5.1f}%", end="", flush=True)
+        print(f"\r[{label}] 版本 v{version} 生成中 {progress:5.1f}%", end="", flush=True)
         if time.monotonic() > deadline:
             raise RoboflowAPIError(
                 200,
@@ -232,8 +248,9 @@ def poll_export_link(
     fmt: str,
     key: str,
     wait_s: float,
+    label: str = "DCV",
 ) -> tuple[str, dict]:
-    """触发/轮询 coco-segmentation 导出，直到拿到签名下载直链。"""
+    """触发/轮询导出，直到拿到签名下载直链（fmt 为导出格式，如 coco）。"""
     url = f"{API_URL}/{ws}/{proj}/{version}/{fmt}?nocache=true"
     deadline = time.monotonic() + wait_s
     while True:
@@ -244,7 +261,7 @@ def poll_export_link(
                 return str(export["link"]), export
             if payload.get("ready") is False or isinstance(export, dict):
                 progress = float(payload.get("progress") or 0.0) * 100
-                print(f"\r[DCV] {fmt} 导出生成中 {progress:5.1f}%", end="", flush=True)
+                print(f"\r[{label}] {fmt} 导出生成中 {progress:5.1f}%", end="", flush=True)
             else:
                 raise RoboflowAPIError(
                     200,
@@ -253,7 +270,7 @@ def poll_export_link(
                 )
         else:  # 202：导出生成中
             progress = float(payload.get("progress") or 0.0) * 100
-            print(f"\r[DCV] {fmt} 导出生成中 {progress:5.1f}%", end="", flush=True)
+            print(f"\r[{label}] {fmt} 导出生成中 {progress:5.1f}%", end="", flush=True)
         if time.monotonic() > deadline:
             raise RoboflowAPIError(
                 200,
@@ -357,9 +374,17 @@ def sha256_file(path: Path) -> str:
 
 
 def validate_coco_segmentation(content_dir: Path) -> dict:
-    """校验 coco-segmentation 导出结构：各 split 的 _annotations.coco.json 可解析、
-    图片文件在磁盘存在、多边形标注统计。返回摘要 dict（含 missing 样例）。"""
-    summary: dict = {"annotation_files": 0, "splits": {}, "categories": [], "problems": []}
+    """校 coco 导出结构（coco / coco-segmentation 通用）：各 split 的
+    _annotations.coco.json 可解析、图片文件在磁盘存在、标注统计与类别分布
+    直方图。检测导出（--format coco）的标注无多边形，polygon_annotations=0
+    属正常。返回摘要 dict（含 missing 样例）。"""
+    summary: dict = {
+        "annotation_files": 0,
+        "splits": {},
+        "categories": [],
+        "category_histogram": {},  # 类别名 -> 全 split 标注数（直方图）
+        "problems": [],
+    }
     ann_files = sorted(content_dir.rglob("_annotations.coco.json"))
     if not ann_files:
         raise ExtractError(f"未找到任何 _annotations.coco.json（{content_dir}）")
@@ -374,6 +399,17 @@ def validate_coco_segmentation(content_dir: Path) -> dict:
         cats = [c.get("name", str(c.get("id"))) for c in data["categories"]]
         if not summary["categories"]:
             summary["categories"] = sorted(cats)
+        split_hist: dict[str, int] = {}
+        for ann in anns:
+            cid = ann.get("category_id")
+            name = str(cid)
+            for c in data["categories"]:
+                if c.get("id") == cid:
+                    name = str(c.get("name", cid))
+                    break
+            split_hist[name] = split_hist.get(name, 0) + 1
+        for name, n in split_hist.items():
+            summary["category_histogram"][name] = summary["category_histogram"].get(name, 0) + n
         # 图片文件存在性（全量核对；缺失只记样例）
         missing = []
         for img in images:
@@ -398,6 +434,7 @@ def validate_coco_segmentation(content_dir: Path) -> dict:
             "missing_images": len(missing),
             "annotations": len(anns),
             "polygon_annotations": poly,
+            "category_histogram": split_hist,
         }
         if missing:
             summary["problems"].append(
@@ -481,18 +518,42 @@ def require_key(args) -> str:
     return key
 
 
-def download_dcv(args) -> int:
+def resolve_dcv_layout(args) -> tuple[Path, str, Path]:
+    """dcv 模式落盘布局：返回 (out_dir, internal_name, sample_dir)。
+
+    显式 --out 时 internal_name 取目录名（中性代号一致性，登记册附录 A 的
+    ext-main 入库路径；sample 随所属集同侧命名）；缺省行为（无 --out -> dcv）
+    保持 v1 兼容。上游坐标（source_url 等）仍按 dcv 既有模式记录——manifest
+    在 data/datasets/* 下，不入库。
+    """
     out_dir = Path(args.out) if args.out else DATASETS_DIR / "dcv"
+    internal = out_dir.name if args.out else "dcv"
+    sample_dir = (out_dir.parent / f"{internal}_sample") if args.out else (DATASETS_DIR / "dcv_sample")
+    return out_dir, internal, sample_dir
+
+
+def download_dcv(args) -> int:
+    out_dir, internal, sample_dir = resolve_dcv_layout(args)
     key = require_key(args)
     max_bytes = int(args.max_gb * (1 << 30))
     limits = httpx.Timeout(15.0, read=60.0)
     with httpx.Client(timeout=limits, follow_redirects=True) as client:
         project = get_project(client, args.workspace, args.project, key)
         version = resolve_version(project, args.version)
+        proj_type = str(project.get("type") or "未知")
         print(
             f"[DCV] 项目 {args.workspace}/{args.project}，选定版本 v{version}"
-            f"（license={project.get('license', '未知')}，project.images={project.get('images', '?')}）"
+            f"（type={proj_type}，license={project.get('license', '未知')}，"
+            f"project.images={project.get('images', '?')}）"
         )
+        if "segmentation" in args.format and proj_type == "object-detection":
+            # 预检警示（下载前可见）：检测型项目可能无多边形标注，coco-segmentation
+            # 导出解包后会在校验处硬失败（total_poly==0）——先核对 type 再决定
+            print(
+                f"[DCV] [WARN] API 自报项目类型为 object-detection，但请求了 {args.format}"
+                "（分割格式）。若导出确无多边形，解包校验将失败；请先 --list-versions 核对，"
+                "必要时改用 --format coco 或回报决策后再继续。"
+            )
         if args.list_versions:
             for v in sorted(project.get("versions") or [], key=lambda x: int(x.get("id", 0) or 0)):
                 print(f"[DCV]   v{v.get('id')}  images={v.get('images')}  created={v.get('created')}")
@@ -517,7 +578,7 @@ def download_dcv(args) -> int:
                 reuse_sha = None
         archive_path, sha = archive_and_extract(
             client, link, out_dir,
-            archive_name=f"dcv_v{version}_{args.format}.zip",
+            archive_name=f"{internal}_v{version}_{args.format}.zip",
             max_bytes=max_bytes, label="DCV", reuse_sha=reuse_sha,
         )
         coco = validate_coco_segmentation(out_dir / "content")
@@ -530,11 +591,11 @@ def download_dcv(args) -> int:
 
     sample_info = {}
     if args.sample:
-        sample_info = build_sample(out_dir, DATASETS_DIR / "dcv_sample", archive_path, sha, coco, args.sample, args.format, version)
+        sample_info = build_sample(out_dir, sample_dir, archive_path, sha, coco, args.sample, args.format, version, internal_name=internal)
 
     rels = collect_rel_paths(out_dir)
     meta = {
-        "internal_name": "dcv",
+        "internal_name": internal,
         "source_url": DCV_UNIVERSE_URL,
         "api_workspace": args.workspace,
         "api_project": args.project,
@@ -559,7 +620,7 @@ def download_dcv(args) -> int:
     return 0
 
 
-def build_sample(content_root: Path, sample_dir: Path, archive_path: Path, archive_sha: str, coco: dict, n: int, fmt: str, version: int) -> dict:
+def build_sample(content_root: Path, sample_dir: Path, archive_path: Path, archive_sha: str, coco: dict, n: int, fmt: str, version: int, internal_name: str = "dcv") -> dict:
     """小样本：从已解包内容抽每 split 前 n 张图 + 裁剪后的标注，独立成目录。"""
     if sample_dir.exists():
         shutil.rmtree(sample_dir)
@@ -587,9 +648,9 @@ def build_sample(content_root: Path, sample_dir: Path, archive_path: Path, archi
     total = sum(s["images"] for s in splits_out.values())
     rels = collect_rel_paths(sample_dir)
     meta = {
-        "internal_name": "dcv_sample",
+        "internal_name": f"{internal_name}_sample",
         "mode": "sample",
-        "of_internal_name": "dcv",
+        "of_internal_name": internal_name,
         "source_url": DCV_UNIVERSE_URL,
         "version": version,
         "format": fmt,
@@ -652,6 +713,132 @@ def download_usk(args) -> int:
     write_manifest(out_dir, meta, rels)
     print(f"[USK] [OK] 入库 {meta['file_count']} 个文件: {ext_counts}")
     print(f"[USK] [OK] 产物目录 {out_dir}（SHA256SUMS 可用 sha256sum -c 校验）")
+    return 0
+
+
+def parse_universe_arg(universe: str) -> tuple[str, str]:
+    """--universe 取值解析：'workspace/project' -> (workspace, project)。"""
+    parts = (universe or "").strip().split("/")
+    if len(parts) != 2 or not parts[0].strip() or not parts[1].strip():
+        raise SystemExit(f"[用法] --universe 需要 <workspace>/<project>，收到 {universe!r}")
+    ws, proj = parts[0].strip(), parts[1].strip()
+    if any(ch.isspace() for ch in ws + proj):
+        raise SystemExit("[用法] --universe 的 workspace/project 不得含空白字符")
+    return ws, proj
+
+
+def download_universe(args) -> int:
+    """通用 Universe 项目下载（数据集入库线）：与 dcv 主源同一条 REST 链路
+    （项目信息 -> 版本解析 -> 导出轮询 -> 流式下载 -> 安全解包 -> COCO 校验
+    -> manifest+SHA256SUMS 登记），但按中性代号落盘与登记。
+
+    与 dcv 主源的差异：
+      - 目标项目由 --universe <workspace>/<project> 指定，落盘目录 --out 必填
+        （目录名 = 中性代号，进 manifest.internal_name）；
+      - 中性名纪律：manifest.json 不写上游 workspace/project/URL，只持中性
+        代号 + 外部登记文件指引（真实坐标不入库）；
+      - 检测框导出（--format coco）同样支持：标注数非零即可，不强制多边形
+        （polygon_annotations 仅为统计参考）；
+      - 不支持 --sample（小样本抽取为主源 dcv 专属）。
+    """
+    if not args.universe:
+        raise SystemExit("[用法] --only universe 需要 --universe <workspace>/<project>")
+    if not args.out:
+        raise SystemExit(
+            "[用法] --only universe 需要 --out data/datasets/<中性代号>"
+            "（目录名即登记代号，不得使用上游项目名）"
+        )
+    if args.sample:
+        print("[警告] --sample 仅主源 dcv 支持；通用 Universe 模式忽略之")
+    out_dir = Path(args.out)
+    code = out_dir.name
+    if code in ("dcv", "dcv_sample", "usk_coffee"):
+        raise SystemExit(f"[用法] --out 目录名 {code!r} 与既有数据集代号冲突")
+    workspace, project = parse_universe_arg(args.universe)
+    key = require_key(args)
+    max_bytes = int(args.max_gb * (1 << 30))
+    fmt = args.format
+    limits = httpx.Timeout(15.0, read=60.0)
+    with httpx.Client(timeout=limits, follow_redirects=True) as client:
+        proj = get_project(client, workspace, project, key)
+        version = resolve_version(proj, args.version)
+        proj_type = str(proj.get("type") or "未知")
+        print(
+            f"[{code}] 项目 {workspace}/{project}，选定版本 v{version}"
+            f"（type={proj_type}，license={proj.get('license', '未知')}，"
+            f"project.images={proj.get('images', '?')}）"
+        )
+        if "segmentation" in fmt and proj_type == "object-detection":
+            # 预检警示（下载前可见）：检测型项目可能无多边形标注
+            print(
+                f"[{code}] [WARN] API 自报项目类型为 object-detection，但请求了 {fmt}"
+                "（分割格式）。若导出确无多边形，解包校验将失败；请先 --list-versions 核对，"
+                "必要时改用 --format coco 或回报决策后再继续。"
+            )
+        if args.list_versions:
+            for v in sorted(proj.get("versions") or [], key=lambda x: int(x.get("id", 0) or 0)):
+                print(f"[{code}]   v{v.get('id')}  images={v.get('images')}  created={v.get('created')}")
+            return 0
+        wait_version_ready(client, workspace, project, version, key, args.wait_min * 60,
+                           label=code)
+        link, export = poll_export_link(
+            client, workspace, project, version, fmt, key, args.wait_min * 60, label=code
+        )
+        if args.dry_run:
+            head = client.head(link)
+            size = int(head.headers.get("content-length") or 0) / (1 << 20)
+            print(f"[{code}] DRY-RUN：导出直链可用，大小 ≈{size:.1f} MiB，未落盘（--dry-run）")
+            return 0
+
+        manifest_path = out_dir / "manifest.json"
+        reuse_sha = None
+        if manifest_path.is_file():
+            try:
+                old = json.loads(manifest_path.read_text(encoding="utf-8"))
+                reuse_sha = (old.get("archive") or {}).get("sha256")
+            except Exception:
+                reuse_sha = None
+        archive_path, sha = archive_and_extract(
+            client, link, out_dir,
+            archive_name=f"{code}_v{version}_{fmt}.zip",
+            max_bytes=max_bytes, label=code, reuse_sha=reuse_sha,
+        )
+        coco = validate_coco_segmentation(out_dir / "content")
+
+    total_imgs = sum(s["images"] for s in coco["splits"].values())
+    total_anns = sum(s["annotations"] for s in coco["splits"].values())
+    total_poly = sum(s["polygon_annotations"] for s in coco["splits"].values())
+    if total_imgs == 0 or total_anns == 0:
+        raise ExtractError(
+            f"导出校验失败：图片或标注数为 0（images={total_imgs}, "
+            f"annotations={total_anns}；检测导出无多边形属正常，看 annotations 计数）"
+        )
+
+    rels = collect_rel_paths(out_dir)
+    meta = {
+        "internal_name": code,
+        "source_ref": EXTERNAL_SOURCE_REGISTRY_NOTE,
+        "version": version,
+        "format": fmt,
+        "license": proj.get("license") or "未声明（以导出包/项目页实际声明为准）",
+        "export_id": (export or {}).get("id"),
+        "archive": {"path": archive_path.relative_to(out_dir).as_posix(), "sha256": sha,
+                    "bytes": archive_path.stat().st_size},
+        "coco_validation": coco,
+        "totals": {"images": total_imgs, "annotations": total_anns,
+                   "polygon_annotations": total_poly},
+        "categories": coco["categories"],
+        "category_histogram": coco["category_histogram"],
+    }
+    write_manifest(out_dir, meta, rels)
+    print(f"[{code}] [OK] 图片 {total_imgs} / 标注 {total_anns}（多边形 {total_poly}），"
+          f"类别 {len(coco['categories'])} 类: {', '.join(coco['categories'])}")
+    for name, n in sorted(coco["category_histogram"].items(), key=lambda kv: -kv[1]):
+        print(f"[{code}]   {n:>6}  {name}")
+    for problem in coco["problems"][:5]:
+        print(f"[{code}] [WARN] {problem}")
+    print(f"[{code}] [OK] 产物目录 {out_dir}（SHA256SUMS 可用 sha256sum -c 校验；"
+          "manifest 仅中性代号，真实来源见外部登记文件）")
     return 0
 
 
@@ -800,9 +987,12 @@ def selftest() -> int:
 # ---------------------------------------------------------------- CLI
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(description="BeanEye 数据集下载器（DCV 主源 + USK 辅源登记）")
-    p.add_argument("--only", choices=["dcv", "usk", "all"], default="all", help="下载哪个数据集（默认 all）")
+    p = argparse.ArgumentParser(description="BeanEye 数据集下载器（DCV 主源 + USK 辅源登记 + 通用 Universe）")
+    p.add_argument("--only", choices=["dcv", "usk", "universe", "all"], default="all",
+                   help="下载哪个数据集（dcv 主源 / usk 辅源 / universe 通用项目；默认 all=dcv+usk）")
     p.add_argument("--key", default=None, help="Roboflow API key（也可用环境变量 ROBOFLOW_API_KEY）；绝不打印")
+    p.add_argument("--universe", default=None, metavar="WORKSPACE/PROJECT",
+                   help="通用 Universe 模式的目标项目（与 --only universe 连用）")
     p.add_argument("--workspace", default=DCV_WORKSPACE, help=argparse.SUPPRESS)
     p.add_argument("--project", default=DCV_PROJECT, help=argparse.SUPPRESS)
     p.add_argument("--version", default="latest", help="数据集版本号或 latest（默认 latest）")
@@ -822,26 +1012,37 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.selftest:
         return selftest()
+    # 脱敏基准 key：CLI --key 之外，环境变量注入的 key 同样不得进任何异常文本
+    # （httpx 的 URL 类异常可能带 query 串——认证回退路径会把 key 放进 URL）
+    key_for_redact = (args.key or os.environ.get("ROBOFLOW_API_KEY")
+                      or os.environ.get("BEANEYE_ROBOFLOW_API_KEY"))
     statuses: list[tuple[str, int]] = []
-    todo = ["dcv", "usk"] if args.only == "all" else [args.only]
+    todo = {"dcv": ["dcv"], "usk": ["usk"], "universe": ["universe"]}.get(
+        args.only, ["dcv", "usk"]
+    )
     for name in todo:
         try:
-            rc = download_dcv(args) if name == "dcv" else download_usk(args)
+            if name == "dcv":
+                rc = download_dcv(args)
+            elif name == "usk":
+                rc = download_usk(args)
+            else:
+                rc = download_universe(args)
             statuses.append((name, rc))
         except BlockedError as exc:
             print(f"[{name.upper()}] [BLOCKED] {exc}")
             statuses.append((name, 3))
         except RoboflowAPIError as exc:
-            print(f"[{name.upper()}] [NG] {redact(str(exc), args.key)}")
+            print(f"[{name.upper()}] [NG] {redact(str(exc), key_for_redact)}")
             if exc.hint:
                 print(f"[{name.upper()}] 提示: {exc.hint}")
             print(f"[{name.upper()}] 人工解锁步骤见 data/datasets/README.md")
             statuses.append((name, 1))
         except (ExtractError, FileNotFoundError) as exc:
-            print(f"[{name.upper()}] [NG] {redact(str(exc), args.key)}")
+            print(f"[{name.upper()}] [NG] {redact(str(exc), key_for_redact)}")
             statuses.append((name, 1))
         except httpx.HTTPError as exc:
-            print(f"[{name.upper()}] [NG] 网络错误: {exc.__class__.__name__}: {redact(str(exc), args.key)}")
+            print(f"[{name.upper()}] [NG] 网络错误: {exc.__class__.__name__}: {redact(str(exc), key_for_redact)}")
             print(f"[{name.upper()}] 提示: 本机到 api.roboflow.com 需直连可达（2026-09-28 实测可达）；代理环境请设置 HTTPS_PROXY")
             statuses.append((name, 1))
     print("----------------------------")

@@ -41,6 +41,7 @@ __all__ = [
     "StatsSummary",
     "Measurements",
     "GradingDecision",
+    "PremiumDecision",
     "BatchResult",
     "CauseItem",
     "AgentReport",
@@ -390,8 +391,14 @@ class Measurements(BeanEyeBaseModel):
     delta_e_hist: dict[str, int]  # 分桶 ["0-2","2-4",...]
     est_weight_g: float = Field(ge=0)
     weight_model: str = Field(min_length=1)  # "area_linear:v1"
+    # 轨2 大中小筛段（v1.2 增补，契约只增不改名；W13 warnings 先例）：
+    # 大(≥17目)/中(15-16)/小(≤14)，口径与来源见 configs/size_bands.yaml；
+    # hist 与 sieve_hist 同源同舍入（aggregate_sieve_hist 聚合恒一致），
+    # frac 为 0-1 占比（总和 1；空盘或筛段配置不可用时为空映射）。
+    size_band_hist: dict[str, int] = Field(default_factory=dict)  # 筛段 key → 粒数
+    size_band_frac: dict[str, float] = Field(default_factory=dict)  # 筛段 key → 占比(0-1)
 
-    @field_validator("sieve_hist", "delta_e_hist")
+    @field_validator("sieve_hist", "delta_e_hist", "size_band_hist")
     @classmethod
     def _check_hist(cls, v: dict[str, int], info) -> dict[str, int]:
         for k, n in v.items():
@@ -439,6 +446,54 @@ class GradingDecision(BeanEyeBaseModel):
         for k, n in v.items():
             if n < 0:
                 raise ValueError(f"defect_counts[{k!r}] 必须 >= 0，得到 {n}")
+        return v
+
+
+# ---------------------------------------------------------------------------
+# 轨3 精品/普通判定层（v1.2 增补，契约只增不改名；W13 warnings 先例）
+# ---------------------------------------------------------------------------
+
+
+class PremiumDecision(BeanEyeBaseModel):
+    """精品（premium）/ 普通（commercial）判定结论。
+
+    判定口径（轨3 spec）：精品 = 严重缺陷（主缺陷）0 粒 **且** 一般缺陷
+    （次缺陷）等效粒数 ≤5（CQI Fine Robusta 口径，v0 1 粒 = 1 等效）；
+    其余判普通。与定级（GradingDecision）解耦：本层是**贸易口径的分层
+    参考**，不改变标准的法定等级结论。``grade_legal_db46`` 在传入 DB46
+    法定表时附带给出其法定理化等级（"DB46 口径同时给出其法定等级"）。
+
+    ``reasons`` 沿用引擎模板键格式 ``"<模板键>:<k>=<v>[;<k>=<v>]*"``（键
+    字符集 [A-Za-z0-9_.]）；``warnings`` 沿用 GradingDecision.warnings 机制
+    （阈值/配置未核对时透传，M10 页脚角标同源）。``moisture_pct`` 为水分
+    占位（管线 v0 无水分计，恒 None；DB46 口径仅在提供时参与水分享核）。
+    """
+
+    standard_id: str = Field(min_length=1)  # 精品阈值所依据的标准 id（缺省 cqi_fine_robusta）
+    verdict: Literal["premium", "commercial"]
+    primary_count: int = Field(ge=0)  # 严重缺陷（主缺陷）粒数
+    secondary_count: int = Field(ge=0)  # 一般缺陷（次缺陷）计数
+    secondary_equiv_count: float = Field(ge=0)  # 一般缺陷等效粒数（v0 CQI 口径 1:1 = 计数）
+    primary_limit: int = Field(ge=0)  # 本判定采用的主缺陷上限（0）
+    secondary_equiv_limit: float = Field(gt=0)  # 本判定采用的次缺陷等效上限（5）
+    size_band_hist: dict[str, int]  # 大中小直方（筛段 key → 粒数；key 来自 configs/size_bands.yaml）
+    size_band_frac: dict[str, float]  # 大中小占比（0-1，总和 1；空盘全 0）
+    bean_count: int = Field(ge=0)
+    moisture_pct: float | None = None  # 水分占位（g/100g）；None = 未测
+    grade_legal_db46: str | None = None  # DB46/T 642 法定理化等级（如"理化一级"；未计算为 None）
+    reasons: list[str]  # 人读判定理由（三语模板键，同 GradingDecision 格式）
+    warnings: list[str] = Field(default_factory=list)
+
+    @field_validator("size_band_hist", "size_band_frac")
+    @classmethod
+    def _check_size_band(cls, v: dict, info) -> dict:
+        for k, n in v.items():
+            if isinstance(n, bool):
+                continue
+            if isinstance(n, int) and n < 0:
+                raise ValueError(f"{info.field_name}[{k!r}] 计数必须 >= 0，得到 {n}")
+            if isinstance(n, float) and n < 0.0:
+                raise ValueError(f"{info.field_name}[{k!r}] 占比必须 >= 0，得到 {n}")
         return v
 
 

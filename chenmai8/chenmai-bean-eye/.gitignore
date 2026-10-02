@@ -19,11 +19,34 @@ build/
 *.key
 secrets/
 
-# Data & models (large artifacts) —— data/ 全部忽略，仅数据集说明文档随 git 跟踪
+# Data & models (large artifacts) —— data/ 默认全部忽略；白名单 = 数据集说明
+# 文档 + 批1 登记册/映射/universe manifest/采集脚手架文本。
+# 数据集本体（原始图片、标注、归档 zip、SHA256SUMS、ext-main 的 dcv 模式
+# manifest[含上游坐标]）不入库，仅存本机（中性名纪律见
+# data/datasets/dataset_registry.md 红线节）。
 data/*
 !data/datasets/
 data/datasets/*
 !data/datasets/README.md
+!data/datasets/dataset_registry.md
+!data/datasets/ext-*/
+data/datasets/ext-*/*
+!data/datasets/ext-*/mapping.yaml
+!data/datasets/ext-rseg/manifest.json
+!data/datasets/ext-rgreen/manifest.json
+!data/datasets/ext-scaa17/manifest.json
+!data/datasets/hn_robusta/
+data/datasets/hn_robusta/*
+!data/datasets/hn_robusta/v0.1/
+data/datasets/hn_robusta/v0.1/*
+!data/datasets/hn_robusta/v0.1/images/
+!data/datasets/hn_robusta/v0.1/masks/
+!data/datasets/hn_robusta/v0.1/meta/
+data/datasets/hn_robusta/v0.1/images/*
+!data/datasets/hn_robusta/v0.1/images/README.md
+data/datasets/hn_robusta/v0.1/masks/*
+!data/datasets/hn_robusta/v0.1/masks/README.md
+!data/datasets/hn_robusta/v0.1/meta/**
 models/
 *.onnx
 *.pt

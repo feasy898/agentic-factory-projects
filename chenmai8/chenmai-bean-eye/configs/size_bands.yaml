@@ -1,0 +1,63 @@
+# =====================================================================
+# BeanEye 大中小筛段配置（轨2 · size bands）
+# ---------------------------------------------------------------------
+# 消费方：beaneye/metrology/size_bands.py（load_size_bands / band_of_screen /
+# size_band_histogram / aggregate_sieve_hist）。
+#
+# 口径：
+# - 筛段按**目数**（screen = 1/64 英寸筛号，与 metrology.screen_of /
+#   Measurements.sieve_hist 同一口径）划分；配置用整目数**含上、下界**声明：
+#   large  screen >= 17        （大粒）
+#   medium 15 <= screen <= 16  （中粒）
+#   small  screen <= 14        （小粒）
+#   加载器换算成连续目数域的左闭右开区间 [min, max+1)（small 为
+#   (-inf,15)、medium [15,17)、large [17,+inf)），因此连续目数 16.99 落
+#   medium、17.00 落 large；整目数 16 落 medium、17 落 large，与
+#   sieve_hist 的整目数口径恒一致。
+# - 毫米对照用 ICO（国际咖啡组织）筛径表（公称孔径 mm）；注意引擎内
+#   screen_mm(s) = s/64*25.4 是精确孔径（如 17 目 = 6.747 mm），ICO 表的
+#   6.70 mm 是行业惯称的公称值，两套数值并存、用途不同（对照 vs 计算）。
+#
+# 来源（screen 阈值）：越南罗布斯塔出口贸易的 18/16/13 档惯例 + ICO 筛径表
+# 折算为大(≥17)/中(15-16)/小(≤14) 三段；**待真实豆到货后按本仓标定流程
+# 修正**（占位口径，不宣称对应任何单一法定标准）。
+# =====================================================================
+
+version: 1
+
+source: >-
+  越南罗豆出口惯例 18/16/13 档 + ICO 筛径表，待真实豆标定修正
+
+bands:                        # 整目数含上/下界；两侧开区间只允许出现在首/尾段
+  - key: large
+    min_screen: 17            # screen >= 17 → 大粒（连续域 [17, +inf)）
+    max_screen: null
+    zh: 大粒
+    en: large
+    vi: hat lon
+  - key: medium
+    min_screen: 15            # 15 <= screen <= 16 → 中粒（连续域 [15, 17)）
+    max_screen: 16
+    zh: 中粒
+    en: medium
+    vi: hat vua
+  - key: small
+    min_screen: null          # screen <= 14 → 小粒（连续域 (-inf, 15)）
+    max_screen: 14
+    zh: 小粒
+    en: small
+    vi: hat nho
+
+# ICO 筛径表（公称孔径 mm；screen → mm 对照，仅作展示/对照，不参与计算）
+screen_mm_table:
+  13: 5.00
+  14: 5.60
+  15: 6.00
+  16: 6.30
+  17: 6.70
+  18: 7.10
+
+notes:
+  - 筛段归属一律用整数目数（与 sieve_hist 同源同舍入：round_half_up(d_mm/25.4*64)）；
+    band_of_screen 额外接受连续目数供边界语义（16.99→medium，17.00→large）。
+  - 各段在整目数域必须相接（下一段 min = 上一段 max + 1），加载器校验。

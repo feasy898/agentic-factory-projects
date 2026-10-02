@@ -68,3 +68,31 @@
   （.venv 检测规划→targets.json→.venv-arm 执行；A 段合成帧 20 粒→严格包络 4 步/
   跳过 16 实跑验证，B 段未验如实标注）；`--list-cams` 裸 python 改 .venv 解释器。
   同步修 docs/SO101联调手册.md §3/§4A/§5。
+
+- 2026-10-02（批1：标准回填/数据集入库/采集操作卡三线并行，bean-eye 仓，终局
+  gate_d4 **exit 0**）：①**标准回填线**（19 文件）——DB46/T 642—2024 印刷稿
+  （15 页）临时 venv 文本层全文抽取+表 1/表 2 页（6/7 页）150dpi 位图人工复核，
+  三套 YAML 就地回填：db46 法定值 verified:true（legal 节每值带条款号；
+  delta_e_max=10.0 显式标注机器内控线）、cqi 按简报公开口径（350g/Fine 0+≤5/
+  新增优质档≤12 双轴近似/奎克≤3·≤5/筛 16 乌干达口径）、nyt 数值维持折算基线
+  锚定 TCVN 4193:2014+巴西 COB（**NY/T 604-2020 正式文本待用户补**，找到后回填
+  nyt_604.yaml）；法定 % 口径经引擎新增 defect_pct_max 轴进定级主链路（粒数占比
+  近似+理由键 defect_pct_within/over 显式标注，不编造粒数当量），6.5.4 5% 粒度
+  容差 premium.db46_legal_grade 如实实现（恰 5% 过/6% 降档测试钉住）；轨 2
+  size_bands.yaml+size_bands.py（大≥17/中 15-16/小≤14+ICO 筛径表）、轨 3
+  PremiumDecision 契约 v1.2 只增+premium.py；docs/standards_matrix.md 六标准
+  矩阵+ISO 10470 双系数表；test_standards_values.py 25 例+test_standards.py
+  12 处同步（无 skip/xfail/删断言/放宽容差）。②**数据集入库线**（8 文件）——
+  复核 5 条全闭环：HIGH-1 dcv 显式 --out 时 internal_name 取目录名；HIGH-2
+  ext-main 类别表证实西语，mapping 改西语键+broca→insect 纠误配；MEDIUM-3
+  检测型项目下载前预检警告；MEDIUM-4 manifest 入库口径（ext-main 含上游坐标
+  不入库）；四集登记册+mapping 就位 **PENDING_KEY**（真实下载待 Private Key），
+  下载器 selftest 5/5 PASS。③**采集操作卡线**（7 文件）——docs/采集操作卡-v0.1.md
+  （13 类分堆指引/≥20px/mm 换算/双灯 45°/背景 RGB≈(208,203,200)/ArUco 1:1 核验/
+  预标注两命令/蓝牙秤补做项；工作量 ≥260 粒/约 540 张/7~9.5h 经验估算）+
+  hn_robusta v0.1 脚手架+sorting_log 模板，test_hn_scaffold 4 例。终局：全量
+  pytest **690 passed / 8 skipped / 0 failed**（前夜基线 653；8 skip 均为数据
+  未下载跳过）。收账：TASK.md C3 批 1 记录、批 1 简报
+  `chenmai-bean-eye/docs/批1成果-标准与数据集.md`、.gitignore 数据集规则
+  （登记册/mapping/universe manifest 入库；数据集本体=原始图片/标注大文件仅存
+  本机不入库）、显式路径 commit（不 push）。批 2 触发条件：GPU 整卡空闲即发。

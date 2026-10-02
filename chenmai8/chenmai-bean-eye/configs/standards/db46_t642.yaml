@@ -1,14 +1,39 @@
 # =====================================================================
-# BeanEye 标准配置 · DB46/T 642 海南中粒种(罗布斯塔)生咖啡（db46_t642）
+# BeanEye 标准配置 · DB46/T 642—2024 海南中粒种(罗布斯塔)生咖啡（db46_t642）
 # ---------------------------------------------------------------------
-# 对应海南省地方标准 DB46/T 642（2024 版，中粒种咖啡/罗布斯塔生咖啡
-# 质量方向）。D1 原文核对未取到等级表全文，本文件的级别命名（特级/
-# 一级/合格）与全部阈值是**结构化占位基线**（参照 §3.3 CQI 结构自定），
-# 一律 verified: false，护照页脚显示"标准阈值核对中"角标；取得原文后
-# 回填并置 true。
-# 与另两套的差异点：本套启用全局色差条件 delta_e_max（占位值 10.0，
-# ΔE76 对 reference_lab，CIE76 口径与 M8 一致）；"合格"级不设筛目条件。
-# 字段语义与判定规则见 cqi_fine_robusta.yaml 文件头（同 schema）。
+# 2026-10-02 法定回填：标准印刷稿 PDF（15 页）pymupdf 文本层全文抽取 +
+# 表 1/表 2 所在页（第 6/7 页）150 dpi 位图逐页人工复核，文本与图一致。
+# 全部法定数值 verified: true，来源条款号见各键注释与 legal 节。
+#
+# 双维度独立分级（6.5.3：以最低指标级别（粒度除外）定最终等级）：
+# - 杯品维度（4.2 表 1）：杯品一级 ≥80 分 / 二级 70~79 / 三级 60~69——
+#   人工杯测维度，机器视觉 v0 不判定，完整口径见下方 legal.cup_grades
+#   与 legal.cupping_method（附录 B 规范性杯品法）；
+# - 理化维度（4.3 表 2）：本文件 grades 即理化等级（一级/二级/三级）。
+#
+# grades 判定语义（v0 引擎，逐条对应法定条款）：
+#   defect_pct_max  缺陷豆，% 上限（4.3 表 2）。引擎按 (主+次缺陷粒数)/
+#                   本盘粒数×100 对照——v0 以粒数占比近似质量百分比（同密度
+#                   假设；GB/T 15033 的 300 g 质量口径待称重标定后升级），
+#                   理由键 grading.reason.defect_pct_within/over 显式标注。
+#   primary_max     严重缺陷粒数上限。一级 = 0 粒（4.3 表 2 表尾行：
+#                   「一级生咖啡中应无严重缺陷」）；二/三级法定无单项严重
+#                   缺陷上限 → 不设限（由 defect_pct_max 总量管住）。
+#                   严重缺陷的类目二分见 legal.serious_defects（3.3/附录 A：
+#                   虫蛀豆 >3 洞属严重、≤3 洞属一般缺陷）。
+#   secondary_full_max  v0 不设限（法定无次缺陷单项限值）。
+#   sieve_min       粒度（筛号）下限（4.3 表 2：一级 ≥16 / 二级 14~15 /
+#                   三级 12~13）。v0 引擎取最严解释（低于下限粒数=0）；
+#                   6.5.4 的「各级允许 5% 粒度不符本级但应符合下一级」容差
+#                   在 beaneye/standards/premium.py 的 db46_legal_grade 中
+#                   如实实现（参考层），到货标定后可回灌引擎。
+#   delta_e_max     10.0 —— **机器视觉内控线，无法定出处**（DB46 原文无
+#                   色差条款），ΔE76 对 reference_lab，仅本台设备内控用。
+# verified 旗标：grades（法定数值，已对照原文）= true；metrology/weight
+# （机器标定项：参考色、筛目基准、估重系数）保持 false → 护照页脚
+# "标准阈值核对中"角标继续提示标定项未完成（W13 passed 阻断随 warnings
+# 非空保持，法定等级名照常记录）。
+# 取样基量：5.1 感官取 300 g 样品；取样按 NY/T 1518（6.2）。
 # =====================================================================
 
 standard: db46_t642
@@ -16,7 +41,7 @@ display:
   zh: DB46/T 642 罗布斯塔生咖啡
   en: DB46/T 642 Robusta Green Coffee
   vi: DB46/T 642 Cà phê Robusta
-sample_g: 300                       # 抽样基量（克）：占位基线，待原文核对
+sample_g: 300                       # 5.1 感官：取 300 g 样品（取样按 6.2/NY/T 1518）
 count_rule: most_severe_per_bean
 severity_order: [normal, broken, faded, brocade, immature, peaberry, shell, elephant, insect, dried, sour, mold, black]
 
@@ -35,34 +60,145 @@ defect_classes:
   mold:     {kind: primary,   zh: 霉豆,          en: mold,      vi: hat moc}
   black:    {kind: primary,   zh: 黑豆,          en: black,     vi: hat den}
 
-grades:                             # 从最优到最差排列（命名与阈值为占位基线）
-  - name: 特级
-    primary_max: 0                  # 主缺陷 0 粒
-    secondary_full_max: 4           # 次缺陷全样累计 ≤4 粒
-    sieve_min: 14                   # v0 语义：筛目 <14 的粒数须为 0
-    verified: false
+grades:                             # 4.3 表 2 理化等级（法定数值，从最优到最差）
   - name: 一级
-    primary_max: 1
-    secondary_full_max: 8
-    sieve_min: 13
-    verified: false
-  - name: 合格
-    primary_max: 3
-    secondary_full_max: 18
-    sieve_min: null                 # 合格级不设筛目条件（占位基线）
-    verified: false
+    defect_pct_max: 4.0             # 表 2：缺陷豆，% ≤4.0（含严重+一般缺陷）
+    primary_max: 0                  # 表 2 表尾行：一级生咖啡中应无严重缺陷
+    secondary_full_max: null        # 法定无次缺陷单项限值 → 不设限
+    sieve_min: 16                   # 表 2：粒度（筛号）≥16（v0 最严解释，见文件头）
+    verified: true
+  - name: 二级
+    defect_pct_max: 7.0             # 表 2：缺陷豆，% 4.1～7.0（判定取上限）
+    primary_max: null               # 法定无单项严重缺陷上限 → 不设限
+    secondary_full_max: null
+    sieve_min: 14                   # 表 2：粒度（筛号）14～15（判定取下限 14）
+    verified: true
+  - name: 三级
+    defect_pct_max: 10.0            # 表 2：缺陷豆，% 7.1～10.0（判定取上限）
+    primary_max: null
+    secondary_full_max: null
+    sieve_min: 12                   # 表 2：粒度（筛号）12～13（判定取下限 12）
+    verified: true
 
 fail_grade: 等外
 
 metrology:
   sieve_targets:
-    min_screen: 12                  # 整盘基准目数（占位基线）
-    verified: false
-  reference_lab: [50, -6, 19]       # 生豆参考色占位（0-255 标度；实测后回填）
+    min_screen: 12                  # 三级筛号下限（表 2）；M8 sieve_pass 基准
+    verified: false                 # 待实盘标定核对
+  reference_lab: [50, -6, 19]       # 生豆参考色（0-255 标度；实测后回填）
   reference_lab_verified: false
-  delta_e_max: 10.0                 # 全局色差条件（占位基线；ΔE76 口径）
+  delta_e_max: 10.0                 # 机器内控线（无法定出处，见文件头）
 
 weight:
   model: area_linear
   g_per_mm2: 0.00042                # 占位系数；到货后标定回填
   verified: false
+
+notes:
+  - 法定数值节见 legal（表 1 杯品等级 / 表 2 理化等级 / 6.5.4 筛差容差 /
+    检验方法条款 / 附录 A 严重缺陷 / 附录 B 杯品法），每值带条款号。
+  - 「缺陷豆，%」为质量百分比口径（5.3 按 GB/T 15033）；v0 引擎以本盘
+    粒数占比近似，粒数↔质量换算待称重标定（premium.db46_legal 同口径）。
+  - 6.5.4 粒度容差（各级允许 5% 不符本级但应符合下一级）在引擎 v0 中取
+    最严解释（0 粒不符）；如实实现见 premium.db46_legal_grade。
+  - 外来杂质（表 2：一级 ≤0.5 / 二级 0.6~0.8 / 三级 0.9~1.2）与水分/灰分/
+    咖啡因（表 2 全局 ≤12.0 / ≤5.5 / ≥1.5）v0 管线无计量来源，仅存于
+    legal 节供人工/实验室核对，不进引擎判定。
+
+legal:                              # DB46/T 642—2024 法定数值表（印刷稿抄录，双重复核）
+  standard: DB46/T 642—2024
+  title_zh: 中粒种咖啡（罗布斯塔）生咖啡
+  title_en: Robusta—Green coffee
+  issued: "2024-09-23"              # 封面：2024-09-23 发布
+  effective: "2024-11-01"           # 封面：2024-11-01 实施
+  issuer: 海南省市场监督管理局
+  cup_grades:                       # 4.2 表 1 杯品等级指标（前提：符合 4.1 基本要求）
+    - name: 杯品一级
+      final_score_min: 80           # 最终得分 ≥80
+    - name: 杯品二级
+      final_score_min: 70           # 最终得分 70～79
+      final_score_max: 79
+    - name: 杯品三级
+      final_score_min: 60           # 最终得分 60～69
+      final_score_max: 69
+  phys_grades:                      # 4.3 表 2 理化等级指标（前提：符合 4.1 基本要求）
+    - name: 一级
+      defect_pct_max: 4.0           # 缺陷豆，% ≤4.0
+      foreign_matter_pct_max: 0.5   # 外来杂质，% ≤0.5
+      sieve_min: 16                 # 粒度（筛号）≥16
+      no_serious_defect: true       # 一级生咖啡中应无严重缺陷（表 2 表尾行）
+    - name: 二级
+      defect_pct_min: 4.1           # 缺陷豆，% 4.1～7.0
+      defect_pct_max: 7.0
+      foreign_matter_pct_min: 0.6   # 外来杂质，% 0.6～0.8
+      foreign_matter_pct_max: 0.8
+      sieve_min: 14                 # 粒度（筛号）14～15
+      sieve_max: 15
+    - name: 三级
+      defect_pct_min: 7.1           # 缺陷豆，% 7.1～10.0
+      defect_pct_max: 10.0
+      foreign_matter_pct_min: 0.9   # 外来杂质，% 0.9～1.2
+      foreign_matter_pct_max: 1.2
+      sieve_min: 12                 # 粒度（筛号）12～13
+      sieve_max: 13
+  phys_global:                      # 表 2 跨等级合并单元格（三个等级同一限值）
+    moisture_pct_max: 12.0          # 水分，g/100 g ≤12.0
+    ash_pct_max: 5.5                # 灰分，g/100 g ≤5.5
+    caffeine_pct_min: 1.5           # 咖啡因，g/100 g ≥1.5（表 2 续，第 6 页）
+  sieve_tolerance:                  # 6.5.4 粒度降档容差
+    frac_allowed_off_grade: 0.05    # 各级允许 5% 粒度不符合本级
+    off_grade_must_match: 下一级    # 但应符合下一级要求；三级应符合基本要求
+  basic_requirements:               # 4.1 基本要求（任一不符即不合格品，6.5.2）
+    - 半圆形或椭圆形
+    - 浅黄色至浅褐色，或浅蓝绿色
+    - 具有生咖啡固有香气，无异味
+    - 无活虫及肉眼可见的死虫、虫尸碎片和昆虫排泄物
+    - 无霉变
+  methods:                          # 第 5 章检验方法 / 第 6 章检验规则
+    sensory_sample_g: 300           # 5.1 感官：取 300 g 样品
+    defect: GB/T 15033              # 5.3 缺陷豆
+    foreign_matter: GB/T 15033      # 5.4 外来杂质
+    sieve: NY/T 3979                # 5.5 粒度（圆孔试验筛，其余按 NY/T 3979）
+    moisture: GB 5009.3 第一法      # 5.6 水分
+    ash: GB 5009.4 第一法           # 5.7 灰分
+    caffeine: GB 5009.139           # 5.8 咖啡因
+    sampling: NY/T 1518             # 6.2 取样（袋装生咖啡取样）
+    lot_rule: 同一产地、同一等级、同一生产线、同日加工为一个检验批次  # 6.1 组批
+    final_grade_rule: 以最低指标级别（粒度除外）判定最终等级  # 6.5.3
+    retest: 对检验结果有异议可抽样复验 1 次，以复验结果为最终结果  # 6.6
+  serious_defects:                  # 3.3 严重缺陷 + 附录 A 表 A.1（资料性）
+    - {key: insect, name: 虫蛀豆, rule: 豆体上虫洞数量 >3 个属严重缺陷；≤3 个属一般缺陷}
+    - {key: black, name: 黑咖啡豆, rule: 外表面和内部（胚乳）有一半以上为黑色}
+    - {key: black, name: 黑生豆, rule: 表面起皱、墨绿几近黑色且具光泽银皮的未成熟豆}
+    - {key: sour, name: 棕色豆, rule: 外表浅棕红/棕黑/黄绿至深红棕、内部褐色，烘焙冲泡有难闻酸味}
+    - {key: mold, name: 发霉豆, rule: 长霉或具肉眼可见霉迹}
+    - {key: null, name: 蜡质豆, rule: 半透明蜡状外观，黄绿至深棕红}
+    - {key: null, name: 臭咖啡豆, rule: 浅棕/稍带棕，破碎发恶臭，冲泡似鱼发酵腐烂味}
+    - {key: sour, name: 酸咖啡豆, rule: 外表蜡状、内部浅棕至茶褐，烘焙冲泡产酸味}
+    - {key: null, name: 脏咖啡豆, rule: 冲泡呈霉味/臭叶/脏味/泥土味/木头味/麻袋味}
+  cupping_method:                   # 附录 B（规范性）生咖啡杯品方法
+    roast_sample_g: 150             # B.4.1 取 150 g 样品烘焙
+    roast_degree: 中度              # B.4.1
+    roast_time_min_s: 8             # B.4.1 烘焙时间宜 8 min～12 min
+    roast_time_min_e: 12
+    bean_agtron_value: 58           # B.4.1 全豆烘焙色值约 58
+    ground_agtron_value: 63         # B.4.1 研磨后烘焙色值约 63
+    agtron_scaa_range: [55, 60]     # B.4.1 Agtron/SCAA 烘焙色板色值 55～60
+    cupping_window_h: [8, 24]       # B.4.1 杯测应于烘焙后 8 h～24 h 内进行
+    grind_mm: [0.6, 0.7]            # B.4.2 研磨粒度 0.6 mm～0.7 mm，杯测前 15 min 内
+    cups: 5                         # B.4.3 每个样品 5 个杯测杯
+    dose_g_per_cup: 8.25            # B.4.3 每杯咖啡粉 8.25 g
+    water_ml_per_cup: 150           # B.5.1.2 注入 150 mL 92 ℃ 开水
+    water_temp_c: 92
+    score_items: 10                 # B.6 表 B.1 十项各满分 10 分
+    quality_scale:                  # 表 B.2 品质标准（最低 5 分，0.25 递增）
+      - {score: 5.0, label: 一般}
+      - {score: 6.0, label: 好}
+      - {score: 7.0, label: 非常好}
+      - {score: 8.0, label: 精品}
+      - {score: 9.0, label: 优质}
+    penalty_flavor_note: 2          # 表 B.2 注 1：瑕疵计 2 分
+    penalty_defect: 4               # 表 B.2 注 1：缺陷计 4 分
+    panel_min: 3                    # B.7.2 杯品人数奇数、原则上不少于 3 人
+    final_score_rule: 总分 = 各项目得分之和 −（瑕疵/缺陷杯数 × 对应分值）  # 表 B.2 注 2

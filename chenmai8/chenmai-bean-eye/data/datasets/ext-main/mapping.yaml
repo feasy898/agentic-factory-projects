@@ -1,0 +1,32 @@
+# =========================================================================
+# ext-main（主源生豆缺陷集，12 类，西语类名）→ taxonomy 13 类 映射表
+# -------------------------------------------------------------------------
+# 语义对齐 train/prepare_coco.py --mapping-yaml（--mapping-source ext-main）：
+#   顶层键 = 中性来源代号；内层 = {上游类别名: taxonomy key | null}
+# 类别键依据 2026-10-02 项目页实抓（web_reader；真实坐标见外部登记文件
+# C:/devsetup/dataset_sources.txt [ext-main] 节）：
+#   Classes (12) 为西语——agrio, broca, caracolillo, concha, elefante,
+#   helado, negro, normal, oreja, partido, seca, triangulo；缩略图 alt 标注
+#   亦为西语（如 "B4.png coffee-beans broca"），说明底层标注即西语。
+#   旧仓库 README 记录的英文名（sour/brocade/peaberry/...）是**翻译版本**，
+#   不是导出 json 的类名，不得用作映射键；其中 broca（咖啡豆螟虫蛀孔）曾被
+#   误译作 brocade——实义为虫蛀，按简报参考表 broca→insect。
+# 下载后必须对照 content/*/_annotations.coco.json 的 categories 逐类复核
+# （tests/test_dataset_registry.py 会在数据就位后校验"映射键 ⊇ 实际类别"）。
+# =========================================================================
+ext-main:
+  # —— 简报参考映射（西语键）——
+  "agrio":       sour      # 酸豆 → sour（简报参考表 agrio→sour）
+  "broca":       insect    # 虫蛀（螟虫蛀孔）→ insect（简报参考表 broca→insect；
+                           #  旧文档英译 brocade 为误译，勿沿用）
+  "caracolillo": peaberry  # 花豆/胡椒粒豆 → peaberry（简报参考表 caracolillo→peaberry）
+  "concha":      shell     # 贝壳豆 → shell（简报参考表 concha→shell）
+  "elefante":    elephant  # 象豆 → elephant
+  "negro":       black     # 黑豆 → black（简报参考表 negro→black）
+  "normal":      normal    # 好豆 → normal
+  "partido":     broken    # 破碎 → broken（简报参考表 partido→broken）
+  "seca":        dried     # 干瘪 → dried（简报参考表 dry→dried 的西语原键）
+  # —— 明确不映射（3 类；简报：无对应类）——
+  "helado":    null        # 冻伤豆（=frozen）：13 类体系无对应类（简报明示 null）
+  "oreja":     null        # 黑耳/耳形变异（=black_ear）：无对应类（简报明示 null）
+  "triangulo": null        # 三角形豆：形状变异概念，无对应类（简报明示 null）

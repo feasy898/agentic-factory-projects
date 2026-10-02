@@ -316,7 +316,17 @@
       "2-4": 3
     },
     "est_weight_g": 19.6,
-    "weight_model": "area_linear:v1"
+    "weight_model": "area_linear:v1",
+    "size_band_hist": {
+      "large": 0,
+      "medium": 1,
+      "small": 2
+    },
+    "size_band_frac": {
+      "large": 0.0,
+      "medium": 0.3333333333333333,
+      "small": 0.6666666666666666
+    }
   },
   "grading": {
     "standard_id": "cqi_fine_robusta",

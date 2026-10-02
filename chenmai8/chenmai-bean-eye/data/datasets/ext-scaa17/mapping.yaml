@@ -1,0 +1,38 @@
+# =========================================================================
+# ext-scaa17（SCAA 17 类缺陷集）→ taxonomy 13 类 映射表
+# -------------------------------------------------------------------------
+# 语义对齐 train/prepare_coco.py --mapping-yaml（--mapping-source ext-scaa17）。
+# 状态：类别名依据 2026-10-02 公开项目页核验（966 图、17 类、CC BY 4.0）。
+#       类名按页面原拼写收录（含两处拼写错误 Damange——COCO 导出的类别名
+#       以页面类名为准，映射键必须与导出 json 完全一致才能命中）。
+# 下载风险：页面 "Dataset 0"（疑似无已生成版本）且类型栏曾显示
+#       "Classification"——下载后若实际导出无 bbox 标注，本集暂不能进
+#       检测/分割合并链路（登记册记录结论），映射表保留待有效导出后启用。
+# =========================================================================
+ext-scaa17:
+  # —— 映射到 broken ——
+  "Broken":               broken   # 破碎 → broken
+  "Cut":                  broken   # 切割豆 → broken（简报参考映射：cut → broken）
+  # —— 映射到 dried ——
+  "Dry Cherry":           dried    # 干果 → dried（简报参考映射：dry cherry → dried）
+  "Withered":             dried    # 干瘪 → dried（简报参考映射：withered → dried）
+  # —— 映射到 faded ——
+  "Fade":                 faded    # 褪色 → faded
+  # —— 映射到 black ——
+  "Full Black":           black    # 全黑豆 → black
+  "Partial Black":        black    # 局部黑 → black
+  # —— 映射到 sour ——
+  "Full Sour":            sour     # 全酸豆 → sour
+  "Partial Sour":         sour     # 局部酸 → sour
+  # —— 映射到 mold ——
+  "Fungus Damange":       mold     # 真菌损伤（页面原拼写）→ mold（简报参考：fungus/moldy → mold）
+  # —— 映射到 insect ——
+  "Severe Insect Damange": insect  # 重度虫损（页面原拼写）→ insect
+  "Slight Insect Damage":  insect  # 轻度虫损 → insect
+  # —— 直接同名 ——
+  "Immature":             immature # 未熟 → immature
+  "Shell":                shell    # 贝壳豆 → shell
+  # —— 明确不映射（3 类；简报：本体系无对应类）——
+  "Floater":   null   # 浮水豆：密度/含水概念，13 类无对应（简报明示 null）
+  "Husk":      null   # 壳/果皮杂物：非豆粒缺陷，13 类无对应（简报明示 null）
+  "Parchment": null   # 带羊皮纸豆：处理工艺状态概念，13 类无对应（同 husk 逻辑）
