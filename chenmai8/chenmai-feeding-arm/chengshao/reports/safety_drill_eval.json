@@ -1,0 +1,56 @@
+{
+  "module": "cs_arm.safety_drill",
+  "date": "2026-10-02",
+  "cmd": "python scripts/safety_drill.py --cases head_turn,estop,face_intrude --trials 20 --mock  (cwd=包根 chengshao/)",
+  "metrics": {
+    "trials_per_case": 20,
+    "cases": {
+      "head_turn": {
+        "trials": 20,
+        "passed": 20,
+        "rate": 1.0
+      },
+      "estop": {
+        "trials": 20,
+        "passed": 20,
+        "rate": 1.0,
+        "max_latency_ms": 0.02,
+        "mean_latency_ms": 0.012
+      },
+      "face_intrude": {
+        "trials": 20,
+        "passed": 20,
+        "rate": 1.0,
+        "zone_intrusions_total": 0,
+        "min_retreat_m": 0.0588
+      }
+    }
+  },
+  "thresholds": {
+    "trials": 20,
+    "stop_or_retreat_rate_min": 1.0,
+    "estop_latency_ms_max": 100.0,
+    "zone_intrusion_count_max": 0,
+    "retreat_min_m": 0.045,
+    "hold_write_count_max": 0,
+    "cases": [
+      "head_turn",
+      "estop",
+      "face_intrude"
+    ]
+  },
+  "pass": true,
+  "checks": {
+    "drill:head_turn": true,
+    "drill:estop": true,
+    "drill:face_intrude": true,
+    "zone_intrusions_zero": true
+  },
+  "notes": [
+    "mock 结论不等于真机实测结论：MockArm 为仿真内虚拟执行器，本演练证明的是包络硬闸与驱动响应链路；真机安全实测（D3+）按同构检查链执行",
+    "estop=空格键软件急停 latch 语义（契约：急停复用 watchdog 违规类别，estop_latched 区分）；violation!=none → clear_to_move=False 直至显式 reset"
+  ],
+  "evidence_kind": "mock_dry_run",
+  "real_machine_measured": false,
+  "mock": true
+}

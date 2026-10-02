@@ -4,7 +4,10 @@
 用法（cwd=包根 chengshao/）::
 
     python scripts/camera_check.py            # 真机：需 CS_HW_SESSION=1 且设备在位；否则 exit 2
-    python scripts/camera_check.py --mock     # 无硬件 dry-run：合成图像走同一检测与断言链 → exit 0
+    python scripts/camera_check.py --mock     # 无硬件 dry-run：合成图像走同一断言链 → exit 0
+    # 注：面部可辨项 mock 用暗斑连通域计数器、真机用 Haar 级联（函数级 docstring 已
+    # 如实披露）——模块级不宣称"同一检测器"；其余断言（清晰度/亮度/ArUco）共用同一
+    # 指标函数。
 
 验收项（§5.9 相机验收 + §2 第 5 步）：
   1) 相机枚举（cv2.VideoCapture 序号探测；scene 顶部 2MP / wrist 腕部 1MP）；

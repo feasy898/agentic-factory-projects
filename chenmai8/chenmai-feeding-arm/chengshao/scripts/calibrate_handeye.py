@@ -498,15 +498,35 @@ def main(argv: list[str] | None = None) -> int:
     elapsed = round(time.perf_counter() - t0, 2)
 
     # npz 落盘（key 契约：T_base_cam / T_flange_cam + reproj_err_mm）。
-    # --mock 缺省写 reports/（合成外参不入 config/calib/——load_t_flange_cam
-    # 只认 npz 优先，mock 数据不得被真机链路误装载）；真机缺省写 config/calib/。
+    # 安全闸（独立复核高危项，2026-10-02 修）：未达通过线的标定**不得落**
+    # config/calib/——load_t_flange_cam 无条件 npz 优先装载且不校验残差，
+    # 失败外参一旦落默认路径会被腕部口部链路静默采用（禁入区锚错位）。
+    # 因此：mock 缺省写 reports/；真机过线缺省写 config/calib/；
+    # 真机未过线写 reports/handeye_<cam>_failed.npz（暂存）并返回失败；
+    # --out 显式指向 config/calib/ 且未过线时同样改道暂存路径。
     key = "T_base_cam" if mode == MODE_EYE_TO_HAND else "T_flange_cam"
+    passed = result.pass_line_met
+    calib_root = resolve_path("config/calib")
     if args.out:
         out_path = resolve_path(args.out)
+        if not passed:
+            try:
+                out_path.resolve().relative_to(calib_root.resolve())
+                under_calib = True
+            except ValueError:
+                under_calib = False
+            if under_calib:
+                out_path = resolve_path(f"reports/handeye_{args.cam}_failed.npz")
+                print("[calibrate_handeye] 警告：未过通过线，拒绝写入 config/calib/，"
+                      f"改落暂存路径 {out_path}", file=sys.stderr)
     elif args.mock:
         out_path = resolve_path(f"reports/mock_handeye_{args.cam}.npz")
-    else:
+    elif passed:
         out_path = resolve_path(f"config/calib/handeye_{args.cam}.npz")
+    else:
+        out_path = resolve_path(f"reports/handeye_{args.cam}_failed.npz")
+        print("[calibrate_handeye] 警告：未过通过线，标定结果只落暂存路径，"
+              "不写 config/calib/（防失败外参被装载）", file=sys.stderr)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     np.savez(out_path, **{
         key: result.T,
@@ -546,7 +566,6 @@ def main(argv: list[str] | None = None) -> int:
     }
     thresholds = {"reproj_err_mm_max": 3.0, "reproj_err_px_max": 2.0,
                   "min_views": 6, "rule": "重投影残差 ≤3mm 或 ≤2px"}
-    passed = result.pass_line_met
     report_path = resolve_path(args.report) if args.report else \
         resolve_path(f"reports/handeye_{args.cam}_eval.json")
     write_report(

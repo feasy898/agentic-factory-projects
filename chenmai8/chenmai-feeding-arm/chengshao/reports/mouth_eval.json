@@ -1,7 +1,7 @@
 {
   "module": "cs_mouth",
-  "date": "2026-09-30",
-  "cmd": "D:\\workspace\\澄迈8项目\\具身助餐机器人\\repo\\.venv\\Scripts\\python.exe -m cs_mouth.eval --input assets/face_samples --report reports/mouth_eval.json (cwd=D:\\workspace\\澄迈8项目\\具身助餐机器人\\repo\\chengshao)",
+  "date": "2026-10-02",
+  "cmd": "D:\\new-workspace\\澄迈项目\\机械臂\\chenmai8\\chenmai-feeding-arm\\.venv\\Scripts\\python.exe -m cs_mouth.eval --input assets/face_samples --report reports/mouth_eval.json (cwd=D:\\new-workspace\\澄迈项目\\机械臂\\chenmai8\\chenmai-feeding-arm\\chengshao)",
   "metrics": {
     "detect_rate": 1.0,
     "detect_frames": 52,
@@ -15,8 +15,8 @@
     "turn_trigger_rate": 1.0,
     "turn_frames": 8,
     "frontal_turn_false_flag_rate": 0.0,
-    "latency_ms_p50": 21.10790000006091,
-    "latency_ms_p95": 29.001100001551094,
+    "latency_ms_p50": 20.288499996240716,
+    "latency_ms_p95": 23.521499999333173,
     "latency_frames": 56,
     "frames_label_missing": 0
   },

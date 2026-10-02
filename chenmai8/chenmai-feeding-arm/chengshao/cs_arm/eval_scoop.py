@@ -374,20 +374,24 @@ def _run_mock(foods: list[str], trials: int,
 
     per_food = []
     for food in foods:
+        # cfg_food：逐食物局部配置。曾把 cfg 整体替换为内置兜底（cfg=cfg_builtin），
+        # 混合传入"未注册食物+注册食物"时后续注册食物会被静默换成内置卡——
+        # 独立复核低危项（2026-10-02 修）：只让当前食物用兜底卡，不动全局 cfg。
         rec = getattr(cfg, "recommended", {}).get(food)
         if rec:
             combo = {k: rec[k] for k in BUILTIN_COMBO}
             src = f"{params_source_cfg}:recommended"
+            cfg_food = cfg
         elif food in cfg.foods:
             combo = dict(BUILTIN_COMBO)
             src = (f"{params_source_cfg}:card_present"
                    if params_source_cfg.startswith("config") else "builtin_default")
-        else:  # config 有但该食物无卡（如自定义注册集）→ 兜底卡
-            cfg_builtin = _builtin_scoop_config(tuple({food} | set(DEFAULT_DISH_REGISTRY)))
-            cfg = cfg if food in cfg.foods else cfg_builtin
+            cfg_food = cfg
+        else:  # config 有但该食物无卡（如自定义注册集）→ 仅本食物用兜底卡
+            cfg_food = _builtin_scoop_config(tuple({food} | set(DEFAULT_DISH_REGISTRY)))
             combo = dict(BUILTIN_COMBO)
             src = "builtin_default"
-        per_food.append(_eval_food_mock(food, cfg, combo, src, trials,
+        per_food.append(_eval_food_mock(food, cfg_food, combo, src, trials,
                                         model, validator, params))
 
     metrics = {
