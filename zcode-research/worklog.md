@@ -20,3 +20,4 @@
 - 2026-10-02 夜班 R7（双臂盲评）：4 评委盲态评审、标签互换，两资产各 2/2 资产臂胜（评委一致命中只读守卫/输出契约要点；两臂各胜一次=无标签偏置）；n=2 小样本，加厚欠账。
 - 2026-10-02 夜班 R8（P-2 复核）：四队列项复跑既有 v3 资产确定性门全过（office-templates/office-guard-hooks/healthcheck 自评 0；prompt-regression 双参 0+红 1），不重复造轮子。
 - 2026-10-02 夜班 R9（登记与收口）：REGISTRY 追加夜班登记节（两新资产+课堂层+P-2+欠账）；本行即 R9；总复核与终提交见下一行。
+- 2026-10-02 夜班 R10（总复核与收口）：5 资产终跑门全绿（SM/DP/HW 双参绿0红1、zctl-mcp/acceptor-agent 零参绿0红1）；误入册 .mimosa 污染两刀清零（8d4a6bb，tracked=0）+ .gitignore 兜底；评测器 diff 0 行；新文件密钥扫描零命中。推送 GitHub 三路受阻（hk SOCKS 代理离线→直连 reset→SSH 无公钥；代理实为 URL 级 http.https://github.com.proxy，普通 http.proxy 覆盖无效）——6 个本地提交+tag classroom-v0.1 安全落库，推送待 hk-gateway 恢复后一条命令完成。Mimosa 推送前扫出上游存量代码 12 处 high（ppt-method-router tests 路径穿越×6、video-capability prefetch_model.py SSRF/路径穿越×6、xuexing-agent dual_agent_verify.py 路径穿越×1）——均为历史项目既有代码非本夜改动，已如实呈报 owner 待裁定。
