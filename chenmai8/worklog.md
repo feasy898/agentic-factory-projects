@@ -96,3 +96,23 @@
   `chenmai-bean-eye/docs/批1成果-标准与数据集.md`、.gitignore 数据集规则
   （登记册/mapping/universe manifest 入库；数据集本体=原始图片/标注大文件仅存
   本机不入库）、显式路径 commit（不 push）。批 2 触发条件：GPU 整卡空闲即发。
+
+- 2026-10-03（采集操作卡试读修订 v0.1.1，bean-eye 仓）：试读者对
+  docs/采集操作卡-v0.1.md 提出 13 条（掩码生成无命令/面积基准歧义/IoU 无工具/
+  NYT1519 与盘面/venv 无准备项/待议与标定照无目录/主次列无枚举/工时口径矛盾/
+  背景无容差/单人无方案/meta 字段外置），逐条闭环：**新增
+  scripts/collect_masks.py**（extract 批量掩码=协议 §4.1 自动路线最小实现
+  [Otsu 极性自检+形态学+连通域]，只用于无码单粒照、自动跳过 *_pile；
+  iou 手勾多边形抽检[门槛 0.95]；poly2mask 人工修正落盘；仅用钉版依赖
+  numpy+opencv，中文路径字节缓冲读写）+ tests/test_collect_masks.py 9 例；
+  卡面改版：§0 环境自检/补救（setup_env.ps1）、NY/T 1519 获取与无图谱降级、
+  标定板两用法（整板当盘/角码贴盘，1:1 三项核验+A3 纸）、存储 ≥32GB；
+  §2 双口径工时表（540 vs 690~840 张，建议口径多三~五成）；§3.3 背景 ±10/通道
+  内控容差+5 点取平均核法；§5 目录树增 images/pending/ 与 images/_calib/+
+  主/次列 5 值枚举+协议 §5.3 十字段 meta 表内联+示例 JSON；§6 改六条自检
+  （掩码命令前置+面积=类堆中位数基准+IoU 命令化）；§7 demo 产物去向
+  （out/app/，不写 masks/）。sorting_log 模板补主/次图例、images/masks README
+  同步。实测：test_collect_masks 8+test_hn_scaffold 5 全过；extract/poly2mask/iou
+  三命令 CLI 端到端实跑（替身图，非真实豆）；make_aruco 板图 1920×1920px
+  （320mm 含白边）与角位（中心 30/270mm、中心距 240mm）实测核对；全量 pytest
+  复跑 **699 passed / 8 skipped / 0 failed exit 0**（690 基线 + 本线 9，272.91s）。
