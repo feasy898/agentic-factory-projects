@@ -93,6 +93,10 @@ def build_parser() -> argparse.ArgumentParser:
                     help="holdout 内部再分 valid 的比例（其余为 test；默认 0.5）")
     ap.add_argument("--seg-format", choices=("polygon", "rle"), default="polygon",
                     help="COCO segmentation 形态：polygon（默认，全量友好）| rle（未压缩 RLE，慢）")
+    ap.add_argument("--image-format", choices=("png", "jpg"), default="png",
+                    help="合成图像落盘格式：png（默认，训练计划规格）| jpg（磁盘预算受限的全量产出）")
+    ap.add_argument("--jpeg-quality", type=int, default=92,
+                    help="jpg 编码质量（--image-format jpg 时生效，默认 92）")
     # 合成分布覆盖（缺省 = 合成配置；训练计划 T0：80–600 粒/盘、粘连分档）
     ap.add_argument("--n-beans-min", type=int, default=None,
                     help="每盘豆数下限覆盖（默认取合成配置）")
@@ -240,16 +244,19 @@ def synth_labels_to_coco(
     return images, anns
 
 
-def synth_one_pair(seed: int, cfg, library, out_dir: Path, index: int) -> Path:
+def synth_one_pair(seed: int, cfg, library, out_dir: Path, index: int,
+                   img_ext: str = ".png", jpeg_quality: int = 92) -> Path:
     """合成一对盘并落盘（复用 beaneye.synth compose/write_batch），返回 labels 路径。
 
     with_rle=False：本脚本 COCO 标注自行按像素栅格化，托盘 mm 网格 RLE
     对训练无用，关掉以省 2048² × 每粒 的落盘开销。
+    img_ext/jpeg_quality 透传 write_batch（默认 PNG，训练计划规格）。
     """
     from beaneye.synth import compose_tray, write_batch
 
     tray = compose_tray(seed=seed, config=cfg, library=library)
-    paths = write_batch(tray, out_dir, index=index, with_rle=False)
+    paths = write_batch(tray, out_dir, index=index, with_rle=False,
+                        img_ext=img_ext, jpeg_quality=jpeg_quality)
     return paths["labels"]
 
 
@@ -495,6 +502,16 @@ def write_manifest(out_dir: Path, args: argparse.Namespace, cats: list[dict], st
     manifest = {
         "prepared_by": "train/prepare_coco.py (beaneye 训练线)",
         "seg_format": args.seg_format,
+        "storage_format": {
+            "image_format": args.image_format,
+            "jpeg_quality": args.jpeg_quality if args.image_format == "jpg" else None,
+            "deviation_note": (
+                "jpg 偏离训练计划 PNG 规格：GPU 机磁盘预算受限"
+                "（/data 可用 < PNG 全量约 147GB 实测外推），"
+                "owner 2026-10-03 授权改 JPG（质量≥92）"
+                if args.image_format == "jpg" else "png（训练计划规格）"
+            ),
+        },
         "seeds": {
             "train_seed0": args.train_seed0,
             "train_pairs": args.train_pairs,
@@ -753,6 +770,7 @@ def run(args: argparse.Namespace, rep: PlanReporter) -> int:
         train_lib = sample_library(cfg.library_seed, cfg.per_class)
         holdout_lib = sample_library(holdout_cfg.library_seed, holdout_cfg.per_class)
         counters = {"train": 0, "valid": 0, "test": 0}
+        img_ext = ".jpg" if args.image_format == "jpg" else ".png"
         jobs: list[tuple[int, object, object, str]] = []
         for k in range(n_train):
             jobs.append((args.train_seed0 + k, cfg, train_lib, "train"))
@@ -766,14 +784,15 @@ def run(args: argparse.Namespace, rep: PlanReporter) -> int:
             sdir = node["dir"]
             labels_path = sdir / f"labels_{idx:04d}.json"
             if not labels_path.exists():  # 断点续跑：已有产物跳过
-                synth_one_pair(seed, scfg, lib, sdir, index=idx)
+                synth_one_pair(seed, scfg, lib, sdir, index=idx,
+                               img_ext=img_ext, jpeg_quality=args.jpeg_quality)
             labels = load_json(labels_path)
             images, anns = synth_labels_to_coco(
                 labels, seg_format=args.seg_format, name2id=name2id,
                 ann_id_start=len(node["anns"]) + 1,
             )
             for img in images:
-                img["file_name"] = f"{img['side']}_{idx:04d}.png"
+                img["file_name"] = f"{img['side']}_{idx:04d}{img_ext}"
                 img["id"] = len(node["images"]) + 1
             for ann in anns:
                 ann["image_id"] = images[0]["id"] if ann["side"] == "top" else images[1]["id"]
