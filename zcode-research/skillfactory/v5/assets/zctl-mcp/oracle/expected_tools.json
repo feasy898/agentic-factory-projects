@@ -1,0 +1,31 @@
+{
+  "serverInfo": { "name": "zctl-mcp", "version": "1.0.0" },
+  "protocolVersion": "2024-11-05",
+  "tools": [
+    {
+      "name": "zctl_reset_status",
+      "readonly": true,
+      "inputSchema_required": [],
+      "description_contains": ["reset status", "只读"]
+    },
+    {
+      "name": "zctl_offpeak_availability",
+      "readonly": true,
+      "inputSchema_required": [],
+      "description_contains": ["offpeak availability", "只读"]
+    },
+    {
+      "name": "zctl_offpeak_status",
+      "readonly": true,
+      "inputSchema_required": ["ticket_id"],
+      "description_contains": ["offpeak status", "只读"]
+    },
+    {
+      "name": "zctl_help",
+      "readonly": true,
+      "inputSchema_required": [],
+      "description_contains": ["dry-run", "不暴露任何变更类工具"]
+    }
+  ],
+  "forbidden_tool_names": ["zctl_reset_use", "zctl_offpeak_take", "zctl_offpeak_settle"]
+}

@@ -176,3 +176,43 @@ hot-templates-skill    → rating A（5/5），15:48:32
 |---|---|
 | deploy-pack | 确定性评测更正：**package vs oracle 终门 4/4、rate 1.0**（复跑 exit 0；修复前 2/4、rate 0.6；R1 行内「dp05 绿 direct」实为 oracle 自评 self_eval=true，经 **2015999 模板对齐迭代修复**；本轮 deploy-pack.gate.json 为 self_eval=false 的 package 终门实证）。状态维持**内部就绪（工具/基建件）**，体检 C 形态备注不变。 |
 | speaker-mapping | 状态更正：待迭代 → **内部就绪（12/12）**——复跑 gate/self 均 exit 0（4 项检查全过；contract v1.1 增补条款 A-2 平台路径归一，仅及 discover JSON transcript 字段，9 txt 仍逐字节）；空目录红路 exit 1 保持 fail-closed。体检 C 形态备注不变。 |
+
+
+---
+
+## 2026-10-02 夜班追加登记（zcode-nightshift；只追加，不改上方任何既有行）
+
+> 证据：本夜三门实测（绿 exit 0 / 红空目录 exit 1 / 用法 exit 2）+ 4 评委双臂盲评（标签互换）+ classroom/rehearsal/round-1/record.md。全部离线零模型调用的确定性门均由脚本逐门复跑。
+
+### 新资产扩线（两类形态首批）
+
+| 名称 | 目录 | 形态 | 状态 | 确定性评测（2026-10-02 复跑） | 盲评（n=2 标签互换） | 体检级 | 许可 | 一句话用途 |
+|---|---|---|---|---|---|---|---|---|
+| zctl-mcp | `v5/assets/zctl-mcp` | MCP server 包 | **内部就绪**（工具/基建件） | 自评 7/7 检查 exit 0（serverInfo/工具集恰等/逐工具契约/变更类零暴露）；红空目录 exit 1；用法 exit 2 | **2/2 胜**（评委理由：只读守卫+变更类不暴露论证完整；裸臂 confirm 参数守卫被两评委一致判形同虚设） | 未体检（待 owner 裁定形态豁免） | 未声明 | zctl（闲时任务/额度重置 CLI）→ 只读 MCP server（4 工具，变更类不暴露） |
+| acceptor-agent | `v5/assets/acceptor-agent` | agent 角色包 | **内部就绪**（基建件） | 自评 4/4 检查 exit 0（三节齐备/字段恰等/example 合法/零承诺措辞）；红空目录 exit 1；用法 exit 2 | **2/2 胜**（评委理由：JSON 输出契约+禁令直接命中不虚报/不越界；裸臂泛化描述被判易虚报） | 未体检（同上） | 未声明 | 验收员子代理角色包（verdict JSON 契约：verified/judged 分级 + 承诺边界） |
+
+> 注 A1：两件为「skill 之外资产形态」（MCP / agent 定义）产线扩展首批，验证了「生成→确定性评测→双臂盲评→准入」产线对非 skill 形态的适配性；体检工具（v3 healthcheck）按 dist skill 包形态设计，对两形态不适用，豁免与整改待 owner 裁定（同 REGISTRY 注 1 先例）。
+> 注 A2：盲评为小样本 n=2（标签互换，两臂各胜一次=无标签偏置），加厚（每臂≥3）欠账待模型配额。
+
+### 课堂层（K 线）
+
+| 事项 | 状态 | 证据 |
+|---|---|---|
+| K-1 走查脚本 / K-2 学员手册 / K-4 教学资产清单 | ✅ 成文（教学路径=v5 三资产：HW L162 / DP L163 / SM L164） | `classroom/{walkthrough,handbook,teaching-assets}.md`，tag `classroom-v0.1`（commit 0079419） |
+| K-3 彩排 round-1 | ✅ 通过（零上下文走通三课，3 交付物评测 4/4，6 门基线复现；缺陷 D1-D5 已回写文档） | `classroom/rehearsal/round-1/record.md` |
+| K-5 dist 发布 | ⛔ 受阻：`dist/` 三包不在 monorepo 快照内，CRLF 修复与包内自检无实物；**未代签未发布** | `evidence/publish-approval-REQUEST.md`（commit 34785e8） |
+
+### P-2 队列项复核（不重复造轮子，复跑既有资产确定性门）
+
+| 队列项 | 既有资产 | 2026-10-02 复跑 |
+|---|---|---|
+| 中文办公模板包 | v3/assets/office-templates | 自评 exit 0 ✅ |
+| 办公护栏 hook | v3/assets/office-guard-hooks | 自评 exit 0 ✅ |
+| 体检流水线 | v3/tools/healthcheck | 自评 exit 0 ✅ |
+| prompt 回归集 | v3/assets/prompt-regression | candidate=oracle/out 双参 exit 0；红路 exit 1 ✅ |
+
+### 欠账（如实，2026-10-02 夜班新增/沿袭）
+
+- FunASR 彩排缺音频环境（沿袭）；hot-templates 盲评加厚缺模型配额（沿袭）；
+- zctl-mcp / acceptor-agent 盲评加厚与体检裁定待补（新增）；dist 三包实物补迁或换候选待 owner 裁定（新增，K-5）；
+- zctl-mcp 对 zcode.z.ai 真实端到端调用待真机（上游 zctl 同款欠账）。

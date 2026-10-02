@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "mimosa-hook-status/v1",
+  "recordedAt": "2026-10-02T15:49:37.037Z",
+  "sessionId": "sess_cad6cf65-998b-4978-90a1-c14811e0c101",
+  "event": "PostToolUse",
+  "toolName": "Write",
+  "file": "D:\\new-workspace\\agent-asset\\afp-clone\\zcode-research\\skillfactory\\v5\\assets\\acceptor-agent\\eval\\runner.py",
+  "outcome": "inconclusive",
+  "coverage": "partial",
+  "findingCount": 0,
+  "durationMs": 22,
+  "hostState": "hook_complete",
+  "reportHint": ".mimosa/reports/"
+}
