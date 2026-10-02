@@ -201,6 +201,40 @@ def test_calibrate_handeye_real_fail_closed_exit2(tmp_path):
     assert rc == 2
 
 
+def test_calibrate_handeye_failed_line_not_written_to_config_calib(tmp_path, monkeypatch):
+    """独立复核高危项回归（2026-10-02）：解算返回但未达通过线时，npz 不得落
+    config/calib/（load_t_flange_cam 无条件 npz 优先装载，失败外参落默认路径
+    会被腕部口部链路静默采用 → 禁入区锚错位）。--out 显式指向 config/calib/
+    同样要改道暂存路径。
+    """
+    from chengshao.scripts import calibrate_handeye as cal_mod
+    import numpy as np
+
+    class _FakeResult:
+        T = np.eye(4)
+        reproj_err_mm = 9.9
+        reproj_err_px = 9.9
+        n_views = 6
+        method = "fake-fail"
+        pass_line_met = False
+
+    class _Sample:
+        K = np.eye(3)
+
+    monkeypatch.setattr(cal_mod, "solve_handeye", lambda *a, **k: _FakeResult())
+    monkeypatch.setattr(cal_mod, "collect_samples_mock",
+                        lambda *a, **k: ([_Sample()],
+                                         {"collection": "mock",
+                                          "ground_truth_T": np.eye(4).tolist()}))
+    monkeypatch.chdir(tmp_path)
+
+    out = tmp_path / "config" / "calib" / "handeye_scene.npz"
+    rc = cal_mod.main(["--cam", "scene", "--mock", "--points", "6", "--out", str(out)])
+    assert rc == 1  # 未达通过线
+    assert not out.exists(), "失败标定不得写入 config/calib/"
+    assert (tmp_path / "reports" / "handeye_scene_failed.npz").is_file()
+
+
 def test_calibrate_handeye_usage_errors_exit2(tmp_path):
     from chengshao.scripts.calibrate_handeye import main as cal_main
 

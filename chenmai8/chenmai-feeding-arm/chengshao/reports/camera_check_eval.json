@@ -1,0 +1,128 @@
+{
+  "module": "cs_arm.camera_check",
+  "date": "2026-10-02",
+  "cmd": "python scripts/camera_check.py --mock  (cwd=包根 chengshao/)",
+  "metrics": {
+    "enumeration": {
+      "devices_found": 2,
+      "expected_roles": [
+        "scene_cam",
+        "wrist_cam"
+      ],
+      "devices": [
+        {
+          "index": 0,
+          "role": "scene_cam",
+          "source": "mock_virtual"
+        },
+        {
+          "index": 1,
+          "role": "wrist_cam",
+          "source": "mock_virtual"
+        }
+      ]
+    },
+    "scene_aruco": {
+      "markers_detected": 3,
+      "bowls_seen": [
+        0,
+        1,
+        2
+      ],
+      "expected_bowls": [
+        0,
+        1,
+        2
+      ],
+      "min_side_px_seen": 159.0
+    },
+    "wrist_face": {
+      "per_distance": {
+        "0.20m": {
+          "detected": true,
+          "eye_blobs": 2,
+          "face_height_frac": 0.95
+        },
+        "0.30m": {
+          "detected": true,
+          "eye_blobs": 2,
+          "face_height_frac": 0.633
+        },
+        "0.40m": {
+          "detected": true,
+          "eye_blobs": 2,
+          "face_height_frac": 0.475
+        },
+        "0.50m": {
+          "detected": true,
+          "eye_blobs": 2,
+          "face_height_frac": 0.38
+        }
+      },
+      "distances_m": [
+        0.2,
+        0.3,
+        0.4,
+        0.5
+      ]
+    },
+    "wrist_min_focus": {
+      "distance_m": 0.2,
+      "var_laplacian_sharp": 435.0,
+      "var_laplacian_blurred_control": 38.2,
+      "metric_discriminates": true,
+      "threshold": 120.0
+    },
+    "wrist_exposure_recovery": {
+      "dark_switch_frame": 10,
+      "recovered_frame": 20,
+      "recovery_s": 0.333,
+      "brightness_threshold": 120.0,
+      "fps": 30.0,
+      "max_s": 1.0
+    },
+    "cable_clearance": {
+      "waypoints": 12,
+      "rejected": [],
+      "violation": "none",
+      "operator_visual_check": "mock_substituted",
+      "note": "线缆牵扯为操作员目视项：mock 以'全行程包络零拒绝'等价替代，不等于真机线缆验收"
+    },
+    "elapsed_s": 3.35
+  },
+  "thresholds": {
+    "devices_required": 2,
+    "aruco_bowls": [
+      0,
+      1,
+      2
+    ],
+    "face_distances_m": [
+      0.2,
+      0.3,
+      0.4,
+      0.5
+    ],
+    "face_all_detected": true,
+    "focus_min_var_laplacian": 120.0,
+    "focus_control_must_be_lower": true,
+    "exposure_recovery_max_s": 1.0,
+    "cable_rejected_max": 0
+  },
+  "pass": true,
+  "checks": {
+    "enumeration": true,
+    "scene_aruco": true,
+    "wrist_face_discernible": true,
+    "wrist_min_focus": true,
+    "wrist_exposure_recovery": true,
+    "cable_clearance": true
+  },
+  "notes": [
+    "mock 结论不等于真机结论：合成帧验证的是检测与断言链路；真机相机成像质量以 D3 bring-up 实测为准（不达标触发第三相机回退）",
+    "真机面部可辨为 cv2 Haar 冒烟口径；生产口部算法验收走 cs_mouth.eval --wrist-view --live（§5.9 另行）"
+  ],
+  "evidence_kind": "mock_dry_run",
+  "real_machine_measured": false,
+  "mock": true
+}
