@@ -40,11 +40,29 @@ UA = "Mozilla/5.0 (X11; Linux x86_64) prefetch-model/1.0"
 
 
 def http(url, headers=None, timeout=60):
+    parsed = urllib.parse.urlparse(url)
+    if parsed.scheme != "https":
+        raise ValueError("仅允许 https 端点（防 SSRF/明文劫持），收到：%s" % parsed.scheme)
     h = {"User-Agent": UA}
     if headers:
         h.update(headers)
     req = urllib.request.Request(url, headers=h)
     return urllib.request.urlopen(req, timeout=timeout)
+
+
+def safe_rel(dest, rel):
+    """把远端清单返回的相对路径并入 dest，拒绝绝对路径/盘符/.. 穿越与空段。"""
+    if not rel or rel.strip() == "":
+        raise ValueError("空路径")
+    pure = rel.replace("\\", "/")
+    if os.path.isabs(pure) or ":" in pure.split("/")[0] or ".." in pure.split("/"):
+        raise ValueError("远端清单路径不合规（拒绝穿越）：%r" % rel)
+    joined = os.path.join(dest, *pure.split("/"))
+    real_dest = os.path.realpath(dest)
+    real_joined = os.path.realpath(joined)
+    if os.path.commonpath([real_dest, real_joined]) != real_dest:
+        raise ValueError("路径越出目标目录：%r" % rel)
+    return joined
 
 
 def list_files(repo, revision, endpoint, source="hf"):
@@ -149,7 +167,7 @@ def main():
           (a.repo, a.revision[:10], a.dest, len(files), total / 1e9), flush=True)
     jobs = []   # (url, path, kind, start, end)
     for p, s in files:
-        dest = os.path.join(a.dest, p)
+        dest = safe_rel(a.dest, p)
         os.makedirs(os.path.dirname(dest) or a.dest, exist_ok=True)
         if os.path.exists(dest) and os.path.getsize(dest) == s:
             if s <= 8 * 1024 * 1024 or os.path.exists(dest + ".ok"):
@@ -186,14 +204,14 @@ def main():
         sys.exit(1)
     # verify sizes
     bad = [p for p, s in files
-           if not os.path.exists(os.path.join(a.dest, p))
-           or os.path.getsize(os.path.join(a.dest, p)) != s]
+           if not os.path.exists(safe_rel(a.dest, p))
+           or os.path.getsize(safe_rel(a.dest, p)) != s]
     if bad:
         print("[prefetch] FAILED size verify: %s" % bad, flush=True)
         sys.exit(1)
     for p, s in files:                    # per-file completion markers (big files only)
         if s > 8 * 1024 * 1024:
-            open(os.path.join(a.dest, p) + ".ok", "w").close()
+            open(safe_rel(a.dest, p) + ".ok", "w").close()
     print("[prefetch] OK %.2f GB in %.0fs (%.1f MB/s avg)" %
           (total / 1e9, dt, done_bytes / max(dt, 0.1) / 1e6), flush=True)
     with open(os.path.join(a.dest, ".PREFETCH_OK"), "w") as f:
