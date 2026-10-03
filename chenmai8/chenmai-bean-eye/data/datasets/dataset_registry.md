@@ -210,3 +210,24 @@ cd data/datasets/ext-main && sha256sum -c SHA256SUMS && cd ../../..
 合计 **11480 图**。全四集 mapping/manifest/SHA256SUMS 齐备并通过 tests/test_dataset_registry.py 20/20。
 过程修复：download_datasets.py resolve_version 兼容 REST 全路径字符串版本 id（"ws/proj/N"）；
 ext-main 需 `--format coco`（项目类型 object-detection，无分割导出）。
+
+---
+
+## 附录 B · 候选数据集情报（2026-10-04 全网调研，搜索代理产出）
+
+**核心结论：海南/兴隆专属罗豆图像数据集不存在公开版**（CATAS/海南大学只发表化学/风味研究）——海南域样本只能自建（本项目 raw_quark 26 张即为自建起点）。
+
+### 新发现可下载（按价值排序）
+| 来源 | 内容 | 量级 | 许可 | 状态 |
+|---|---|---|---|---|
+| Zenodo 21441551 | 多品种**单粒**生豆 PNG（14 品种类，可能含 robusta） | 17,958 图 / 344MB | CC BY 4.0 | 下载中（edge /tmp/zenodo-beans/） |
+| Kaggle sujitraarw 17-defects | SCAA 17 类生豆（黑/酸/破碎细分，泰国罗豆可能） | ~900 图 500px | 需 Kaggle 账号 | **待用户提供 Kaggle API token** |
+| HF SamruddhK grading | 生豆分级 A-D（D=缺陷），多边形 2284 个 | 3,877 图 / 13.4GB | MIT | 未下（大；可只下部分） |
+| 乌干达辅源（绿豆集） | 阿拉比卡 4 类（defect 单类） | 8,000 图 | 引用制 | 未下（辅助） |
+| Wikimedia Coffea canephora (products) | 罗豆产品照片（无标签） | ~38 图 | CC BY/SA | 按需 |
+
+### 已排除（防复踩）
+BRACOL/BRACOT=叶病数据集；RoCoLe=叶；RoastedCoffeeDefectDataset=烘焙豆；Kaggle gpiosenka=烘焙度；Zenodo 22122512=表格特征非图像；魔搭/飞桨/天池=无生豆数据。
+
+### 已入库（本仓）
+ext-main 8309 / ext-scaa17 1240 / ext-rgreen 4360 / ext-rseg 958（见 2026-10-03 下载实录）。
