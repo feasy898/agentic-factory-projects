@@ -38,6 +38,9 @@ __all__ = [
     "draw_overlay",
     "LiveParams",
     "LiveStreamHub",
+    "CLASSIFIER_CHOICES",
+    "ClassifierUsageError",
+    "build_classifier",
 ]
 
 _LAZY = {
@@ -56,6 +59,9 @@ _LAZY = {
     "draw_overlay": ("beaneye.realtime.overlay", "draw_overlay"),
     "LiveParams": ("beaneye.realtime.server", "LiveParams"),
     "LiveStreamHub": ("beaneye.realtime.server", "LiveStreamHub"),
+    "CLASSIFIER_CHOICES": ("beaneye.realtime.engine", "CLASSIFIER_CHOICES"),
+    "ClassifierUsageError": ("beaneye.realtime.engine", "ClassifierUsageError"),
+    "build_classifier": ("beaneye.realtime.engine", "build_classifier"),
 }
 
 

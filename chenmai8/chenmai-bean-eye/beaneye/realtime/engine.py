@@ -43,7 +43,7 @@ import numpy as np
 from pydantic import Field
 
 from beaneye.calibration import CalibrationError, calibrate, load_tray_config, warp_to_tray
-from beaneye.classify import RulesV0
+from beaneye.classify import DEFAULT_TAU, NnOnnxClassifier, RulesV0
 from beaneye.segment import ClassicSeg
 from beaneye.schemas import BeanEyeBaseModel, BeanMask, TrayScan
 from beaneye.taxonomy import Taxonomy, load_taxonomy
@@ -54,7 +54,35 @@ __all__ = [
     "FrameResult",
     "RealtimeEngine",
     "crop_mask_rgba",
+    "CLASSIFIER_CHOICES",
+    "ClassifierUsageError",
+    "build_classifier",
 ]
+
+CLASSIFIER_CHOICES = ("rules", "nn")
+
+
+class ClassifierUsageError(ValueError):
+    """分类器开关用法错误（未知选项 / nn 未给 onnx 路径）。"""
+
+
+def build_classifier(
+    choice: str = "rules",
+    nn_onnx: str | None = None,
+    *,
+    tau: float = DEFAULT_TAU,
+) -> RulesV0 | NnOnnxClassifier:
+    """分类器开关装配（批10）：``rules`` → RulesV0（缺省，产品现状）；
+    ``nn`` → NnOnnxClassifier(onnx, τ)（批9 海南域 ONNX 头，τ=批10 扫描
+    推荐工作点 0.13）。两实现满足同一冻结分类协议，引擎无差别调用。
+    """
+    if choice == "rules":
+        return RulesV0()
+    if choice == "nn":
+        if not nn_onnx:
+            raise ClassifierUsageError("classifier=nn 需要提供 nn_onnx 路径（如 train/runs/crop_cls/b9.onnx）")
+        return NnOnnxClassifier(nn_onnx, tau=tau)
+    raise ClassifierUsageError(f"未知分类器选项 {choice!r}（可选 {CLASSIFIER_CHOICES}）")
 
 
 # ---------------------------------------------------------------------------
