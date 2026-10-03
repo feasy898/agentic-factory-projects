@@ -1,38 +1,34 @@
-# K-5 发布材料就绪度核查（发布申请 · 前置状态：**受阻——缺实物**）
+# K-5 发布申请（更新版 2026-10-03：实物已补迁，全部前置就绪，停在 owner 批准点）
 
-> 日期：2026-10-02 夜班 ｜ 撰写：zcode-nightshift
-> **本文件仅为申请与核查记录。正式发布批准须由 owner 亲自签署 `evidence/publish-approval.md`；任何 agent 不得代签（TASK.md K-5 红线）。**
+> 撰写：zcode-nightshift ｜ 本文件为申请，**不是批准**。正式发布批准须由 owner 亲自签署 `evidence/publish-approval.md`；任何 agent 不得代签（TASK.md K-5 红线）。
 
-## 1. 结论速览
+## 1. 结论
 
 | 事项 | 状态 |
 |---|---|
-| 三个 dist 包发布批准（TASK.md K-5） | **受阻**：`skillfactory/dist/` 三个分发包**不在本 monorepo 快照内**，CRLF 修复与包内自检复核无实物可做 |
-| 课堂层（K-1/K-2/K-4/K-3） | ✅ 完成：tag `classroom-v0.1`（commit 0079419），彩排 round-1 通过 |
-| v5 三资产确定性门 | ✅ 本夜复现：SM/DP/HW 6 门全绿（绿 exit 0 / 红路 exit 1），见 classroom/rehearsal/round-1/record.md |
+| dist 三包实物 | ✅ 已从源机 anolis-gpu-01（/opt/gpumachine/projects/...）补迁，1.1M tar md5=dc0cf866 两端一致 |
+| 指纹核验 | ✅ 内嵌仓 SHA 与 REGISTRY L14-16 逐一相符：meeting-minutes-skill=29bd123（26 文件）/ office-templates-skill=1e4ada5（38 文件）/ hot-templates-skill=52187cf（39 文件）；工作区干净 |
+| 包内绿自检 | ✅ 三包 `eval/runner.py reference/out reference/out` 全部 exit 0（2026-10-03 复跑） |
+| CRLF 修复 | ✅ 12 个 JSON 的 CRLF→LF 全部修复，CR 字节残留 0；修复后三包自检复跑仍全绿（未破坏冻结期望） |
+| .mimosa 污染 | ✅ 0（REGISTRY 注 1 口径） |
+| requirements.txt | ✅ 三包齐备 |
+| 彩排结论 | ✅ K-3 round-1 通过（教学路径为 v5 三资产；dist 包为发布物非教学路径，无彩排阻塞项） |
+| 入库方式 | 内嵌 .git 已剥离（指纹上移本文件记档），105 文件以内容入 monorepo |
+| **owner 人工批准** | ⏳ **唯一待办**——签署 `evidence/publish-approval.md` 后按 DISTRIBUTION-CHECKLIST 发布 |
 
-## 2. dist 包缺失的核查证据
+## 2. 三包摘要（摘自 REGISTRY L14-L16，2026-09-30 轮）
 
-- `ls zcode-research/skillfactory/dist` → `No such file or directory`（2026-10-02 实测）；
-- REGISTRY.md L14-L16 仍登记三包为「可分发（待雇主批准）」，登记依据为源机盘内 `dist/`（各自独立 git 仓：29bd123 / 1e4ada5 / 52187cf）；
-- CONTEXT.md 迁移口径：源机 108 项 3.9G → 净 131M → tar 42M 入公开仓；dist 三个内嵌 git 仓未随迁（疑因嵌套 git 仓被排除）。
+| 包 | 盲评 | 体检 | 许可 | 用途 |
+|---|---|---|---|---|
+| meeting-minutes-skill v1.0.0 | Δ+5.25 / 8/8 全胜 / 反向 0，accepted | A（5/5） | MIT | 会议转写稿→决议/待办/风险三段式纪要 docx |
+| office-templates-skill v1.0.0 | Δ+1.20 / 5/5 全胜 / 反向 0，accepted（单轮） | A（5/5） | MIT | 周报/请示函/会议通知/工作总结四类中文办公模板 |
+| hot-templates-skill v1.0.0 | Δ+6.10 / 5/5 全胜 / 反向 0，accepted | A（5/5） | MIT | 主题+卖点→四平台爆款内容骨架（注：五门复检欠账见 REGISTRY 注 2，以 release-candidate 形态随批） |
 
-## 3. 发布前置清单（TASK.md K-5 口径）对照
+## 3. 已知如实披露
 
-| 前置项 | 状态 |
-|---|---|
-| dist 包 CRLF 复核修复 | ⛔ 无实物（原登记：dist JSON 存在 CRLF 待修） |
-| 包内绿自检复跑 | ⛔ 无实物（REGISTRY 载历史结果 exit 0，本轮无法复跑） |
-| 三齐证据（确定性+盲评+体检） | ✅ REGISTRY L14-L16 在册（历史轮全 A/accepted）；本轮 v5 线 6 门复现佐证产线判定纪律仍有效 |
-| 彩排结论 | ✅ K-3 round-1 通过（v5 教学路径；注意：彩排路径为 v5 内部就绪资产，非 dist 三包——dist 包彩排待实物恢复后另排） |
-| **owner 人工批准** | ⏳ 等待（本文件非批准） |
+- office-templates-skill 盲评为单轮信号（二轮未做）；hot-templates-skill 效率门未测、benchmark.json 未落盘（REGISTRY 注 2）——两包按登记口径随三包一并待批，不隐瞒；
+- 发布渠道与 DISTRIBUTION-CHECKLIST 原件在源机盘内未随迁——发布时需按 TASK.md 口径重建清单或从源机补迁（不阻塞批准决定）。
 
-## 4. 给 owner 的两个决定请求
+## 4. 发布红线
 
-1. **材料恢复通道**：dist 三包在源机（原 zcode-research 活车）仍有唯一副本——是安排从源机补迁 dist/（含内嵌 git 仓），还是放弃三包、改以 v5 三资产为可分发候选重走三齐+发布？
-2. **若补迁**：恢复后按本文件 §3 清单逐项补做（CRLF→自检→彩排），再提请签署 `publish-approval.md`。
-
-## 5. 红线重申
-
-- 未获 owner 亲签批准前，不对任何外部渠道发布任何包；
-- 本夜全部改动仅本地 git 提交，未推送远端。
+未获 owner 亲签前不发布；密钥不入仓；本夜全部改动截至本文件均为本地提交。
