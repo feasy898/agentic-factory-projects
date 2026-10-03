@@ -268,7 +268,32 @@ def run(args: argparse.Namespace) -> int:
         print(f"[FAIL] 数据目录不完整: {data_dir}（先跑 prepare_coco.py）")
         return 1
 
-    model = model_cls(device=device)
+    # 构造器参数名以 2026-10-03 pydantic 报错实测为准：合法参数为 resolution
+    # （img_size 不存在）；非法参数抛 ValidationError（ValueError 子类）非 TypeError。
+    # amp=fp16：V100（Volta，sm_70）无 bf16 硬件支持，包默认 bf16 存在风险；
+    # 值不被接受时自动降级到仅 resolution 分支。
+    model = None
+    for ctor_kwargs in (
+        {"device": device, "resolution": args.resolution, "amp": "fp16",
+         "gradient_checkpointing": True},
+        {"device": device, "resolution": args.resolution,
+         "gradient_checkpointing": True},
+        {"device": device, "resolution": args.resolution},
+        {"device": device, "img_size": args.resolution},
+        {"device": device},
+    ):
+        try:
+            model = model_cls(**ctor_kwargs)
+        except (TypeError, ValueError):
+            continue
+        if len(ctor_kwargs) > 1:
+            used = ",".join(k for k in ctor_kwargs if k != "device")
+            print(f"[构造] 已传入 {used}（resolution={args.resolution}）")
+        else:
+            print(f"[警告] 构造器不认 resolution/img_size，回退包默认分辨率训练"
+                  f"（计划口径 {args.resolution} 未生效，见 README API 核对节）")
+        break
+    assert model is not None, "模型构造全部失败（不应到达）"
     train_kwargs: dict = {
         "dataset_dir": str(data_dir),
         "output_dir": str(out),
