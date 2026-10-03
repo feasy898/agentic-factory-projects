@@ -1,0 +1,89 @@
+{
+  "template": "工作总结",
+  "title": "____2026年9月工作总结",
+  "filled_fields": [
+    "总结时段",
+    "工作回顾",
+    "下一步工作打算"
+  ],
+  "missing_fields": [
+    "总结主体",
+    "主要成绩",
+    "存在问题",
+    "成文日期"
+  ],
+  "fields": [
+    {
+      "name": "总结主体",
+      "required": true,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "以____占位"
+    },
+    {
+      "name": "总结时段",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "2026年9月"
+    },
+    {
+      "name": "工作回顾",
+      "required": true,
+      "kind": "list",
+      "status": "filled",
+      "value": [
+        "完成评测平台月度巡检"
+      ]
+    },
+    {
+      "name": "主要成绩",
+      "required": true,
+      "kind": "list",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "以____占位条目"
+    },
+    {
+      "name": "存在问题",
+      "required": false,
+      "kind": "list",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "省略该条目/小节"
+    },
+    {
+      "name": "下一步工作打算",
+      "required": true,
+      "kind": "list",
+      "status": "filled",
+      "value": [
+        "制定四季度评测排期"
+      ]
+    },
+    {
+      "name": "成文日期",
+      "required": false,
+      "kind": "text",
+      "status": "missing",
+      "value": null,
+      "rendered_as": "留空（渲染为空字符串）"
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "filled": 3,
+    "missing": 4,
+    "missing_required": 2,
+    "missing_required_names": [
+      "总结主体",
+      "主要成绩"
+    ],
+    "unknown_keys": []
+  },
+  "outputs": {
+    "docx": "out\\工作总结\\case2\\文书.docx",
+    "fields_json": "out\\工作总结\\case2\\fields.json"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "skill": "office-templates（中文办公模板技能：周报/请示函/会议通知/工作总结 四类文书 → GB/T 9704 风格 文书.docx + 字段填充台账 fields.json，缺数据不编造、确定性可复现）",
+  "eval_inputs": [
+    { "case": "周报-case1", "input": "oracle/inputs/周报/case1.json", "output": "oracle/out/周报/case1" },
+    { "case": "周报-case2", "input": "oracle/inputs/周报/case2.json", "output": "oracle/out/周报/case2" },
+    { "case": "请示函-case1", "input": "oracle/inputs/请示函/case1.json", "output": "oracle/out/请示函/case1" },
+    { "case": "请示函-case2", "input": "oracle/inputs/请示函/case2.json", "output": "oracle/out/请示函/case2" },
+    { "case": "会议通知-case1", "input": "oracle/inputs/会议通知/case1.json", "output": "oracle/out/会议通知/case1" },
+    { "case": "会议通知-case2", "input": "oracle/inputs/会议通知/case2.json", "output": "oracle/out/会议通知/case2" },
+    { "case": "工作总结-case1", "input": "oracle/inputs/工作总结/case1.json", "output": "oracle/out/工作总结/case1" },
+    { "case": "工作总结-case2", "input": "oracle/inputs/工作总结/case2.json", "output": "oracle/out/工作总结/case2" }
+  ],
+  "ab_tasks": [
+    {
+      "id": "ab1-standard-four-templates",
+      "instruction": "A/B 对照标准全量生成：让被测技能与参照实现（oracle）分别处理 oracle/inputs/ 下四类模板的 case1 输入（周报、请示函、会议通知、工作总结各一份，字段全部齐全），以 contract §2 命令行（--template/--data/--outdir）各生成 文书.docx 与 fields.json 到 package/out/<模板>/case1/，与 oracle/out/<模板>/case1/ 逐一对照版式与字段台账，判定被测产物可否替代参照交付。",
+      "input": "oracle/inputs/请示函/case1.json",
+      "rubric": [
+        "四个单元目录 package/out/<模板>/case1/ 均恰含 文书.docx 与 fields.json，python eval/runner.py package/out oracle/out 的 units_found/products_exact 全部 pass",
+        "版式四要素对四类全部成立（spec V2–V5）：标题居中黑体二号且与 fields.json.title 相等；请示函/会议通知称谓顶格；正文存在 firstLineChars=200 的仿宋三号 28 磅固定行距段；落款右对齐右空两字",
+        "A4 页面版心按 GB/T 9704（上3.7/下3.5/左2.8/右2.6 cm，容差 0.05 cm），标题文案符合四条公式（如 关于{请示事由}的请示）",
+        "四份 fields.json 顶层与 summary 键集合恰为 spec §6 所列，filled/missing 计数与明细自洽，且四类 case1 均 filled=total/total（周报 7/7、请示函 8/8、会议通知 11/11、工作总结 7/7）",
+        "与参照的字段填充一致率 ≥90%（runner 的 field_fill_agreement_ge_90pct pass，自校验口径 oracle vs oracle 为 100%）"
+      ]
+    },
+    {
+      "id": "ab2-boundary-missing-required",
+      "instruction": "A/B 对照必填缺失边界：让被测技能与参照实现分别处理 oracle/inputs/请示函/case2.json（主送机关键缺失、请示事项为空字符串、联系电话/成文日期选填缺失）与 oracle/inputs/会议通知/case2.json（会议名称缺失、会议地点空字符串、会议议题/会议要求/联系人/联系电话选填缺失、含模板外键「备注」），对照两边的占位渲染与缺失记账，判定被测是否做到「缺数据不编造、如实记账」。",
+      "input": "oracle/inputs/请示函/case2.json",
+      "rubric": [
+        "必填缺失以____占位且程序退出码 0：请示函渲染「____：」顶格称谓与「____」请示事项（文中____出现次数 ≥ missing_required 数），会议通知标题为「关于召开____的通知」",
+        "fields.json 记账与 spec §9 期望表一致：请示函 missing_required=[主送机关,请示事项]、选填 missing=[联系电话,成文日期]；会议通知 missing_required=[会议名称,会议地点]、unknown_keys=[备注]",
+        "选填缺失不误记为必填：联系电话/成文日期等 rendered_as 为留空/省略语义且不出现在 missing_required_names，正文行内留空（如 联系人：李工　　联系电话：）、独立小节省略",
+        "落款仍右对齐右空两字（请示函两行、会议通知两行），称谓段仍顶格，版式不因缺数据而破坏",
+        "runner 对应单元的 boundary_reported 与 fields_match_docx 均 pass，与参照字段填充一致率 ≥90%"
+      ]
+    },
+    {
+      "id": "ab3-empty-and-string-lists",
+      "instruction": "A/B 对照列表字段边界：让被测技能与参照实现分别处理 oracle/inputs/周报/case2.json（周期空字符串、本周工作内容空数组、问题与需协调事项选填缺失）与 oracle/inputs/工作总结/case2.json（总结主体缺失、主要成绩空数组、工作回顾为字符串型列表、存在问题与成文日期选填缺失），对照两边列表字段的占位条目/省略/字符串单项化行为。",
+      "input": "oracle/inputs/周报/case2.json",
+      "rubric": [
+        "空列表按必填缺失渲染占位条目：周报「一、本周工作内容」节含「1．____」，工作总结「主要成绩」节含「1．____」，fields.json rendered_as 为占位条目语义",
+        "字符串型列表单项化正确：工作总结 case2 的 工作回顾=\"完成评测平台月度巡检\" 渲染为单项条目且 fields.json value=[\"完成评测平台月度巡检\"]",
+        "选填小节整节省略：周报 case2 文书中不出现「问题与需协调事项」节头、工作总结 case2 不出现「存在问题」节，但 fields.json 仍记 missing（required=false）",
+        "缺失记账与 spec §9 一致：周报 missing_required=[部门,周期,本周工作内容]（标题为「____工作周报」），工作总结 missing_required=[总结主体,主要成绩]（标题为「____2026年9月工作总结」）",
+        "小节编号与条目编号规范（一、二、三、与 1．2．3．），落款右对齐不因空日期/缺主体破坏（工作总结空成文日期行为空段，末个非空段仍右对齐）"
+      ]
+    },
+    {
+      "id": "ab4-invalid-input-rejection",
+      "instruction": "A/B 对照非法输入拒绝：让被测技能与参照实现分别接受四组非法输入——①--template 证书（模板名非法）②--data 指向不存在的文件 ③--data 内容为「不是JSON」（JSON 解析失败）④--data 内容为 [\"数组\",\"非对象\"]（顶层非对象），另以 oracle/inputs/周报/case1.json 作合法对照。逐组记录退出码、stderr 与产物残留，判定被测的 CLI 契约（contract §2）与参照是否一致。",
+      "input": "oracle/inputs/周报/case1.json",
+      "rubric": [
+        "四组非法输入退出码均为 2（不是崩溃/其他码），stderr 打印中文错误信息，且与参照 oracle 的退出码逐组一致",
+        "四组非法输入均零产物残留：不创建 outdir、不写 文书.docx 或 fields.json（find 计数=0），不产半成品",
+        "合法对照组退出码 0 且两产物齐全，证明拒绝逻辑未误伤正常输入",
+        "SKILL.md 错误处理节逐条列出四种非法输入与退出码表（contract §4.7），与实测行为一致",
+        "被测不得把必填缺失当作错误（spec C3/F7）：含缺失的 case2 输入必须 exit 0 并产出，与负路径行为形成对照"
+      ]
+    },
+    {
+      "id": "ab5-determinism-layout-selfeval",
+      "instruction": "A/B 对照确定性与交付自评：让被测技能以 package/scripts/gen_doc.py 为唯一入口，对 oracle/inputs/会议通知/case1.json 同一输入连续运行两遍到同一 outdir（package/out/会议通知/case1，覆盖复写），再运行 python eval/runner.py package/out oracle/out 做确定性评测；与参照实现（同输入连跑两遍）对照产物确定性，判定被测是否满足可分发资产的确定性交付要求（spec D1）。",
+      "input": "oracle/inputs/会议通知/case1.json",
+      "rubric": [
+        "确定性：同输入连跑两遍，fields.json（除 outputs 键外）逐字节一致，文书.docx 解析后的段落文本/对齐/缩进/字体/行距完全一致（无当前时间、随机内容等不可复现源）",
+        "交付布局正确：package/out/会议通知/case1 为恰含两产物的单元目录，相对名与参照 oracle/out/会议通知/case1 配对",
+        "python eval/runner.py package/out oracle/out 输出 ok=true 且 exit 0，六类检查对全部单元 pass（含 field_fill_agreement_ge_90pct）",
+        "runner 自校验红绿双向成立：python eval/runner.py oracle/out oracle/out 全过 exit 0（绿），python eval/runner.py <空目录> oracle/out 报 units_found 失败且 exit 1（红）",
+        "package/ 三件套（SKILL.md、scripts/gen_doc.py、requirements.txt）齐全，入口脚本可 py_compile 且按 contract §2 命令行直接运行成功"
+      ]
+    }
+  ]
+}

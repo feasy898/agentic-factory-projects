@@ -1,0 +1,14 @@
+{
+  "verdict": { "type": "string", "enum": ["PASS", "FAIL"] },
+  "deliverable_path": { "type": "string", "nonempty": true },
+  "checks": {
+    "type": "array",
+    "min_items": 1,
+    "item_required": ["name", "passed", "evidence", "status"],
+    "passed_type": "boolean",
+    "evidence_nonempty": true,
+    "status_enum": ["verified", "judged"]
+  },
+  "blockers": { "type": "array", "item_type": "string" },
+  "boundary_note": { "type": "string", "nonempty": true }
+}
