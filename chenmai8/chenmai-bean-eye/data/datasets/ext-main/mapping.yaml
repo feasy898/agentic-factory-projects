@@ -26,7 +26,8 @@ ext-main:
   "normal":      normal    # 好豆 → normal
   "partido":     broken    # 破碎 → broken（简报参考表 partido→broken）
   "seca":        dried     # 干瘪 → dried（简报参考表 dry→dried 的西语原键）
-  # —— 明确不映射（3 类；简报：无对应类）——
-  "helado":    null        # 冻伤豆（=frozen）：13 类体系无对应类（简报明示 null）
-  "oreja":     null        # 黑耳/耳形变异（=black_ear）：无对应类（简报明示 null）
-  "triangulo": null        # 三角形豆：形状变异概念，无对应类（简报明示 null）
+  # —— 明确不映射（4 类；简报：无对应类）——
+  "helado":       null     # 冻伤豆（=frozen）：13 类体系无对应类（简报明示 null）
+  "oreja":        null     # 黑耳/耳形变异（=black_ear）：无对应类（简报明示 null）
+  "triangulo":    null     # 三角形豆：形状变异概念，无对应类（简报明示 null）
+  "coffee-beans": null     # 容器/统称类（导出 v8 实测新增，2026-10-03）：非缺陷语义，不映射

@@ -195,3 +195,18 @@ cd data/datasets/ext-main && sha256sum -c SHA256SUMS && cd ../../..
   --ext-coco-json/--ext-image-root/--mapping-yaml/--mapping-source），核对
   stats 与 13 类键后把结论记回本文件第 1-4 节。
 
+
+---
+
+## 2026-10-03 下载实录（key 就绪后执行）
+
+| 代号 | 结果 | 实测规模 | 备注 |
+|---|---|---|---|
+| ext-main | ✅ v8 bbox COCO | **8728 图 / 10779 标注（含多边形 8340）/ 13 类** | 主源所有版本均 320×320 预处理——适合喂裁剪分类腿（224-320px），对 1024 分割腿贡献有限；bbox 导出意外含多边形，T3 合并时可作分割源；新增容器类 coffee-beans（null 映射） |
+| ext-rseg | ✅ 备选源 coco-segmentation | **1002 图 / 5 类** | 主源无版本，走备选 robusta-coffee-bean-defects；实测键名 Broken-Chipped（连字符），新增 defects 粗标桶（null）；**绿豆占比抽样核验仍 PENDING**（烘焙工作区风险，T3 并入前必须完成） |
+| ext-rgreen | ✅ coco bbox | **250 图 / 3 类** | 实测多一个 defect-coffee 粗标桶（null 映射） |
+| ext-scaa17 | ✅ 备选 fork coco bbox | **1500 图 / 15 类** | 主源 gcb 无已生成版本，走预案备选 fork；fork 将 Full/Partial Black/Sour 简并、含 objects 容器类（null）；映射表已按 fork 实测类名重写 |
+
+合计 **11480 图**。全四集 mapping/manifest/SHA256SUMS 齐备并通过 tests/test_dataset_registry.py 20/20。
+过程修复：download_datasets.py resolve_version 兼容 REST 全路径字符串版本 id（"ws/proj/N"）；
+ext-main 需 `--format coco`（项目类型 object-detection，无分割导出）。

@@ -13,7 +13,11 @@
 # =========================================================================
 ext-rseg:
   # —— 待核验后启用（绿豆占比核验通过的前提）——
-  "Black":         black    # 黑豆：若样本为绿生豆黑粒 → black；若为烘焙深色豆 → null
-  "Broken/Chipped": broken  # 破碎/缺口：物理破损表型不因烘焙改变 → broken
-  "Good beans":    normal   # 好豆：前提是样本确为绿生豆（核验项）
-  "Insect damage": insect   # 虫蛀孔洞：物理虫害表型 → insect（核验项：确认非烘焙豆图）
+  # 2026-10-03 实测：主源无版本，经备选 robusta-coffee-bean-defects 下载成功，
+  # 实际导出类名 5 类（与页面预核的 4 类有出入）：Broken-Chipped 为连字符键，
+  # 另增 defects 粗标桶类。
+  "Black":           black    # 黑豆：若样本为绿生豆黑粒 → black；若为烘焙深色豆 → null
+  "Broken-Chipped":  broken   # 破碎/缺口（实测键名连字符）：物理破损表型不因烘焙改变 → broken
+  "Good beans":      normal   # 好豆：前提是样本确为绿生豆（核验项）
+  "Insect damage":   insect   # 虫蛀孔洞：物理虫害表型 → insect（核验项：确认非烘焙豆图）
+  "defects":         null     # 粗标缺陷桶（实测新增，2026-10-03）：无细分语义，不映射

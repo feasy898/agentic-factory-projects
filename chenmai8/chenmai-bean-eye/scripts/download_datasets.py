@@ -198,13 +198,18 @@ def get_project(client: httpx.Client, ws: str, proj: str, key: str) -> dict:
 
 
 def resolve_version(project_payload: dict, version_arg: str) -> int:
-    """'latest' 取 versions 里数值最大的 id；数字字符串直接用。"""
+    """'latest' 取 versions 里数值最大的 id；数字字符串直接用。
+
+    REST 实测（2026-10-03）：versions[].id 为全路径字符串（如
+    "redtraining/defectoscafeverde/8"），取末段数字；兼容纯整数 id。
+    """
     versions = project_payload.get("versions") or []
     if version_arg.lower() in ("latest", "newest"):
         ids = []
         for v in versions:
+            tail = str(v.get("id", "")).rsplit("/", 1)[-1]
             try:
-                ids.append(int(v.get("id")))
+                ids.append(int(tail))
             except (TypeError, ValueError):
                 continue
         if not ids:

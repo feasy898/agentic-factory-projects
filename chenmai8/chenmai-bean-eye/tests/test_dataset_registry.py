@@ -142,11 +142,12 @@ def test_mapping_yaml_neutral_naming(code):
 
 
 # ext-main 页面实抓类别表（2026-10-02 web_reader，西语原样；类名是数据词表
-# 而非上游项目名，可入 tracked 测试）。守护点：映射键必须逐字对齐页面类名——
-# 曾发生按旧 README 英译记录配键（broca 误译 brocade）导致 11/12 键不命中。
+# 而非上游项目名，可入 tracked 测试）。守护点：映射键必须逐字对齐——曾发生按
+# 旧 README 英译记录配键（broca 误译 brocade）导致 11/12 键不命中。
+# 2026-10-03 下载实测：导出 v8 比页面类表多一个容器类 coffee-beans（已 null 映射）。
 EXT_MAIN_PAGE_CLASSES = frozenset({
-    "agrio", "broca", "caracolillo", "concha", "elefante", "helado",
-    "negro", "normal", "oreja", "partido", "seca", "triangulo",
+    "agrio", "broca", "caracolillo", "coffee-beans", "concha", "elefante",
+    "helado", "negro", "normal", "oreja", "partido", "seca", "triangulo",
 })
 
 

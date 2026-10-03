@@ -1,38 +1,34 @@
 # =========================================================================
-# ext-scaa17（SCAA 17 类缺陷集）→ taxonomy 13 类 映射表
+# ext-scaa17（SCAA 缺陷集）→ taxonomy 13 类 映射表
 # -------------------------------------------------------------------------
 # 语义对齐 train/prepare_coco.py --mapping-yaml（--mapping-source ext-scaa17）。
-# 状态：类别名依据 2026-10-02 公开项目页核验（966 图、17 类、CC BY 4.0）。
-#       类名按页面原拼写收录（含两处拼写错误 Damange——COCO 导出的类别名
-#       以页面类名为准，映射键必须与导出 json 完全一致才能命中）。
-# 下载风险：页面 "Dataset 0"（疑似无已生成版本）且类型栏曾显示
-#       "Classification"——下载后若实际导出无 bbox 标注，本集暂不能进
-#       检测/分割合并链路（登记册记录结论），映射表保留待有效导出后启用。
+# 2026-10-03 实测更新：主源 gcb-defect-detection 无已生成版本（--list-versions
+# 为空），经登记册预案的备选 fork（capstone-2-wwe5t/coffee-bean-defect-a0vno）
+# 下载成功：1500 图 / 15 类 / bbox COCO。本表键名以该 fork 实际导出的
+# content/*/_annotations.coco.json categories 为准（与原 GCB 17 类页面名不同：
+# 该 fork 将 Full/Partial Black/Sour 简并为 Black/Sour，另含 objects 容器类）。
 # =========================================================================
 ext-scaa17:
-  # —— 映射到 broken ——
-  "Broken":               broken   # 破碎 → broken
-  "Cut":                  broken   # 切割豆 → broken（简报参考映射：cut → broken）
-  # —— 映射到 dried ——
-  "Dry Cherry":           dried    # 干果 → dried（简报参考映射：dry cherry → dried）
-  "Withered":             dried    # 干瘪 → dried（简报参考映射：withered → dried）
-  # —— 映射到 faded ——
-  "Fade":                 faded    # 褪色 → faded
   # —— 映射到 black ——
-  "Full Black":           black    # 全黑豆 → black
-  "Partial Black":        black    # 局部黑 → black
-  # —— 映射到 sour ——
-  "Full Sour":            sour     # 全酸豆 → sour
-  "Partial Sour":         sour     # 局部酸 → sour
+  "Black":          black    # 黑豆（fork 简并 Full/Partial Black）→ black
+  # —— 映射到 broken ——
+  "Broken":         broken   # 破碎 → broken
+  "Cut":            broken   # 切割豆 → broken（简报参考映射：cut → broken）
+  # —— 映射到 dried ——
+  "Dry Cherry":     dried    # 干果 → dried（简报参考映射：dry cherry → dried）
+  "Withered":       dried    # 干瘪 → dried（简报参考映射：withered → dried）
+  # —— 映射到 faded ——
+  "Fade":           faded    # 褪色 → faded
   # —— 映射到 mold ——
-  "Fungus Damange":       mold     # 真菌损伤（页面原拼写）→ mold（简报参考：fungus/moldy → mold）
+  "Fungus Damage":  mold     # 真菌损伤（fork 键名拼写已修正）→ mold
   # —— 映射到 insect ——
-  "Severe Insect Damange": insect  # 重度虫损（页面原拼写）→ insect
-  "Slight Insect Damage":  insect  # 轻度虫损 → insect
+  "Insect Damage":  insect   # 虫损（fork 简并 Severe/Slight）→ insect
   # —— 直接同名 ——
-  "Immature":             immature # 未熟 → immature
-  "Shell":                shell    # 贝壳豆 → shell
-  # —— 明确不映射（3 类；简报：本体系无对应类）——
+  "Immature":       immature # 未熟 → immature
+  "Shell":          shell    # 贝壳豆 → shell
+  "Sour":           sour     # 酸豆（fork 简并 Full/Partial Sour）→ sour
+  # —— 明确不映射（4 类；本体系无对应类）——
   "Floater":   null   # 浮水豆：密度/含水概念，13 类无对应（简报明示 null）
   "Husk":      null   # 壳/果皮杂物：非豆粒缺陷，13 类无对应（简报明示 null）
   "Parchment": null   # 带羊皮纸豆：处理工艺状态概念，13 类无对应（同 husk 逻辑）
+  "objects":   null   # 容器/背景类（fork 导出实测新增，2026-10-03）：非缺陷语义

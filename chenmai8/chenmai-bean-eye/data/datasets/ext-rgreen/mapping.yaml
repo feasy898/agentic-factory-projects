@@ -12,3 +12,4 @@
 ext-rgreen:
   "full-black":    black    # 整粒黑豆 → black（简报参考映射：full black → black）
   "partial-black": black    # 局部黑斑 → black（简报参考映射：partial black → black）
+  "defect-coffee": null     # 粗标缺陷桶（2026-10-03 导出实测新增）：无细分语义，不映射
