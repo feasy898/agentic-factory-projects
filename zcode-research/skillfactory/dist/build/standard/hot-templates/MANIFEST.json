@@ -1,0 +1,101 @@
+{
+  "manifest_version": "1",
+  "skill": "hot-templates",
+  "skill_version": "1.0.0",
+  "variant": "standard",
+  "source_pkg": "hot-templates-skill",
+  "built_by": "build.py v1.0.0",
+  "transforms": {
+    "frontmatter": [
+      "top.version -> metadata.version",
+      "top.permissions -> metadata.permissions"
+    ],
+    "text_normalization": "utf-8 decode; CRLF/CR -> LF (text files only)",
+    "excluded": [
+      "./reference"
+    ],
+    "stripped": [
+      "README.md"
+    ],
+    "added": [
+      "MANIFEST.json"
+    ]
+  },
+  "normalizations": {
+    "text": "utf-8 + LF",
+    "binary": "byte-identical"
+  },
+  "file_count": 14,
+  "files": [
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "4541c73b61bf393812a63311f13703036b5557f3c366b22e9d3290c0bbf532e4",
+      "bytes": 2964
+    },
+    {
+      "path": "EVALUATION.md",
+      "sha256": "6f54c09bc0252a7369033a56985d804694619b1ca35c468ee69218375625ca07",
+      "bytes": 7781
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "fc1d71276934d21069136891d65c1ba29b0d3a96db751a2fdd8c8f308d0fed59",
+      "bytes": 1069
+    },
+    {
+      "path": "MANIFEST.md",
+      "sha256": "ea1338c7ae274016c87fc64b6b2142622e1d7dcf28d525b65b372b58a5b40ed8",
+      "bytes": 1436
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "4c8f9068698934db33f8f21b548da671a5a5419529c5601532d4540fe86f4bce",
+      "bytes": 8686
+    },
+    {
+      "path": "eval/golden.json",
+      "sha256": "19e4b6e11bee018ed8c0842a3a39a651a98c97f2fead0c8e16ee2ed6ddeff186",
+      "bytes": 7002
+    },
+    {
+      "path": "eval/runner.py",
+      "sha256": "a2e41bcefc9a9cb897929af0f9e14e4990f9f3cfe657daa4868aa789da923860",
+      "bytes": 23670
+    },
+    {
+      "path": "references/dy.md",
+      "sha256": "15f10bf4b5b558e58f7ebf3008767bdfb159c24fa3d4eef16e355e544acd6c90",
+      "bytes": 2842
+    },
+    {
+      "path": "references/frozen-tokens.md",
+      "sha256": "4229b293091b3483bb3cff1f8afc9c6ecf7be3e7cffa032340b785cb337e06e0",
+      "bytes": 6781
+    },
+    {
+      "path": "references/video.md",
+      "sha256": "4bfe30f234a33788a21b14ef12ca2de4b2a086d5d1a18fec8334e43dca32c52d",
+      "bytes": 3879
+    },
+    {
+      "path": "references/wx.md",
+      "sha256": "5d5bd63db4c1a57510f6bc941cd492167aa14b6c981278dcf84e94f8c04bc33d",
+      "bytes": 2798
+    },
+    {
+      "path": "references/xhs.md",
+      "sha256": "1ec677bbf7b91d7e3cf37f1549cd26ed3ac1fa36175561686a7e3d23fc14584d",
+      "bytes": 3166
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "8bc7053b27227a8b7969f823fa1b78aeef611746df71238d83f5f9763334f204",
+      "bytes": 304
+    },
+    {
+      "path": "scripts/gen.py",
+      "sha256": "ec0ffe6a065a5f690a992e2053ffbe5e254c7fe941b14e130ed626038f54a0aa",
+      "bytes": 19853
+    }
+  ]
+}

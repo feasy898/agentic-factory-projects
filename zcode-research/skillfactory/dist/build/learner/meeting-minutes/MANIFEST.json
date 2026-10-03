@@ -1,0 +1,104 @@
+{
+  "manifest_version": "1",
+  "skill": "meeting-minutes",
+  "skill_version": "1.0.0",
+  "variant": "learner",
+  "source_pkg": "meeting-minutes-skill",
+  "built_by": "build.py v1.0.0",
+  "transforms": {
+    "frontmatter": [
+      "top.version -> metadata.version",
+      "top.permissions -> metadata.permissions"
+    ],
+    "text_normalization": "utf-8 decode; CRLF/CR -> LF (text files only)",
+    "excluded": [
+      "./reference"
+    ],
+    "stripped": [],
+    "added": [
+      "MANIFEST.json"
+    ]
+  },
+  "normalizations": {
+    "text": "utf-8 + LF",
+    "binary": "byte-identical"
+  },
+  "file_count": 15,
+  "files": [
+    {
+      "path": ".mimosa/hook-state/sess_dwf-dwfrun-b97e21dd-3a2e-4415-87ea-f076bfde01e5-actor_1_1.json",
+      "sha256": "cd64de0d53e6ce0bf2bd0ea3a28369d26a53855ac63e137fdd7519d937c90c94",
+      "bytes": 218
+    },
+    {
+      "path": "CHANGELOG.md",
+      "sha256": "8aa7d155bacbccfb91d0a3702a986da380947b88822e84f1b65b9f966d9bf1e1",
+      "bytes": 1425
+    },
+    {
+      "path": "EVALUATION.md",
+      "sha256": "885b761ef79f354812b04783476de0356aecf7beb88e23fb748a8390b078651c",
+      "bytes": 4782
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "fc1d71276934d21069136891d65c1ba29b0d3a96db751a2fdd8c8f308d0fed59",
+      "bytes": 1069
+    },
+    {
+      "path": "MANIFEST.md",
+      "sha256": "3f055c2bffde5fb00f26c1cdce739510adc72f9ca3e302ab27986db27a36308e",
+      "bytes": 1035
+    },
+    {
+      "path": "README.md",
+      "sha256": "2493ccb1c5017e4478c4af854223779db81a9b7294e5a803e8c2956797aaed68",
+      "bytes": 3034
+    },
+    {
+      "path": "SKILL.md",
+      "sha256": "80cd21ede82c051beed0f456b33421ffbe86e70478802a2a6bc30017cd386e44",
+      "bytes": 6604
+    },
+    {
+      "path": "eval/golden.json",
+      "sha256": "b3be400ae3b4984a1537d4909b9ea379246d8b978d3c8a179c90182c5c854315",
+      "bytes": 4182
+    },
+    {
+      "path": "eval/runner.py",
+      "sha256": "51721efdf7fcb33bca866746c72e52ca3294eb8bd43a2e5d44402793788ab872",
+      "bytes": 11304
+    },
+    {
+      "path": "references/classification-rules.md",
+      "sha256": "4347864b3586e900170a88e5b3a53889107352852ada33a3335172b668ab70fc",
+      "bytes": 2991
+    },
+    {
+      "path": "references/docx-and-summary.md",
+      "sha256": "595000dac3ec67e09ed0c6b5b972dd5ffd334a566ecdd9f9225fd50d10813763",
+      "bytes": 3502
+    },
+    {
+      "path": "references/extraction-heuristics.md",
+      "sha256": "0c6a997ee56e4d1bd24c68689d0f6f7754fefd0af177eb79cf219e5c2fe6626c",
+      "bytes": 3385
+    },
+    {
+      "path": "requirements.txt",
+      "sha256": "dfea9cd01250f46caa09e7e7041e7105cd29d5383c7c3d3fff4a8dd24e79509b",
+      "bytes": 19
+    },
+    {
+      "path": "scripts/gen_docx.py",
+      "sha256": "2b252735a79a4e5df887b2ef079a9584510873167492cbe79b10c8cb9b823f0e",
+      "bytes": 639
+    },
+    {
+      "path": "scripts/minutes.py",
+      "sha256": "630068f4d33206e863cf0f53d6111b6056fe481c25fffd030da8dd783e513f80",
+      "bytes": 10153
+    }
+  ]
+}

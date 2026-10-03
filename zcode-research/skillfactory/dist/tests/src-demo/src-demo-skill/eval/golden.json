@@ -1,0 +1,11 @@
+{
+  "skill": "src-demo",
+  "eval_inputs": [
+    {
+      "case": "case1",
+      "input": "reference/inputs/case1.txt",
+      "output": "reference/out/case1"
+    }
+  ],
+  "ab_tasks": []
+}

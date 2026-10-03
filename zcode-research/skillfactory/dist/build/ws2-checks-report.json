@@ -1,0 +1,142 @@
+[
+  {
+    "id": "AC-1",
+    "pass": true,
+    "detail": "golden exit=0 fails=[]"
+  },
+  {
+    "id": "AC-2..5/r1-name-dir-mismatch",
+    "pass": true,
+    "detail": "exit=1 internal_fails=['name_equals_dir'] target=name_equals_dir"
+  },
+  {
+    "id": "AC-2..5/r2-top-version",
+    "pass": true,
+    "detail": "exit=1 internal_fails=['top_fields_whitelist'] target=top_fields_whitelist"
+  },
+  {
+    "id": "AC-2..5/r3-top-permissions",
+    "pass": true,
+    "detail": "exit=1 internal_fails=['top_fields_whitelist'] target=top_fields_whitelist"
+  },
+  {
+    "id": "AC-2..5/r4-unknown-field",
+    "pass": true,
+    "detail": "exit=1 internal_fails=['top_fields_whitelist'] target=top_fields_whitelist"
+  },
+  {
+    "id": "AC-2..5/r5-no-metadata-version",
+    "pass": true,
+    "detail": "exit=1 internal_fails=['metadata_version_present'] target=metadata_version_present"
+  },
+  {
+    "id": "AC-2..5/r6-no-frontmatter",
+    "pass": true,
+    "detail": "exit=1 internal_fails=['frontmatter_present'] target=frontmatter_present"
+  },
+  {
+    "id": "AC-2..5/r7-no-name",
+    "pass": true,
+    "detail": "exit=1 internal_fails=['name_present'] target=name_present"
+  },
+  {
+    "id": "AC-2..5/r8-desc-1025",
+    "pass": true,
+    "detail": "exit=1 internal_fails=['description_length'] target=description_length"
+  },
+  {
+    "id": "AC-6",
+    "pass": true,
+    "detail": "单一变异源：非目标内部规则命中=无"
+  },
+  {
+    "id": "AC-7",
+    "pass": true,
+    "detail": "隔离 PATH exit=3 fail_closed=True"
+  },
+  {
+    "id": "AC-8",
+    "pass": true,
+    "detail": "留痕：现行体检器 REQUIRED_FIELDS=['name', 'version', 'license', 'description', 'permissions']；与 G0-5 白名单冲突字段=['version', 'permissions']；对齐（体检器升级）属 WS9，届时重跑本条"
+  },
+  {
+    "id": "AC-9",
+    "pass": true,
+    "detail": "v5 package/ 布局 exit=3 refused=True"
+  },
+  {
+    "id": "BP-1",
+    "pass": true,
+    "detail": "standard:OK; claude-code:OK; learner:OK"
+  },
+  {
+    "id": "BP-2",
+    "pass": true,
+    "detail": "metadata.version=0.2.0 metadata.permissions=[shell] top=['description', 'license', 'name'] dir=src-demo"
+  },
+  {
+    "id": "BP-3a",
+    "pass": true,
+    "detail": "无标注源：claude-code 零私字段=True 正文零标注块残留=True"
+  },
+  {
+    "id": "BP-3b",
+    "pass": true,
+    "detail": "含标注源：claude-code 恰生成 allowed-tools 且正文剥离"
+  },
+  {
+    "id": "BP-4",
+    "pass": true,
+    "detail": "smoke 双态：绿 exit=0 红 exit=1"
+  },
+  {
+    "id": "BP-5",
+    "pass": true,
+    "detail": "白名单外 learner 文件被拦=True；standard 剥 README 维持=True"
+  },
+  {
+    "id": "BP-6",
+    "pass": true,
+    "detail": "变换面外差异=无 违禁=无 正文保真=True"
+  },
+  {
+    "id": "BP-7",
+    "pass": true,
+    "detail": "双跑 diff=空"
+  },
+  {
+    "id": "BP-8",
+    "pass": true,
+    "detail": "共享文件逐字节一致=True 差异集=['README.md']（⊆ standard 已剥离人读层）；MANIFEST source_pkg 随源正确=True"
+  },
+  {
+    "id": "BP-9",
+    "pass": true,
+    "detail": "三包×三变体 门+绿+红：全过"
+  },
+  {
+    "id": "HY-1",
+    "pass": true,
+    "detail": "打包输入+产物双侧保留名扫描：源=零命中 产物=零命中"
+  },
+  {
+    "id": "HY-2",
+    "pass": true,
+    "detail": "发布物 CRLF 扫描=零命中（utf-8 严格解码由 is_text_bytes 隐式验证）"
+  },
+  {
+    "id": "HY-3",
+    "pass": true,
+    "detail": "评测留档 json.load=全部可解析"
+  },
+  {
+    "id": "HY-4",
+    "pass": true,
+    "detail": "K-5 发布批准留痕位在修复票（发布亲签动作归 owner，本轮只留位）"
+  },
+  {
+    "id": "HY-5",
+    "pass": true,
+    "detail": "产物无 oracle/reference/违禁目录；MANIFEST.json 9 份均含版本+sha256 指纹"
+  }
+]

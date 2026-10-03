@@ -1,0 +1,4 @@
+# hot-templates-skill 运行依赖
+# 无第三方依赖：scripts/gen.py 与 eval/runner.py 均为纯 Python 标准库
+# （argparse / json / os / re / sys，见各脚本 import 区），无需 pip install。
+# Python >= 3.8（用到 str.reconfigure / dict 保序，3.7+ 特性按 3.8 基线声明）。
