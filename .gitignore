@@ -25,11 +25,12 @@ __pycache__/
 *.zip.orig
 # ---- 工具状态（Mimosa 安全扫描钩子）----
 .mimosa/
+# ---- Windows NUL 设备名残留文件（2026-10-05 追加，绝不入库）----
+nul
+NUL
 # ---- OS/编辑器 ----
 .DS_Store
 Thumbs.db
-.mimosa/
-
 # ---- Windows 保留名文件与本地 bundle（不入库，2026-10-05）----
 nul
 NUL

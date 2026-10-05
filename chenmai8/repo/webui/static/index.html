@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>试玩广告工厂 · 操作台</title>
+<style>
+  :root { --bd: #d0d7de; --dim: #57606a; --acc: #0969da; --ok: #1a7f37; --bad: #cf222e; }
+  * { box-sizing: border-box; }
+  body { font-family: system-ui, "Segoe UI", "Microsoft YaHei", sans-serif;
+         margin: 0 auto; max-width: 860px; padding: 18px 16px 60px; color: #1f2328; line-height: 1.55; }
+  h1 { font-size: 21px; margin: 6px 0 2px; }
+  h1 small { font-size: 12.5px; color: var(--dim); font-weight: 400; margin-left: 8px; }
+  fieldset { border: 1px solid var(--bd); border-radius: 8px; margin: 14px 0; padding: 10px 14px 12px; }
+  legend { font-weight: 600; font-size: 13.5px; padding: 0 6px; }
+  label { font-size: 13px; display: block; margin: 8px 0 3px; color: #333; }
+  input[type=text], input[type=number], select, input[type=url] {
+         width: 100%; padding: 6px 8px; border: 1px solid var(--bd); border-radius: 6px; font-size: 13.5px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .row > div { flex: 1 1 180px; }
+  .tpl { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tpl label { flex: 1 1 120px; margin: 0; border: 1px solid var(--bd); border-radius: 8px;
+               padding: 9px 10px; cursor: pointer; text-align: center; }
+  .tpl input { margin-right: 6px; }
+  .tpl label:has(input:checked) { border-color: var(--acc); background: #ddf4ff; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0 12px; }
+  .dim { color: var(--dim); font-size: 12px; }
+  button#go { width: 100%; padding: 11px; font-size: 15px; font-weight: 600; color: #fff;
+              background: #1f883d; border: 0; border-radius: 8px; cursor: pointer; margin-top: 4px; }
+  button#go:disabled { background: #8c959f; cursor: wait; }
+  pre#log { background: #f6f8fa; border: 1px solid var(--bd); border-radius: 6px;
+            padding: 8px 10px; font-size: 11.5px; max-height: 220px; overflow: auto; white-space: pre-wrap; }
+  .card { border: 1px solid var(--bd); border-radius: 8px; padding: 12px 16px; margin: 14px 0; }
+  .status { font-weight: 700; }
+  .status.queued, .status.running { color: #9a6700; }
+  .status.done { color: var(--ok); }
+  .status.failed { color: var(--bad); }
+  img.qr { width: 168px; height: 168px; image-rendering: pixelated; border: 1px solid var(--bd); }
+  table { border-collapse: collapse; width: 100%; font-size: 12.5px; margin-top: 6px; }
+  th, td { border: 1px solid var(--bd); padding: 4px 8px; text-align: left; }
+  th { background: #f6f8fa; }
+  a { color: var(--acc); word-break: break-all; }
+  .links a { display: inline-block; margin-right: 14px; }
+  #errors { color: var(--bad); font-size: 13px; white-space: pre-wrap; }
+  #history li { margin: 3px 0; font-size: 13px; }
+  .badge { display: inline-block; min-width: 52px; text-align: center; border-radius: 10px;
+           font-size: 11.5px; color: #fff; padding: 1px 8px; }
+  .badge.done { background: var(--ok); } .badge.failed { background: var(--bad); }
+  .badge.queued, .badge.running { background: #9a6700; }
+</style>
+</head>
+<body>
+<h1>试玩广告工厂 · 操作台<small>PlayableSpec → 多渠道可玩广告包（上传 → 流水线 → 二维码 + 质检报告）</small></h1>
+
+<section>
+<fieldset>
+  <legend>① 选模板</legend>
+  <div class="tpl" id="tplRadios"></div>
+  <p class="dim" id="slotHint"></p>
+</fieldset>
+
+<fieldset>
+  <legend>② 填文案（留空用内置缺省，可直接改）</legend>
+  <div class="row">
+    <div><label>语言</label><select id="locale"></select></div>
+    <div style="flex:2 1 260px"><label>标题</label><input type="text" id="title" maxlength="80"></div>
+  </div>
+  <div class="grid">
+    <div><label>CTA（cta）</label><input type="text" id="t_cta" maxlength="40"></div>
+    <div><label>胜利（win）</label><input type="text" id="t_win" maxlength="40"></div>
+    <div><label>失败（lose）</label><input type="text" id="t_lose" maxlength="40"></div>
+    <div><label>得分（score）</label><input type="text" id="t_score" maxlength="40"></div>
+  </div>
+  <label>教程引导（tutorial）</label>
+  <input type="text" id="t_tutorial" maxlength="60">
+</fieldset>
+
+<fieldset>
+  <legend>③ 上传 PNG 素材（可选，按槽位替换；不传用程序化贴图）</legend>
+  <input type="file" id="assets" multiple accept="image/png">
+</fieldset>
+
+<fieldset>
+  <legend>④ 高级（全部可留空）</legend>
+  <div class="grid">
+    <div><label>工程标识 projectId（小写字母/数字/连字符）</label><input type="text" id="projectId" placeholder="webui-&lt;模板&gt;"></div>
+    <div><label>随机种子 seed（留空随机）</label><input type="text" id="seed" placeholder="留空随机"></div>
+    <div style="flex:2 1 260px"><label>落地页 landingUrl（http/https）</label><input type="text" id="landingUrl" placeholder="https://…"></div>
+  </div>
+  <label style="margin-top:10px"><input type="checkbox" id="nearWin" checked> nearWin 吸引点（最后一步险些失败再成）</label>
+</fieldset>
+
+<fieldset>
+  <legend>⑤ 或直接上传 spec JSON（选了它，上面 ①-④ 仅作展示）</legend>
+  <input type="file" id="specFile" accept=".json,application/json">
+  <p class="dim">spec 内 sprites 同名键的上传素材会覆盖原路径；未上传时素材路径按 spec 原值（缺失回退程序化贴图）。</p>
+</fieldset>
+
+<button id="go">生成并质检（约 0.5–1.5 分钟）</button>
+<p id="errors"></p>
+</section>
+
+<section class="card" id="progress" hidden>
+  <div>任务 <b id="jobId"></b> · 状态 <span class="status" id="jobStatus"></span>
+    <span class="dim" id="jobNote"></span></div>
+  <pre id="log"></pre>
+</section>
+
+<section class="card" id="result" hidden>
+  <h2 style="font-size:16px;margin:2px 0 10px">产物</h2>
+  <div class="row">
+    <div style="flex:0 0 180px"><img class="qr" id="qr" alt="预览二维码"><p class="dim">手机扫码即玩（与操作台同一局域网）</p></div>
+    <div style="flex:1 1 300px">
+      <p class="links" id="resLinks"></p>
+      <p class="dim" id="qaLine"></p>
+      <table id="pkgTable"></table>
+    </div>
+  </div>
+</section>
+
+<section class="card" id="historyCard" hidden>
+  <h2 style="font-size:16px;margin:2px 0 6px">最近任务</h2>
+  <ul id="history" style="margin:4px 0;padding-left:20px"></ul>
+</section>
+
+<script>
+"use strict";
+var META = null;
+var $ = function (id) { return document.getElementById(id); };
+var TEXT_KEYS = ["cta", "tutorial", "win", "lose", "score"];
+var currentJob = null, pollTimer = null;
+
+function fillDefaults() {
+  if (!META) return;
+  var tpl = document.querySelector('input[name=tpl]:checked').value;
+  var loc = $("locale").value;
+  var d = (META.defaults[tpl] || {})[loc] || {};
+  $("title").value = d.title || "";
+  TEXT_KEYS.forEach(function (k) { $("t_" + k).value = d[k] || ""; });
+  $("landingUrl").placeholder = META.landingUrlDefault || "https://…";
+  var t = META.templates.find(function (x) { return x.id === tpl; });
+  $("slotHint").textContent = "素材槽位键（文件名同名自动对位，否则按顺序填入）：" + t.spriteSlots.join(" / ");
+}
+
+function init() {
+  fetch("/api/meta").then(function (r) { return r.json(); }).then(function (m) {
+    META = m;
+    $("tplRadios").innerHTML = m.templates.map(function (t, i) {
+      return '<label><input type="radio" name="tpl" value="' + t.id + '"' + (i === 0 ? " checked" : "") + ">" + t.label + "（" + t.id + "）</label>";
+    }).join("");
+    $("locale").innerHTML = m.locales.map(function (l) { return '<option>' + l + '</option>'; }).join("");
+    document.querySelectorAll('input[name=tpl]').forEach(function (el) {
+      el.addEventListener("change", fillDefaults);
+    });
+    $("locale").addEventListener("change", fillDefaults);
+    fillDefaults();
+    refreshHistory();
+  });
+}
+
+$("go").addEventListener("click", function () {
+  $("errors").textContent = "";
+  var fd = new FormData();
+  if ($("specFile").files.length) {
+    fd.append("spec", $("specFile").files[0]);
+  } else {
+    fd.append("template", document.querySelector('input[name=tpl]:checked').value);
+    fd.append("locale", $("locale").value);
+    fd.append("title", $("title").value);
+    fd.append("project_id", $("projectId").value);
+    fd.append("seed", $("seed").value);
+    fd.append("landing_url", $("landingUrl").value);
+    fd.append("near_win", $("nearWin").checked ? "true" : "false");
+    TEXT_KEYS.forEach(function (k) { fd.append(k, $("t_" + k).value); });
+  }
+  Array.prototype.forEach.call($("assets").files, function (f) { fd.append("assets", f, f.name); });
+
+  $("go").disabled = true;
+  fetch("/api/build", { method: "POST", body: fd }).then(function (r) {
+    return r.json().then(function (body) { return { ok: r.ok, body: body }; });
+  }).then(function (res) {
+    if (!res.ok) {
+      var d = res.body && res.body.detail;
+      $("errors").textContent = typeof d === "string" ? d : (d && d.errors ? d.errors.join("\n") : JSON.stringify(res.body));
+      $("go").disabled = false;
+      return;
+    }
+    currentJob = res.body.id;
+    $("progress").hidden = false;
+    $("result").hidden = true;
+    $("jobId").textContent = res.body.id;
+    poll();
+  }).catch(function (e) { $("errors").textContent = "请求失败：" + e; $("go").disabled = false; });
+});
+
+function poll() {
+  if (!currentJob) return;
+  fetch("/api/jobs/" + currentJob).then(function (r) { return r.json(); }).then(function (j) {
+    $("jobStatus").textContent = j.status;
+    $("jobStatus").className = "status " + j.status;
+    $("jobNote").textContent = (j.projectId ? "· " + j.projectId + "/" + j.locale : "") +
+      (j.notes && j.notes.length ? " · " + j.notes.join("；") : "");
+    $("log").textContent = j.logTail || "（流水线日志）";
+    if (j.status === "done") { renderResult(j); $("go").disabled = false; refreshHistory(); return; }
+    if (j.status === "failed") { $("go").disabled = false; refreshHistory(); return; }
+    pollTimer = setTimeout(poll, 1500);
+  }).catch(function () { pollTimer = setTimeout(poll, 2500); });
+}
+
+function renderResult(j) {
+  $("result").hidden = false;
+  $("qr").src = j.links.qr;
+  $("resLinks").innerHTML =
+    '<a href="' + j.links.preview + '" target="_blank" rel="noopener">▶ 预览（点击即玩）</a>' +
+    '<a href="' + j.links.summary + '" target="_blank" rel="noopener">汇总页</a>' +
+    '<a href="' + j.links.report + '" target="_blank" rel="noopener">质检报告</a>';
+  $("qaLine").textContent = "质检（" + j.qa.channel + "/" + j.qa.locale + "）：pass " + j.qa.pass +
+    " · fail " + j.qa.fail + " · skip " + j.qa.skip +
+    " · pf:ready " + j.qa.readyMs + "ms · pf:end " + j.qa.endMs + "ms（win=" + j.qa.endWin + "）· 加载 " + j.qa.loadMs + "ms · 墙钟 " + j.wallSec + "s";
+  $("pkgTable").innerHTML = "<tr><th>渠道</th><th>语言</th><th>形态</th><th>字节/上限</th><th>产物</th></tr>" +
+    j.packages.map(function (p) {
+      return "<tr><td>" + p.channel + "</td><td>" + p.locale + "</td><td>" + p.format + "</td><td>" +
+        p.bytes.toLocaleString() + " / " + p.maxBytes.toLocaleString() + '</td><td><a href="' + p.href + '">' + p.href.split("/").pop() + "</a></td></tr>";
+    }).join("");
+}
+
+function refreshHistory() {
+  fetch("/api/jobs").then(function (r) { return r.json(); }).then(function (list) {
+    $("historyCard").hidden = !list.length;
+    $("history").innerHTML = list.slice(0, 8).map(function (j) {
+      return '<li><span class="badge ' + j.status + '">' + j.status + "</span> <code>" + j.id + "</code> " +
+        (j.projectId || "") + "/" + (j.locale || "") + " · " + (j.finishedAt || j.createdAt) +
+        ' <a href="/api/jobs/' + j.id + '">状态</a></li>';
+    }).join("");
+  });
+}
+
+init();
+</script>
+</body>
+</html>

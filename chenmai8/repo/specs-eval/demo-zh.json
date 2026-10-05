@@ -1,0 +1,71 @@
+{
+  "specVersion": "1.0.0",
+  "meta": {
+    "projectId": "demo-zh",
+    "title": "宝石消消乐（试玩演示）",
+    "seed": 20261008
+  },
+  "game": {
+    "template": "match3",
+    "params": {
+      "cols": 6,
+      "rows": 6,
+      "moves": 15,
+      "colors": 5,
+      "goalType": "clear-jelly",
+      "goalCount": 30,
+      "spriteKeys": ["piece-0", "piece-1", "piece-2", "piece-3", "piece-4"]
+    },
+    "difficulty": { "targetLevel": 0.4 },
+    "attract": { "nearWin": true, "failBait": false, "firstClickSucceed": true },
+    "durationBudgetSec": { "target": 20, "max": 30 }
+  },
+  "flow": {
+    "tutorial": { "enabled": true, "gesture": "drag", "maxSec": 4 },
+    "endScreen": {
+      "showScore": true,
+      "ctaKey": "cta",
+      "landingUrl": "https://example.com/playable-lp"
+    }
+  },
+  "assets": {
+    "background": "assets/theme-a/bg-portrait.png",
+    "sprites": {
+      "piece-0": "specs-eval/assets/demo-zh/piece-0.png"
+    },
+    "audio": {}
+  },
+  "i18n": {
+    "defaultLocale": "zh",
+    "locales": ["zh", "en"],
+    "strings": {
+      "zh": {
+        "cta": "立即下载",
+        "tutorial": "拖动宝石，三个同色连成一线！",
+        "win": "通关啦！",
+        "lose": "再试一次！",
+        "score": "得分"
+      },
+      "en": {
+        "cta": "Play Now",
+        "tutorial": "Drag to match 3 gems!",
+        "win": "You Win!",
+        "lose": "Try Again!",
+        "score": "Score"
+      }
+    },
+    "rtl": []
+  },
+  "channels": {
+    "targets": ["applovin", "meta", "mintegral"],
+    "orientation": "portrait",
+    "overrides": {
+      "applovin": { "maxBytes": 5242880, "ctaStyle": "banner" },
+      "meta": { "maxBytes": 3145728, "ctaStyle": "endcard" }
+    }
+  },
+  "qc": {
+    "maxLoadSec": 3.0,
+    "autoplayTimeoutSec": 45
+  }
+}
