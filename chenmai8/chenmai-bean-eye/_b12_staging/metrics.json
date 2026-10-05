@@ -1,0 +1,1436 @@
+{
+  "prepared_by": "train/retrain_real.py（beaneye 批5 真实重训对照线）",
+  "recipe": "B-mixed",
+  "gate_basis": "决胜=真实照片探针 train/eval_real_probe.py；对照门槛=合成 test macro-F1≥0.85（批4=0.906766）",
+  "args": {
+    "dry_run": false,
+    "real_roots": [
+      "/data/coffee-bean/crops-web-b11",
+      "/data/coffee-bean/zenodo-normal-b11",
+      "/data/coffee-bean/crops-ext/ext-main",
+      "/data/coffee-bean/crops-ext/ext-scaa17",
+      "/data/coffee-bean/crops-ext/ext-rgreen"
+    ],
+    "synth_root": "/data/coffee-bean/crops",
+    "synth_eval_root": null,
+    "real_repeat": 3,
+    "out": "train/runs/b11_clean_retrain",
+    "epochs": 8,
+    "batch": 256,
+    "lr": 0.0003,
+    "size": 224,
+    "device": "cuda:0",
+    "workers": 8,
+    "seed": 0,
+    "imbalance": "loss-weight",
+    "limit_per_class": 0,
+    "check_gates": true
+  },
+  "classes": [
+    "normal",
+    "broken",
+    "faded",
+    "brocade",
+    "immature",
+    "peaberry",
+    "shell",
+    "elephant",
+    "insect",
+    "dried",
+    "sour",
+    "mold",
+    "black"
+  ],
+  "weights_source": "IMAGENET1K_V1（torchvision 预训练，BSD）",
+  "selection": {
+    "metric": "real_valid_macro_f1_supported",
+    "note": "真实 valid 合并集、有 support 类的 macro-F1（两配方一致；全 13 类口径同记；0-support 类真实训练不存在样本）"
+  },
+  "imbalance": {
+    "method": "loss-weight",
+    "formula": "w_c = 1/log(1.02 + n_eff_c)，n_eff_c = 合成(若混入) + 真实×repeat",
+    "class_weights": {
+      "normal": 0.097535,
+      "broken": 0.099166,
+      "faded": 0.108698,
+      "brocade": 0.101046,
+      "immature": 0.108786,
+      "peaberry": 0.105579,
+      "shell": 0.106498,
+      "elephant": 0.106299,
+      "insect": 0.100894,
+      "dried": 0.099127,
+      "sour": 0.100938,
+      "mold": 0.100938,
+      "black": 0.095745
+    }
+  },
+  "data": {
+    "real_roots": [
+      "/data/coffee-bean/crops-web-b11",
+      "/data/coffee-bean/zenodo-normal-b11",
+      "/data/coffee-bean/crops-ext/ext-main",
+      "/data/coffee-bean/crops-ext/ext-scaa17",
+      "/data/coffee-bean/crops-ext/ext-rgreen"
+    ],
+    "synth_root": "/data/coffee-bean/crops",
+    "synth_eval_root": null,
+    "real_repeat": 3,
+    "real_train": 13220,
+    "real_train_effective": 39660,
+    "synth_train": 208058,
+    "real_gradient_share_pct": 16.01,
+    "zero_train_classes": [
+      "brocade"
+    ],
+    "counts": {
+      "real_train_merged": {
+        "normal": 2786,
+        "broken": 1319,
+        "faded": 40,
+        "brocade": 0,
+        "immature": 77,
+        "peaberry": 1002,
+        "shell": 733,
+        "elephant": 708,
+        "insect": 163,
+        "dried": 1351,
+        "sour": 157,
+        "mold": 101,
+        "black": 4783
+      },
+      "real_valid_merged": {
+        "normal": 489,
+        "broken": 228,
+        "faded": 10,
+        "brocade": 0,
+        "immature": 16,
+        "peaberry": 108,
+        "shell": 79,
+        "elephant": 63,
+        "insect": 75,
+        "dried": 173,
+        "sour": 271,
+        "mold": 14,
+        "black": 1436
+      },
+      "real_by_root": {
+        "/data/coffee-bean/crops-web-b11": {
+          "train": {
+            "normal": 829,
+            "broken": 14,
+            "faded": 0,
+            "brocade": 0,
+            "immature": 0,
+            "peaberry": 0,
+            "shell": 0,
+            "elephant": 0,
+            "insect": 13,
+            "dried": 0,
+            "sour": 0,
+            "mold": 2,
+            "black": 16
+          },
+          "valid": {
+            "normal": 137,
+            "broken": 1,
+            "faded": 0,
+            "brocade": 0,
+            "immature": 0,
+            "peaberry": 0,
+            "shell": 0,
+            "elephant": 0,
+            "insect": 1,
+            "dried": 0,
+            "sour": 0,
+            "mold": 0,
+            "black": 2
+          }
+        },
+        "/data/coffee-bean/zenodo-normal-b11": {
+          "train": {
+            "normal": 1006,
+            "broken": 0,
+            "faded": 0,
+            "brocade": 0,
+            "immature": 0,
+            "peaberry": 0,
+            "shell": 0,
+            "elephant": 0,
+            "insect": 0,
+            "dried": 0,
+            "sour": 0,
+            "mold": 0,
+            "black": 0
+          },
+          "valid": {
+            "normal": 252,
+            "broken": 0,
+            "faded": 0,
+            "brocade": 0,
+            "immature": 0,
+            "peaberry": 0,
+            "shell": 0,
+            "elephant": 0,
+            "insect": 0,
+            "dried": 0,
+            "sour": 0,
+            "mold": 0,
+            "black": 0
+          }
+        },
+        "/data/coffee-bean/crops-ext/ext-main": {
+          "train": {
+            "normal": 951,
+            "broken": 1137,
+            "faded": 0,
+            "brocade": 0,
+            "immature": 0,
+            "peaberry": 1002,
+            "shell": 660,
+            "elephant": 708,
+            "insect": 0,
+            "dried": 1212,
+            "sour": 0,
+            "mold": 0,
+            "black": 1473
+          },
+          "valid": {
+            "normal": 100,
+            "broken": 194,
+            "faded": 0,
+            "brocade": 0,
+            "immature": 0,
+            "peaberry": 108,
+            "shell": 67,
+            "elephant": 63,
+            "insect": 48,
+            "dried": 152,
+            "sour": 245,
+            "mold": 0,
+            "black": 189
+          }
+        },
+        "/data/coffee-bean/crops-ext/ext-scaa17": {
+          "train": {
+            "normal": 0,
+            "broken": 168,
+            "faded": 40,
+            "brocade": 0,
+            "immature": 77,
+            "peaberry": 0,
+            "shell": 73,
+            "elephant": 0,
+            "insect": 150,
+            "dried": 139,
+            "sour": 157,
+            "mold": 99,
+            "black": 161
+          },
+          "valid": {
+            "normal": 0,
+            "broken": 33,
+            "faded": 10,
+            "brocade": 0,
+            "immature": 16,
+            "peaberry": 0,
+            "shell": 12,
+            "elephant": 0,
+            "insect": 26,
+            "dried": 21,
+            "sour": 26,
+            "mold": 14,
+            "black": 18
+          }
+        },
+        "/data/coffee-bean/crops-ext/ext-rgreen": {
+          "train": {
+            "normal": 0,
+            "broken": 0,
+            "faded": 0,
+            "brocade": 0,
+            "immature": 0,
+            "peaberry": 0,
+            "shell": 0,
+            "elephant": 0,
+            "insect": 0,
+            "dried": 0,
+            "sour": 0,
+            "mold": 0,
+            "black": 3133
+          },
+          "valid": {
+            "normal": 0,
+            "broken": 0,
+            "faded": 0,
+            "brocade": 0,
+            "immature": 0,
+            "peaberry": 0,
+            "shell": 0,
+            "elephant": 0,
+            "insect": 0,
+            "dried": 0,
+            "sour": 0,
+            "mold": 0,
+            "black": 1227
+          }
+        }
+      },
+      "synth": {
+        "train": {
+          "normal": 20000,
+          "broken": 20000,
+          "faded": 9774,
+          "brocade": 19860,
+          "immature": 9590,
+          "peaberry": 9978,
+          "shell": 9766,
+          "elephant": 10054,
+          "insect": 19668,
+          "dried": 20000,
+          "sour": 19600,
+          "mold": 19768,
+          "black": 20000
+        },
+        "valid": {
+          "normal": 20000,
+          "broken": 778,
+          "faded": 252,
+          "brocade": 464,
+          "immature": 252,
+          "peaberry": 276,
+          "shell": 266,
+          "elephant": 270,
+          "insect": 506,
+          "dried": 454,
+          "sour": 512,
+          "mold": 476,
+          "black": 760
+        },
+        "test": {
+          "normal": 20000,
+          "broken": 734,
+          "faded": 236,
+          "brocade": 506,
+          "immature": 254,
+          "peaberry": 248,
+          "shell": 278,
+          "elephant": 238,
+          "insect": 526,
+          "dried": 456,
+          "sour": 526,
+          "mold": 456,
+          "black": 808
+        }
+      }
+    }
+  },
+  "train_seconds": 1682.2,
+  "best_epoch": 5,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.080561,
+      "lr": 0.0003,
+      "real_valid_macro_f1_supported": 0.716068,
+      "real_valid_macro_f1_all13": 0.660986,
+      "synth_valid_macro_f1": 0.901298,
+      "seconds": 208.4
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.039185,
+      "lr": 0.000288581929876693,
+      "real_valid_macro_f1_supported": 0.701801,
+      "real_valid_macro_f1_all13": 0.647816,
+      "synth_valid_macro_f1": 0.915384,
+      "seconds": 194.5
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.029969,
+      "lr": 0.0002560660171779821,
+      "real_valid_macro_f1_supported": 0.690126,
+      "real_valid_macro_f1_all13": 0.637039,
+      "synth_valid_macro_f1": 0.892345,
+      "seconds": 194.2
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.022634,
+      "lr": 0.00020740251485476348,
+      "real_valid_macro_f1_supported": 0.694505,
+      "real_valid_macro_f1_all13": 0.641082,
+      "synth_valid_macro_f1": 0.889698,
+      "seconds": 194.6
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.016843,
+      "lr": 0.00015,
+      "real_valid_macro_f1_supported": 0.74391,
+      "real_valid_macro_f1_all13": 0.686686,
+      "synth_valid_macro_f1": 0.870761,
+      "seconds": 195.4
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.01144,
+      "lr": 9.259748514523653e-05,
+      "real_valid_macro_f1_supported": 0.726928,
+      "real_valid_macro_f1_all13": 0.671011,
+      "synth_valid_macro_f1": 0.889723,
+      "seconds": 195.5
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.007331,
+      "lr": 4.3933982822017876e-05,
+      "real_valid_macro_f1_supported": 0.732174,
+      "real_valid_macro_f1_all13": 0.675853,
+      "synth_valid_macro_f1": 0.877339,
+      "seconds": 197.1
+    },
+    {
+      "epoch": 8,
+      "train_loss": 0.004084,
+      "lr": 1.1418070123306989e-05,
+      "real_valid_macro_f1_supported": 0.736671,
+      "real_valid_macro_f1_all13": 0.680004,
+      "synth_valid_macro_f1": 0.882911,
+      "seconds": 200.1
+    }
+  ],
+  "eval": {
+    "real_valid": {
+      "macro_f1": 0.686686,
+      "accuracy": 0.889939,
+      "per_class": {
+        "normal": {
+          "precision": 0.903882,
+          "recall": 1.0,
+          "f1": 0.949515,
+          "support": 489
+        },
+        "broken": {
+          "precision": 0.884,
+          "recall": 0.969298,
+          "f1": 0.924686,
+          "support": 228
+        },
+        "faded": {
+          "precision": 1.0,
+          "recall": 0.6,
+          "f1": 0.75,
+          "support": 10
+        },
+        "brocade": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 0
+        },
+        "immature": {
+          "precision": 0.833333,
+          "recall": 0.625,
+          "f1": 0.714286,
+          "support": 16
+        },
+        "peaberry": {
+          "precision": 0.877049,
+          "recall": 0.990741,
+          "f1": 0.930435,
+          "support": 108
+        },
+        "shell": {
+          "precision": 0.73913,
+          "recall": 0.860759,
+          "f1": 0.795322,
+          "support": 79
+        },
+        "elephant": {
+          "precision": 0.302439,
+          "recall": 0.984127,
+          "f1": 0.462687,
+          "support": 63
+        },
+        "insect": {
+          "precision": 0.892857,
+          "recall": 0.333333,
+          "f1": 0.485437,
+          "support": 75
+        },
+        "dried": {
+          "precision": 0.933333,
+          "recall": 0.971098,
+          "f1": 0.951841,
+          "support": 173
+        },
+        "sour": {
+          "precision": 0.87234,
+          "recall": 0.151292,
+          "f1": 0.257862,
+          "support": 271
+        },
+        "mold": {
+          "precision": 0.818182,
+          "recall": 0.642857,
+          "f1": 0.72,
+          "support": 14
+        },
+        "black": {
+          "precision": 0.974114,
+          "recall": 0.995822,
+          "f1": 0.984848,
+          "support": 1436
+        }
+      },
+      "confusion_matrix": [
+        [
+          489,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          3,
+          221,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          2
+        ],
+        [
+          0,
+          3,
+          6,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          10,
+          0,
+          1,
+          0,
+          0,
+          5,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          107,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          3,
+          0,
+          0,
+          0,
+          0,
+          68,
+          3,
+          1,
+          3,
+          1,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          62,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          35,
+          4,
+          0,
+          0,
+          0,
+          1,
+          0,
+          5,
+          25,
+          0,
+          0,
+          1,
+          4
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          0,
+          168,
+          2,
+          0,
+          1
+        ],
+        [
+          12,
+          19,
+          0,
+          0,
+          0,
+          13,
+          22,
+          133,
+          0,
+          3,
+          41,
+          0,
+          28
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          1,
+          9,
+          3
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          1430
+        ]
+      ],
+      "confusion_note": "行=真值、列=预测，顺序与 classes 一致",
+      "macro_f1_supported": 0.74391,
+      "supported_classes": [
+        "normal",
+        "broken",
+        "faded",
+        "immature",
+        "peaberry",
+        "shell",
+        "elephant",
+        "insect",
+        "dried",
+        "sour",
+        "mold",
+        "black"
+      ]
+    },
+    "synth_valid": {
+      "macro_f1": 0.870761,
+      "accuracy": 0.85336,
+      "per_class": {
+        "normal": {
+          "precision": 0.998716,
+          "recall": 0.8166,
+          "f1": 0.898523,
+          "support": 20000
+        },
+        "broken": {
+          "precision": 0.998716,
+          "recall": 1.0,
+          "f1": 0.999358,
+          "support": 778
+        },
+        "faded": {
+          "precision": 0.996047,
+          "recall": 1.0,
+          "f1": 0.99802,
+          "support": 252
+        },
+        "brocade": {
+          "precision": 0.958592,
+          "recall": 0.997845,
+          "f1": 0.977825,
+          "support": 464
+        },
+        "immature": {
+          "precision": 0.191506,
+          "recall": 0.984127,
+          "f1": 0.320621,
+          "support": 252
+        },
+        "peaberry": {
+          "precision": 1.0,
+          "recall": 0.996377,
+          "f1": 0.998185,
+          "support": 276
+        },
+        "shell": {
+          "precision": 0.970803,
+          "recall": 1.0,
+          "f1": 0.985185,
+          "support": 266
+        },
+        "elephant": {
+          "precision": 0.090147,
+          "recall": 0.955556,
+          "f1": 0.164751,
+          "support": 270
+        },
+        "insect": {
+          "precision": 0.99798,
+          "recall": 0.976285,
+          "f1": 0.987013,
+          "support": 506
+        },
+        "dried": {
+          "precision": 1.0,
+          "recall": 0.995595,
+          "f1": 0.997792,
+          "support": 454
+        },
+        "sour": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 512
+        },
+        "mold": {
+          "precision": 0.995772,
+          "recall": 0.989496,
+          "f1": 0.992624,
+          "support": 476
+        },
+        "black": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 760
+        }
+      },
+      "confusion_matrix": [
+        [
+          16332,
+          0,
+          0,
+          19,
+          1047,
+          0,
+          0,
+          2599,
+          1,
+          0,
+          0,
+          2,
+          0
+        ],
+        [
+          0,
+          778,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          252,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          463,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          0,
+          0,
+          248,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0,
+          275,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          266,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          12,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          258,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          8,
+          4,
+          494,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          452,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          512,
+          0,
+          0
+        ],
+        [
+          3,
+          1,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          471,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          760
+        ]
+      ],
+      "confusion_note": "行=真值、列=预测，顺序与 classes 一致",
+      "macro_f1_supported": 0.870761,
+      "supported_classes": [
+        "normal",
+        "broken",
+        "faded",
+        "brocade",
+        "immature",
+        "peaberry",
+        "shell",
+        "elephant",
+        "insect",
+        "dried",
+        "sour",
+        "mold",
+        "black"
+      ]
+    },
+    "synth_test": {
+      "macro_f1": 0.868916,
+      "accuracy": 0.853558,
+      "per_class": {
+        "normal": {
+          "precision": 0.999266,
+          "recall": 0.81685,
+          "f1": 0.898897,
+          "support": 20000
+        },
+        "broken": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 734
+        },
+        "faded": {
+          "precision": 0.995781,
+          "recall": 1.0,
+          "f1": 0.997886,
+          "support": 236
+        },
+        "brocade": {
+          "precision": 0.98062,
+          "recall": 1.0,
+          "f1": 0.990215,
+          "support": 506
+        },
+        "immature": {
+          "precision": 0.197295,
+          "recall": 0.976378,
+          "f1": 0.328259,
+          "support": 254
+        },
+        "peaberry": {
+          "precision": 0.991968,
+          "recall": 0.995968,
+          "f1": 0.993964,
+          "support": 248
+        },
+        "shell": {
+          "precision": 0.929766,
+          "recall": 1.0,
+          "f1": 0.963605,
+          "support": 278
+        },
+        "elephant": {
+          "precision": 0.081335,
+          "recall": 0.983193,
+          "f1": 0.150241,
+          "support": 238
+        },
+        "insect": {
+          "precision": 1.0,
+          "recall": 0.952471,
+          "f1": 0.975657,
+          "support": 526
+        },
+        "dried": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 456
+        },
+        "sour": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 526
+        },
+        "mold": {
+          "precision": 0.997807,
+          "recall": 0.997807,
+          "f1": 0.997807,
+          "support": 456
+        },
+        "black": {
+          "precision": 0.998764,
+          "recall": 1.0,
+          "f1": 0.999382,
+          "support": 808
+        }
+      },
+      "confusion_matrix": [
+        [
+          16337,
+          0,
+          0,
+          10,
+          1009,
+          2,
+          0,
+          2640,
+          0,
+          0,
+          0,
+          1,
+          1
+        ],
+        [
+          0,
+          734,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          236,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          506,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          6,
+          0,
+          0,
+          0,
+          248,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          0,
+          0,
+          247,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          278,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          234,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          21,
+          3,
+          501,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          456,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          526,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          455,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          808
+        ]
+      ],
+      "confusion_note": "行=真值、列=预测，顺序与 classes 一致",
+      "macro_f1_supported": 0.868916,
+      "supported_classes": [
+        "normal",
+        "broken",
+        "faded",
+        "brocade",
+        "immature",
+        "peaberry",
+        "shell",
+        "elephant",
+        "insect",
+        "dried",
+        "sour",
+        "mold",
+        "black"
+      ]
+    }
+  },
+  "top_confusions": {
+    "real_valid": [
+      {
+        "count": 133,
+        "true": "sour",
+        "pred": "elephant"
+      },
+      {
+        "count": 35,
+        "true": "insect",
+        "pred": "normal"
+      },
+      {
+        "count": 28,
+        "true": "sour",
+        "pred": "black"
+      },
+      {
+        "count": 22,
+        "true": "sour",
+        "pred": "shell"
+      },
+      {
+        "count": 19,
+        "true": "sour",
+        "pred": "broken"
+      }
+    ],
+    "synth_valid": [
+      {
+        "count": 2599,
+        "true": "normal",
+        "pred": "elephant"
+      },
+      {
+        "count": 1047,
+        "true": "normal",
+        "pred": "immature"
+      },
+      {
+        "count": 19,
+        "true": "normal",
+        "pred": "brocade"
+      },
+      {
+        "count": 12,
+        "true": "elephant",
+        "pred": "normal"
+      },
+      {
+        "count": 8,
+        "true": "insect",
+        "pred": "shell"
+      }
+    ],
+    "synth_test": [
+      {
+        "count": 2640,
+        "true": "normal",
+        "pred": "elephant"
+      },
+      {
+        "count": 1009,
+        "true": "normal",
+        "pred": "immature"
+      },
+      {
+        "count": 21,
+        "true": "insect",
+        "pred": "shell"
+      },
+      {
+        "count": 10,
+        "true": "normal",
+        "pred": "brocade"
+      },
+      {
+        "count": 6,
+        "true": "immature",
+        "pred": "normal"
+      }
+    ]
+  },
+  "export": {
+    "onnx_path": "/home/anuser/agentic-factory-projects/chenmai8/chenmai-bean-eye/train/runs/b11_clean_retrain/crop_cls.onnx",
+    "opset": 17,
+    "static_input": [
+      1,
+      3,
+      224,
+      224
+    ],
+    "exporter": "torchscript(dynamo=False)",
+    "seconds": 0.4,
+    "bytes": 44723222,
+    "sha256": "f3a43c7aaf2071945aea3a584950c9373ba598b4fab611d15449df950959ff98",
+    "parity_max_abs_diff": 7.152557373046875e-07,
+    "bench_batch64": {
+      "onnx_path": "/home/anuser/agentic-factory-projects/chenmai8/chenmai-bean-eye/train/runs/b11_clean_retrain/crop_cls_b64.onnx",
+      "bytes": 44723222,
+      "sha256": "7e8eaa27c9a7a7340a903c388836143646c924053b4a9f7cae775fffc1bf6750",
+      "note": "仅 batch64 吞吐测速用，非交付件"
+    }
+  },
+  "latency": {
+    "device": "CPU（本机 os.cpu_count=16；GPU 机 16 核，非部署目标机，口径如实记录）",
+    "onnxruntime": "1.30.0",
+    "session": {
+      "providers": [
+        "CPUExecutionProvider"
+      ],
+      "intra_op_num_threads": 0,
+      "intra_op_note": "0 = 默认用满物理核"
+    },
+    "batch1": {
+      "runs": 100,
+      "mean_ms": 4.909,
+      "p50_ms": 4.664,
+      "p95_ms": 5.161
+    },
+    "batch64": {
+      "runs": 20,
+      "mean_ms_per_batch": 245.8,
+      "mean_ms_per_image": 3.84,
+      "throughput_imgs_per_s": 260.4
+    }
+  },
+  "gates": {
+    "synth_test_macro_f1": {
+      "basis": "批5 对照门槛：合成 test macro-F1≥0.85（批4=0.906766；决胜=真实照片探针）",
+      "threshold": 0.85,
+      "value": 0.868916,
+      "pass": true,
+      "not_evaluated": false
+    }
+  },
+  "total_seconds": 1691.6
+}

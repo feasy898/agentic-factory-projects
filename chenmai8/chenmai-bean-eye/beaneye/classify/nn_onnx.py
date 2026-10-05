@@ -9,6 +9,12 @@
 可零改动换入。**缺省产品行为不变**：``beaneye.classify.build_default()``
 仍返回 RulesV0；NN 头按需显式构造（实时侧开关见 ``beaneye.realtime``）。
 
+部署状态（批13，2026-10-04）
+    缺省 ``DEFAULT_TAU`` = **0.1**（批13 缺陷过采样×8 重训 ONNX 的 τ 扫描
+    推荐工作点）；缺省 ONNX = ``train/runs/crop_cls/b13_winner.onnx``
+    （demo 实时侧 ``--nn-onnx`` 缺省已指向）。胜者判定、探针三数与档案见
+    ``train/runs/crop_cls/DEPLOYED.md``。以下批9/批10 记录为历史沿革，保留。
+
 权重来源（批9 产物，不入库；``*.onnx`` 随 .gitignore 忽略）
     ``train/runs/crop_cls/b9.onnx``（44 MB，opset 17，静态输入
     ``1×3×224×224``，输出 13 维 logits，类别序 = taxonomy
@@ -61,8 +67,9 @@ from beaneye.taxonomy import Taxonomy, load_taxonomy
 
 __all__ = ["NnOnnxClassifier", "NnOnnxError", "DEFAULT_TAU"]
 
-# τ 缺省工作点（批10 阈值扫描推荐值，出处见模块 docstring）
-DEFAULT_TAU = 0.13
+# τ 缺省工作点（批13 部署工作点 = 批13 τ 扫描推荐值，判定与探针三数见
+# train/runs/crop_cls/DEPLOYED.md；批10 时代缺省 0.13，批13 起替换）
+DEFAULT_TAU = 0.1
 
 # ImageNet 归一化常数（训练口径；train/crop_classifier.py 同值）
 _IMAGENET_MEAN = np.array([0.485, 0.456, 0.406], dtype=np.float32)
@@ -102,7 +109,7 @@ class NnOnnxClassifier:
         onnx_path:
             ONNX 模型路径（惰性加载：首次 ``classify`` 才读文件/建会话）。
         tau:
-            缺陷判决阈值（缺省 0.13 = 批10 扫描推荐工作点）。
+            缺陷判决阈值（缺省 0.1 = 批13 部署工作点，档案 DEPLOYED.md）。
         classes:
             输出类别表（须与训练类别序一致）；缺省取 taxonomy
             ``severity_order``（批9 训练类别表即此序，第 0 位 = normal）。

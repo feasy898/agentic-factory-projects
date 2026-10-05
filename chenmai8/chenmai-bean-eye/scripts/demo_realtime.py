@@ -94,10 +94,10 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--pool", type=int, default=2, help="合成源预合成盘数（循环播放，默认 2）")
     p.add_argument("--classifier", choices=("rules", "nn"), default="rules",
                    help="分类器开关（批10；默认 rules=产品现状）")
-    p.add_argument("--nn-onnx", default="train/runs/crop_cls/b9.onnx",
-                   help="NN 分类头 ONNX 路径（classifier=nn 时用，默认批9 海南域头）")
-    p.add_argument("--tau", type=float, default=0.13,
-                   help="NN 缺陷判决阈值 τ（批10 扫描推荐工作点，默认 0.13）")
+    p.add_argument("--nn-onnx", default="train/runs/crop_cls/b13_winner.onnx",
+                   help="NN 分类头 ONNX 路径（classifier=nn 时用，默认批13 过采样重训头）")
+    p.add_argument("--tau", type=float, default=0.1,
+                   help="NN 缺陷判决阈值 τ（批13 τ 扫描推荐工作点，默认 0.1）")
     return p
 
 

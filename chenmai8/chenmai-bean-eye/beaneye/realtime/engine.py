@@ -72,9 +72,10 @@ def build_classifier(
     *,
     tau: float = DEFAULT_TAU,
 ) -> RulesV0 | NnOnnxClassifier:
-    """分类器开关装配（批10）：``rules`` → RulesV0（缺省，产品现状）；
-    ``nn`` → NnOnnxClassifier(onnx, τ)（批9 海南域 ONNX 头，τ=批10 扫描
-    推荐工作点 0.13）。两实现满足同一冻结分类协议，引擎无差别调用。
+    """分类器开关装配（批10 引入）：``rules`` → RulesV0（缺省，产品现状）；
+    ``nn`` → NnOnnxClassifier(onnx, τ)（τ 缺省随 ``DEFAULT_TAU`` = 批13
+    部署工作点 0.1，档案 train/runs/crop_cls/DEPLOYED.md）。两实现满足同一
+    冻结分类协议，引擎无差别调用。
     """
     if choice == "rules":
         return RulesV0()

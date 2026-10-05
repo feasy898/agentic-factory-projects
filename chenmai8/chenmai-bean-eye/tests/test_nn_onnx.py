@@ -85,10 +85,11 @@ def mask() -> BeanMask:
 
 
 def test_default_tau_is_sweep_recommendation():
-    """τ 缺省 = 0.13（批10 扫描推荐工作点：检出 56.36% 过 55% 门 / normal
-    66.47% 距 70% 门 3.53pt；两门实测不可同时满足）。"""
-    assert DEFAULT_TAU == 0.13
-    assert NnOnnxClassifier(session=MockSession(_logits_for(0.9, "broken", 0.05))).tau == 0.13
+    """τ 缺省 = 0.1（批13 τ 扫描推荐工作点：网格上无「检出≥55% 且
+    normal≥70%」可行点，取相对缺口最小者；胜者判定与探针三数见
+    train/runs/crop_cls/DEPLOYED.md）。"""
+    assert DEFAULT_TAU == 0.1
+    assert NnOnnxClassifier(session=MockSession(_logits_for(0.9, "broken", 0.05))).tau == 0.1
 
 
 def test_protocol_output_contract(mask):
@@ -298,7 +299,7 @@ def test_build_classifier_switch():
     rules = build_classifier("rules")
     assert isinstance(rules, RulesV0)
     nn = build_classifier("nn", nn_onnx="whatever/b9.onnx")
-    assert isinstance(nn, NnOnnxClassifier) and nn.tau == 0.13
+    assert isinstance(nn, NnOnnxClassifier) and nn.tau == 0.1
     nn2 = build_classifier("nn", nn_onnx="whatever/b9.onnx", tau=0.2)
     assert nn2.tau == 0.2
     with pytest.raises(ClassifierUsageError, match="nn_onnx"):
@@ -312,7 +313,7 @@ class _StubClassifier:
 
     stage = "classify"
     version = "stub:v0"
-    tau = 0.13  # τ 工作点随实现自带（本仓引擎不回读 τ，属性仅为协议对齐保留）
+    tau = 0.1  # τ 工作点随实现自带（本仓引擎不回读 τ，属性仅为协议对齐保留）
 
     def classify(self, crop_rgba, mask):
         return "black", 0.9, TAX.severity_rank("black")
@@ -407,7 +408,7 @@ def test_demo_cli_nn_requires_onnx_path(capsys):
     """classifier=nn 缺 onnx 路径 → 装配层用法错误（退出码 2 + 指名 nn_onnx）。"""
     from scripts.demo_realtime import main
 
-    # 缺省 --nn-onnx 非空（train/runs/crop_cls/b9.onnx），显式置空才触发该分支
+    # 缺省 --nn-onnx 非空（train/runs/crop_cls/b13_winner.onnx），显式置空才触发该分支
     code = main(["--classifier", "nn", "--nn-onnx", "", "--source", "synth",
                  "--max-frames", "1", "--no-show"])
     assert code == 2

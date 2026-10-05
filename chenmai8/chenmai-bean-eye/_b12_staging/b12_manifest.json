@@ -1,0 +1,465 @@
+{
+  "batch": "batch12-web-expansion-retrain",
+  "date": "2026-10-04",
+  "host": "anolis-gpu-01 (36.139.118.235 / tailnet 100.64.0.7), 2xV100S-32GB, 训练只用卡0",
+  "purpose": "网页域二轮扩张（2427 粒）+ Zenodo 全品种 normal 池（13361 张 Arabica）后的强化重训；holdout 探针对照批11（normal 63.3% / 坏堆检出 56.4% / 合成 macro 0.8689）",
+  "code_identity": "retrain_real.py / eval_real_probe.py / _probe_conf_analysis.py 与批11 sha256 逐一相同（92527f6b… / b7940351… / 260cb120…）——同代码同口径，唯一变量是数据",
+  "redline_attestation": {
+    "rule": "训练与选型全程不得使用 /data/coffee-bean/crops-hn 与 crops-hn-*（用户照片派生裁片=holdout 域）",
+    "real_roots_used": [
+      "/data/coffee-bean/crops-web-b12",
+      "/data/coffee-bean/crops-web-b11",
+      "/data/coffee-bean/allvar-normal-jpg",
+      "/data/coffee-bean/zenodo-robusta-normal-b12",
+      "/data/coffee-bean/crops-ext/ext-main",
+      "/data/coffee-bean/crops-ext/ext-scaa17",
+      "/data/coffee-bean/crops-ext/ext-rgreen"
+    ],
+    "synth_root_used": "/data/coffee-bean/crops",
+    "crops_hn_touched": false,
+    "evidence": "retrain_real.py --dry-run 输入清单 7 个真实根逐条 [OK] 且不含任何 crops-hn* 路径；metrics.json args.real_roots 同；holdout /data/coffee-bean/real-photos（26 张）仅在训练结束后由 eval_real_probe.py 评测一次，未参与任何训练/选型"
+  },
+  "recipe": {
+    "model": "resnet18 + 13 类头，IMAGENET1K_V1 起点（torchvision 预训练，BSD）",
+    "precision": "fp16 autocast + GradScaler（V100 无 bf16）",
+    "epochs": 8,
+    "batch": 256,
+    "lr": 0.0003,
+    "optimizer": "AdamW wd=0.05 + cosine",
+    "imbalance": "loss-weight w_c=1/log(1.02+n_eff_c)",
+    "real_repeat": 3,
+    "effective_train": 294281,
+    "real_gradient_share_pct": 29.3,
+    "best_epoch": 7,
+    "train_seconds": 1908.0,
+    "seed": 0
+  },
+  "data_provenance": {
+    "crops-web-b12": {
+      "source": "COS everything-1476163454 beaneye-batch12/crops_web_b12.tar.gz（2,316,333 bytes，sha256 6b045f267d1e69e27ed7c293038a653ffde462812d12826920ef033972773366）",
+      "counts": "train 2160 + valid 267 = 2427（normal 2369 / black 27 / broken 17 / insect 7 / sour 3 / shell 2 / immature 2，与任务给定一致；labels.csv 为 class,count 汇总 8 行，训练不读 csv）"
+    },
+    "crops-web-b11": {
+      "source": "复用 /data/coffee-bean/crops-web-b11（批11 已验）；本批以 b12-dl 重下的 tarball 做文件清单 diff：1016 文件逐一一致（B11-IDENTICAL）",
+      "counts": "train 874 + valid 141 = 1015"
+    },
+    "allvar-normal": {
+      "source": "COS beaneye-datasets/zenodo-allvar/allvar_normal.tar.gz（183,543,560 bytes，sha256 a04af004c5635a2cc8e293a8e7ce69e8095189875142ad16965d2a81658f287d）→ /data/coffee-bean/allvar-normal（allvar_out/train，14367 PNG）",
+      "varieties": "14 目录：A-001..A-013（13 个 Arabica 品种，13361 张）+ R-001-Robusta（1006 张）",
+      "dedup_decision": "R-001-Robusta 经 md5 全量比对与 zenodo_robusta_1258 train 1006 张逐一相同（1006/1006）→ 从 allvar 池剔除，由 zenodo-robusta-normal-b12 根单独入训，避免同一批图双计（计数/loss 权重）",
+      "holdout_clean": "allvar 全部 14367 张（R-001 与 Arabica 各查一次）与 robusta val 252 张md5 零重叠 → zenodo holdout 干净；allvar 内部 md5 无重复",
+      "build": "13 个 Arabica 品种 PNG→JPG(q95) 拍平 → allvar-normal-jpg/train/normal 13361 张（build_b12_real_pools.py）；valid/normal 置空——该池不入选型 valid"
+    },
+    "zenodo-robusta-normal-b12": {
+      "source": "复用 zenodo-normal-b11/train/normal 的 1006 张 JPG(q95)（同源 tarball sha256 4e83f37a2d01bc20d1a0a5cc41530ef5e4dcf6f5fb1432461c6537ff52e3d314）",
+      "holdout_discipline": "valid/normal 置空：val 252 张不入训练、也不入选型 valid（批11 曾入选型合并集；批12 排除，参考指标由 in-domain 参考升级为真留出）"
+    },
+    "crops-ext": "ext-main / ext-scaa17 / ext-rgreen（机器已有，批5/b11 同款三集）",
+    "synth": "/data/coffee-bean/crops 全量回放 208058（valid/test 同批4 口径）"
+  },
+  "results": {
+    "holdout_probe_user_photos": {
+      "n_photos": 26,
+      "n_photos_by_pile": {
+        "大": 7,
+        "中": 7,
+        "小": 7,
+        "坏": 5
+      },
+      "normal_correct_rate": 0.813411,
+      "normal_by_pile_pct": {
+        "大": 70.0,
+        "中": 76.53,
+        "小": 86.67
+      },
+      "normal_pile_beans": 343,
+      "normal_pile_normal": 279,
+      "bad_pile_beans": 55,
+      "bad_pile_defect_detection_nonnormal": 0.327273,
+      "bad_pile_hn_defect_broken_black_sour": {
+        "rule": "检出=预测∈{broken,black,sour}",
+        "detected": 12,
+        "rate": 0.218182
+      },
+      "bad_pile_defect_distribution_pct": {
+        "black": 61.11,
+        "dried": 27.78,
+        "broken": 5.56,
+        "insect": 5.56
+      },
+      "size_order_ok": true,
+      "eq_d_median_px": {
+        "大": 75.4,
+        "中": 65.3,
+        "小": 50.5
+      }
+    },
+    "vs_batch11": {
+      "holdout_normal": {
+        "b11": 0.632653,
+        "b12": 0.813411,
+        "delta": 0.180758
+      },
+      "holdout_normal_by_pile": {
+        "b11": {
+          "大": 58.0,
+          "中": 50.0,
+          "小": 71.28
+        },
+        "b12": {
+          "大": 70.0,
+          "中": 76.53,
+          "小": 86.67
+        }
+      },
+      "bad_pile_nonnormal": {
+        "b11": 0.563636,
+        "b12": 0.327273,
+        "delta": -0.236363
+      },
+      "bad_pile_hn3_broken_black_sour": {
+        "b11": 0.418182,
+        "b12": 0.218182
+      },
+      "synth_test_macro_f1": {
+        "b11": 0.868916,
+        "b12": 0.884087,
+        "threshold": 0.85,
+        "pass": true
+      },
+      "zenodo_val_252_normal_rate": {
+        "b11": 1.0,
+        "b12": 1.0,
+        "b12_nature": "真留出（不入训练/选型）；b11 为 in-domain 参考",
+        "b12_pred_counts": {
+          "normal": 252
+        },
+        "b12_p_normal_mean": 1.0
+      },
+      "real_valid_macro_sup": {
+        "b11": 0.74391,
+        "b12": 0.749476,
+        "note": "选型 valid 合并集口径，b12 已剔除 zenodo valid 252（-252）并加入 web-b12 valid 267，两批集合不同，只作参考"
+      }
+    },
+    "confusion_analysis": {
+      "normal_pile_pred_counts": {
+        "normal": 279,
+        "dried": 13,
+        "insect": 3,
+        "black": 47,
+        "broken": 1
+      },
+      "normal_misclass_detail": {
+        "black": {
+          "count": 47,
+          "share_of_normal_pile_beans": 13.7,
+          "conf_mean": 0.6911,
+          "conf_min": 0.3125,
+          "conf_max": 0.9876,
+          "conf_hist": {
+            "0.5-0.6": 12,
+            "0.6-0.7": 5,
+            "0.7-0.8": 8,
+            "0.8-0.9": 6,
+            "0.9-1.0": 9
+          },
+          "p_normal_mean": 0.1568
+        },
+        "dried": {
+          "count": 13,
+          "share_of_normal_pile_beans": 3.79,
+          "conf_mean": 0.7431,
+          "conf_min": 0.2908,
+          "conf_max": 0.9962,
+          "conf_hist": {
+            "0.5-0.6": 2,
+            "0.6-0.7": 1,
+            "0.7-0.8": 1,
+            "0.8-0.9": 2,
+            "0.9-1.0": 5
+          },
+          "p_normal_mean": 0.0982
+        },
+        "insect": {
+          "count": 3,
+          "share_of_normal_pile_beans": 0.87,
+          "conf_mean": 0.4622,
+          "conf_min": 0.3892,
+          "conf_max": 0.5808,
+          "conf_hist": {
+            "0.5-0.6": 1,
+            "0.6-0.7": 0,
+            "0.7-0.8": 0,
+            "0.8-0.9": 0,
+            "0.9-1.0": 0
+          },
+          "p_normal_mean": 0.2267
+        },
+        "broken": {
+          "count": 1,
+          "share_of_normal_pile_beans": 0.29,
+          "conf_mean": 0.5051,
+          "conf_min": 0.5051,
+          "conf_max": 0.5051,
+          "conf_hist": {
+            "0.5-0.6": 1,
+            "0.6-0.7": 0,
+            "0.7-0.8": 0,
+            "0.8-0.9": 0,
+            "0.9-1.0": 0
+          },
+          "p_normal_mean": 0.2257
+        }
+      },
+      "normal_pred_conf_mean": {
+        "normal": 0.9227
+      },
+      "bad_pile_pred_counts": {
+        "insect": 1,
+        "black": 11,
+        "dried": 5,
+        "broken": 1,
+        "normal": 37
+      },
+      "b11_black_reference": {
+        "count": 117,
+        "share_of_normal_pile_beans_pct": 34.11,
+        "conf_mean": 0.7619,
+        "conf_min": 0.357,
+        "conf_max": 0.9983,
+        "p_normal_mean": 0.1321,
+        "conf_hist": {
+          "0.5-0.6": 12,
+          "0.6-0.7": 15,
+          "0.7-0.8": 21,
+          "0.8-0.9": 27,
+          "0.9-1.0": 30
+        }
+      },
+      "per_photo_b11_vs_b12": [
+        {
+          "file": "大（1）.jpg",
+          "pile": "大",
+          "beans": 1,
+          "normal_b11": 1,
+          "normal_b12": 1
+        },
+        {
+          "file": "大（2）.jpg",
+          "pile": "大",
+          "beans": 2,
+          "normal_b11": 2,
+          "normal_b12": 2
+        },
+        {
+          "file": "大（3）.jpg",
+          "pile": "大",
+          "beans": 8,
+          "normal_b11": 8,
+          "normal_b12": 7
+        },
+        {
+          "file": "大（4）.jpg",
+          "pile": "大",
+          "beans": 3,
+          "normal_b11": 3,
+          "normal_b12": 3
+        },
+        {
+          "file": "大（5）.jpg",
+          "pile": "大",
+          "beans": 1,
+          "normal_b11": 1,
+          "normal_b12": 1
+        },
+        {
+          "file": "大（6）.jpg",
+          "pile": "大",
+          "beans": 3,
+          "normal_b11": 3,
+          "normal_b12": 2
+        },
+        {
+          "file": "大（全）.jpg",
+          "pile": "大",
+          "beans": 32,
+          "normal_b11": 11,
+          "normal_b12": 19
+        },
+        {
+          "file": "中（1）.jpg",
+          "pile": "中",
+          "beans": 3,
+          "normal_b11": 2,
+          "normal_b12": 2
+        },
+        {
+          "file": "中（2）.jpg",
+          "pile": "中",
+          "beans": 5,
+          "normal_b11": 5,
+          "normal_b12": 5
+        },
+        {
+          "file": "中（3）.jpg",
+          "pile": "中",
+          "beans": 7,
+          "normal_b11": 7,
+          "normal_b12": 7
+        },
+        {
+          "file": "中（4）.jpg",
+          "pile": "中",
+          "beans": 3,
+          "normal_b11": 3,
+          "normal_b12": 3
+        },
+        {
+          "file": "中（5）.jpg",
+          "pile": "中",
+          "beans": 4,
+          "normal_b11": 3,
+          "normal_b12": 3
+        },
+        {
+          "file": "中（6）.jpg",
+          "pile": "中",
+          "beans": 6,
+          "normal_b11": 5,
+          "normal_b12": 5
+        },
+        {
+          "file": "中（全）.jpg",
+          "pile": "中",
+          "beans": 70,
+          "normal_b11": 24,
+          "normal_b12": 50
+        },
+        {
+          "file": "小（1）.jpg",
+          "pile": "小",
+          "beans": 8,
+          "normal_b11": 6,
+          "normal_b12": 7
+        },
+        {
+          "file": "小（2）.jpg",
+          "pile": "小",
+          "beans": 13,
+          "normal_b11": 11,
+          "normal_b12": 10
+        },
+        {
+          "file": "小（3）.jpg",
+          "pile": "小",
+          "beans": 8,
+          "normal_b11": 7,
+          "normal_b12": 7
+        },
+        {
+          "file": "小（4）.jpg",
+          "pile": "小",
+          "beans": 14,
+          "normal_b11": 13,
+          "normal_b12": 11
+        },
+        {
+          "file": "小（5）.jpg",
+          "pile": "小",
+          "beans": 3,
+          "normal_b11": 2,
+          "normal_b12": 2
+        },
+        {
+          "file": "小（6）.jpg",
+          "pile": "小",
+          "beans": 4,
+          "normal_b11": 4,
+          "normal_b12": 3
+        },
+        {
+          "file": "小（全）.jpg",
+          "pile": "小",
+          "beans": 145,
+          "normal_b11": 96,
+          "normal_b12": 129
+        },
+        {
+          "file": "坏（1）.jpg",
+          "pile": "坏",
+          "beans": 0,
+          "normal_b11": 0,
+          "normal_b12": 0
+        },
+        {
+          "file": "坏（2）.jpg",
+          "pile": "坏",
+          "beans": 7,
+          "normal_b11": 0,
+          "normal_b12": 0
+        },
+        {
+          "file": "坏（3）.jpg",
+          "pile": "坏",
+          "beans": 6,
+          "normal_b11": 2,
+          "normal_b12": 1
+        },
+        {
+          "file": "坏（4）.jpg",
+          "pile": "坏",
+          "beans": 3,
+          "normal_b11": 0,
+          "normal_b12": 0
+        },
+        {
+          "file": "坏（全）.jpg",
+          "pile": "坏",
+          "beans": 39,
+          "normal_b11": 22,
+          "normal_b12": 36
+        }
+      ],
+      "segmentation_identical": true
+    }
+  },
+  "verdict": {
+    "rule": "ask 口径：holdout normal 对照批11 63.3%，升级≥70% 为达标；坏堆检出对照 56.4%；诚实第一",
+    "holdout_normal": 0.813411,
+    "upgrade_ge_70pct": true,
+    "delta_normal_vs_b11": 0.180758,
+    "delta_bad_detect_vs_b11": -0.236363,
+    "reading": [
+      "正常堆 normal 判对率 63.27%→81.34%（+18.07pp，三堆 全升：大 58.0→70.0、中 50.0→76.53、小 71.28→86.67），越过 70% 升级线；批11 主混淆『正常豆→black』117 粒(34.1%)→47 粒(13.7%)，高置信段(0.9+)从 30 粒降到 9 粒",
+      "代价：坏堆非 normal 检出 56.36%→32.73%（-23.6pp），{broken,black,sour} 口径 41.82%→21.82%——批11 manifest 已预言『检出率的改善部分由 black 过判贡献，同一枚硬币的两面』，本批硬币翻回了另一面：black 过判消退的同时，坏堆里深色缺陷豆也被放行为 normal",
+      "逐照片分解：改善与回退都集中在四张『（全）』堆照——中（全）24→50、小（全）96→129、大（全）11→19；坏（全）22→36（39 粒中 36 粒判 normal，占坏堆回退的绝大部分）。其余 22 张照片判对几乎不变（±1-2 粒）；两批分割粒数逐一相同（seg_identical=True），差异纯来自分类头",
+      "坏堆 12/55 的新检出构成：black 11 + broken 1；dried 5 粒不在 {broken,black,sour} 口径内但属缺陷预测；正常堆误判里 dried 13 粒(3.8%)是新第二混淆（批11 只有 4 粒）——『深色/老化外观』在 black 与 dried 两个缺陷类间摆动，是网页黑豆样张与海南实拍深色豆域差的延续",
+      "归因（与 ask 三个候选假说对照）：①『全品种 normal 稀释海南深色特征』方向成立但非稀释——allvar 13 个 Arabica 品种真实生豆把『深色但正常』的外观重新拉回 normal 流形，主混淆大幅收敛；②网页域噪声：二轮网页裁片 2427 粒(正常 2369)进一步加宽网页 normal 覆盖，同向贡献；③批次效应：训练/评测代码 sha256 与批11逐一相同、分割粒数一致，可排除代码与分割批次效应。剩余 47 粒 black 误判 + 坏堆欠检表明：网页/公开域与海南实拍深色豆的域差仍在，纯网页域路线到此收益率已明显递减",
+      "合成 test macro 0.8841（批11 0.8689，门 0.85 PASS）；真实梯度占比 16.01%→29.30%（全量 allvar 入池如实记录），合成域未失守。Zenodo val 252 张本批为真留出（不入训练/选型）252/252=100%"
+    ]
+  },
+  "deviations_from_ask": [
+    "allvar-normal 实际入池 13361 张（任务给 14367）：R-001-Robusta 1006 张经 md5 比对与 zenodo_robusta_1258 train 逐一全同，剔除以免同一批图经两个根重复入训（计数/loss 权重双计）；robusta 由 zenodo-robusta-normal-b12 根独立入训，总量不损",
+    "zenodo val 252 张除不入训练外，也**不入选型 valid 合并集**（批11 曾入）：ask 说『留作 zenodo holdout 不入训练』，选型是训练管线的一环，一并排除后该 252 张成为真留出，参考指标性质由 in-domain 参考升级为留出考试",
+    "全量 allvar + real_repeat=3 → 真实梯度占比 29.30%（批11 16.01%）：ask 预授权『抽样或全量，若全量导致合成占比过低则按 real_repeat 权衡，如实记录』——合成仍占 70.66% 未失守，未调 repeat",
+    "epochs=8（ask 允许 8-10）：取下限以与批11 逐项对齐（同代码同超参，唯一变量=数据），best_epoch=7",
+    "retrain_real.py 不在 /data/coffee-bean/train：与批11 相同，实际位于 repo /home/anuser/agentic-factory-projects/chenmai8/chenmai-bean-eye/train/（脚本 sha256 与批11 交付件逐一相同：92527f6b…/b7940351…/260cb120…）",
+    "训练 env = repo .venv（torch 2.14.0+cu126，批11 同）；/data/night/venv 补装 onnx/onnxruntime 未用上（训练与评测最终均走 repo .venv）"
+  ],
+  "artifacts_gpu_dir": "/data/coffee-bean/batch12-results",
+  "artifacts_sha256": {
+    "_probe_conf_analysis.py": "260cb120543f0ed4daa5e29e6ad5bdef7d13154b5fe5526d82a6a36f71b4469a",
+    "batch12_train.log": "374412d41f4fd934d70977f38c9a2c14ef0f145628bd5d77b37e4a83dd0d7132",
+    "build_b12_real_pools.py": "c737469258843741485f29eba1ba22cacdfdbb1791c3deb293c9c35278bb06c7",
+    "compose_b12_manifest.py": "6e6020f32b124428a15fd017e7bb4c545312216680c5909d6b06aed3f50948b4",
+    "crop_cls.onnx": "68755a965e0747abe5a01d7e6d0d521c2016b4ed2bbac07759e0fb1bd477f697",
+    "eval_real_probe.py": "b79403512fb493c97f07ace912ed6ca76783b3adaee7239c6d5704f43f753454",
+    "eval_zenodo_valid_b12.py": "25dd734900bb9a2a32f137eb7e72a5810295d53babdefbeeef0c51c945aa34b6",
+    "metrics.json": "742981b87d7a826fbc8d7a74ff0a95ef2d92ba17dfa7742feb6b9045a7555729",
+    "probe_b12.json": "2efcab12b0a6900def7d97cff97bd5bf673be390e7e1f55ceb07534fd9da6c95",
+    "probe_b12_conf.json": "6cd071b8612d29312286e240c7bf2329803209c4e3a6fc9583a3078451f5ce16",
+    "retrain_real.py": "92527f6be14beda605ec95468bb33431afbb7c1b219b7b0a848c7e26ec87b27d",
+    "zenodo_valid_normal_b12.json": "2a679641fbb436853036199ba729785fc7cc235effb0140a0ab615efa802f763"
+  }
+}
