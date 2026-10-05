@@ -1,0 +1,22 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "meta",
+  "locale": "zh",
+  "project": "golden-merge",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\repo\\specs-eval\\golden-merge.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\oracle-matrix\\golden-merge\\dist",
+  "maxBytes": 3145728,
+  "packageFiles": [
+    "index.html"
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 1239022,
+      "sha256": "895c28ffb2286606922644548fdbf5ec96b2de1d9e52fea4c2fb8d3b796beab8",
+      "role": "package"
+    }
+  ],
+  "warnings": []
+}

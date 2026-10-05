@@ -1,0 +1,3281 @@
+[
+ {
+  "t": 3,
+  "ev": "addInitScript",
+  "kind": "function"
+ },
+ {
+  "t": 995,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => !!window.__pfprobe)(); }",
+  "val": true
+ },
+ {
+  "t": 1007,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.texts === 'functi"
+ },
+ {
+  "t": 1022,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 1026,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => !!(window.__PF_QC__ && typeof window.__PF_QC__.hint === 'funct"
+ },
+ {
+  "t": 1039,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => !!window.__pfprobe)(); }",
+  "val": true
+ },
+ {
+  "t": 1040,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 1055,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 1057,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 1072,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.PF && typeof PF.isMuted === 'function') ? PF.isMuted()"
+ },
+ {
+  "t": 1074,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__pfprobe && typeof window.__pfprobe.sampleMedia === '",
+  "val": {
+   "unmuted": 0,
+   "playing": 0,
+   "playsBeforeFirst": 0
+  }
+ },
+ {
+  "t": 1089,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 1091,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 1109,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 1124,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 1156,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 1189,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 1208,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 1240,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 1257,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.PF && typeof PF.isMuted === 'function') ? PF.isMuted()"
+ },
+ {
+  "t": 1451,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 1457,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 1473,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 1475,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 1491,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 1493,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 1508,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 1548,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 1595,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 1640,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 1674,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 1858,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 1873,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 1876,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 1891,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 1906,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 1925,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 1941,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 1992,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 2047,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 2091,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 2141,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 2340,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 2341,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 2358,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 2374,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 2390,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 2412,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 2429,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 2489,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 2548,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 2600,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 2650,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 2847,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 2856,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 2858,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 2873,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 2874,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 2893,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 2909,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 2948,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 2996,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 3040,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 3077,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 3275,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 3294,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 3311,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 3324,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 3325,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 3353,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 3371,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 3424,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 3482,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 3524,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 3590,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 3772,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 3774,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 3787,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 3788,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 3790,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 3792,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 3805,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 3824,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 3854,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 3870,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 3888,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 4071,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 4073,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 4075,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 4089,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 4289,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 4291,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 4292,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 4307,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 4488,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 4490,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 4493,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 4504,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 4688,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 4690,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 4692,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 4705,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 4889,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 4891,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 4899,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 4932,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 5130,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 5137,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 5140,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 5142,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 5335,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 5341,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 5355,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 5357,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 5359,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 5375,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 5386,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 5402,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 5420,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 5436,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 5454,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 5639,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 5652,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 5656,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 5658,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 5854,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 5856,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 5858,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 5873,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 6055,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 6057,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 6072,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 6076,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 6269,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 6271,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 6274,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 6275,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 6470,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 6472,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 6474,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 6475,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 6668,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 6670,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 6672,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 6674,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 6870,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 6871,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 6874,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 6886,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 7070,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 7073,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 7075,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 7086,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 7268,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 7272,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 7274,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 7286,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 7468,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 7471,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 7473,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 7475,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 7492,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 7508,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 7518,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 7591,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 7623,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 7653,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 7671,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 7855,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 7857,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 7869,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 7871,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 8054,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 8056,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 8059,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 8078,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 8267,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 8269,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 8271,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 8274,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 8466,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 8469,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 8472,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 8474,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 8667,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 8671,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 8673,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 8676,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 8866,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 8868,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 8870,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 8873,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 9057,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 9074,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 9094,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 9107,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 9303,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 9305,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 9308,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 9319,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 9501,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 9504,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 9506,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 9508,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 9700,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 9703,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 9705,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 9706,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 9888,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 9891,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 9902,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 9904,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 10086,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 10087,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 10090,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 10102,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 10285,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 10286,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 10289,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 10291,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 10482,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 10490,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 10511,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 10526,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 10742,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 10754,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 10757,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 10768,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 10953,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 10957,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 10970,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 10973,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 10975,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 10991,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 11003,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 11019,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 11039,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 11070,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 11088,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 11271,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 11273,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 11276,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 11289,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 11474,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 11484,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 11487,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 11489,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 11671,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 11673,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 11676,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 11692,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 11884,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 11887,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 11890,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 11903,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 12086,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 12088,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 12090,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 12104,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 12106,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 12108,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 12117,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 12134,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 12154,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 12172,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 12205,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 12388,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 12390,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 12393,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 12406,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 12589,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 12591,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 12605,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 12608,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 12799,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 12801,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 12804,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 12805,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 12988,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 12990,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 13001,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 13003,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 13185,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 13187,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 13190,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 13192,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 13201,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 13209,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 13218,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 13235,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 13304,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 13336,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 13351,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 13534,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 13544,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 13556,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 13559,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 13750,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 13753,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 13755,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 13757,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 13940,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 13955,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 13972,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 13975,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 14168,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 14170,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 14173,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 14175,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 14369,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 14371,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 14373,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 14387,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 14590,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 14592,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 14594,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 14613,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 14815,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 14819,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 14821,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 14824,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 14837,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 14842,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 14853,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 14872,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 14886,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 14903,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 14920,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 15102,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 15105,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 15107,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 15109,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 15302,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 15305,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 15307,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 15323,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 15504,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 15506,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 15510,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 15519,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 15704,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 15706,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 15708,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 15724,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 15921,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 15923,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 15935,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 15937,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 15939,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 15941,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 15953,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 15985,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 16003,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 16020,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 16036,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 16218,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 16220,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 16224,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 16234,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 16417,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 16419,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 16422,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 16423,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 16605,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 16607,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 16617,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 16619,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 16803,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 16805,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 16807,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 16818,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 17001,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 17002,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 17005,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 17006,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 17189,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 17191,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 17203,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 17205,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 17206,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 17223,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 17233,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 17252,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 17275,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 17300,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 17318,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 17502,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 17507,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 17520,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 17522,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 17704,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 17706,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 17708,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 17721,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 17903,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 17905,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 17908,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 17919,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 18102,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 18104,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 18106,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 18107,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 18290,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 18300,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 18303,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 18305,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 18487,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 18489,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 18492,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 18506,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 18689,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 18691,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 18702,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 18704,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 18888,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 18890,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 18893,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 18901,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 18904,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 18908,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 18926,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 18968,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 18986,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 19007,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 19035,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 19218,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 19219,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 19223,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 19234,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 19420,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 19422,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 19424,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 19436,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 19618,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 19621,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 19624,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 19636,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 19819,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 19821,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 19825,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 19840,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 20022,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 20035,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 20038,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 20040,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 20222,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 20235,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 20238,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 20241,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 20434,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 20438,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 20440,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 20452,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 20636,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 20637,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 20640,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 20641,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 20834,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 20835,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 20838,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 20839,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 21022,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 21024,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 21036,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 21038,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 21220,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 21222,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 21225,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 21236,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 21418,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 21419,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 21424,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 21434,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 21617,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 21618,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 21621,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 21622,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 21804,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 21806,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 21807,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 21819,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 22001,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 22002,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 22004,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 22006,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 22016,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 22025,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 22033,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 22052,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 22089,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 22117,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 22135,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 22318,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 22320,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 22323,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 22336,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 22518,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 22520,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 22523,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 22533,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 22716,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 22721,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 22723,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 22735,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 22918,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 22921,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 22924,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 22935,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 23117,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 23119,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 23123,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 23125,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 23307,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 23321,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 23323,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 23325,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 23516,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 23519,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 23522,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 23523,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 23717,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 23719,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 23722,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 23724,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 23725,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 23740,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 23749,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 23769,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 23785,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 23836,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 23851,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 24034,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 24036,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 24040,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 24051,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 24052,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 24058,
+  "ev": "mouse.down"
+ },
+ {
+  "t": 24066,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 24086,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 24101,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 24117,
+  "ev": "mouse.move"
+ },
+ {
+  "t": 24135,
+  "ev": "mouse.up"
+ },
+ {
+  "t": 24316,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 24318,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 24322,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 24334,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 24516,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 24518,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 24520,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 24522,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 24704,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 24705,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 24709,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 24716,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 24899,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 24901,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 24903,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 24904,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 25087,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 25089,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 25091,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 25102,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 25289,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 25291,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 25304,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 25305,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 25488,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 25501,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 25504,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 25506,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const q = window.__PF_QC__; if (!q || typeof q.hint !== 'fun"
+ },
+ {
+  "t": 25697,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.state === 'functi"
+ },
+ {
+  "t": 25714,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 25734,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 25753,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => window.__pfprobe || null)(); }",
+  "val": {
+   "created": 1,
+   "running": 1
+  }
+ },
+ {
+  "t": 25778,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__pfprobe && typeof window.__pfprobe.sampleMedia === '",
+  "val": {
+   "unmuted": 0,
+   "playing": 0,
+   "playsBeforeFirst": 0
+  }
+ },
+ {
+  "t": 25801,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 25821,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.endScreenVisible "
+ },
+ {
+  "t": 26142,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.texts === 'functi"
+ },
+ {
+  "t": 26146,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.textStates === 'f"
+ },
+ {
+  "t": 26166,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__PF_QC__ && typeof window.__PF_QC__.assets === 'funct"
+ },
+ {
+  "t": 26191,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const p = window.__pfprobe; return p ? (p.rtc | 0) : null; }",
+  "val": 0
+ },
+ {
+  "t": 26444,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => !!document.querySelector('canvas'))(); }"
+ },
+ {
+  "t": 26460,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => !!(window.PF && typeof PF.isMuted === 'function'))(); }"
+ },
+ {
+  "t": 0,
+  "ev": "addInitScript",
+  "kind": "function"
+ },
+ {
+  "t": 759,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => !!window.__pfprobe)(); }",
+  "val": true
+ },
+ {
+  "t": 762,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.__pfprobe && typeof window.__pfprobe.sampleMedia === '",
+  "val": {
+   "unmuted": 0,
+   "playing": 0,
+   "playsBeforeFirst": 0
+  }
+ },
+ {
+  "t": 764,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => (window.PF && typeof PF.isMuted === 'function') ? PF.isMuted()"
+ },
+ {
+  "t": 797,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const p = window.__pfprobe; return p && p.audio ? p.audio.ru",
+  "val": 1
+ },
+ {
+  "t": 815,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => { const p = window.__pfprobe; return p ? (p.rtc | 0) : null; }",
+  "val": 0
+ },
+ {
+  "t": 1036,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => !!document.querySelector('canvas'))(); }"
+ },
+ {
+  "t": 1049,
+  "ev": "evaluate",
+  "src": "function anonymous( ) { return (() => !!(window.PF && typeof PF.isMuted === 'function'))(); }"
+ }
+]

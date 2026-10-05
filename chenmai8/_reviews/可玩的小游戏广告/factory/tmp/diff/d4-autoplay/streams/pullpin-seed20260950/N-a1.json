@@ -1,0 +1,49 @@
+{
+ "artifact": "golden-pullpin/preview/en/index.html",
+ "pfEvents": {
+  "ready": 121.19999999925494,
+  "start": 1107,
+  "first": 1106,
+  "cta": null,
+  "end": 6501.799999998882,
+  "endWin": true
+ },
+ "gesturesCount": 4,
+ "gestures": [
+  {
+   "i": 1,
+   "t": 1068,
+   "stateBefore": "tutorial",
+   "type": "tap",
+   "x": 287,
+   "y": 557
+  },
+  {
+   "i": 2,
+   "t": 2820,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 287,
+   "y": 557
+  },
+  {
+   "i": 3,
+   "t": 4453,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 287,
+   "y": 557
+  },
+  {
+   "i": 4,
+   "t": 5362,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 314,
+   "y": 533
+  }
+ ],
+ "finalState": "end",
+ "endScreenVisible": true,
+ "wallSec": 6.7
+}

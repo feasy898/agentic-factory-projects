@@ -1,0 +1,79 @@
+{
+  "specVersion": "1.0.0",
+  "meta": {
+    "projectId": "assetkit-selftest",
+    "title": "素材自测",
+    "seed": 1
+  },
+  "game": {
+    "template": "match3",
+    "params": {},
+    "difficulty": {
+      "targetLevel": 0.5
+    },
+    "attract": {
+      "nearWin": true
+    },
+    "durationBudgetSec": {
+      "target": 20,
+      "max": 30
+    }
+  },
+  "flow": {
+    "tutorial": {
+      "enabled": true,
+      "gesture": "tap",
+      "maxSec": 3
+    },
+    "endScreen": {
+      "showScore": true,
+      "ctaKey": "cta",
+      "landingUrl": "https://example.com/lp"
+    }
+  },
+  "assets": {
+    "sprites": {
+      "piece-0": "selftest-gem.png"
+    },
+    "audio": {
+      "tap": "selftest-sfx.wav"
+    }
+  },
+  "i18n": {
+    "defaultLocale": "zh",
+    "locales": [
+      "zh",
+      "ar"
+    ],
+    "strings": {
+      "zh": {
+        "cta": "立即下载",
+        "tutorial": "得分通关啦立即下载拖动宝石三色连成一线",
+        "win": "通关啦！",
+        "lose": "再试一次！",
+        "score": "得分"
+      },
+      "ar": {
+        "cta": "حمّل الآن",
+        "tutorial": "مرحبا بكم في اللعبة اسحب الجواهر",
+        "win": "فوز!",
+        "lose": "حاول مرة أخرى",
+        "score": "النقاط"
+      }
+    },
+    "rtl": [
+      "ar"
+    ]
+  },
+  "channels": {
+    "targets": [
+      "applovin"
+    ],
+    "orientation": "portrait",
+    "overrides": {}
+  },
+  "qc": {
+    "maxLoadSec": 3,
+    "autoplayTimeoutSec": 45
+  }
+}

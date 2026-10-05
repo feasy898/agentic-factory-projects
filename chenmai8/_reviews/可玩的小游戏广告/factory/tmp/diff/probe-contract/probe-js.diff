@@ -1,0 +1,26 @@
+--- probe-js-before(3119)
++++ probe-js-after
+@@ -1,6 +1,6 @@
+ (() => {
+   const probe = { ready: null, start: null, end: null, endWin: null, first: null, cta: null,
+-                  audio: { created: 0, running: 0 },
++                  audio: { created: 0, running: 0, everBeforeFirstGesture: false },
+                   media: { unmuted: 0, playing: 0, playsBeforeFirst: 0 },
+                   rtc: 0 };
+   window.__pfprobe = probe;
+@@ -31,7 +31,14 @@
+       const ctx = new Ctor(...args);
+       probe.audio.created += 1;
+       const upd = () => {
+-        if (ctx.state === 'running') running.add(ctx); else running.delete(ctx);
++        if (ctx.state === 'running') {
++          running.add(ctx);
++          // 首次 pointer 事件前出现 running 即置旗（事件驱动，置真不复位）：
++          // 构造时初次 upd() 覆盖"构造即 running"，statechange 覆盖其后 resume。
++          if (firstGestureAt === null) probe.audio.everBeforeFirstGesture = true;
++        } else {
++          running.delete(ctx);
++        }
+         probe.audio.running = running.size;
+       };
+       try { if (ctx.addEventListener) ctx.addEventListener('statechange', upd); } catch (e) {}

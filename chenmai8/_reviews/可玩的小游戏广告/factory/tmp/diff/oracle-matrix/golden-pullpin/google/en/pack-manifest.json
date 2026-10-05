@@ -1,0 +1,28 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "google",
+  "locale": "en",
+  "project": "golden-pullpin",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\repo\\specs-eval\\golden-pullpin.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\oracle-matrix\\golden-pullpin\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-pullpin-en.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-pullpin-en.zip",
+      "bytes": 342214,
+      "sha256": "a84eaa5615aa3063ef420210bd37b109e4ba21be629510aba427a9263bb7d1b3",
+      "role": "package"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1241413,
+      "sha256": "aaf975334f6c290d9a92bbcc732a86047391144590c4ce76c79836d38449a097",
+      "role": "entry-in-zip"
+    }
+  ],
+  "warnings": []
+}

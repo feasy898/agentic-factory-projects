@@ -1,0 +1,22 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "preview",
+  "locale": "en",
+  "project": "golden-merge",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\d4-autoplay\\specs\\golden-merge-seed20261003.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\d4-autoplay\\build\\N\\merge-seed20261003\\golden-merge\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "index.html"
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 1239049,
+      "sha256": "249015e3f3692664106271268fdc7d202970c504d7f7b608343a39494907d2ff",
+      "role": "package"
+    }
+  ],
+  "warnings": []
+}

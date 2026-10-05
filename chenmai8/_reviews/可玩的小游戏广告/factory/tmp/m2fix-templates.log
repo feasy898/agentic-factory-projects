@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: 本器复验 tmpl-match3：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+ok 1 - 本器复验 tmpl-match3：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+  ---
+  duration_ms: 41783.0424
+  type: 'test'
+  ...
+# Subtest: 本器复验 tmpl-merge：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+ok 2 - 本器复验 tmpl-merge：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+  ---
+  duration_ms: 25840.4498
+  type: 'test'
+  ...
+# Subtest: 本器复验 tmpl-pullpin：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+ok 3 - 本器复验 tmpl-pullpin：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+  ---
+  duration_ms: 23476.5263
+  type: 'test'
+  ...
+# Subtest: 本器复验 tmpl-sort：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+ok 4 - 本器复验 tmpl-sort：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+  ---
+  duration_ms: 22832.0255
+  type: 'test'
+  ...
+# Subtest: CHK10 实装层：demo-zh 构建 + 标题/教程/胜/CTA/分文案 + piece-0 像素对账 → pass
+ok 5 - CHK10 实装层：demo-zh 构建 + 标题/教程/胜/CTA/分文案 + piece-0 像素对账 → pass
+  ---
+  duration_ms: 28131.5358
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 142857.4083

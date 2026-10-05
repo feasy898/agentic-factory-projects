@@ -1,0 +1,249 @@
+{
+ "artifact": "golden-sort/preview/en/index.html",
+ "pfEvents": {
+  "ready": 129,
+  "start": 999,
+  "first": 998,
+  "cta": null,
+  "end": 13166,
+  "endWin": true
+ },
+ "gesturesCount": 29,
+ "gestures": [
+  {
+   "i": 1,
+   "t": 998,
+   "stateBefore": "tutorial",
+   "type": "tap",
+   "x": 122,
+   "y": 456
+  },
+  {
+   "i": 2,
+   "t": 1228,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 342,
+   "y": 456
+  },
+  {
+   "i": 3,
+   "t": 1798,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 195,
+   "y": 456
+  },
+  {
+   "i": 4,
+   "t": 2014,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 122,
+   "y": 456
+  },
+  {
+   "i": 5,
+   "t": 2581,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 268,
+   "y": 456
+  },
+  {
+   "i": 6,
+   "t": 2797,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 342,
+   "y": 456
+  },
+  {
+   "i": 7,
+   "t": 3363,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 122,
+   "y": 456
+  },
+  {
+   "i": 8,
+   "t": 3561,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 268,
+   "y": 456
+  },
+  {
+   "i": 9,
+   "t": 4142,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 195,
+   "y": 456
+  },
+  {
+   "i": 10,
+   "t": 4345,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 122,
+   "y": 456
+  },
+  {
+   "i": 11,
+   "t": 4911,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 195,
+   "y": 456
+  },
+  {
+   "i": 12,
+   "t": 5111,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 342,
+   "y": 456
+  },
+  {
+   "i": 13,
+   "t": 5680,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 195,
+   "y": 456
+  },
+  {
+   "i": 14,
+   "t": 5879,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 122,
+   "y": 456
+  },
+  {
+   "i": 15,
+   "t": 6461,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 48,
+   "y": 456
+  },
+  {
+   "i": 16,
+   "t": 6662,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 195,
+   "y": 456
+  },
+  {
+   "i": 17,
+   "t": 7230,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 268,
+   "y": 456
+  },
+  {
+   "i": 18,
+   "t": 7428,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 195,
+   "y": 456
+  },
+  {
+   "i": 19,
+   "t": 8181,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 268,
+   "y": 456
+  },
+  {
+   "i": 20,
+   "t": 8379,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 48,
+   "y": 456
+  },
+  {
+   "i": 21,
+   "t": 8949,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 122,
+   "y": 456
+  },
+  {
+   "i": 22,
+   "t": 9160,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 268,
+   "y": 456
+  },
+  {
+   "i": 23,
+   "t": 9913,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 48,
+   "y": 456
+  },
+  {
+   "i": 24,
+   "t": 10127,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 122,
+   "y": 456
+  },
+  {
+   "i": 25,
+   "t": 10709,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 48,
+   "y": 456
+  },
+  {
+   "i": 26,
+   "t": 10913,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 268,
+   "y": 456
+  },
+  {
+   "i": 27,
+   "t": 11494,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 48,
+   "y": 456
+  },
+  {
+   "i": 28,
+   "t": 11695,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 122,
+   "y": 456
+  },
+  {
+   "i": 29,
+   "t": 12696,
+   "stateBefore": "playing",
+   "type": "tap",
+   "x": 122,
+   "y": 456
+  }
+ ],
+ "finalState": "end",
+ "endScreenVisible": true,
+ "wallSec": 13.3
+}

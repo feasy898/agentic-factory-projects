@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "outDir": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-cli-smoke",
+  "entries": [
+    {
+      "key": "selftest-gem.png",
+      "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-gem.png",
+      "out": "selftest-gem.webp",
+      "kind": "image",
+      "encoding": "webp-nearlossless",
+      "originalBytes": 932,
+      "optimizedBytes": 466
+    },
+    {
+      "key": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\atlas.png",
+      "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\atlas.png",
+      "out": "atlas.webp",
+      "kind": "image",
+      "encoding": "webp-lossy",
+      "originalBytes": 183837,
+      "optimizedBytes": 101278
+    },
+    {
+      "key": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\selftest-gem.webp",
+      "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\selftest-gem.webp",
+      "out": "selftest-gem-2.webp",
+      "kind": "image",
+      "encoding": "original",
+      "originalBytes": 466,
+      "optimizedBytes": 466
+    },
+    {
+      "key": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\selftest-photo.webp",
+      "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\selftest-photo.webp",
+      "out": "selftest-photo.webp",
+      "kind": "image",
+      "encoding": "webp-lossy",
+      "originalBytes": 118412,
+      "optimizedBytes": 108008
+    },
+    {
+      "key": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-photo.png",
+      "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-photo.png",
+      "out": "selftest-photo-2.webp",
+      "kind": "image",
+      "encoding": "webp-lossy",
+      "originalBytes": 733041,
+      "optimizedBytes": 118412
+    },
+    {
+      "key": "selftest-sfx.wav",
+      "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-sfx.wav",
+      "out": "selftest-sfx.m4a",
+      "kind": "audio",
+      "encoding": "aac-48000",
+      "originalBytes": 22094,
+      "optimizedBytes": 4334
+    }
+  ]
+}

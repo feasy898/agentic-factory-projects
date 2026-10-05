@@ -1,0 +1,12 @@
+{
+  "name": "@pf/tmpl-sort",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "排序/拧螺丝玩法模板（M3）：PlayableSpec 驱动渲染，含教程→游玩→结束页流程、attract 参数与 QC 钩子。走法/可解性消费 @pf/spec 单源（决策 §2.1 P1），nearWin/failBait/firstClickSucceed 行为语义对照模板资产 spec §7.3 冻结。",
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --experimental-strip-types tests/logic-test.ts",
+    "typecheck": "tsc --noEmit"
+  }
+}

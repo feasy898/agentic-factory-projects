@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: 门项5 金标层：mini.html --autoplay 全过、已实装项零 skip、CHK03/08/09 必 pass
+ok 1 - 门项5 金标层：mini.html --autoplay 全过、已实装项零 skip、CHK03/08/09 必 pass
+  ---
+  duration_ms: 5172.3073
+  type: 'test'
+  ...
+# Subtest: 门项6 变异层：MUT-01/02/04 各自恰好命中对应 CHK 且 exit 1（夹具只读）
+ok 2 - 门项6 变异层：MUT-01/02/04 各自恰好命中对应 CHK 且 exit 1（夹具只读）
+  ---
+  duration_ms: 16408.884
+  type: 'test'
+  ...
+# Subtest: 退出码契约：产物不存在 → 2；非 .html → 2
+ok 3 - 退出码契约：产物不存在 → 2；非 .html → 2
+  ---
+  duration_ms: 2593.0093
+  type: 'test'
+  ...
+# Subtest: CHK10 阴性对照：无嵌入的夹具 + --require-sprite → 恰 CHK10 fail、exit 1（检查非永绿）
+ok 4 - CHK10 阴性对照：无嵌入的夹具 + --require-sprite → 恰 CHK10 fail、exit 1（检查非永绿）
+  ---
+  duration_ms: 4992.1104
+  type: 'test'
+  ...
+# Subtest: CHK10 阴性对照：--require-text 未上屏 → 恰 CHK10 fail（夹具无 texts 钩子从严）
+ok 5 - CHK10 阴性对照：--require-text 未上屏 → 恰 CHK10 fail（夹具无 texts 钩子从严）
+  ---
+  duration_ms: 4851.7915
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 34383.1107

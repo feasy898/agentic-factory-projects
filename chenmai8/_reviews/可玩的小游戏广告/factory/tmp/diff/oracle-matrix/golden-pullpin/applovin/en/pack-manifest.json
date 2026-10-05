@@ -1,0 +1,22 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "applovin",
+  "locale": "en",
+  "project": "golden-pullpin",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\repo\\specs-eval\\golden-pullpin.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\oracle-matrix\\golden-pullpin\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "index.html"
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 1241446,
+      "sha256": "22002b3a87881833a3ad41c7033ecba12db98ec9a7c0fdfdc096e7aadb7f7895",
+      "role": "package"
+    }
+  ],
+  "warnings": []
+}

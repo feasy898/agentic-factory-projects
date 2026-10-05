@@ -1,0 +1,152 @@
+{
+  "assetkitVersion": "1.0.0",
+  "generatedAt": "2026-09-30T11:03:08",
+  "spec": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-spec.json",
+  "outDir": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt",
+  "subsetTextChars": 62,
+  "materials": {
+    "image": [
+      {
+        "key": "selftest-gem.png",
+        "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-gem.png",
+        "kind": "image",
+        "status": "optimized",
+        "out": "selftest-gem.webp",
+        "encoding": "webp-nearlossless",
+        "originalBytes": 932,
+        "optimizedBytes": 466,
+        "reductionPct": 50,
+        "width": 128,
+        "height": 128,
+        "alpha": true,
+        "candidates": [
+          {
+            "encoding": "webp-lossy",
+            "bytes": 956
+          },
+          {
+            "encoding": "webp-nearlossless",
+            "bytes": 466
+          },
+          {
+            "encoding": "png-palette",
+            "bytes": 553
+          },
+          {
+            "encoding": "png-plain",
+            "bytes": 732
+          }
+        ],
+        "note": ""
+      },
+      {
+        "key": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-photo.png",
+        "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-photo.png",
+        "kind": "image",
+        "status": "optimized",
+        "out": "selftest-photo.webp",
+        "encoding": "webp-lossy",
+        "originalBytes": 733041,
+        "optimizedBytes": 118412,
+        "reductionPct": 83.8,
+        "width": 512,
+        "height": 512,
+        "alpha": false,
+        "candidates": [
+          {
+            "encoding": "webp-lossy",
+            "bytes": 118412
+          },
+          {
+            "encoding": "webp-nearlossless",
+            "bytes": 241500
+          },
+          {
+            "encoding": "png-palette",
+            "bytes": 159730
+          },
+          {
+            "encoding": "png-plain",
+            "bytes": 721659
+          }
+        ],
+        "note": ""
+      }
+    ],
+    "audio": [
+      {
+        "key": "selftest-sfx.wav",
+        "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-sfx.wav",
+        "kind": "audio",
+        "status": "optimized",
+        "out": "selftest-sfx.m4a",
+        "encoding": "aac-48000",
+        "originalBytes": 22094,
+        "optimizedBytes": 4334,
+        "reductionPct": 80.4,
+        "note": ""
+      }
+    ],
+    "font": [
+      {
+        "key": "C:\\Windows\\Fonts\\msyh.ttc",
+        "src": "C:\\Windows\\Fonts\\msyh.ttc",
+        "kind": "font",
+        "status": "optimized",
+        "out": "msyh.subset.woff2",
+        "encoding": "woff2",
+        "originalBytes": 19704352,
+        "optimizedBytes": 14740,
+        "reductionPct": 99.9,
+        "charsRequested": 62,
+        "charsCovered": 38,
+        "note": "字符覆盖 38/62；字体缺 24 字形：\"آأابةجحخرزسط\"（另 12 字略）"
+      },
+      {
+        "key": "C:\\Windows\\Fonts\\arial.ttf",
+        "src": "C:\\Windows\\Fonts\\arial.ttf",
+        "kind": "font",
+        "status": "optimized",
+        "out": "arial.subset.woff2",
+        "encoding": "woff2",
+        "originalBytes": 1036584,
+        "optimizedBytes": 25596,
+        "reductionPct": 97.5,
+        "charsRequested": 62,
+        "charsCovered": 35,
+        "note": "字符覆盖 35/62；字体缺 27 字形：\"一三下关再分动即啦宝得成\"（另 15 字略）"
+      }
+    ]
+  },
+  "totals": {
+    "count": 5,
+    "originalBytes": 21497003,
+    "optimizedBytes": 163548,
+    "reductionPct": 99.24,
+    "minReductionPct": 30,
+    "minReductionMet": true
+  },
+  "atlas": {
+    "packed": 2,
+    "skipped": [],
+    "image": "atlas.png",
+    "width": 640,
+    "height": 512,
+    "encoding": "png-palette",
+    "bytes": 183837,
+    "candidates": [
+      {
+        "encoding": "webp-lossless",
+        "bytes": 546550
+      },
+      {
+        "encoding": "png-palette",
+        "bytes": 183837
+      }
+    ],
+    "note": "atlas.json 与图集图已写入输出目录（pf-atlas/1）"
+  },
+  "notes": [
+    "图集：atlas.json 与图集图已写入输出目录（pf-atlas/1）"
+  ]
+}

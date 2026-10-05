@@ -1,0 +1,5 @@
+# qacore 重生成试点依赖钉版（SPEC §9：playwright 1.63.0 + pillow 12.3.0）
+# 注：原仓 requirements 另含 fastapi/uvicorn/httpx/pydantic/jsonschema/fonttools/qrcode，
+# 属 pfcore/llmgw 等其他模块；qacore 本体仅需以下两项。
+playwright==1.63.0
+pillow==12.3.0

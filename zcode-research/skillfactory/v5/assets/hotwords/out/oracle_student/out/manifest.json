@@ -1,0 +1,111 @@
+{
+  "script": "fixtures/script.json",
+  "base_store": "fixtures/base.json",
+  "steps": [
+    {
+      "step": "01_list_initial",
+      "desc": "初始演示库按类别分组列出",
+      "expect": "ok",
+      "exit_code": 0,
+      "pass": true,
+      "stdout_first_line": "[产品]（2 词）",
+      "stderr_first_line": "",
+      "artifacts": []
+    },
+    {
+      "step": "02_add_ok",
+      "desc": "追加新词条",
+      "expect": "ok",
+      "exit_code": 0,
+      "pass": true,
+      "stdout_first_line": "已添加：灵犀大模型（类别：产品，权重：20） 备注：公司旗舰大模型",
+      "stderr_first_line": "",
+      "artifacts": []
+    },
+    {
+      "step": "03_add_duplicate",
+      "desc": "重复词条报错（退出码 2，库不变）",
+      "expect": "fail",
+      "exit_code": 2,
+      "pass": true,
+      "stdout_first_line": "",
+      "stderr_first_line": "错误：热词「悟空客服」已存在（类别：产品），不可重复添加",
+      "artifacts": []
+    },
+    {
+      "step": "04_add_with_weight",
+      "desc": "带自定义权重追加",
+      "expect": "ok",
+      "exit_code": 0,
+      "pass": true,
+      "stdout_first_line": "已添加：通义听悟（类别：产品，权重：30） 备注：转写工具",
+      "stderr_first_line": "",
+      "artifacts": []
+    },
+    {
+      "step": "05_remove_ok",
+      "desc": "按词删除既有词条",
+      "expect": "ok",
+      "exit_code": 0,
+      "pass": true,
+      "stdout_first_line": "已删除：闪修服务（类别：售后）",
+      "stderr_first_line": "",
+      "artifacts": []
+    },
+    {
+      "step": "06_remove_missing",
+      "desc": "删除不存在的词报错（退出码 2）",
+      "expect": "fail",
+      "exit_code": 2,
+      "pass": true,
+      "stdout_first_line": "",
+      "stderr_first_line": "错误：热词「不存在的词」不存在，无法删除",
+      "artifacts": []
+    },
+    {
+      "step": "07_list_final",
+      "desc": "增删后的库按类别分组列出",
+      "expect": "ok",
+      "exit_code": 0,
+      "pass": true,
+      "stdout_first_line": "[产品]（4 词）",
+      "stderr_first_line": "",
+      "artifacts": []
+    },
+    {
+      "step": "08_export_funasr",
+      "desc": "导出 FunASR 热词文件（词 权重）",
+      "expect": "ok",
+      "exit_code": 0,
+      "pass": true,
+      "stdout_first_line": "已导出 7 条热词 → hotwords_funasr.txt（格式 funasr）",
+      "stderr_first_line": "",
+      "artifacts": [
+        "hotwords_funasr.txt"
+      ]
+    },
+    {
+      "step": "09_export_plain",
+      "desc": "导出纯文本热词文件（每行一词）",
+      "expect": "ok",
+      "exit_code": 0,
+      "pass": true,
+      "stdout_first_line": "已导出 7 条热词 → hotwords_plain.txt（格式 plain）",
+      "stderr_first_line": "",
+      "artifacts": [
+        "hotwords_plain.txt"
+      ]
+    },
+    {
+      "step": "10_export_stdout",
+      "desc": "省略 --out 时导出到标准输出",
+      "expect": "ok",
+      "exit_code": 0,
+      "pass": true,
+      "stdout_first_line": "悟空客服 20",
+      "stderr_first_line": "",
+      "artifacts": []
+    }
+  ],
+  "all_pass": true
+}

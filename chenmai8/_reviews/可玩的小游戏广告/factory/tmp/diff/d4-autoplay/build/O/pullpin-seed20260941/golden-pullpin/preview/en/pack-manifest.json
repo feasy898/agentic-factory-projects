@@ -1,0 +1,22 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "preview",
+  "locale": "en",
+  "project": "golden-pullpin",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\d4-autoplay\\specs\\golden-pullpin-seed20260941.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\d4-autoplay\\build\\O\\pullpin-seed20260941\\golden-pullpin\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "index.html"
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 1241413,
+      "sha256": "63de8c4d6eb1e8d9d90b06387cb8c4d6ec2b0ea15e1151bdcda9c8b655e313c3",
+      "role": "package"
+    }
+  ],
+  "warnings": []
+}

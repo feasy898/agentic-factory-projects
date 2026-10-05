@@ -1,0 +1,884 @@
+{
+  "capturedAt": "2026-09-30T05:02:08.780Z",
+  "f1": [
+    {
+      "file": "specs-eval/golden-match3.json",
+      "ok": true,
+      "issues": [],
+      "oracleOk": true,
+      "oracleIssues": [],
+      "equal": true,
+      "pythonOk": true,
+      "pythonIssues": [],
+      "pythonEqual": true
+    },
+    {
+      "file": "specs-eval/golden-merge.json",
+      "ok": true,
+      "issues": [],
+      "oracleOk": true,
+      "oracleIssues": [],
+      "equal": true,
+      "pythonOk": true,
+      "pythonIssues": [],
+      "pythonEqual": true
+    },
+    {
+      "file": "specs-eval/golden-pullpin.json",
+      "ok": true,
+      "issues": [],
+      "oracleOk": true,
+      "oracleIssues": [],
+      "equal": true,
+      "pythonOk": true,
+      "pythonIssues": [],
+      "pythonEqual": true
+    },
+    {
+      "file": "specs-eval/golden-sort.json",
+      "ok": true,
+      "issues": [],
+      "oracleOk": true,
+      "oracleIssues": [],
+      "equal": true,
+      "pythonOk": true,
+      "pythonIssues": [],
+      "pythonEqual": true
+    },
+    {
+      "file": "specs-eval/demo-zh.json",
+      "ok": true,
+      "issues": [],
+      "oracleOk": true,
+      "oracleIssues": [],
+      "equal": true,
+      "pythonOk": true,
+      "pythonIssues": [],
+      "pythonEqual": true
+    },
+    {
+      "file": "specs-eval/bad/01-missing-field.json",
+      "ok": false,
+      "issues": [
+        "$.flow [schema-required]"
+      ],
+      "oracleOk": false,
+      "oracleIssues": [
+        "$.flow [schema-required]"
+      ],
+      "equal": true,
+      "pythonOk": false,
+      "pythonIssues": [
+        "$.flow [schema-required]"
+      ],
+      "pythonEqual": true
+    },
+    {
+      "file": "specs-eval/bad/02-pullpin-unsolvable.json",
+      "ok": false,
+      "issues": [
+        "$.game.params.orderSolution[0] [I1-pullpin-unsolvable]"
+      ],
+      "oracleOk": false,
+      "oracleIssues": [
+        "$.game.params.orderSolution[0] [I1-pullpin-unsolvable]"
+      ],
+      "equal": true,
+      "pythonOk": false,
+      "pythonIssues": [
+        "$.game.params.orderSolution[0] [I1-pullpin-unsolvable]"
+      ],
+      "pythonEqual": true
+    },
+    {
+      "file": "specs-eval/bad/03-duration-over-budget.json",
+      "ok": false,
+      "issues": [
+        "$.game.durationBudgetSec.max [schema-maximum]"
+      ],
+      "oracleOk": false,
+      "oracleIssues": [
+        "$.game.durationBudgetSec.max [schema-maximum]"
+      ],
+      "equal": true,
+      "pythonOk": false,
+      "pythonIssues": [
+        "$.game.durationBudgetSec.max [schema-maximum]"
+      ],
+      "pythonEqual": true
+    },
+    {
+      "file": "specs-eval/bad/04-missing-locale-strings.json",
+      "ok": false,
+      "issues": [
+        "$.i18n.strings.ja [I5-i18n-coverage]"
+      ],
+      "oracleOk": false,
+      "oracleIssues": [
+        "$.i18n.strings.ja [I5-i18n-coverage]"
+      ],
+      "equal": true,
+      "pythonOk": false,
+      "pythonIssues": [
+        "$.i18n.strings.ja [I5-i18n-coverage]"
+      ],
+      "pythonEqual": true
+    },
+    {
+      "file": "specs-eval/bad/05-bad-url.json",
+      "ok": false,
+      "issues": [
+        "$.flow.endScreen.landingUrl [schema-pattern]"
+      ],
+      "oracleOk": false,
+      "oracleIssues": [
+        "$.flow.endScreen.landingUrl [schema-pattern]"
+      ],
+      "equal": true,
+      "pythonOk": false,
+      "pythonIssues": [
+        "$.flow.endScreen.landingUrl [schema-pattern]"
+      ],
+      "pythonEqual": true
+    },
+    {
+      "file": "specs-eval/bad/06-unknown-template.json",
+      "ok": false,
+      "issues": [
+        "$.game.template [schema-enum]"
+      ],
+      "oracleOk": false,
+      "oracleIssues": [
+        "$.game.template [schema-enum]"
+      ],
+      "equal": true,
+      "pythonOk": false,
+      "pythonIssues": [
+        "$.game.template [schema-enum]"
+      ],
+      "pythonEqual": true
+    }
+  ],
+  "f6": {
+    "lcg1_first5": {
+      "equal": true,
+      "actual": [
+        1015568748,
+        1586005467,
+        2165703038,
+        3027450565,
+        217083232
+      ],
+      "expected": [
+        1015568748,
+        1586005467,
+        2165703038,
+        3027450565,
+        217083232
+      ]
+    },
+    "lcg424242_below3_x2": {
+      "equal": true,
+      "actual": [
+        2,
+        0
+      ],
+      "expected": [
+        2,
+        0
+      ]
+    },
+    "lcg20260930_first8": {
+      "equal": true,
+      "actual": [
+        1755204281,
+        3931075780,
+        841087315,
+        2862263958,
+        2491389181,
+        687559224,
+        2070704183,
+        2869268522
+      ],
+      "expected": [
+        1755204281,
+        3931075780,
+        841087315,
+        2862263958,
+        2491389181,
+        687559224,
+        2070704183,
+        2869268522
+      ]
+    },
+    "roles_424242_2_3": {
+      "equal": true,
+      "actual": [
+        [
+          2,
+          0
+        ],
+        [
+          0,
+          2
+        ]
+      ],
+      "expected": [
+        [
+          2,
+          0
+        ],
+        [
+          0,
+          2
+        ]
+      ]
+    },
+    "roles_20260930_3_3": {
+      "equal": true,
+      "actual": [
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ],
+      "expected": [
+        [
+          2,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          0
+        ]
+      ]
+    },
+    "board_20260930": {
+      "equal": true,
+      "actual": [
+        [
+          1,
+          0,
+          0,
+          3,
+          1,
+          4
+        ],
+        [
+          3,
+          2,
+          1,
+          4,
+          3,
+          2
+        ],
+        [
+          0,
+          4,
+          0,
+          1,
+          1,
+          2
+        ],
+        [
+          3,
+          3,
+          0,
+          3,
+          3,
+          4
+        ],
+        [
+          3,
+          1,
+          2,
+          1,
+          3,
+          1
+        ],
+        [
+          1,
+          2,
+          1,
+          3,
+          2,
+          4
+        ]
+      ],
+      "expected": [
+        [
+          1,
+          0,
+          0,
+          3,
+          1,
+          4
+        ],
+        [
+          3,
+          2,
+          1,
+          4,
+          3,
+          2
+        ],
+        [
+          0,
+          4,
+          0,
+          1,
+          1,
+          2
+        ],
+        [
+          3,
+          3,
+          0,
+          3,
+          3,
+          4
+        ],
+        [
+          3,
+          1,
+          2,
+          1,
+          3,
+          1
+        ],
+        [
+          1,
+          2,
+          1,
+          3,
+          2,
+          4
+        ]
+      ]
+    },
+    "findmove_20260930": {
+      "equal": true,
+      "actual": [
+        0,
+        2,
+        1,
+        2
+      ],
+      "expected": [
+        0,
+        2,
+        1,
+        2
+      ]
+    },
+    "board_424242": {
+      "equal": true,
+      "actual": [
+        [
+          4,
+          2,
+          4,
+          2,
+          1,
+          4
+        ],
+        [
+          4,
+          0,
+          2,
+          4,
+          4,
+          4
+        ],
+        [
+          4,
+          1,
+          2,
+          2,
+          4,
+          3
+        ],
+        [
+          3,
+          0,
+          1,
+          1,
+          1,
+          3
+        ],
+        [
+          1,
+          2,
+          0,
+          4,
+          0,
+          1
+        ],
+        [
+          2,
+          3,
+          1,
+          2,
+          1,
+          3
+        ]
+      ],
+      "expected": [
+        [
+          4,
+          2,
+          4,
+          2,
+          1,
+          4
+        ],
+        [
+          4,
+          0,
+          2,
+          4,
+          4,
+          4
+        ],
+        [
+          4,
+          1,
+          2,
+          2,
+          4,
+          3
+        ],
+        [
+          3,
+          0,
+          1,
+          1,
+          1,
+          3
+        ],
+        [
+          1,
+          2,
+          0,
+          4,
+          0,
+          1
+        ],
+        [
+          2,
+          3,
+          1,
+          2,
+          1,
+          3
+        ]
+      ]
+    },
+    "findmove_424242": {
+      "equal": true,
+      "actual": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "expected": [
+        0,
+        0,
+        0,
+        1
+      ]
+    },
+    "scramble_20260930_5_4_4.board": {
+      "equal": true,
+      "actual": [
+        [
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          1,
+          1,
+          1,
+          1
+        ],
+        [],
+        [
+          3,
+          3,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "expected": [
+        [
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          1,
+          1,
+          1,
+          1
+        ],
+        [],
+        [
+          3,
+          3,
+          3,
+          3
+        ],
+        [
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "scramble_20260930_5_4_4.trace": {
+      "equal": true,
+      "actual": [
+        [
+          1,
+          4,
+          4
+        ],
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          4,
+          0,
+          4
+        ],
+        [
+          2,
+          4,
+          4
+        ],
+        [
+          1,
+          2,
+          4
+        ],
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          4,
+          0,
+          4
+        ],
+        [
+          2,
+          4,
+          4
+        ],
+        [
+          1,
+          2,
+          4
+        ],
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          4,
+          0,
+          4
+        ],
+        [
+          2,
+          4,
+          4
+        ],
+        [
+          1,
+          2,
+          4
+        ],
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          4,
+          0,
+          4
+        ],
+        [
+          2,
+          4,
+          4
+        ],
+        [
+          1,
+          2,
+          4
+        ],
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          4,
+          0,
+          4
+        ],
+        [
+          2,
+          4,
+          4
+        ]
+      ],
+      "expected": [
+        [
+          1,
+          4,
+          4
+        ],
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          4,
+          0,
+          4
+        ],
+        [
+          2,
+          4,
+          4
+        ],
+        [
+          1,
+          2,
+          4
+        ],
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          4,
+          0,
+          4
+        ],
+        [
+          2,
+          4,
+          4
+        ],
+        [
+          1,
+          2,
+          4
+        ],
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          4,
+          0,
+          4
+        ],
+        [
+          2,
+          4,
+          4
+        ],
+        [
+          1,
+          2,
+          4
+        ],
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          4,
+          0,
+          4
+        ],
+        [
+          2,
+          4,
+          4
+        ],
+        [
+          1,
+          2,
+          4
+        ],
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          4,
+          0,
+          4
+        ],
+        [
+          2,
+          4,
+          4
+        ]
+      ]
+    },
+    "scramble_424242_4_4_4.board": {
+      "equal": true,
+      "actual": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          3,
+          3,
+          3,
+          3
+        ]
+      ],
+      "expected": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          3,
+          3,
+          3,
+          3
+        ]
+      ]
+    },
+    "scramble_424242_4_4_4.trace": {
+      "equal": true,
+      "actual": [],
+      "expected": []
+    },
+    "solved_4_4_4": {
+      "equal": true,
+      "actual": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          3,
+          3,
+          3,
+          3
+        ]
+      ],
+      "expected": [
+        [
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          2,
+          2,
+          2,
+          2
+        ],
+        [
+          3,
+          3,
+          3,
+          3
+        ]
+      ]
+    }
+  }
+}

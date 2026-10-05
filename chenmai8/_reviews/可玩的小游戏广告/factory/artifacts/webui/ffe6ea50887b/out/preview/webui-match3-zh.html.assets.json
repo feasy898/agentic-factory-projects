@@ -1,0 +1,14 @@
+{
+  "spec": "spec.json",
+  "locale": "zh",
+  "sprites": [
+    {
+      "spriteKey": "piece-0",
+      "path": "assets/piece-0.png",
+      "bytes": 402,
+      "source": "assetkit",
+      "originalBytes": 893,
+      "optimizedBytes": 402
+    }
+  ]
+}

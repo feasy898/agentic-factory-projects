@@ -1,0 +1,23 @@
+==============================================================================
+[matrix] 端到端矩阵门 mode=quick specs=[golden-match3.json] locales=[en] channels=[applovin,meta,mintegral,google,unity,tiktok] budget=<=90s
+[matrix] 构建 OK：golden-match3×en（1,242,938B）
+[matrix] 打包 OK：applovin/en index.html 1,242,934B（single-html）
+[matrix] 打包 OK：meta/en index.html 1,242,901B（single-html）
+[matrix] 打包 OK：mintegral/en golden-match3-en.zip 343,440B（zip）
+[matrix] 打包 OK：google/en golden-match3-en.zip 343,276B（zip）
+[matrix] 打包 OK：unity/en golden-match3-en.zip 343,287B（zip）
+[matrix] 打包 OK：tiktok/en golden-match3-en.zip 343,950B（zip）
+[matrix] 质检完成：6 包并行度 4（含单重试 0 格），阶段墙钟 191.0s
+------------------------------------------------------------------------------
+spec                  locale channel         bytes        上限  结果        质检墙钟
+golden-match3.json    en     applovin    1,242,934 5,242,880  pass     30.9s
+golden-match3.json    en     google        343,276 5,242,880  pass     32.9s
+golden-match3.json    en     meta        1,242,901 3,145,728  pass     30.9s
+golden-match3.json    en     mintegral     343,440 5,242,880  pass     31.6s
+golden-match3.json    en     tiktok        343,950 5,242,880  pass     31.8s
+golden-match3.json    en     unity         343,287 5,242,880  pass     32.9s
+------------------------------------------------------------------------------
+[matrix] FAIL：ReferenceError: writeFileSync is not defined
+    at writeSummary (file:///D:/workspace/%E6%BE%84%E8%BF%888%E9%A1%B9%E7%9B%AE/%E5%8F%AF%E7%8E%A9%E7%9A%84%E5%B0%8F%E6%B8%B8%E6%88%8F%E5%B9%BF%E5%91%8A/factory/scripts/e2e-matrix.mjs:371:3)
+    at runMatrix (file:///D:/workspace/%E6%BE%84%E8%BF%888%E9%A1%B9%E7%9B%AE/%E5%8F%AF%E7%8E%A9%E7%9A%84%E5%B0%8F%E6%B8%B8%E6%88%8F%E5%B9%BF%E5%91%8A/factory/scripts/e2e-matrix.mjs:449:23)
+    at async file:///D:/workspace/%E6%BE%84%E8%BF%888%E9%A1%B9%E7%9B%AE/%E5%8F%AF%E7%8E%A9%E7%9A%84%E5%B0%8F%E6%B8%B8%E6%88%8F%E5%B9%BF%E5%91%8A/factory/scripts/e2e-matrix.mjs:478:22

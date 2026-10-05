@@ -1,0 +1,22 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "meta",
+  "locale": "zh",
+  "project": "golden-match3",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\repo\\specs-eval\\golden-match3.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\oracle-matrix\\golden-match3\\dist",
+  "maxBytes": 3145728,
+  "packageFiles": [
+    "index.html"
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 1242889,
+      "sha256": "17f5a2ff7dde88d5532ab32935d8b580defaf2f2d56514464f5b93a2a6a31cfd",
+      "role": "package"
+    }
+  ],
+  "warnings": []
+}

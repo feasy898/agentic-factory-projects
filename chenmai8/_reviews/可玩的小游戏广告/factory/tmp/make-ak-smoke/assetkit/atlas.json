@@ -1,0 +1,15 @@
+{
+  "format": "pf-atlas/1",
+  "image": "atlas.webp",
+  "width": 96,
+  "height": 96,
+  "encoding": "webp-lossless",
+  "frames": {
+    "piece-0": {
+      "x": 0,
+      "y": 0,
+      "width": 96,
+      "height": 96
+    }
+  }
+}

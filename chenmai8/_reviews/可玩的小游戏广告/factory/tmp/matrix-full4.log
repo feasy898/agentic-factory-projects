@@ -1,0 +1,114 @@
+==============================================================================
+[matrix] 端到端矩阵门 mode=full specs=[golden-match3.json, golden-merge.json, golden-pullpin.json, golden-sort.json] locales=[en,zh] channels=[applovin,meta,mintegral,google,unity,tiktok] budget=<=1200s
+[matrix] 构建 OK：golden-match3×en（1,242,938B）
+[matrix] 构建 OK：golden-match3×zh（1,242,938B）
+[matrix] 构建 OK：golden-merge×en（1,239,086B）
+[matrix] 构建 OK：golden-merge×zh（1,239,086B）
+[matrix] 构建 OK：golden-pullpin×en（1,241,826B）
+[matrix] 构建 OK：golden-pullpin×zh（1,241,826B）
+[matrix] 构建 OK：golden-sort×en（1,242,578B）
+[matrix] 构建 OK：golden-sort×zh（1,242,578B）
+[matrix] 打包 OK：applovin/en index.html 1,242,934B（single-html）
+[matrix] 打包 OK：meta/en index.html 1,242,901B（single-html）
+[matrix] 打包 OK：mintegral/en golden-match3-en.zip 343,440B（zip）
+[matrix] 打包 OK：google/en golden-match3-en.zip 343,276B（zip）
+[matrix] 打包 OK：unity/en golden-match3-en.zip 343,287B（zip）
+[matrix] 打包 OK：tiktok/en golden-match3-en.zip 343,950B（zip）
+[matrix] 打包 OK：applovin/zh index.html 1,242,934B（single-html）
+[matrix] 打包 OK：meta/zh index.html 1,242,901B（single-html）
+[matrix] 打包 OK：mintegral/zh golden-match3-zh.zip 343,441B（zip）
+[matrix] 打包 OK：google/zh golden-match3-zh.zip 343,276B（zip）
+[matrix] 打包 OK：unity/zh golden-match3-zh.zip 343,288B（zip）
+[matrix] 打包 OK：tiktok/zh golden-match3-zh.zip 343,949B（zip）
+[matrix] 打包 OK：applovin/en index.html 1,239,082B（single-html）
+[matrix] 打包 OK：meta/en index.html 1,239,049B（single-html）
+[matrix] 打包 OK：mintegral/en golden-merge-en.zip 342,485B（zip）
+[matrix] 打包 OK：google/en golden-merge-en.zip 342,315B（zip）
+[matrix] 打包 OK：unity/en golden-merge-en.zip 342,332B（zip）
+[matrix] 打包 OK：tiktok/en golden-merge-en.zip 342,996B（zip）
+[matrix] 打包 OK：applovin/zh index.html 1,239,082B（single-html）
+[matrix] 打包 OK：meta/zh index.html 1,239,049B（single-html）
+[matrix] 打包 OK：mintegral/zh golden-merge-zh.zip 342,484B（zip）
+[matrix] 打包 OK：google/zh golden-merge-zh.zip 342,314B（zip）
+[matrix] 打包 OK：unity/zh golden-merge-zh.zip 342,331B（zip）
+[matrix] 打包 OK：tiktok/zh golden-merge-zh.zip 342,995B（zip）
+[matrix] 打包 OK：applovin/en index.html 1,241,822B（single-html）
+[matrix] 打包 OK：meta/en index.html 1,241,789B（single-html）
+[matrix] 打包 OK：mintegral/en golden-pullpin-en.zip 342,481B（zip）
+[matrix] 打包 OK：google/en golden-pullpin-en.zip 342,312B（zip）
+[matrix] 打包 OK：unity/en golden-pullpin-en.zip 342,328B（zip）
+[matrix] 打包 OK：tiktok/en golden-pullpin-en.zip 342,991B（zip）
+[matrix] 打包 OK：applovin/zh index.html 1,241,822B（single-html）
+[matrix] 打包 OK：meta/zh index.html 1,241,789B（single-html）
+[matrix] 打包 OK：mintegral/zh golden-pullpin-zh.zip 342,481B（zip）
+[matrix] 打包 OK：google/zh golden-pullpin-zh.zip 342,313B（zip）
+[matrix] 打包 OK：unity/zh golden-pullpin-zh.zip 342,328B（zip）
+[matrix] 打包 OK：tiktok/zh golden-pullpin-zh.zip 342,991B（zip）
+[matrix] 打包 OK：applovin/en index.html 1,242,574B（single-html）
+[matrix] 打包 OK：meta/en index.html 1,242,541B（single-html）
+[matrix] 打包 OK：mintegral/en golden-sort-en.zip 343,268B（zip）
+[matrix] 打包 OK：google/en golden-sort-en.zip 343,101B（zip）
+[matrix] 打包 OK：unity/en golden-sort-en.zip 343,115B（zip）
+[matrix] 打包 OK：tiktok/en golden-sort-en.zip 343,780B（zip）
+[matrix] 打包 OK：applovin/zh index.html 1,242,574B（single-html）
+[matrix] 打包 OK：meta/zh index.html 1,242,541B（single-html）
+[matrix] 打包 OK：mintegral/zh golden-sort-zh.zip 343,268B（zip）
+[matrix] 打包 OK：google/zh golden-sort-zh.zip 343,101B（zip）
+[matrix] 打包 OK：unity/zh golden-sort-zh.zip 343,115B（zip）
+[matrix] 打包 OK：tiktok/zh golden-sort-zh.zip 343,778B（zip）
+[matrix] 首检 20 格 FAIL，抖动单重试：重跑同一判官 → golden-merge.json×en×applovin、golden-merge.json×en×mintegral、golden-merge.json×en×google、golden-merge.json×en×tiktok、golden-merge.json×zh×applovin、golden-merge.json×zh×meta、golden-merge.json×zh×mintegral、golden-merge.json×zh×google、golden-merge.json×zh×unity、golden-merge.json×zh×tiktok、golden-pullpin.json×en×applovin、golden-pullpin.json×en×meta、golden-pullpin.json×en×unity、golden-pullpin.json×en×tiktok、golden-pullpin.json×zh×unity、golden-pullpin.json×zh×tiktok、golden-sort.json×en×applovin、golden-sort.json×en×meta、golden-sort.json×zh×unity、golden-sort.json×zh×tiktok
+[matrix] 质检完成：48 包并行度 2（含单重试 20 格），阶段墙钟 805.4s
+------------------------------------------------------------------------------
+spec                  locale channel         bytes        上限  结果        质检墙钟
+golden-match3.json    en     applovin    1,242,934 5,242,880  pass     35.2s
+golden-match3.json    en     google        343,276 5,242,880  pass     35.2s
+golden-match3.json    en     meta        1,242,901 3,145,728  pass     35.7s
+golden-match3.json    en     mintegral     343,440 5,242,880  pass     35.0s
+golden-match3.json    en     tiktok        343,950 5,242,880  pass     33.8s
+golden-match3.json    en     unity         343,287 5,242,880  pass     34.2s
+golden-match3.json    zh     applovin    1,242,934 5,242,880  pass     35.3s
+golden-match3.json    zh     google        343,276 5,242,880  pass     35.9s
+golden-match3.json    zh     meta        1,242,901 3,145,728  pass     35.2s
+golden-match3.json    zh     mintegral     343,441 5,242,880  pass     35.8s
+golden-match3.json    zh     tiktok        343,949 5,242,880  pass     34.9s
+golden-match3.json    zh     unity         343,288 5,242,880  pass     34.4s
+golden-merge.json     en     applovin    1,239,082 5,242,880  pass*    14.2s
+golden-merge.json     en     google        342,315 5,242,880  pass*    13.4s
+golden-merge.json     en     meta        1,239,049 3,145,728  pass     23.4s
+golden-merge.json     en     mintegral     342,485 5,242,880  pass*    14.3s
+golden-merge.json     en     tiktok        342,996 5,242,880  pass*    14.0s
+golden-merge.json     en     unity         342,332 5,242,880  pass     21.8s
+golden-merge.json     zh     applovin    1,239,082 5,242,880  pass*    12.8s
+golden-merge.json     zh     google        342,314 5,242,880  pass*    12.3s
+golden-merge.json     zh     meta        1,239,049 3,145,728  pass*    12.6s
+golden-merge.json     zh     mintegral     342,484 5,242,880  pass*    12.2s
+golden-merge.json     zh     tiktok        342,995 5,242,880  pass*    13.4s
+golden-merge.json     zh     unity         342,331 5,242,880  pass*    12.7s
+golden-pullpin.json   en     applovin    1,241,822 5,242,880  pass*    18.2s
+golden-pullpin.json   en     google        342,312 5,242,880  pass     23.9s
+golden-pullpin.json   en     meta        1,241,789 3,145,728  pass*    17.2s
+golden-pullpin.json   en     mintegral     342,481 5,242,880  pass     25.4s
+golden-pullpin.json   en     tiktok        342,991 5,242,880  pass*    16.6s
+golden-pullpin.json   en     unity         342,328 5,242,880  pass*    16.3s
+golden-pullpin.json   zh     applovin    1,241,822 5,242,880  pass     23.6s
+golden-pullpin.json   zh     google        342,313 5,242,880  pass     25.7s
+golden-pullpin.json   zh     meta        1,241,789 3,145,728  pass     21.8s
+golden-pullpin.json   zh     mintegral     342,481 5,242,880  pass     24.5s
+golden-pullpin.json   zh     tiktok        342,991 5,242,880  pass*    15.1s
+golden-pullpin.json   zh     unity         342,328 5,242,880  pass*    15.4s
+golden-sort.json      en     applovin    1,242,574 5,242,880  pass*    22.6s
+golden-sort.json      en     google        343,101 5,242,880  pass     19.3s
+golden-sort.json      en     meta        1,242,541 3,145,728  pass*    22.8s
+golden-sort.json      en     mintegral     343,268 5,242,880  pass     20.6s
+golden-sort.json      en     tiktok        343,780 5,242,880  pass     21.8s
+golden-sort.json      en     unity         343,115 5,242,880  pass     20.4s
+golden-sort.json      zh     applovin    1,242,574 5,242,880  pass     21.3s
+golden-sort.json      zh     google        343,101 5,242,880  pass     22.8s
+golden-sort.json      zh     meta        1,242,541 3,145,728  pass     21.3s
+golden-sort.json      zh     mintegral     343,268 5,242,880  pass     21.5s
+golden-sort.json      zh     tiktok        343,778 5,242,880  pass*    22.8s
+golden-sort.json      zh     unity         343,115 5,242,880  pass*    21.7s
+------------------------------------------------------------------------------
+[matrix] 总墙钟 921.8s（预算 ≤1200s），包 48：pass 48 / fail 0，skip 0（其中 20 格为单重试后过，见表内 * 号与 summary retried 字段）
+[matrix] summary.json：artifacts/matrix/summary.json
+[matrix] PASS：全矩阵全绿（exit 0）

@@ -1,0 +1,36 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "mintegral",
+  "locale": "en",
+  "project": "golden-sort",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\repo\\specs-eval\\golden-sort.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\oracle-matrix\\golden-sort\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-sort-en.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-sort-en.zip",
+      "bytes": 343095,
+      "sha256": "d99032ff5459665d2649d78faf50fc0851b935e121cfacb01c0ddc06502ef43e",
+      "role": "package"
+    },
+    {
+      "path": "Template.html",
+      "bytes": 1241992,
+      "sha256": "4dfda2bc553938c292e6463fe09965515e8148cc2d1a1396f11a1a61e872c470",
+      "role": "entry-in-zip"
+    },
+    {
+      "path": "build.js",
+      "bytes": 55,
+      "sha256": "c313221de22848013f4e599101039b18d1bb4a7af3041bc31d299b1a652bc9ae",
+      "role": "bundle-in-zip"
+    }
+  ],
+  "warnings": [
+    "dist 内没有外链 <script>，build.js 为空占位"
+  ]
+}

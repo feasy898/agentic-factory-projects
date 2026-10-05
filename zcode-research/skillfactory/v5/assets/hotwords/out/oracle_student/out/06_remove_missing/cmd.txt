@@ -1,0 +1,1 @@
+"C:\Program Files\Python312\python.exe" D:\new-workspace\agent-asset\afp-clone\zcode-research\skillfactory\v5\assets\hotwords\out\oracle_student\hotwords.py --store D:\new-workspace\agent-asset\afp-clone\zcode-research\skillfactory\v5\assets\hotwords\out\oracle_student\out\_work\store.json remove 不存在的词

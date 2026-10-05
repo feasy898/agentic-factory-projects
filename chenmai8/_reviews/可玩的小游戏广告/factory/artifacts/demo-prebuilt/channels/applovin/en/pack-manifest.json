@@ -1,0 +1,22 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "applovin",
+  "locale": "en",
+  "project": "demo-zh",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\specs-eval\\demo-zh.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\demo-zh\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "index.html"
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 1242410,
+      "sha256": "69ffa706e2fed60bf94cac27a5fe394a1d1d18d3676ca58ba7c11f4615dce6e3",
+      "role": "package"
+    }
+  ],
+  "warnings": []
+}

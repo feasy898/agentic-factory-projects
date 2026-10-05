@@ -1,0 +1,22 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "preview",
+  "locale": "en",
+  "project": "golden-match3",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\d4-autoplay\\specs\\golden-match3-seed20260932.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\d4-autoplay\\build\\N\\match3-seed20260932\\golden-match3\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "index.html"
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 1242901,
+      "sha256": "d98000e9dd8c5bd10ecd155bce8bf57ce274d014b95bc3a4cb5fbaa82b840de9",
+      "role": "package"
+    }
+  ],
+  "warnings": []
+}

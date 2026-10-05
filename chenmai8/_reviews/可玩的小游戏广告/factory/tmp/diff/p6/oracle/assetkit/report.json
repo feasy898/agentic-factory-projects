@@ -1,0 +1,22 @@
+{
+  "assetkitVersion": "1.0.0",
+  "generatedAt": "2026-09-30T14:42:05",
+  "spec": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\repo\\specs-eval\\golden-match3.json",
+  "outDir": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\assetkit",
+  "subsetTextChars": 143,
+  "materials": {
+    "image": [],
+    "audio": [],
+    "font": []
+  },
+  "totals": {
+    "count": 0,
+    "originalBytes": 0,
+    "optimizedBytes": 0,
+    "reductionPct": 0.0,
+    "minReductionPct": null,
+    "minReductionMet": null
+  },
+  "atlas": null,
+  "notes": []
+}

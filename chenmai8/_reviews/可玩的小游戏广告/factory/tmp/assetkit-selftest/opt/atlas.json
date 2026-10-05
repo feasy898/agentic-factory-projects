@@ -1,0 +1,21 @@
+{
+  "format": "pf-atlas/1",
+  "image": "atlas.png",
+  "width": 640,
+  "height": 512,
+  "encoding": "png-palette",
+  "frames": {
+    "selftest-photo": {
+      "x": 0,
+      "y": 0,
+      "width": 512,
+      "height": 512
+    },
+    "selftest-gem": {
+      "x": 512,
+      "y": 0,
+      "width": 128,
+      "height": 128
+    }
+  }
+}

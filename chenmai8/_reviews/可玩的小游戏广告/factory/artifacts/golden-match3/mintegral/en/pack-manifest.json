@@ -1,0 +1,34 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "mintegral",
+  "locale": "en",
+  "project": "golden-match3",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\specs-eval\\golden-match3.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\golden-match3\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-match3-en.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-match3-en.zip",
+      "bytes": 343440,
+      "sha256": "8aa6eeb47ba763325a093f477809afccde31053fc7dd2c23e9e53a67b3043758",
+      "role": "package"
+    },
+    {
+      "path": "Template.html",
+      "bytes": 1242934,
+      "sha256": "69f76c6c45a7359c5bd46b66419498f8ddccd1718214a8f5c6114f89251b5bef",
+      "role": "entry-in-zip"
+    },
+    {
+      "path": "build.js",
+      "bytes": 55,
+      "sha256": "c313221de22848013f4e599101039b18d1bb4a7af3041bc31d299b1a652bc9ae",
+      "role": "bundle-in-zip"
+    }
+  ],
+  "warnings": []
+}

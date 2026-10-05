@@ -1,0 +1,21 @@
+{
+  "name": "@pf/engine-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "渠道运行时桥（M2）：window.PF 全局 + pf:* 事件 + 按渠道注入退出接口与首交互前强制静音；零 npm 运行时依赖（模板经 esbuild 直接打包 src/*.ts）",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "types": "./src/types.ts",
+  "scripts": {
+    "test": "node --test test/",
+    "coverage": "c8 --include packages/engine-bridge/src/** --check-coverage --lines 80 --reporter text node --test test/",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "c8": "^12.0.0",
+    "jsdom": "^30.1.1",
+    "typescript": "^7.0.2"
+  }
+}

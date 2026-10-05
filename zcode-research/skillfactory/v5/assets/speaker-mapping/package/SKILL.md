@@ -51,7 +51,7 @@ python map_speakers.py --transcript T.txt --mapping confirmed.json --out T_named
 |---|---|---|
 | `WARNING: 未映射说话人标签 "X"，出现 N 次，已原样保留` | 有标签没填名 | 回第 2 步补填（或明确决定保留） |
 | `WARNING: 映射键 "X" 在转写稿中未出现` | 映射里的键写错/稿里没这个人 | 回第 2 步核对键名 |
-| `INFO: 写出 …（共 N 行，替换 X 处，未映射 Y 种）` | 汇总信息 | — |
+| `INFO: 写出 out/<file>（共 N 行，替换标签 X 处，未映射标签 Y 种）` | 汇总信息 | — |
 | exit `0` | 成功（含仅警告） | 交付产物 |
 | exit `2` | 输入文件不存在 / 参数错误 | 检查路径与参数 |
 | exit `1` | 映射文件不是合法 JSON / 顶层非对象 | 修 JSON 后重跑 |

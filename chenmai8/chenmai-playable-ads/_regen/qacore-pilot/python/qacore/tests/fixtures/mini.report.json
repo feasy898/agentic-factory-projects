@@ -1,0 +1,128 @@
+{
+  "channel": "preview",
+  "url": "http://127.0.0.1:8365/mini.html",
+  "autoplay": true,
+  "pf": {
+    "present": true,
+    "readyMs": 367.5,
+    "endMs": 1911.5,
+    "endWin": true
+  },
+  "checks": [
+    {
+      "id": "CHK01",
+      "name": "包体大小 ≤ 渠道上限",
+      "status": "pass",
+      "detail": "2220 B ≤ 渠道上限 5242880 B"
+    },
+    {
+      "id": "CHK02",
+      "name": "文件数",
+      "status": "skip",
+      "detail": "未实装（当前输入为单文件）"
+    },
+    {
+      "id": "CHK03",
+      "name": "零外网",
+      "status": "pass",
+      "detail": "两趟零外网请求/WebSocket/WebRTC"
+    },
+    {
+      "id": "CHK04",
+      "name": "首交互前静音",
+      "status": "pass",
+      "detail": "首交互前静音合规；首手势后已解除静音"
+    },
+    {
+      "id": "CHK05",
+      "name": "横竖屏",
+      "status": "pass",
+      "detail": "竖屏方差 801.8 / 横屏方差 818.8 ≥ 阈值 30.0"
+    },
+    {
+      "id": "CHK06",
+      "name": "退出接口",
+      "status": "skip",
+      "detail": "未实装（退出接口 stub 注入属后续）"
+    },
+    {
+      "id": "CHK07",
+      "name": "自动试玩到结束页",
+      "status": "pass",
+      "detail": "pf:end 于 1912ms 触发（win=True），终态 end，结束页可见"
+    },
+    {
+      "id": "CHK08",
+      "name": "控制台零错误",
+      "status": "pass",
+      "detail": "两趟 console.error / pageerror 均为零"
+    },
+    {
+      "id": "CHK09",
+      "name": "本地加载",
+      "status": "pass",
+      "detail": "竖屏 load 547ms ≤ 2000ms"
+    },
+    {
+      "id": "CHK10",
+      "name": "多语言文案与素材上屏",
+      "status": "skip",
+      "detail": "未提供 --require-text/--require-sprite，无判定对象"
+    }
+  ],
+  "screenshot": "mini.png",
+  "requests": [
+    {
+      "url": "http://127.0.0.1:8365/mini.html",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "blocked": false,
+      "failed": false
+    },
+    {
+      "url": "http://127.0.0.1:8365/mini.html",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "blocked": false,
+      "failed": false
+    }
+  ],
+  "facts": {
+    "artifact_bytes": 2220,
+    "channel": "preview",
+    "channel_max_bytes": 5242880,
+    "external_requests": [],
+    "runtime_stubs": [],
+    "request_count": 2,
+    "console_errors": [],
+    "load_ms": 546.9999999913853,
+    "max_load_sec": 2.0,
+    "autoplay_enabled": true,
+    "autoplay_timeout_sec": 45.0,
+    "pf_present": true,
+    "viewport_shots": {
+      "portrait": {
+        "has_canvas": true,
+        "variance": 801.8053531050682,
+        "muted_before_first_interaction": true,
+        "muted_after_first_gesture": false,
+        "audio_running_before_interaction": 0,
+        "media_unmuted_before_first": 0,
+        "plays_before_first": 0
+      },
+      "landscape": {
+        "has_canvas": true,
+        "variance": 818.8382429480553
+      }
+    },
+    "variance_threshold": 30.0,
+    "required_texts": [],
+    "required_sprites": [],
+    "page_texts": [],
+    "text_states": [],
+    "text_states_hook": false,
+    "asset_audit": []
+  }
+}

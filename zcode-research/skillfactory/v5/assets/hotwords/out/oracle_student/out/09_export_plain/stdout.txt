@@ -1,0 +1,1 @@
+已导出 7 条热词 → hotwords_plain.txt（格式 plain）

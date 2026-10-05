@@ -1,0 +1,28 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "google",
+  "locale": "en",
+  "project": "golden-match3",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\repo\\specs-eval\\golden-match3.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-match3-en.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-match3-en.zip",
+      "bytes": 343280,
+      "sha256": "08207113a6a2ac5edfe00a5c6ccd321a1e1c7df889f1a587d4b493c1da9a4c2b",
+      "role": "package"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1242889,
+      "sha256": "dc6a849f237b6635517c0b9bba66ade6cc85ce16daf9f73f9ca736110fffa8ff",
+      "role": "entry-in-zip"
+    }
+  ],
+  "warnings": []
+}

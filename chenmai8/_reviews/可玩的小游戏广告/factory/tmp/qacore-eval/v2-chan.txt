@@ -1,0 +1,6 @@
+viewport":{"width":600,"height":1024}
+viewport":{"width":1024,"height":600}
+viewport":{"width":360,"height":640}
+viewport":{"width":640,"height":360}
+viewport":{"width":360,"height":640}
+viewport":{"width":640,"height":360}

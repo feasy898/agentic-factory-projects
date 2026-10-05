@@ -1,0 +1,3759 @@
+{
+  "capturedAt": "2026-09-30T07:59:17.238Z",
+  "inputs": {
+    "oracleMatrix": "tmp/diff/oracle-matrix",
+    "factoryMatrix": "artifacts/matrix",
+    "jobs": 2,
+    "wallSec": 791.6
+  },
+  "perCell": [
+    {
+      "cell": "golden-match3|en|applovin",
+      "run": {
+        "NA": [
+          {
+            "attempt": 0,
+            "exit": 0,
+            "wallSec": null,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 32.5,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1168.2192,
+            "o": 950.9255000157282,
+            "ratio": 1.2285075960006098
+          },
+          "endMs": {
+            "n": 30954.400000000373,
+            "o": 27126,
+            "ratio": 1.1411339674113534
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1013.0646000000002,
+            "o": 796.0400000001755,
+            "ratio": 1.2726302698354062
+          },
+          "endMs": {
+            "n": 26137.899999976158,
+            "o": 27218,
+            "ratio": 0.9603167021815033
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-match3|en|meta",
+      "run": {
+        "NA": [
+          {
+            "attempt": 0,
+            "exit": 0,
+            "wallSec": null,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 31.8,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1178.9861999999994,
+            "o": 965.6631000107154,
+            "ratio": 1.2209084099691878
+          },
+          "endMs": {
+            "n": 31316.799999999814,
+            "o": 27969,
+            "ratio": 1.1196968071793705
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 868.9537,
+            "o": 819.3549999996321,
+            "ratio": 1.06053383454106
+          },
+          "endMs": {
+            "n": 26849.19999998808,
+            "o": 26442,
+            "ratio": 1.0153997428329202
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-match3|en|mintegral",
+      "run": {
+        "NA": [
+          {
+            "attempt": 0,
+            "exit": 0,
+            "wallSec": null,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 31.2,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1299.1816999999996,
+            "o": 1616.793199966196,
+            "ratio": 0.8035546537597777
+          },
+          "endMs": {
+            "n": 29619,
+            "o": 28527.30000001192,
+            "ratio": 1.0382686058613195
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 953.0556999999999,
+            "o": 716.6494000002785,
+            "ratio": 1.3298772035525732
+          },
+          "endMs": {
+            "n": 26245.69999998808,
+            "o": 26394,
+            "ratio": 0.9943812987795742
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-match3|en|google",
+      "run": {
+        "NA": [
+          {
+            "attempt": 0,
+            "exit": 0,
+            "wallSec": null,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 33.1,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1009.1475,
+            "o": 1150.7337000221014,
+            "ratio": 0.876960064679272
+          },
+          "endMs": {
+            "n": 30241,
+            "o": 28774.399999976158,
+            "ratio": 1.0509689168158174
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 966.2626,
+            "o": 614.6056000006865,
+            "ratio": 1.5721669311163462
+          },
+          "endMs": {
+            "n": 25964.100000023842,
+            "o": 28287.599999999627,
+            "ratio": 0.917861536504482
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-match3|en|unity",
+      "run": {
+        "NA": [
+          {
+            "attempt": 0,
+            "exit": 0,
+            "wallSec": null,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 32,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1089.3573999999999,
+            "o": 1331.9193000206724,
+            "ratio": 0.817885437941392
+          },
+          "endMs": {
+            "n": 30180,
+            "o": 27636.69999998808,
+            "ratio": 1.0920261825765383
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 830.9436000000001,
+            "o": 748.6408000004303,
+            "ratio": 1.1099363005589895
+          },
+          "endMs": {
+            "n": 26202.30000001192,
+            "o": 26568,
+            "ratio": 0.9862353206869889
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-match3|en|tiktok",
+      "run": {
+        "NA": [
+          {
+            "attempt": 0,
+            "exit": 0,
+            "wallSec": null,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 32.7,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1373.1414,
+            "o": 1220.9543000208214,
+            "ratio": 1.1246460248156571
+          },
+          "endMs": {
+            "n": 30906.299999999814,
+            "o": 28817.69999998808,
+            "ratio": 1.072476290613498
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 902.4405000000002,
+            "o": 865.2734999996028,
+            "ratio": 1.0429540486336568
+          },
+          "endMs": {
+            "n": 25962,
+            "o": 27156,
+            "ratio": 0.9560318161732214
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-match3|zh|applovin",
+      "run": {
+        "NA": [
+          {
+            "attempt": 0,
+            "exit": 0,
+            "wallSec": null,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 31.5,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 879.8966999999998,
+            "o": 856.9787999731489,
+            "ratio": 1.0267426685789298
+          },
+          "endMs": {
+            "n": 27062,
+            "o": 27000.299999952316,
+            "ratio": 1.002285159796291
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 914.8303000000001,
+            "o": 769.9772000005396,
+            "ratio": 1.1881264795884332
+          },
+          "endMs": {
+            "n": 25732,
+            "o": 26510.400000000373,
+            "ratio": 0.9706379383185331
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-match3|zh|meta",
+      "run": {
+        "NA": [
+          {
+            "attempt": 0,
+            "exit": 0,
+            "wallSec": null,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 32,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1095.7242,
+            "o": 885.3245999780484,
+            "ratio": 1.237652494946112
+          },
+          "endMs": {
+            "n": 27358.599999999627,
+            "o": 27086,
+            "ratio": 1.01006423982868
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 771.0396999999998,
+            "o": 876.552200000333,
+            "ratio": 0.8796278190844846
+          },
+          "endMs": {
+            "n": 26032,
+            "o": 26814.299999999814,
+            "ratio": 0.9708252686066831
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-match3|zh|mintegral",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 31.9,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 30.8,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 649.0235,
+            "o": 984.0524999890476,
+            "ratio": 0.6595415386955712
+          },
+          "endMs": {
+            "n": 27225.299999999814,
+            "o": 27038,
+            "ratio": 1.0069272875212594
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1038.3910999999998,
+            "o": 867.8325999999288,
+            "ratio": 1.196533870702812
+          },
+          "endMs": {
+            "n": 25948.5,
+            "o": 26215.299999999814,
+            "ratio": 0.989822737103912
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-match3|zh|google",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 31.1,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 32.4,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 498.6542999999999,
+            "o": 1137.7605000161566,
+            "ratio": 0.4382770363296308
+          },
+          "endMs": {
+            "n": 26794.599999999627,
+            "o": 28592.80000001192,
+            "ratio": 0.937110041688413
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 909.6500000000001,
+            "o": 659.2852000003404,
+            "ratio": 1.3797518888631664
+          },
+          "endMs": {
+            "n": 25667,
+            "o": 27423.700000000186,
+            "ratio": 0.9359422689133787
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-match3|zh|unity",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 31.2,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 32.5,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 731.8456000000001,
+            "o": 905.7002000045031,
+            "ratio": 0.8080439862952016
+          },
+          "endMs": {
+            "n": 26514.200000000186,
+            "o": 26778,
+            "ratio": 0.9901486294719616
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 997.6999000000001,
+            "o": 712.6611000003322,
+            "ratio": 1.399964022169212
+          },
+          "endMs": {
+            "n": 26054.69999998808,
+            "o": 27570.200000000186,
+            "ratio": 0.9450312293704036
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-match3|zh|tiktok",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 31.4,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 32.1,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 639.0306000000003,
+            "o": 1060.2872999734245,
+            "ratio": 0.602695703340045
+          },
+          "endMs": {
+            "n": 27031.299999999814,
+            "o": 27072,
+            "ratio": 0.9984966016548394
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 793.3628999999996,
+            "o": 803.7852000006751,
+            "ratio": 0.9870334761069665
+          },
+          "endMs": {
+            "n": 25941.399999976158,
+            "o": 26670,
+            "ratio": 0.9726809148847453
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-merge|en|applovin",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.5,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.6,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 714.6150000000002,
+            "o": 978.2572000403889,
+            "ratio": 0.7304980734826141
+          },
+          "endMs": {
+            "n": 5844.0999999996275,
+            "o": 5771,
+            "ratio": 1.0126667821867315
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1256.7825000000003,
+            "o": 784.5028000001548,
+            "ratio": 1.6020114905896476
+          },
+          "endMs": {
+            "n": 5991.199999988079,
+            "o": 5448,
+            "ratio": 1.099706314241571
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-merge|en|meta",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.3,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.5,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 758.4408999999998,
+            "o": 932.1981000248343,
+            "ratio": 0.8136048549978749
+          },
+          "endMs": {
+            "n": 5528,
+            "o": 5945.300000011921,
+            "ratio": 0.9298101020955908
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1229.8118000000004,
+            "o": 680.8866000001217,
+            "ratio": 1.8061918093259297
+          },
+          "endMs": {
+            "n": 5809,
+            "o": 5470.5,
+            "ratio": 1.0618773421076684
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-merge|en|mintegral",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 9.5,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.8,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 559.1232,
+            "o": 968.7369000166655,
+            "ratio": 0.577167237038644
+          },
+          "endMs": {
+            "n": 5406.200000000186,
+            "o": 5654,
+            "ratio": 0.9561726211531989
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1416.9138000000003,
+            "o": 739.2470999993748,
+            "ratio": 1.9166984895864978
+          },
+          "endMs": {
+            "n": 6600.800000011921,
+            "o": 5553,
+            "ratio": 1.1886907977691195
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-merge|en|google",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 9.7,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.3,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 653.1278,
+            "o": 864.6599000203423,
+            "ratio": 0.7553580315042183
+          },
+          "endMs": {
+            "n": 5463,
+            "o": 5694,
+            "ratio": 0.9594309799789252
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1583.6107000000002,
+            "o": 652.4693000001207,
+            "ratio": 2.4271037733111847
+          },
+          "endMs": {
+            "n": 6497.800000011921,
+            "o": 5161,
+            "ratio": 1.259019569853114
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-merge|en|unity",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 9.7,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.2,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 645.4816000000001,
+            "o": 914.0664999722503,
+            "ratio": 0.7061648140694314
+          },
+          "endMs": {
+            "n": 5082,
+            "o": 5877.800000011921,
+            "ratio": 0.864609207524872
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 692.4656,
+            "o": 653.7683999995352,
+            "ratio": 1.0591909917954008
+          },
+          "endMs": {
+            "n": 5068.599999964237,
+            "o": 5196,
+            "ratio": 0.9754811393310695
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-merge|en|tiktok",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 9.8,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.7,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 669.8515,
+            "o": 938.778400013689,
+            "ratio": 0.7135352709331962
+          },
+          "endMs": {
+            "n": 5484,
+            "o": 5858,
+            "ratio": 0.9361556845339707
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 873.6351999999997,
+            "o": 796.9154000002163,
+            "ratio": 1.0962709467024512
+          },
+          "endMs": {
+            "n": 5173,
+            "o": 5486,
+            "ratio": 0.9429456799125046
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-merge|zh|applovin",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 9.9,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.1,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 660.6042,
+            "o": 917.25860000588,
+            "ratio": 0.7201940652240985
+          },
+          "endMs": {
+            "n": 5292,
+            "o": 6143.899999976158,
+            "ratio": 0.8613421442439714
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 848.6131999999998,
+            "o": 684.1282999994291,
+            "ratio": 1.2404299018191587
+          },
+          "endMs": {
+            "n": 5503,
+            "o": 5161,
+            "ratio": 1.0662662274752954
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-merge|zh|meta",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 9.8,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.7,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 639.0378000000001,
+            "o": 891.9112000148743,
+            "ratio": 0.7164814165236886
+          },
+          "endMs": {
+            "n": 5475,
+            "o": 6000,
+            "ratio": 0.9125
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1197.6453999999999,
+            "o": 729.8180999996475,
+            "ratio": 1.6410190429650597
+          },
+          "endMs": {
+            "n": 5956,
+            "o": 5218,
+            "ratio": 1.141433499425067
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-merge|zh|mintegral",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 9.6,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.8,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 582.4289999999999,
+            "o": 978.4898000070825,
+            "ratio": 0.5952325716586766
+          },
+          "endMs": {
+            "n": 5394.5,
+            "o": 5951.800000011921,
+            "ratio": 0.906364461169595
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1283.6455,
+            "o": 682.1195999991687,
+            "ratio": 1.8818481392435644
+          },
+          "endMs": {
+            "n": 6222.100000023842,
+            "o": 5589.0999999996275,
+            "ratio": 1.1132561593144257
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-merge|zh|google",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 9.2,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.7,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 570.1769999999999,
+            "o": 1226.7593000433408,
+            "ratio": 0.4647831078026927
+          },
+          "endMs": {
+            "n": 4875.700000000186,
+            "o": 6989.899999976158,
+            "ratio": 0.6975350148094847
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1576.8768,
+            "o": 752.5826999999481,
+            "ratio": 2.0952870694477945
+          },
+          "endMs": {
+            "n": 6344,
+            "o": 5812,
+            "ratio": 1.0915347556779078
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-merge|zh|unity",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.1,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 11,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 744.1253999999999,
+            "o": 1739.796799956821,
+            "ratio": 0.4277082243273858
+          },
+          "endMs": {
+            "n": 5449,
+            "o": 7417,
+            "ratio": 0.7346636106242416
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1536.8127999999997,
+            "o": 674.6689000001425,
+            "ratio": 2.2778770445764955
+          },
+          "endMs": {
+            "n": 6592.900000035763,
+            "o": 5347,
+            "ratio": 1.2330091640238943
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-merge|zh|tiktok",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 10.2,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 11.3,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 704.0269000000003,
+            "o": 1272.697500011418,
+            "ratio": 0.5531769332411544
+          },
+          "endMs": {
+            "n": 5584,
+            "o": 6958.199999988079,
+            "ratio": 0.802506395333501
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 933.808,
+            "o": 799.526099999639,
+            "ratio": 1.1679518654868448
+          },
+          "endMs": {
+            "n": 5325,
+            "o": 5490.5,
+            "ratio": 0.9698570257717877
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-pullpin|en|applovin",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 13.2,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 13.5,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 783.9324000000001,
+            "o": 1304.8035000101663,
+            "ratio": 0.6008049487864587
+          },
+          "endMs": {
+            "n": 7992,
+            "o": 9143.300000011921,
+            "ratio": 0.8740826616199381
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1258.5589,
+            "o": 584.743399999752,
+            "ratio": 2.1523268154895527
+          },
+          "endMs": {
+            "n": 8845,
+            "o": 8194.900000000373,
+            "ratio": 1.0793298270875298
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-pullpin|en|meta",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 14,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 14.5,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 814.6163999999999,
+            "o": 1299.0738000371493,
+            "ratio": 0.6270747666350476
+          },
+          "endMs": {
+            "n": 8443,
+            "o": 8420.199999988079,
+            "ratio": 1.0027077741635535
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 951.6498999999999,
+            "o": 800.9701999999379,
+            "ratio": 1.1881214806744043
+          },
+          "endMs": {
+            "n": 7670,
+            "o": 8589.5,
+            "ratio": 0.8929506956167413
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-pullpin|en|mintegral",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 16,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 19.7,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 829.8519999999999,
+            "o": 1278.4317000187002,
+            "ratio": 0.6491171956920821
+          },
+          "endMs": {
+            "n": 8473.400000000373,
+            "o": 8314,
+            "ratio": 1.019172480154002
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1645.9570999999996,
+            "o": 1549.8719999995956,
+            "ratio": 1.0619955067259936
+          },
+          "endMs": {
+            "n": 8225,
+            "o": 10909.899999999441,
+            "ratio": 0.7539024189039699
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-pullpin|en|google",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 19.1,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 19.3,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1016.3867,
+            "o": 1525.732700014487,
+            "ratio": 0.6661630179325313
+          },
+          "endMs": {
+            "n": 11486.300000000745,
+            "o": 8515.399999976158,
+            "ratio": 1.3488855485394584
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1590.3928999999998,
+            "o": 1152.7927999995882,
+            "ratio": 1.3795999593340347
+          },
+          "endMs": {
+            "n": 9038.599999964237,
+            "o": 11005.5,
+            "ratio": 0.8212802689531813
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-pullpin|en|unity",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 16.4,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 13.7,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1003.7497000000003,
+            "o": 1030.7624000124633,
+            "ratio": 0.9737934755748401
+          },
+          "endMs": {
+            "n": 10833.200000000186,
+            "o": 7977,
+            "ratio": 1.3580544064184763
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1534.9911999999995,
+            "o": 786.7558999996618,
+            "ratio": 1.9510386893834026
+          },
+          "endMs": {
+            "n": 8031,
+            "o": 8052.5,
+            "ratio": 0.9973300217323813
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-pullpin|en|tiktok",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 12.8,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 13.9,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 780.7619999999997,
+            "o": 1258.2360999658704,
+            "ratio": 0.6205210612071755
+          },
+          "endMs": {
+            "n": 7755,
+            "o": 8298.199999988079,
+            "ratio": 0.9345400207287292
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1626.5752000000002,
+            "o": 808.7861000003613,
+            "ratio": 2.011131496942484
+          },
+          "endMs": {
+            "n": 8314,
+            "o": 7749,
+            "ratio": 1.0729126338882435
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-pullpin|zh|applovin",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 13.3,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 15,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 816.8932,
+            "o": 1275.7580999750644,
+            "ratio": 0.6403198223989067
+          },
+          "endMs": {
+            "n": 7903.200000000186,
+            "o": 8428,
+            "ratio": 0.9377313716184369
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1737.6962000000003,
+            "o": 838.3913999996366,
+            "ratio": 2.0726550868732114
+          },
+          "endMs": {
+            "n": 8716.800000011921,
+            "o": 7962.5,
+            "ratio": 1.0947315541616227
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-pullpin|zh|meta",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 12.9,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 16.1,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 716.1737999999998,
+            "o": 1275.9347999817692,
+            "ratio": 0.561293414060211
+          },
+          "endMs": {
+            "n": 7618,
+            "o": 8833.699999988079,
+            "ratio": 0.862379297464288
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 937.2617,
+            "o": 918.7542999998186,
+            "ratio": 1.0201440145642693
+          },
+          "endMs": {
+            "n": 7396,
+            "o": 8595,
+            "ratio": 0.860500290866783
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-pullpin|zh|mintegral",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 15.8,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 15.4,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1010.7224000000001,
+            "o": 1197.0614999881946,
+            "ratio": 0.8443362350305041
+          },
+          "endMs": {
+            "n": 9229.599999999627,
+            "o": 8556.5,
+            "ratio": 1.0786653421375128
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 846.1983,
+            "o": 894.539299999451,
+            "ratio": 0.9459598924278892
+          },
+          "endMs": {
+            "n": 7561,
+            "o": 8866.200000000186,
+            "ratio": 0.8527892445466876
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-pullpin|zh|google",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 15.7,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 15.2,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 943.4730000000002,
+            "o": 1374.6912000351585,
+            "ratio": 0.6863163159667206
+          },
+          "endMs": {
+            "n": 9532.099999999627,
+            "o": 9011,
+            "ratio": 1.0578293197203004
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 867.5360000000001,
+            "o": 940.1657999997042,
+            "ratio": 0.9227478812782522
+          },
+          "endMs": {
+            "n": 7819.699999988079,
+            "o": 8569,
+            "ratio": 0.9125568911177593
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-pullpin|zh|unity",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 14.1,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 15.8,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 797.3079,
+            "o": 1354.5204999973066,
+            "ratio": 0.5886274146471652
+          },
+          "endMs": {
+            "n": 8759.599999999627,
+            "o": 8754.300000011921,
+            "ratio": 1.0006054167652125
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 944.0097000000001,
+            "o": 938.0838000006406,
+            "ratio": 1.0063170262607193
+          },
+          "endMs": {
+            "n": 7790,
+            "o": 8457,
+            "ratio": 0.9211304245004138
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-pullpin|zh|tiktok",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 14,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 15.4,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 789.8424000000002,
+            "o": 1578.4429999766871,
+            "ratio": 0.5003933623270944
+          },
+          "endMs": {
+            "n": 8057,
+            "o": 8752.100000023842,
+            "ratio": 0.9205790610228461
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1673.6154999999999,
+            "o": 1022.8360999999495,
+            "ratio": 1.63624993290722
+          },
+          "endMs": {
+            "n": 8785.199999988079,
+            "o": 8973,
+            "ratio": 0.9790705449669095
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-sort|en|applovin",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 20.3,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 20.5,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 838.3379999999997,
+            "o": 1466.7560000088997,
+            "ratio": 0.5715592777496141
+          },
+          "endMs": {
+            "n": 15086,
+            "o": 19984.19999998808,
+            "ratio": 0.7548963681312737
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1738.3667999999998,
+            "o": 728.1392000004416,
+            "ratio": 2.3874099897367778
+          },
+          "endMs": {
+            "n": 15101,
+            "o": 14225,
+            "ratio": 1.0615817223198594
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-sort|en|meta",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 19.3,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 20.6,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 816.3391000000001,
+            "o": 1640.521399967838,
+            "ratio": 0.4976095404887764
+          },
+          "endMs": {
+            "n": 14440,
+            "o": 18807,
+            "ratio": 0.7677992236933057
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1705.7080000000005,
+            "o": 702.6991999991878,
+            "ratio": 2.4273657917953684
+          },
+          "endMs": {
+            "n": 15618.799999952316,
+            "o": 14884,
+            "ratio": 1.0493684493383713
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-sort|en|mintegral",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 19.3,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 20.3,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 799.0104999999999,
+            "o": 1225.3797000157647,
+            "ratio": 0.6520513600720825
+          },
+          "endMs": {
+            "n": 14257.700000000186,
+            "o": 15436.899999976158,
+            "ratio": 0.9236116059585932
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1470.7582999999995,
+            "o": 745.515599999635,
+            "ratio": 1.9728068735258115
+          },
+          "endMs": {
+            "n": 14560,
+            "o": 14490,
+            "ratio": 1.0048309178743962
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-sort|en|google",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 17.2,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 20,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 514.5072,
+            "o": 974.4901999947615,
+            "ratio": 0.5279757559416871
+          },
+          "endMs": {
+            "n": 13241.099999999627,
+            "o": 14528,
+            "ratio": 0.911419328193807
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1367.3948,
+            "o": 706.3687999998365,
+            "ratio": 1.9358086030984332
+          },
+          "endMs": {
+            "n": 14931,
+            "o": 14593,
+            "ratio": 1.0231617898992669
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-sort|en|unity",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 19.3,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 18.8,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 663.7291,
+            "o": 920.4812000389211,
+            "ratio": 0.7210675242166111
+          },
+          "endMs": {
+            "n": 14409.400000000373,
+            "o": 14447,
+            "ratio": 0.9973973835398611
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1880.1328999999996,
+            "o": 669.7769000002154,
+            "ratio": 2.8071032309406236
+          },
+          "endMs": {
+            "n": 22660.400000035763,
+            "o": 13900,
+            "ratio": 1.6302446043191197
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-sort|en|tiktok",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 18.9,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 19.6,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 715.2593000000002,
+            "o": 1101.497100025881,
+            "ratio": 0.6493519592409224
+          },
+          "endMs": {
+            "n": 14213.300000000745,
+            "o": 14482,
+            "ratio": 0.98144593288225
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 803.7408999999998,
+            "o": 705.3550999999061,
+            "ratio": 1.1394840697970523
+          },
+          "endMs": {
+            "n": 13650.399999976158,
+            "o": 14501.199999999255,
+            "ratio": 0.9413289934610142
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-sort|zh|applovin",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 18.8,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 19.8,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 595.6437999999998,
+            "o": 1015.6568000093102,
+            "ratio": 0.5864616866588593
+          },
+          "endMs": {
+            "n": 13730.900000000373,
+            "o": 14871,
+            "ratio": 0.9233340057830928
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 867.6743000000001,
+            "o": 685.2150999993682,
+            "ratio": 1.2662801797578602
+          },
+          "endMs": {
+            "n": 13900.399999976158,
+            "o": 14597,
+            "ratio": 0.9522778653131574
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-sort|zh|meta",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 18.5,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 18.9,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 798.1761000000001,
+            "o": 1169.809399987571,
+            "ratio": 0.6823129477404444
+          },
+          "endMs": {
+            "n": 13864.300000000745,
+            "o": 14831,
+            "ratio": 0.9348189602859379
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 890.8146000000002,
+            "o": 697.0923999997467,
+            "ratio": 1.2779003185235183
+          },
+          "endMs": {
+            "n": 13814,
+            "o": 13983,
+            "ratio": 0.9879138954444683
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-sort|zh|mintegral",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 17.6,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 20.5,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 574.5922,
+            "o": 890.7209999742918,
+            "ratio": 0.6450866208572427
+          },
+          "endMs": {
+            "n": 13277.200000000186,
+            "o": 16978,
+            "ratio": 0.7820237955000698
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 1045.9286000000002,
+            "o": 667.6432000003842,
+            "ratio": 1.566598147033323
+          },
+          "endMs": {
+            "n": 13972,
+            "o": 14790.200000000186,
+            "ratio": 0.9446795851306827
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-sort|zh|google",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 17.7,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 19.3,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 588.8515,
+            "o": 1326.33969996823,
+            "ratio": 0.4439673335677917
+          },
+          "endMs": {
+            "n": 13405.099999999627,
+            "o": 17118.80000001192,
+            "ratio": 0.7830630651675522
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 810.4598000000001,
+            "o": 766.7500000006839,
+            "ratio": 1.0570065862396834
+          },
+          "endMs": {
+            "n": 13752.300000011921,
+            "o": 14312.5,
+            "ratio": 0.9608593886471211
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-sort|zh|unity",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 17.8,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 19.7,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 562.3586,
+            "o": 1060.35470002098,
+            "ratio": 0.530349514166225
+          },
+          "endMs": {
+            "n": 13378.5,
+            "o": 14964.899999976158,
+            "ratio": 0.8939919411436972
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 880.3674000000001,
+            "o": 715.0698999994347,
+            "ratio": 1.231162715701914
+          },
+          "endMs": {
+            "n": 13656,
+            "o": 14681,
+            "ratio": 0.9301818677201825
+          }
+        }
+      },
+      "nbAllPass": true
+    },
+    {
+      "cell": "golden-sort|zh|tiktok",
+      "run": {
+        "NA": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 18.3,
+            "fails": []
+          }
+        ],
+        "OB": [
+          {
+            "attempt": 1,
+            "exit": 0,
+            "wallSec": 19.7,
+            "fails": []
+          }
+        ]
+      },
+      "pairs": {
+        "N(A)≡O(A)": {
+          "name": "N(A)≡O(A)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 635.4298999999999,
+            "o": 1187.8292000037618,
+            "ratio": 0.5349505635978535
+          },
+          "endMs": {
+            "n": 13769,
+            "o": 15199,
+            "ratio": 0.9059148628199224
+          }
+        },
+        "N(B)≡O(B)": {
+          "name": "N(B)≡O(B)",
+          "statusEq": true,
+          "statuses": [
+            "CHK01:pass",
+            "CHK02:skip",
+            "CHK03:pass",
+            "CHK04:pass",
+            "CHK05:pass",
+            "CHK06:skip",
+            "CHK07:pass",
+            "CHK08:pass",
+            "CHK09:pass",
+            "CHK10:pass"
+          ],
+          "factsKeysEq": true,
+          "loadMs": {
+            "n": 882.4951000000001,
+            "o": 728.1989000002795,
+            "ratio": 1.2118874389945677
+          },
+          "endMs": {
+            "n": 14122.399999976158,
+            "o": 14997.599999999627,
+            "ratio": 0.9416439963711867
+          }
+        }
+      },
+      "nbAllPass": true
+    }
+  ],
+  "findings": [],
+  "regressions": [],
+  "diffs": [],
+  "verdict": "PASS（零回归）"
+}

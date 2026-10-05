@@ -1,0 +1,15 @@
+# pipeline 配置（重生成试点自含副本）
+# media 段为媒体规范化目标的唯一事实源（spec m1-ingest §2，frozen）；
+# 代码侧兜底常量见 pipeline/config.py::_DEFAULT_MEDIA。
+media:
+  width: 1080          # 竖屏宽
+  height: 1920         # 竖屏高（等比缩放+黑边 pad）
+  fps: 25              # 恒定帧率
+  mix_sr: 48000        # 混音底座采样率（audio_48k.wav）
+  asr_sr: 16000        # 识别用采样率（audio_16k.wav，由 48k 产物派生）
+  loudness_lufs: -16.0 # loudnorm 目标 integrated loudness
+  true_peak_dbtp: -1.5 # loudnorm 目标 true peak
+  lra: 11              # loudnorm 目标 LRA
+  crf: 18              # libx264 crf
+  preset: veryfast     # libx264 preset
+  video_audio_bitrate: 192k  # 容器内音轨 AAC 码率（仅统一编码，不做响度处理）

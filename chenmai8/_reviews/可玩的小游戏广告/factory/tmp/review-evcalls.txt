@@ -1,0 +1,16 @@
+qacore/src/autoplay.ts:27:    return await ev(page, 
+qacore/src/autoplay.ts:41:    raw = await ev(page, 
+qacore/src/autoplay.ts:59:    v = await ev(page, 
+qacore/src/autoplay.ts:70:    const v = await ev(page, 
+qacore/src/autoplay.ts:87:    const v = await ev(page, 
+qacore/src/autoplay.ts:104:    v = await ev(page, 
+qacore/src/autoplay.ts:122:    const v = await ev(page, 
+qacore/src/autoplay.ts:133:    return Boolean(await ev(page, "() => !!window.__pfprobe"));
+qacore/src/autoplay.ts:156:    return Boolean(await ev(page, 
+qacore/src/autoplay.ts:167:    v = await ev(page, 
+qacore/src/autoplay.ts:185:    v = await ev(page, 
+qacore/src/autoplay.ts:218:    v = await ev(page, 
+qacore/src/autoplay.ts:231:    return Boolean(await ev(page, 
+qacore/src/autoplay.ts:275:    return (await ev(page, "() => window.__pfprobe || null") as ProbeSnapshot | null) ?? {};
+qacore/src/autoplay.ts:394:    const v = await ev(page, 
+qacore/src/run.ts:309:        const hasCanvas = Boolean(await ev(page, "() => !!document.querySelector('canvas')"));

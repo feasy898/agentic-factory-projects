@@ -1,0 +1,36 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "mintegral",
+  "locale": "en",
+  "project": "golden-match3",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\repo\\specs-eval\\golden-match3.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\oracle-matrix\\golden-match3\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-match3-en.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-match3-en.zip",
+      "bytes": 343448,
+      "sha256": "109da5a919c8e0b992f93bc869db6a42f23fe57bde68e600c297a8adc97c5431",
+      "role": "package"
+    },
+    {
+      "path": "Template.html",
+      "bytes": 1242922,
+      "sha256": "1a09d567ef50077257aafc98619340c2015c9ed09f6a7964808bec7842fe6df3",
+      "role": "entry-in-zip"
+    },
+    {
+      "path": "build.js",
+      "bytes": 55,
+      "sha256": "c313221de22848013f4e599101039b18d1bb4a7af3041bc31d299b1a652bc9ae",
+      "role": "bundle-in-zip"
+    }
+  ],
+  "warnings": [
+    "dist 内没有外链 <script>，build.js 为空占位"
+  ]
+}

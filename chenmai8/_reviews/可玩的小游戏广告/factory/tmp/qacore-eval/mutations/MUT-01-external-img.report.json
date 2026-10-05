@@ -1,0 +1,199 @@
+{
+  "channel": "preview",
+  "url": "http://127.0.0.1:1486/MUT-01-external-img.html",
+  "autoplay": true,
+  "pf": {
+    "present": true,
+    "readyMs": 48,
+    "endMs": 875,
+    "endWin": true
+  },
+  "checks": [
+    {
+      "id": "CHK01",
+      "name": "包体大小 ≤ 渠道上限",
+      "status": "pass",
+      "detail": "2244 B ≤ 上限 5242880 B"
+    },
+    {
+      "id": "CHK02",
+      "name": "文件数 ≤ 渠道上限",
+      "status": "skip",
+      "detail": "未实装（当前输入为单 HTML 文件，无目录清点）"
+    },
+    {
+      "id": "CHK03",
+      "name": "零外网请求",
+      "status": "fail",
+      "detail": "发现 1 条非本机请求/WebSocket，已拦截：http…"
+    },
+    {
+      "id": "CHK04",
+      "name": "首交互前静音",
+      "status": "pass",
+      "detail": "首交互前 PF.isMuted()=true，无未静音媒体元素，无 running AudioContext，首交互后 isMuted()=false（已解除静音，gestures=3）"
+    },
+    {
+      "id": "CHK05",
+      "name": "横竖屏渲染非空白",
+      "status": "pass",
+      "detail": "390×844 与 844×390 双仿真像素方差 797/820 ≥ 阈值 30"
+    },
+    {
+      "id": "CHK06",
+      "name": "渠道退出接口调用",
+      "status": "skip",
+      "detail": "未实装（渠道 stub 注入属 M8 后续里程碑）"
+    },
+    {
+      "id": "CHK07",
+      "name": "自动试玩到结束页",
+      "status": "pass",
+      "detail": "pf:end 于 875ms 触发（win=True，gestures=3），结束页可见"
+    },
+    {
+      "id": "CHK08",
+      "name": "控制台零错误",
+      "status": "pass",
+      "detail": "两趟均无 console error 与 pageerror"
+    },
+    {
+      "id": "CHK09",
+      "name": "本地加载 ≤2s",
+      "status": "pass",
+      "detail": "load 耗时 62ms"
+    },
+    {
+      "id": "CHK10",
+      "name": "多语言文案与素材上屏",
+      "status": "skip",
+      "detail": "未提供 --require-text/--require-sprite，无判定对象（locale 仿真属后续）"
+    }
+  ],
+  "screenshot": "MUT-01-external-img.report.png",
+  "requests": [
+    {
+      "url": "http://127.0.0.1:1486/MUT-01-external-img.html",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "blocked": false,
+      "failed": false
+    },
+    {
+      "url": "https://cdn.example.com/mut01-external.png",
+      "method": "GET",
+      "resource_type": "image",
+      "status": null,
+      "blocked": true,
+      "failed": true
+    },
+    {
+      "url": "http://127.0.0.1:1486/MUT-01-external-img.html",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "blocked": false,
+      "failed": false
+    },
+    {
+      "url": "https://cdn.example.com/mut01-external.png",
+      "method": "GET",
+      "resource_type": "image",
+      "status": null,
+      "blocked": true,
+      "failed": true
+    }
+  ],
+  "facts": {
+    "artifact_bytes": 2244,
+    "channel": "preview",
+    "channel_max_bytes": 5242880,
+    "channel_mute_required": true,
+    "external_requests": [
+      "https://cdn.example.com/mut01-external.png"
+    ],
+    "runtime_stubs": [],
+    "rtc_connections": 0,
+    "request_count": 4,
+    "console_errors": [],
+    "load_ms": 62.29829999999993,
+    "max_load_sec": 2,
+    "autoplay_enabled": true,
+    "autoplay_timeout_sec": 45,
+    "muteLoadTime": {
+      "has_canvas": true,
+      "variance": 796.9445309042931,
+      "probeInstalled": true,
+      "enabled": true,
+      "timeoutSec": 45,
+      "reachedState": "end",
+      "gestures": 3,
+      "firstMutedBeforeInteraction": true,
+      "audioRunningBeforeInteraction": 0,
+      "mediaUnmutedBeforeInteraction": 0,
+      "mediaPlaysBeforeInteraction": 0,
+      "mutedAfterFirstGesture": false,
+      "pfEndFired": true,
+      "pfEndMs": 875,
+      "pfEndWin": true,
+      "pfReadyMs": 48,
+      "endScreenVisible": true,
+      "qcHooksPresent": true,
+      "textStatesHook": false,
+      "qcTexts": [],
+      "qcVisibleTexts": [],
+      "page_texts": [],
+      "text_states": [],
+      "text_states_hook": false,
+      "asset_audit": []
+    },
+    "required_texts": [],
+    "required_sprites": [],
+    "page_texts": [],
+    "text_states": [],
+    "text_states_hook": false,
+    "asset_audit": [],
+    "pf_present": true,
+    "probe_installed": true,
+    "viewport_shots": {
+      "portrait": {
+        "has_canvas": true,
+        "variance": 796.9445309042931,
+        "probeInstalled": true,
+        "enabled": true,
+        "timeoutSec": 45,
+        "reachedState": "end",
+        "gestures": 3,
+        "firstMutedBeforeInteraction": true,
+        "audioRunningBeforeInteraction": 0,
+        "mediaUnmutedBeforeInteraction": 0,
+        "mediaPlaysBeforeInteraction": 0,
+        "mutedAfterFirstGesture": false,
+        "pfEndFired": true,
+        "pfEndMs": 875,
+        "pfEndWin": true,
+        "pfReadyMs": 48,
+        "endScreenVisible": true,
+        "qcHooksPresent": true,
+        "textStatesHook": false,
+        "qcTexts": [],
+        "qcVisibleTexts": [],
+        "page_texts": [],
+        "text_states": [],
+        "text_states_hook": false,
+        "asset_audit": []
+      },
+      "landscape": {
+        "has_canvas": true,
+        "variance": 819.7639303207397,
+        "probeInstalled": true,
+        "firstMutedBeforeInteraction": true,
+        "audioRunningBeforeInteraction": 0,
+        "mediaUnmutedBeforeInteraction": 0,
+        "mediaPlaysBeforeInteraction": 0
+      }
+    },
+    "variance_threshold": 30
+  }
+}

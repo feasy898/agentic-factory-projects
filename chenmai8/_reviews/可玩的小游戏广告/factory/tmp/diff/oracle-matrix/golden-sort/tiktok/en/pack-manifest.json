@@ -1,0 +1,40 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "tiktok",
+  "locale": "en",
+  "project": "golden-sort",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\repo\\specs-eval\\golden-sort.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\oracle-matrix\\golden-sort\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-sort-en.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-sort-en.zip",
+      "bytes": 343606,
+      "sha256": "25f320e8b9b09f929b5ac2dcc3352f99d397af006f75dda2647952ea92c5ff53",
+      "role": "package"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1241993,
+      "sha256": "eb132397c5e36135c581bd07d5713cd2e46423f4d75f25c8baea438d1112294d",
+      "role": "entry-in-zip"
+    },
+    {
+      "path": "config.json",
+      "bytes": 96,
+      "sha256": "e0fc02c497f46e0b9a4ffb57bd52e26413fef76dcf5cf525fa305a77133c9d25",
+      "role": "generated-in-zip"
+    },
+    {
+      "path": "js-sdk.js",
+      "bytes": 493,
+      "sha256": "e5dcc71988c665155bf5660c54d236baeaaf792a0bdfdd1deefab610b050f544",
+      "role": "generated-in-zip"
+    }
+  ],
+  "warnings": []
+}

@@ -1,0 +1,200 @@
+TAP version 13
+# Subtest: 本器复验 tmpl-match3：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+ok 1 - 本器复验 tmpl-match3：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+  ---
+  duration_ms: 31139.2067
+  type: 'test'
+  ...
+# Subtest: 本器复验 tmpl-merge：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+ok 2 - 本器复验 tmpl-merge：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+  ---
+  duration_ms: 10219.593
+  type: 'test'
+  ...
+# Subtest: 本器复验 tmpl-pullpin：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+not ok 3 - 本器复验 tmpl-pullpin：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+  ---
+  duration_ms: 13339.499
+  type: 'test'
+  location: 'D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\qacore\\tests\\templates.test.mjs:63:3'
+  failureType: 'testCodeFailure'
+  error: |-
+    pullpin: qacore exit=1
+    qacore: pullpin.html @ preview -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\tmp\qacore-eval\templates\pullpin.report.json (2 请求, 1 FAIL, pf:end 7167ms)
+    
+    
+    [
+     {
+      "id": "CHK01",
+      "name": "包体大小 ≤ 渠道上限",
+      "status": "pass",
+      "detail": "1387691 B ≤ 上限 5242880 B"
+     },
+     {
+      "id": "CHK02",
+      "name": "文件数 ≤ 渠道上限",
+      "status": "skip",
+      "detail": "未实装（当前输入为单 HTML 文件，无目录清点）"
+     },
+     {
+      "id": "CHK03",
+      "name": "零外网请求",
+      "status": "pass",
+      "detail": "两趟共 2 条请求均指向本地伺服地址，无外网请求、无外部 WebSocket、无 WebRTC 构造"
+     },
+     {
+      "id": "CHK04",
+      "name": "首交互前静音",
+      "status": "fail",
+      "detail": "首交互前存在 running AudioContext（1）"
+     },
+     {
+      "id": "CHK05",
+      "name": "横竖屏渲染非空白",
+      "status": "pass",
+      "detail": "390×844 与 844×390 双仿真像素方差 1192/550 ≥ 阈值 30"
+     },
+     {
+      "id": "CHK06",
+      "name": "渠道退出接口调用",
+      "status": "skip",
+      "detail": "未实装（渠道 stub 注入属 M8 后续里程碑）"
+     },
+     {
+      "id": "CHK07",
+      "name": "自动试玩到结束页",
+      "status": "pass",
+      "detail": "pf:end 于 7167ms 触发（win=True，gestures=5），结束页可见"
+     },
+     {
+      "id": "CHK08",
+      "name": "控制台零错误",
+      "status": "pass",
+      "detail": "两趟均无 console error 与 pageerror"
+     },
+     {
+      "id": "CHK09",
+      "name": "本地加载 ≤2s",
+      "status": "pass",
+      "detail": "load 耗时 841ms"
+     },
+     {
+      "id": "CHK10",
+      "name": "多语言文案与素材上屏",
+      "status": "skip",
+      "detail": "未提供 --require-text/--require-sprite，无判定对象（locale 仿真属后续）"
+     }
+    ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'fail'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/workspace/%E6%BE%84%E8%BF%888%E9%A1%B9%E7%9B%AE/%E5%8F%AF%E7%8E%A9%E7%9A%84%E5%B0%8F%E6%B8%B8%E6%88%8F%E5%B9%BF%E5%91%8A/factory/qacore/tests/templates.test.mjs:76:14)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+# Subtest: 本器复验 tmpl-sort：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+ok 4 - 本器复验 tmpl-sort：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+  ---
+  duration_ms: 18638.3643
+  type: 'test'
+  ...
+# Subtest: CHK10 实装层：demo-zh 构建 + 标题/教程/胜/CTA/分文案 + piece-0 像素对账 → pass
+not ok 5 - CHK10 实装层：demo-zh 构建 + 标题/教程/胜/CTA/分文案 + piece-0 像素对账 → pass
+  ---
+  duration_ms: 23202.4241
+  type: 'test'
+  location: 'D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\qacore\\tests\\templates.test.mjs:93:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    demo-zh: qacore exit=1
+    qacore: demo-zh.html @ preview -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\tmp\qacore-eval\templates\demo-zh.report.json (2 请求, 1 FAIL, pf:end 17905ms)
+    
+    
+    [
+     {
+      "id": "CHK01",
+      "name": "包体大小 ≤ 渠道上限",
+      "status": "pass",
+      "detail": "1243050 B ≤ 上限 5242880 B"
+     },
+     {
+      "id": "CHK02",
+      "name": "文件数 ≤ 渠道上限",
+      "status": "skip",
+      "detail": "未实装（当前输入为单 HTML 文件，无目录清点）"
+     },
+     {
+      "id": "CHK03",
+      "name": "零外网请求",
+      "status": "pass",
+      "detail": "两趟共 2 条请求均指向本地伺服地址，无外网请求、无外部 WebSocket、无 WebRTC 构造"
+     },
+     {
+      "id": "CHK04",
+      "name": "首交互前静音",
+      "status": "fail",
+      "detail": "首交互前存在 running AudioContext（1）"
+     },
+     {
+      "id": "CHK05",
+      "name": "横竖屏渲染非空白",
+      "status": "pass",
+      "detail": "390×844 与 844×390 双仿真像素方差 1443/843 ≥ 阈值 30"
+     },
+     {
+      "id": "CHK06",
+      "name": "渠道退出接口调用",
+      "status": "skip",
+      "detail": "未实装（渠道 stub 注入属 M8 后续里程碑）"
+     },
+     {
+      "id": "CHK07",
+      "name": "自动试玩到结束页",
+      "status": "pass",
+      "detail": "pf:end 于 17905ms 触发（win=True，gestures=18），结束页可见"
+     },
+     {
+      "id": "CHK08",
+      "name": "控制台零错误",
+      "status": "pass",
+      "detail": "两趟均无 console error 与 pageerror"
+     },
+     {
+      "id": "CHK09",
+      "name": "本地加载 ≤2s",
+      "status": "pass",
+      "detail": "load 耗时 671ms"
+     },
+     {
+      "id": "CHK10",
+      "name": "多语言文案与素材上屏",
+      "status": "pass",
+      "detail": "渲染文案命中 5/5（集合共 29 条，active+visible 采样核验通过）；替换素材像素对账通过 1/1"
+     }
+    ]
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  operator: 'fail'
+  stack: |-
+    TestContext.<anonymous> (file:///D:/workspace/%E6%BE%84%E8%BF%888%E9%A1%B9%E7%9B%AE/%E5%8F%AF%E7%8E%A9%E7%9A%84%E5%B0%8F%E6%B8%B8%E6%88%8F%E5%B9%BF%E5%91%8A/factory/qacore/tests/templates.test.mjs:119:12)
+    Test.runInAsyncScope (node:async_hooks:214:14)
+    Test.run (node:internal/test_runner/test:1047:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:744:18)
+    Test.postRun (node:internal/test_runner/test:1173:19)
+    Test.run (node:internal/test_runner/test:1101:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:744:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 3
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 96879.7577

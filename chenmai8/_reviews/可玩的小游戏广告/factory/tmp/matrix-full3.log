@@ -1,0 +1,152 @@
+==============================================================================
+[matrix] 端到端矩阵门 mode=full specs=[golden-match3.json, golden-merge.json, golden-pullpin.json, golden-sort.json] locales=[en,zh] channels=[applovin,meta,mintegral,google,unity,tiktok] budget=<=1200s
+[matrix] 构建 OK：golden-match3×en（1,242,938B）
+[matrix] 构建 OK：golden-match3×zh（1,242,938B）
+[matrix] 构建 OK：golden-merge×en（1,239,086B）
+[matrix] 构建 OK：golden-merge×zh（1,239,086B）
+[matrix] 构建 OK：golden-pullpin×en（1,241,826B）
+[matrix] 构建 OK：golden-pullpin×zh（1,241,826B）
+[matrix] 构建 OK：golden-sort×en（1,242,578B）
+[matrix] 构建 OK：golden-sort×zh（1,242,578B）
+[matrix] 打包 OK：applovin/en index.html 1,242,934B（single-html）
+[matrix] 打包 OK：meta/en index.html 1,242,901B（single-html）
+[matrix] 打包 OK：mintegral/en golden-match3-en.zip 343,440B（zip）
+[matrix] 打包 OK：google/en golden-match3-en.zip 343,276B（zip）
+[matrix] 打包 OK：unity/en golden-match3-en.zip 343,287B（zip）
+[matrix] 打包 OK：tiktok/en golden-match3-en.zip 343,950B（zip）
+[matrix] 打包 OK：applovin/zh index.html 1,242,934B（single-html）
+[matrix] 打包 OK：meta/zh index.html 1,242,901B（single-html）
+[matrix] 打包 OK：mintegral/zh golden-match3-zh.zip 343,441B（zip）
+[matrix] 打包 OK：google/zh golden-match3-zh.zip 343,276B（zip）
+[matrix] 打包 OK：unity/zh golden-match3-zh.zip 343,288B（zip）
+[matrix] 打包 OK：tiktok/zh golden-match3-zh.zip 343,949B（zip）
+[matrix] 打包 OK：applovin/en index.html 1,239,082B（single-html）
+[matrix] 打包 OK：meta/en index.html 1,239,049B（single-html）
+[matrix] 打包 OK：mintegral/en golden-merge-en.zip 342,485B（zip）
+[matrix] 打包 OK：google/en golden-merge-en.zip 342,315B（zip）
+[matrix] 打包 OK：unity/en golden-merge-en.zip 342,332B（zip）
+[matrix] 打包 OK：tiktok/en golden-merge-en.zip 342,996B（zip）
+[matrix] 打包 OK：applovin/zh index.html 1,239,082B（single-html）
+[matrix] 打包 OK：meta/zh index.html 1,239,049B（single-html）
+[matrix] 打包 OK：mintegral/zh golden-merge-zh.zip 342,484B（zip）
+[matrix] 打包 OK：google/zh golden-merge-zh.zip 342,314B（zip）
+[matrix] 打包 OK：unity/zh golden-merge-zh.zip 342,331B（zip）
+[matrix] 打包 OK：tiktok/zh golden-merge-zh.zip 342,995B（zip）
+[matrix] 打包 OK：applovin/en index.html 1,241,822B（single-html）
+[matrix] 打包 OK：meta/en index.html 1,241,789B（single-html）
+[matrix] 打包 OK：mintegral/en golden-pullpin-en.zip 342,481B（zip）
+[matrix] 打包 OK：google/en golden-pullpin-en.zip 342,312B（zip）
+[matrix] 打包 OK：unity/en golden-pullpin-en.zip 342,328B（zip）
+[matrix] 打包 OK：tiktok/en golden-pullpin-en.zip 342,991B（zip）
+[matrix] 打包 OK：applovin/zh index.html 1,241,822B（single-html）
+[matrix] 打包 OK：meta/zh index.html 1,241,789B（single-html）
+[matrix] 打包 OK：mintegral/zh golden-pullpin-zh.zip 342,481B（zip）
+[matrix] 打包 OK：google/zh golden-pullpin-zh.zip 342,313B（zip）
+[matrix] 打包 OK：unity/zh golden-pullpin-zh.zip 342,328B（zip）
+[matrix] 打包 OK：tiktok/zh golden-pullpin-zh.zip 342,991B（zip）
+[matrix] 打包 OK：applovin/en index.html 1,242,574B（single-html）
+[matrix] 打包 OK：meta/en index.html 1,242,541B（single-html）
+[matrix] 打包 OK：mintegral/en golden-sort-en.zip 343,268B（zip）
+[matrix] 打包 OK：google/en golden-sort-en.zip 343,101B（zip）
+[matrix] 打包 OK：unity/en golden-sort-en.zip 343,115B（zip）
+[matrix] 打包 OK：tiktok/en golden-sort-en.zip 343,780B（zip）
+[matrix] 打包 OK：applovin/zh index.html 1,242,574B（single-html）
+[matrix] 打包 OK：meta/zh index.html 1,242,541B（single-html）
+[matrix] 打包 OK：mintegral/zh golden-sort-zh.zip 343,268B（zip）
+[matrix] 打包 OK：google/zh golden-sort-zh.zip 343,101B（zip）
+[matrix] 打包 OK：unity/zh golden-sort-zh.zip 343,115B（zip）
+[matrix] 打包 OK：tiktok/zh golden-sort-zh.zip 343,778B（zip）
+[matrix] 首检 42 格 FAIL，抖动单重试：重跑同一判官 → golden-match3.json×en×applovin、golden-match3.json×en×meta、golden-match3.json×en×mintegral、golden-match3.json×en×google、golden-match3.json×en×unity、golden-match3.json×en×tiktok、golden-match3.json×zh×applovin、golden-match3.json×zh×meta、golden-merge.json×en×applovin、golden-merge.json×en×meta、golden-merge.json×en×mintegral、golden-merge.json×en×google、golden-merge.json×en×unity、golden-merge.json×en×tiktok、golden-merge.json×zh×applovin、golden-merge.json×zh×meta、golden-merge.json×zh×mintegral、golden-merge.json×zh×google、golden-merge.json×zh×unity、golden-merge.json×zh×tiktok、golden-pullpin.json×en×applovin、golden-pullpin.json×en×meta、golden-pullpin.json×en×mintegral、golden-pullpin.json×en×google、golden-pullpin.json×en×unity、golden-pullpin.json×en×tiktok、golden-pullpin.json×zh×applovin、golden-pullpin.json×zh×meta、golden-pullpin.json×zh×mintegral、golden-pullpin.json×zh×google、golden-pullpin.json×zh×unity、golden-pullpin.json×zh×tiktok、golden-sort.json×en×applovin、golden-sort.json×en×meta、golden-sort.json×en×mintegral、golden-sort.json×en×google、golden-sort.json×en×unity、golden-sort.json×en×tiktok、golden-sort.json×zh×applovin、golden-sort.json×zh×meta、golden-sort.json×zh×google、golden-sort.json×zh×tiktok
+[matrix] 质检完成：48 包并行度 4（含单重试 42 格），阶段墙钟 939.9s
+------------------------------------------------------------------------------
+spec                  locale channel         bytes        上限  结果        质检墙钟
+golden-match3.json    en     applovin    1,242,934 5,242,880  fail*    61.2s
+golden-match3.json    en     google        343,276 5,242,880  fail*    84.8s
+golden-match3.json    en     meta        1,242,901 3,145,728  fail*    76.4s
+golden-match3.json    en     mintegral     343,440 5,242,880  fail*    83.1s
+golden-match3.json    en     tiktok        343,950 5,242,880  fail*    91.4s
+golden-match3.json    en     unity         343,287 5,242,880  fail*    94.7s
+golden-match3.json    zh     applovin    1,242,934 5,242,880  fail*   106.5s
+golden-match3.json    zh     google        343,276 5,242,880  pass     40.0s
+golden-match3.json    zh     meta        1,242,901 3,145,728  fail*   111.3s
+golden-match3.json    zh     mintegral     343,441 5,242,880  pass     39.9s
+golden-match3.json    zh     tiktok        343,949 5,242,880  pass     40.0s
+golden-match3.json    zh     unity         343,288 5,242,880  pass     39.9s
+golden-merge.json     en     applovin    1,239,082 5,242,880  pass*    49.9s
+golden-merge.json     en     google        342,315 5,242,880  pass*    34.2s
+golden-merge.json     en     meta        1,239,049 3,145,728  fail*    51.6s
+golden-merge.json     en     mintegral     342,485 5,242,880  pass*    40.1s
+golden-merge.json     en     tiktok        342,996 5,242,880  fail*    27.7s
+golden-merge.json     en     unity         342,332 5,242,880  fail*    27.2s
+golden-merge.json     zh     applovin    1,239,082 5,242,880  fail*    30.3s
+golden-merge.json     zh     google        342,314 5,242,880  fail*    23.9s
+golden-merge.json     zh     meta        1,239,049 3,145,728  fail*    30.8s
+golden-merge.json     zh     mintegral     342,484 5,242,880  fail*    29.3s
+golden-merge.json     zh     tiktok        342,995 5,242,880  fail*    21.8s
+golden-merge.json     zh     unity         342,331 5,242,880  fail*    22.0s
+golden-pullpin.json   en     applovin    1,241,822 5,242,880  fail*    27.1s
+golden-pullpin.json   en     google        342,312 5,242,880  fail*    25.8s
+golden-pullpin.json   en     meta        1,241,789 3,145,728  fail*    26.7s
+golden-pullpin.json   en     mintegral     342,481 5,242,880  fail*    26.6s
+golden-pullpin.json   en     tiktok        342,991 5,242,880  fail*    27.1s
+golden-pullpin.json   en     unity         342,328 5,242,880  pass*    26.6s
+golden-pullpin.json   zh     applovin    1,241,822 5,242,880  fail*    30.6s
+golden-pullpin.json   zh     google        342,313 5,242,880  fail*    31.4s
+golden-pullpin.json   zh     meta        1,241,789 3,145,728  fail*    30.7s
+golden-pullpin.json   zh     mintegral     342,481 5,242,880  fail*    31.1s
+golden-pullpin.json   zh     tiktok        342,991 5,242,880  fail*    33.7s
+golden-pullpin.json   zh     unity         342,328 5,242,880  fail*    33.5s
+golden-sort.json      en     applovin    1,242,574 5,242,880  fail*    37.0s
+golden-sort.json      en     google        343,101 5,242,880  fail*    49.4s
+golden-sort.json      en     meta        1,242,541 3,145,728  fail*    34.5s
+golden-sort.json      en     mintegral     343,268 5,242,880  fail*    49.0s
+golden-sort.json      en     tiktok        343,780 5,242,880  fail*    56.3s
+golden-sort.json      en     unity         343,115 5,242,880  fail*    47.5s
+golden-sort.json      zh     applovin    1,242,574 5,242,880  fail*    44.4s
+golden-sort.json      zh     google        343,101 5,242,880  fail*    42.8s
+golden-sort.json      zh     meta        1,242,541 3,145,728  fail*    45.0s
+golden-sort.json      zh     mintegral     343,268 5,242,880  pass     29.3s
+golden-sort.json      zh     tiktok        343,778 5,242,880  fail*    37.2s
+golden-sort.json      zh     unity         343,115 5,242,880  pass     29.2s
+------------------------------------------------------------------------------
+[matrix] 总墙钟 1052.6s（预算 ≤1200s），包 48：pass 10 / fail 38，skip 0（其中 42 格为单重试后过，见表内 * 号与 summary retried 字段）
+[matrix] summary.json：artifacts/matrix/summary.json
+[matrix] FAIL golden-match3.json×en×applovin：qacore exit 1：qacore: index.html @ applovin -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-match3\applovin\en\index.report.json (4 请求, 1 FAIL, pf:end 41771ms)
+[matrix] FAIL golden-match3.json×en×meta：qacore exit 1：qacore: index.html @ meta -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-match3\meta\en\index.report.json (2 请求, 1 FAIL, pf:end 40577ms)
+[matrix] FAIL golden-match3.json×en×mintegral：qacore exit 1：qacore: Template.html @ mintegral -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-match3\mintegral\en\index.report.json (4 请求, 1 FAIL, pf:end 41062ms)
+[matrix] FAIL golden-match3.json×en×google：qacore exit 1：qacore: index.html @ google -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-match3\google\en\index.report.json (2 请求, 1 FAIL, pf:end 39922ms)
+[matrix] FAIL golden-match3.json×en×unity：qacore exit 1：qacore: index.html @ unity -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-match3\unity\en\index.report.json (4 请求, 1 FAIL, pf:end 37793ms)
+[matrix] FAIL golden-match3.json×en×tiktok：qacore exit 1：qacore: index.html @ tiktok -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-match3\tiktok\en\index.report.json (4 请求, 1 FAIL, pf:end 33818ms)
+[matrix] FAIL golden-match3.json×zh×applovin：qacore exit 1：qacore: index.html @ applovin -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-match3\applovin\zh\index.report.json (4 请求, 1 FAIL, pf:end 31347ms)
+[matrix] FAIL golden-match3.json×zh×meta：qacore exit 1：qacore: index.html @ meta -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-match3\meta\zh\index.report.json (2 请求, 1 FAIL, pf:end 32427ms)
+[matrix] FAIL golden-merge.json×en×meta：qacore exit 1：qacore: index.html @ meta -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-merge\meta\en\index.report.json (2 请求, 1 FAIL, pf:end 9476ms)
+[matrix] FAIL golden-merge.json×en×unity：qacore exit 1：qacore: index.html @ unity -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-merge\unity\en\index.report.json (4 请求, 1 FAIL, pf:end 9926ms)
+[matrix] FAIL golden-merge.json×en×tiktok：qacore exit 1：qacore: index.html @ tiktok -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-merge\tiktok\en\index.report.json (4 请求, 1 FAIL, pf:end 9834ms)
+[matrix] FAIL golden-merge.json×zh×applovin：qacore exit 1：qacore: index.html @ applovin -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-merge\applovin\zh\index.report.json (4 请求, 1 FAIL, pf:end 12074ms)
+[matrix] FAIL golden-merge.json×zh×meta：qacore exit 1：qacore: index.html @ meta -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-merge\meta\zh\index.report.json (2 请求, 1 FAIL, pf:end 12245ms)
+[matrix] FAIL golden-merge.json×zh×mintegral：qacore exit 1：qacore: Template.html @ mintegral -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-merge\mintegral\zh\index.report.json (4 请求, 1 FAIL, pf:end 11456ms)
+[matrix] FAIL golden-merge.json×zh×google：qacore exit 1：qacore: index.html @ google -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-merge\google\zh\index.report.json (2 请求, 1 FAIL, pf:end 7872ms)
+[matrix] FAIL golden-merge.json×zh×unity：qacore exit 1：qacore: index.html @ unity -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-merge\unity\zh\index.report.json (4 请求, 1 FAIL, pf:end 8911ms)
+[matrix] FAIL golden-merge.json×zh×tiktok：qacore exit 1：qacore: index.html @ tiktok -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-merge\tiktok\zh\index.report.json (4 请求, 1 FAIL, pf:end 8421ms)
+[matrix] FAIL golden-pullpin.json×en×applovin：qacore exit 1：qacore: index.html @ applovin -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-pullpin\applovin\en\index.report.json (4 请求, 1 FAIL, pf:end 11894ms)
+[matrix] FAIL golden-pullpin.json×en×meta：qacore exit 1：qacore: index.html @ meta -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-pullpin\meta\en\index.report.json (2 请求, 1 FAIL, pf:end 11259ms)
+[matrix] FAIL golden-pullpin.json×en×mintegral：qacore exit 1：qacore: Template.html @ mintegral -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-pullpin\mintegral\en\index.report.json (4 请求, 1 FAIL, pf:end 10922ms)
+[matrix] FAIL golden-pullpin.json×en×google：qacore exit 1：qacore: index.html @ google -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-pullpin\google\en\index.report.json (2 请求, 1 FAIL, pf:end 11161ms)
+[matrix] FAIL golden-pullpin.json×en×tiktok：qacore exit 1：qacore: index.html @ tiktok -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-pullpin\tiktok\en\index.report.json (4 请求, 1 FAIL, pf:end 11495ms)
+[matrix] FAIL golden-pullpin.json×zh×applovin：qacore exit 1：qacore: index.html @ applovin -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-pullpin\applovin\zh\index.report.json (4 请求, 1 FAIL, pf:end 13453ms)
+[matrix] FAIL golden-pullpin.json×zh×meta：qacore exit 1：qacore: index.html @ meta -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-pullpin\meta\zh\index.report.json (2 请求, 1 FAIL, pf:end 14102ms)
+[matrix] FAIL golden-pullpin.json×zh×mintegral：qacore exit 1：qacore: Template.html @ mintegral -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-pullpin\mintegral\zh\index.report.json (4 请求, 1 FAIL, pf:end 13569ms)
+[matrix] FAIL golden-pullpin.json×zh×google：qacore exit 1：qacore: index.html @ google -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-pullpin\google\zh\index.report.json (2 请求, 1 FAIL, pf:end 13664ms)
+[matrix] FAIL golden-pullpin.json×zh×unity：qacore exit 1：qacore: index.html @ unity -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-pullpin\unity\zh\index.report.json (4 请求, 1 FAIL, pf:end 13981ms)
+[matrix] FAIL golden-pullpin.json×zh×tiktok：qacore exit 1：qacore: index.html @ tiktok -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-pullpin\tiktok\zh\index.report.json (4 请求, 1 FAIL, pf:end 13887ms)
+[matrix] FAIL golden-sort.json×en×applovin：qacore exit 1：qacore: index.html @ applovin -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-sort\applovin\en\index.report.json (4 请求, 1 FAIL, pf:end 18816ms)
+[matrix] FAIL golden-sort.json×en×meta：qacore exit 1：qacore: index.html @ meta -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-sort\meta\en\index.report.json (2 请求, 1 FAIL, pf:end 17570ms)
+[matrix] FAIL golden-sort.json×en×mintegral：qacore exit 1：qacore: Template.html @ mintegral -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-sort\mintegral\en\index.report.json (4 请求, 1 FAIL, pf:end 22065ms)
+[matrix] FAIL golden-sort.json×en×google：qacore exit 1：qacore: index.html @ google -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-sort\google\en\index.report.json (2 请求, 1 FAIL, pf:end 22764ms)
+[matrix] FAIL golden-sort.json×en×unity：qacore exit 1：qacore: index.html @ unity -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-sort\unity\en\index.report.json (4 请求, 1 FAIL, pf:end 30114ms)
+[matrix] FAIL golden-sort.json×en×tiktok：qacore exit 1：qacore: index.html @ tiktok -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-sort\tiktok\en\index.report.json (4 请求, 1 FAIL, pf:end 23136ms)
+[matrix] FAIL golden-sort.json×zh×applovin：qacore exit 1：qacore: index.html @ applovin -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-sort\applovin\zh\index.report.json (4 请求, 1 FAIL, pf:end 20001ms)
+[matrix] FAIL golden-sort.json×zh×meta：qacore exit 1：qacore: index.html @ meta -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-sort\meta\zh\index.report.json (2 请求, 1 FAIL, pf:end 18962ms)
+[matrix] FAIL golden-sort.json×zh×google：qacore exit 1：qacore: index.html @ google -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-sort\google\zh\index.report.json (2 请求, 1 FAIL, pf:end 19777ms)
+[matrix] FAIL golden-sort.json×zh×tiktok：qacore exit 1：qacore: index.html @ tiktok -> D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\matrix\golden-sort\tiktok\zh\index.report.json (4 请求, 1 FAIL, pf:end 21526ms)
+[matrix] FAIL：矩阵 38 包质检未过（质检是唯一裁判）

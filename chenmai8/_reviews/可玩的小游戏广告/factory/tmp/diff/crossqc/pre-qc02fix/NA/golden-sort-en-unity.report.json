@@ -1,0 +1,673 @@
+{
+  "channel": "unity",
+  "url": "http://127.0.0.1:8028/index.html",
+  "autoplay": true,
+  "pf": {
+    "present": true,
+    "readyMs": 133,
+    "endMs": 12946,
+    "endWin": true
+  },
+  "checks": [
+    {
+      "id": "CHK01",
+      "name": "包体大小 ≤ 渠道上限",
+      "status": "pass",
+      "detail": "1241992 B ≤ 上限 5242880 B"
+    },
+    {
+      "id": "CHK02",
+      "name": "文件数 ≤ 渠道上限",
+      "status": "skip",
+      "detail": "未实装（当前输入为单 HTML 文件，无目录清点）"
+    },
+    {
+      "id": "CHK03",
+      "name": "零外网请求",
+      "status": "pass",
+      "detail": "两趟共 4 条请求均指向本地伺服地址，无外网请求、无外部 WebSocket、无 WebRTC 构造"
+    },
+    {
+      "id": "CHK04",
+      "name": "首交互前静音",
+      "status": "fail",
+      "detail": "首交互前存在 running AudioContext（1）"
+    },
+    {
+      "id": "CHK05",
+      "name": "横竖屏渲染非空白",
+      "status": "pass",
+      "detail": "390×844 与 844×390 双仿真像素方差 1220/1023 ≥ 阈值 30"
+    },
+    {
+      "id": "CHK06",
+      "name": "渠道退出接口调用",
+      "status": "skip",
+      "detail": "未实装（渠道 stub 注入属 M8 后续里程碑）"
+    },
+    {
+      "id": "CHK07",
+      "name": "自动试玩到结束页",
+      "status": "pass",
+      "detail": "pf:end 于 12946ms 触发（win=True，gestures=27），结束页可见"
+    },
+    {
+      "id": "CHK08",
+      "name": "控制台零错误",
+      "status": "pass",
+      "detail": "两趟均无 console error 与 pageerror"
+    },
+    {
+      "id": "CHK09",
+      "name": "本地加载 ≤2s",
+      "status": "pass",
+      "detail": "load 耗时 600ms"
+    },
+    {
+      "id": "CHK10",
+      "name": "多语言文案与素材上屏",
+      "status": "pass",
+      "detail": "渲染文案命中 5/5（集合共 24 条，active+visible 采样核验通过）"
+    }
+  ],
+  "screenshot": "golden-sort-en-unity.report.png",
+  "requests": [
+    {
+      "url": "http://127.0.0.1:8028/index.html",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "blocked": false,
+      "failed": false
+    },
+    {
+      "url": "http://127.0.0.1:8028/mraid.js",
+      "method": "GET",
+      "resource_type": "script",
+      "status": 200,
+      "blocked": false,
+      "failed": false,
+      "stub": true
+    },
+    {
+      "url": "http://127.0.0.1:8028/index.html",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "blocked": false,
+      "failed": false
+    },
+    {
+      "url": "http://127.0.0.1:8028/mraid.js",
+      "method": "GET",
+      "resource_type": "script",
+      "status": 200,
+      "blocked": false,
+      "failed": false,
+      "stub": true
+    }
+  ],
+  "facts": {
+    "artifact_bytes": 1241992,
+    "channel": "unity",
+    "channel_max_bytes": 5242880,
+    "channel_mute_required": true,
+    "external_requests": [],
+    "runtime_stubs": [
+      "http://127.0.0.1:8028/mraid.js"
+    ],
+    "rtc_connections": 0,
+    "request_count": 4,
+    "console_errors": [],
+    "load_ms": 599.5687999999998,
+    "max_load_sec": 2,
+    "autoplay_enabled": true,
+    "autoplay_timeout_sec": 45,
+    "muteLoadTime": {
+      "has_canvas": true,
+      "variance": 1220.2158269882202,
+      "probeInstalled": true,
+      "enabled": true,
+      "timeoutSec": 45,
+      "reachedState": "end",
+      "gestures": 27,
+      "firstMutedBeforeInteraction": true,
+      "audioRunningBeforeInteraction": 1,
+      "mediaUnmutedBeforeInteraction": 0,
+      "mediaPlaysBeforeInteraction": 0,
+      "mutedAfterFirstGesture": false,
+      "pfEndFired": true,
+      "pfEndMs": 12946,
+      "pfEndWin": true,
+      "pfReadyMs": 133,
+      "endScreenVisible": true,
+      "qcHooksPresent": true,
+      "textStatesHook": true,
+      "qcTexts": [
+        "0/4",
+        "1/4",
+        "2/4",
+        "3/4",
+        "4/4",
+        "Play Now",
+        "Score  400",
+        "Sort It! (Playable Demo)",
+        "Sorted!",
+        "Tap a stack, then tap where it pours!",
+        "×17",
+        "×18",
+        "×19",
+        "×20",
+        "×21",
+        "×22",
+        "×23",
+        "×24",
+        "×25",
+        "×26",
+        "×27",
+        "×28",
+        "×29",
+        "×30"
+      ],
+      "qcVisibleTexts": [
+        "0/4",
+        "1/4",
+        "2/4",
+        "3/4",
+        "4/4",
+        "Play Now",
+        "Score  400",
+        "Sort It! (Playable Demo)",
+        "Sorted!",
+        "Tap a stack, then tap where it pours!",
+        "×17",
+        "×18",
+        "×19",
+        "×20",
+        "×21",
+        "×22",
+        "×23",
+        "×24",
+        "×25",
+        "×26",
+        "×27",
+        "×28",
+        "×29",
+        "×30"
+      ],
+      "page_texts": [
+        "0/4",
+        "1/4",
+        "2/4",
+        "3/4",
+        "4/4",
+        "Play Now",
+        "Score  400",
+        "Sort It! (Playable Demo)",
+        "Sorted!",
+        "Tap a stack, then tap where it pours!",
+        "×17",
+        "×18",
+        "×19",
+        "×20",
+        "×21",
+        "×22",
+        "×23",
+        "×24",
+        "×25",
+        "×26",
+        "×27",
+        "×28",
+        "×29",
+        "×30"
+      ],
+      "text_states": [
+        {
+          "text": "0/4",
+          "everVisible": true
+        },
+        {
+          "text": "1/4",
+          "everVisible": true
+        },
+        {
+          "text": "2/4",
+          "everVisible": true
+        },
+        {
+          "text": "3/4",
+          "everVisible": true
+        },
+        {
+          "text": "4/4",
+          "everVisible": true
+        },
+        {
+          "text": "Play Now",
+          "everVisible": true
+        },
+        {
+          "text": "Score  400",
+          "everVisible": true
+        },
+        {
+          "text": "Sort It! (Playable Demo)",
+          "everVisible": true
+        },
+        {
+          "text": "Sorted!",
+          "everVisible": true
+        },
+        {
+          "text": "Tap a stack, then tap where it pours!",
+          "everVisible": true
+        },
+        {
+          "text": "×17",
+          "everVisible": true
+        },
+        {
+          "text": "×18",
+          "everVisible": true
+        },
+        {
+          "text": "×19",
+          "everVisible": true
+        },
+        {
+          "text": "×20",
+          "everVisible": true
+        },
+        {
+          "text": "×21",
+          "everVisible": true
+        },
+        {
+          "text": "×22",
+          "everVisible": true
+        },
+        {
+          "text": "×23",
+          "everVisible": true
+        },
+        {
+          "text": "×24",
+          "everVisible": true
+        },
+        {
+          "text": "×25",
+          "everVisible": true
+        },
+        {
+          "text": "×26",
+          "everVisible": true
+        },
+        {
+          "text": "×27",
+          "everVisible": true
+        },
+        {
+          "text": "×28",
+          "everVisible": true
+        },
+        {
+          "text": "×29",
+          "everVisible": true
+        },
+        {
+          "text": "×30",
+          "everVisible": true
+        }
+      ],
+      "text_states_hook": true,
+      "asset_audit": []
+    },
+    "required_texts": [
+      "Sort It! (Playable Demo)",
+      "Tap a stack, then tap where it pours!",
+      "Sorted!",
+      "Play Now",
+      "Score"
+    ],
+    "required_sprites": [],
+    "page_texts": [
+      "0/4",
+      "1/4",
+      "2/4",
+      "3/4",
+      "4/4",
+      "Play Now",
+      "Score  400",
+      "Sort It! (Playable Demo)",
+      "Sorted!",
+      "Tap a stack, then tap where it pours!",
+      "×17",
+      "×18",
+      "×19",
+      "×20",
+      "×21",
+      "×22",
+      "×23",
+      "×24",
+      "×25",
+      "×26",
+      "×27",
+      "×28",
+      "×29",
+      "×30"
+    ],
+    "text_states": [
+      {
+        "text": "0/4",
+        "everVisible": true
+      },
+      {
+        "text": "1/4",
+        "everVisible": true
+      },
+      {
+        "text": "2/4",
+        "everVisible": true
+      },
+      {
+        "text": "3/4",
+        "everVisible": true
+      },
+      {
+        "text": "4/4",
+        "everVisible": true
+      },
+      {
+        "text": "Play Now",
+        "everVisible": true
+      },
+      {
+        "text": "Score  400",
+        "everVisible": true
+      },
+      {
+        "text": "Sort It! (Playable Demo)",
+        "everVisible": true
+      },
+      {
+        "text": "Sorted!",
+        "everVisible": true
+      },
+      {
+        "text": "Tap a stack, then tap where it pours!",
+        "everVisible": true
+      },
+      {
+        "text": "×17",
+        "everVisible": true
+      },
+      {
+        "text": "×18",
+        "everVisible": true
+      },
+      {
+        "text": "×19",
+        "everVisible": true
+      },
+      {
+        "text": "×20",
+        "everVisible": true
+      },
+      {
+        "text": "×21",
+        "everVisible": true
+      },
+      {
+        "text": "×22",
+        "everVisible": true
+      },
+      {
+        "text": "×23",
+        "everVisible": true
+      },
+      {
+        "text": "×24",
+        "everVisible": true
+      },
+      {
+        "text": "×25",
+        "everVisible": true
+      },
+      {
+        "text": "×26",
+        "everVisible": true
+      },
+      {
+        "text": "×27",
+        "everVisible": true
+      },
+      {
+        "text": "×28",
+        "everVisible": true
+      },
+      {
+        "text": "×29",
+        "everVisible": true
+      },
+      {
+        "text": "×30",
+        "everVisible": true
+      }
+    ],
+    "text_states_hook": true,
+    "asset_audit": [],
+    "pf_present": true,
+    "probe_installed": true,
+    "viewport_shots": {
+      "portrait": {
+        "has_canvas": true,
+        "variance": 1220.2158269882202,
+        "probeInstalled": true,
+        "enabled": true,
+        "timeoutSec": 45,
+        "reachedState": "end",
+        "gestures": 27,
+        "firstMutedBeforeInteraction": true,
+        "audioRunningBeforeInteraction": 1,
+        "mediaUnmutedBeforeInteraction": 0,
+        "mediaPlaysBeforeInteraction": 0,
+        "mutedAfterFirstGesture": false,
+        "pfEndFired": true,
+        "pfEndMs": 12946,
+        "pfEndWin": true,
+        "pfReadyMs": 133,
+        "endScreenVisible": true,
+        "qcHooksPresent": true,
+        "textStatesHook": true,
+        "qcTexts": [
+          "0/4",
+          "1/4",
+          "2/4",
+          "3/4",
+          "4/4",
+          "Play Now",
+          "Score  400",
+          "Sort It! (Playable Demo)",
+          "Sorted!",
+          "Tap a stack, then tap where it pours!",
+          "×17",
+          "×18",
+          "×19",
+          "×20",
+          "×21",
+          "×22",
+          "×23",
+          "×24",
+          "×25",
+          "×26",
+          "×27",
+          "×28",
+          "×29",
+          "×30"
+        ],
+        "qcVisibleTexts": [
+          "0/4",
+          "1/4",
+          "2/4",
+          "3/4",
+          "4/4",
+          "Play Now",
+          "Score  400",
+          "Sort It! (Playable Demo)",
+          "Sorted!",
+          "Tap a stack, then tap where it pours!",
+          "×17",
+          "×18",
+          "×19",
+          "×20",
+          "×21",
+          "×22",
+          "×23",
+          "×24",
+          "×25",
+          "×26",
+          "×27",
+          "×28",
+          "×29",
+          "×30"
+        ],
+        "page_texts": [
+          "0/4",
+          "1/4",
+          "2/4",
+          "3/4",
+          "4/4",
+          "Play Now",
+          "Score  400",
+          "Sort It! (Playable Demo)",
+          "Sorted!",
+          "Tap a stack, then tap where it pours!",
+          "×17",
+          "×18",
+          "×19",
+          "×20",
+          "×21",
+          "×22",
+          "×23",
+          "×24",
+          "×25",
+          "×26",
+          "×27",
+          "×28",
+          "×29",
+          "×30"
+        ],
+        "text_states": [
+          {
+            "text": "0/4",
+            "everVisible": true
+          },
+          {
+            "text": "1/4",
+            "everVisible": true
+          },
+          {
+            "text": "2/4",
+            "everVisible": true
+          },
+          {
+            "text": "3/4",
+            "everVisible": true
+          },
+          {
+            "text": "4/4",
+            "everVisible": true
+          },
+          {
+            "text": "Play Now",
+            "everVisible": true
+          },
+          {
+            "text": "Score  400",
+            "everVisible": true
+          },
+          {
+            "text": "Sort It! (Playable Demo)",
+            "everVisible": true
+          },
+          {
+            "text": "Sorted!",
+            "everVisible": true
+          },
+          {
+            "text": "Tap a stack, then tap where it pours!",
+            "everVisible": true
+          },
+          {
+            "text": "×17",
+            "everVisible": true
+          },
+          {
+            "text": "×18",
+            "everVisible": true
+          },
+          {
+            "text": "×19",
+            "everVisible": true
+          },
+          {
+            "text": "×20",
+            "everVisible": true
+          },
+          {
+            "text": "×21",
+            "everVisible": true
+          },
+          {
+            "text": "×22",
+            "everVisible": true
+          },
+          {
+            "text": "×23",
+            "everVisible": true
+          },
+          {
+            "text": "×24",
+            "everVisible": true
+          },
+          {
+            "text": "×25",
+            "everVisible": true
+          },
+          {
+            "text": "×26",
+            "everVisible": true
+          },
+          {
+            "text": "×27",
+            "everVisible": true
+          },
+          {
+            "text": "×28",
+            "everVisible": true
+          },
+          {
+            "text": "×29",
+            "everVisible": true
+          },
+          {
+            "text": "×30",
+            "everVisible": true
+          }
+        ],
+        "text_states_hook": true,
+        "asset_audit": []
+      },
+      "landscape": {
+        "has_canvas": true,
+        "variance": 1023.1623952388763,
+        "probeInstalled": true,
+        "firstMutedBeforeInteraction": true,
+        "audioRunningBeforeInteraction": 1,
+        "mediaUnmutedBeforeInteraction": 0,
+        "mediaPlaysBeforeInteraction": 0
+      }
+    },
+    "variance_threshold": 30
+  }
+}

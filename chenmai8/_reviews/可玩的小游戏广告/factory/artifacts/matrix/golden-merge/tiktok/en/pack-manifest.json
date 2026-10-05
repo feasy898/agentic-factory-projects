@@ -1,0 +1,40 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "tiktok",
+  "locale": "en",
+  "project": "golden-merge",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\specs-eval\\golden-merge.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\matrix\\golden-merge\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-merge-en.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-merge-en.zip",
+      "bytes": 342996,
+      "sha256": "8fe7221083bcd46fb66dbe527c88e4076de13f2cf53074bc3ae9196f5fbff06e",
+      "role": "package"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1239083,
+      "sha256": "0e89d3f5eafef9590f8652eef9372c668d8c6768f53edece365f0194c310c350",
+      "role": "entry-in-zip"
+    },
+    {
+      "path": "config.json",
+      "bytes": 97,
+      "sha256": "4ab0c28859b398a8348e44f6789b689376a24117a27a7fffef5578fa0bb08326",
+      "role": "generated-in-zip"
+    },
+    {
+      "path": "js-sdk.js",
+      "bytes": 493,
+      "sha256": "e5dcc71988c665155bf5660c54d236baeaaf792a0bdfdd1deefab610b050f544",
+      "role": "generated-in-zip"
+    }
+  ],
+  "warnings": []
+}

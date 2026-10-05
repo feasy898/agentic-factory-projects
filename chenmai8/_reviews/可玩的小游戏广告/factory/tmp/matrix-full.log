@@ -1,0 +1,45 @@
+==============================================================================
+[matrix] 端到端矩阵门 mode=full specs=[golden-match3.json, golden-merge.json, golden-pullpin.json, golden-sort.json] locales=[en,zh] channels=[applovin,meta,mintegral,google,unity,tiktok] budget=<=1200s
+[matrix] 构建 OK：golden-match3×en（1,242,938B）
+[matrix] 构建 OK：golden-match3×zh（1,242,938B）
+[matrix] 构建 OK：golden-merge×en（1,239,086B）
+[matrix] 构建 OK：golden-merge×zh（1,239,086B）
+[matrix] 构建 OK：golden-pullpin×en（1,387,710B）
+[matrix] 构建 OK：golden-pullpin×zh（1,387,710B）
+[matrix] 构建 OK：golden-sort×en（1,388,462B）
+[matrix] 构建 OK：golden-sort×zh（1,388,462B）
+[matrix] 打包 OK：applovin/en index.html 1,242,934B（single-html）
+[matrix] 打包 OK：meta/en index.html 1,242,901B（single-html）
+[matrix] 打包 OK：mintegral/en golden-match3-en.zip 343,440B（zip）
+[matrix] 打包 OK：google/en golden-match3-en.zip 343,276B（zip）
+[matrix] 打包 OK：unity/en golden-match3-en.zip 343,287B（zip）
+[matrix] 打包 OK：tiktok/en golden-match3-en.zip 343,950B（zip）
+[matrix] 打包 OK：applovin/zh index.html 1,242,934B（single-html）
+[matrix] 打包 OK：meta/zh index.html 1,242,901B（single-html）
+[matrix] 打包 OK：mintegral/zh golden-match3-zh.zip 343,441B（zip）
+[matrix] 打包 OK：google/zh golden-match3-zh.zip 343,276B（zip）
+[matrix] 打包 OK：unity/zh golden-match3-zh.zip 343,288B（zip）
+[matrix] 打包 OK：tiktok/zh golden-match3-zh.zip 343,949B（zip）
+[matrix] 打包 OK：applovin/en index.html 1,239,082B（single-html）
+[matrix] 打包 OK：meta/en index.html 1,239,049B（single-html）
+[matrix] 打包 OK：mintegral/en golden-merge-en.zip 342,485B（zip）
+[matrix] 打包 OK：google/en golden-merge-en.zip 342,315B（zip）
+[matrix] 打包 OK：unity/en golden-merge-en.zip 342,332B（zip）
+[matrix] 打包 OK：tiktok/en golden-merge-en.zip 342,996B（zip）
+[matrix] 打包 OK：applovin/zh index.html 1,239,082B（single-html）
+[matrix] 打包 OK：meta/zh index.html 1,239,049B（single-html）
+[matrix] 打包 OK：mintegral/zh golden-merge-zh.zip 342,484B（zip）
+[matrix] 打包 OK：google/zh golden-merge-zh.zip 342,314B（zip）
+[matrix] 打包 OK：unity/zh golden-merge-zh.zip 342,331B（zip）
+[matrix] 打包 OK：tiktok/zh golden-merge-zh.zip 342,995B（zip）
+[matrix] FAIL：打包 applovin/en 失败（exit 1）
+[packager] 失败: index.html 存在白名单外链接（零外链红线）:
+  - https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#（…}});var ca=K((cv,rd)=>{rd.exports={$id:"https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#",description:"Meta-…）
+  - https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#（…chema=this.compile(g,!0))}var Tf={$ref:"https://raw.githubusercontent.com/ajv-validator/ajv/master/lib/refs/data.json#"};function Wa(l){re…）
+  - https://json-schema.org/draft/2020-12/schema（…var dl=K((py,pm)=>{pm.exports={$schema:"https://json-schema.org/draft/2020-12/schema",$id:"https://json-…）
+  - https://json-schema.org/draft/2020-12/schema（…n-schema.org/draft/2020-12/schema",$id:"https://json-schema.org/draft/2020-12/schema",$vocabulary:{"http…）
+  - https://json-schema.org/draft/2020-12/vocab/core（…org/draft/2020-12/schema",$vocabulary:{"https://json-schema.org/draft/2020-12/vocab/core":!0,"https://json-s…）
+  - https://json-schema.org/draft/2020-12/vocab/applicator（…chema.org/draft/2020-12/vocab/core":!0,"https://json-schema.org/draft/2020-12/vocab/applicator":!0,"https://json-s…）
+  - https://json-schema.org/draft/2020-12/vocab/unevaluated（…org/draft/2020-12/vocab/applicator":!0,"https://json-schema.org/draft/2020-12/vocab/unevaluated":!0,"https://json-s…）
+  - https://json-schema.org/draft/2020-12/vocab/validation（…rg/draft/2020-12/vocab/unevaluated":!0,"https://json-schema.org/draft/2020-12/vocab/validation":!0,"https://json-s…）
+白名单: https://example.com/playable-lp, https://pf.io, http://www.w3.org/1999/xhtml, http://www.w3.org/2000/svg

@@ -1,0 +1,78 @@
+d4-autoplay-streams: 4 模板 × 3 seed × {O,N}，jobs=1（驱动=复刻器，同语义同宿主）
+  [seed] match3 seed=20260931 validate N=0 O=0 受理
+  [seed] match3 seed=20260932 validate N=0 O=0 受理
+  [seed] match3 seed=20260933 validate N=0 O=0 受理
+  [seed] merge seed=20261002 validate N=0 O=0 受理
+  [seed] merge seed=20261003 validate N=0 O=0 受理
+  [seed] merge seed=20261004 validate N=0 O=0 受理
+  [seed] pullpin seed=20260931 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260932 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260933 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260934 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260935 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260936 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260937 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260938 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260939 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260940 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260941 validate N=0 O=0 受理
+  [seed] pullpin seed=20260942 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260943 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260944 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260945 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260946 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260947 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260948 validate N=0 O=0 受理
+  [seed] pullpin seed=20260949 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260950 validate N=0 O=0 受理
+  [seed] sort seed=20260931 validate N=0 O=0 受理
+  [seed] sort seed=20260932 validate N=0 O=0 受理
+  [seed] sort seed=20260933 validate N=0 O=0 受理
+d4: seed 变体受理 12 格（每模板 3）
+d4: 双实现产物构建完成
+  [drive] match3-seed20260931 a1: O gestures=15 win=true end=17835ms | N gestures=15 win=true end=17578ms | Δ=0 winEq=true seqEq=true ✗事件链时序无序
+  [retry] match3-seed20260931 对称单重试（两侧同跑，抖动口径）
+  [drive] match3-seed20260931 a2: O gestures=15 win=true end=18043ms | N gestures=16 win=true end=17428ms | Δ=1 winEq=true seqEq=true ✗事件链时序无序
+  [retry] match3-seed20260931 对称单重试（两侧同跑，抖动口径）
+  [drive] match3-seed20260932 a1: O gestures=17 win=true end=27253ms | N gestures=17 win=true end=27058ms | Δ=0 winEq=true seqEq=true ✗事件链时序无序
+  [retry] match3-seed20260932 对称单重试（两侧同跑，抖动口径）
+  [drive] match3-seed20260932 a2: O gestures=16 win=true end=26055ms | N gestures=17 win=true end=25675ms | Δ=1 winEq=true seqEq=true ✗事件链时序无序
+  [retry] match3-seed20260932 对称单重试（两侧同跑，抖动口径）
+  [drive] match3-seed20260933 a1: O gestures=18 win=true end=16163ms | N gestures=11 win=true end=14283ms | Δ=7 winEq=true seqEq=true ✗事件链时序无序
+  [retry] match3-seed20260933 对称单重试（两侧同跑，抖动口径）
+  [drive] match3-seed20260933 a2: O gestures=11 win=true end=14893ms | N gestures=11 win=true end=14534ms | Δ=0 winEq=true seqEq=true ✗事件链时序无序
+  [retry] match3-seed20260933 对称单重试（两侧同跑，抖动口径）
+  [drive] merge-seed20261002 a1: O gestures=8 win=true end=6412ms | N gestures=8 win=true end=6453ms | Δ=0 winEq=true seqEq=true ✗事件链时序无序
+  [retry] merge-seed20261002 对称单重试（两侧同跑，抖动口径）
+  [drive] merge-seed20261002 a2: O gestures=8 win=true end=6135ms | N gestures=9 win=true end=6636ms | Δ=1 winEq=true seqEq=true ✗事件链时序无序
+  [retry] merge-seed20261002 对称单重试（两侧同跑，抖动口径）
+  [drive] merge-seed20261003 a1: O gestures=7 win=true end=5966ms | N gestures=7 win=true end=5659ms | Δ=0 winEq=true seqEq=true ✗事件链时序无序
+  [retry] merge-seed20261003 对称单重试（两侧同跑，抖动口径）
+  [drive] merge-seed20261003 a2: O gestures=7 win=true end=5634ms | N gestures=7 win=true end=5543ms | Δ=0 winEq=true seqEq=true ✗事件链时序无序
+  [retry] merge-seed20261003 对称单重试（两侧同跑，抖动口径）
+  [drive] merge-seed20261004 a1: O gestures=8 win=true end=6723ms | N gestures=9 win=true end=7206ms | Δ=1 winEq=true seqEq=true ✗事件链时序无序
+  [retry] merge-seed20261004 对称单重试（两侧同跑，抖动口径）
+  [drive] merge-seed20261004 a2: O gestures=8 win=true end=6901ms | N gestures=8 win=true end=7253ms | Δ=0 winEq=true seqEq=true ✗事件链时序无序
+  [retry] merge-seed20261004 对称单重试（两侧同跑，抖动口径）
+  [drive] pullpin-seed20260941 a1: O gestures=4 win=true end=7302ms | N gestures=4 win=true end=7458ms | Δ=0 winEq=true seqEq=true ✗事件链时序无序
+  [retry] pullpin-seed20260941 对称单重试（两侧同跑，抖动口径）
+  [drive] pullpin-seed20260941 a2: O gestures=4 win=true end=6939ms | N gestures=4 win=true end=6976ms | Δ=0 winEq=true seqEq=true ✗事件链时序无序
+  [retry] pullpin-seed20260941 对称单重试（两侧同跑，抖动口径）
+node:fs:560
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open 'D:\workspace\澄迈8项目\可玩的小游戏广告\factory\tmp\diff\d4-autoplay\build\N\pullpin-seed20260948\golden-pullpin\preview\en\index.html'
+    at Object.openSync (node:fs:560:18)
+    at readFileSync (node:fs:444:35)
+    at Server.<anonymous> (file:///D:/workspace/%E6%BE%84%E8%BF%888%E9%A1%B9%E7%9B%AE/%E5%8F%AF%E7%8E%A9%E7%9A%84%E5%B0%8F%E6%B8%B8%E6%88%8F%E5%B9%BF%E5%91%8A/factory/scripts/diff/d4-autoplay-streams.mjs:140:13)
+    at Server.emit (node:events:519:28)
+    at parserOnIncoming (node:_http_server:1186:12)
+    at HTTPParser.parserOnHeadersComplete (node:_http_common:125:17) {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\d4-autoplay\\build\\N\\pullpin-seed20260948\\golden-pullpin\\preview\\en\\index.html'
+}
+
+Node.js v22.23.2

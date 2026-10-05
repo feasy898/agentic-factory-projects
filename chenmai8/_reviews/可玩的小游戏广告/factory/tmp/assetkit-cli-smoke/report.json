@@ -1,0 +1,233 @@
+{
+  "assetkitVersion": "1.0.0",
+  "generatedAt": "2026-09-30T10:34:25",
+  "spec": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-spec.json",
+  "outDir": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-cli-smoke",
+  "subsetTextChars": 62,
+  "materials": {
+    "image": [
+      {
+        "key": "selftest-gem.png",
+        "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-gem.png",
+        "kind": "image",
+        "status": "optimized",
+        "out": "selftest-gem.webp",
+        "encoding": "webp-nearlossless",
+        "originalBytes": 932,
+        "optimizedBytes": 466,
+        "reductionPct": 50,
+        "width": 128,
+        "height": 128,
+        "alpha": true,
+        "candidates": [
+          {
+            "encoding": "webp-lossy",
+            "bytes": 956
+          },
+          {
+            "encoding": "webp-nearlossless",
+            "bytes": 466
+          },
+          {
+            "encoding": "png-palette",
+            "bytes": 553
+          },
+          {
+            "encoding": "png-plain",
+            "bytes": 732
+          }
+        ],
+        "note": ""
+      },
+      {
+        "key": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\atlas.png",
+        "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\atlas.png",
+        "kind": "image",
+        "status": "optimized",
+        "out": "atlas.webp",
+        "encoding": "webp-lossy",
+        "originalBytes": 183837,
+        "optimizedBytes": 101278,
+        "reductionPct": 44.9,
+        "width": 640,
+        "height": 512,
+        "alpha": true,
+        "candidates": [
+          {
+            "encoding": "webp-lossy",
+            "bytes": 101278
+          },
+          {
+            "encoding": "webp-nearlossless",
+            "bytes": 189492
+          },
+          {
+            "encoding": "png-palette",
+            "bytes": 183092
+          },
+          {
+            "encoding": "png-plain",
+            "bytes": 236275
+          }
+        ],
+        "note": ""
+      },
+      {
+        "key": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\selftest-gem.webp",
+        "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\selftest-gem.webp",
+        "kind": "image",
+        "status": "kept-original",
+        "out": "selftest-gem-2.webp",
+        "encoding": "original",
+        "originalBytes": 466,
+        "optimizedBytes": 466,
+        "reductionPct": 0,
+        "width": 128,
+        "height": 128,
+        "candidates": [
+          {
+            "encoding": "webp-lossy",
+            "bytes": 956
+          },
+          {
+            "encoding": "webp-nearlossless",
+            "bytes": 466
+          },
+          {
+            "encoding": "png-palette",
+            "bytes": 553
+          },
+          {
+            "encoding": "png-plain",
+            "bytes": 732
+          }
+        ],
+        "note": "全部候选编码不小于原始字节，保留原图"
+      },
+      {
+        "key": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\selftest-photo.webp",
+        "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\selftest-photo.webp",
+        "kind": "image",
+        "status": "optimized",
+        "out": "selftest-photo.webp",
+        "encoding": "webp-lossy",
+        "originalBytes": 118412,
+        "optimizedBytes": 108008,
+        "reductionPct": 8.8,
+        "width": 512,
+        "height": 512,
+        "alpha": false,
+        "candidates": [
+          {
+            "encoding": "webp-lossy",
+            "bytes": 108008
+          },
+          {
+            "encoding": "webp-nearlossless",
+            "bytes": 544922
+          },
+          {
+            "encoding": "png-palette",
+            "bytes": 181022
+          },
+          {
+            "encoding": "png-plain",
+            "bytes": 754561
+          }
+        ],
+        "note": ""
+      },
+      {
+        "key": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-photo.png",
+        "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-photo.png",
+        "kind": "image",
+        "status": "optimized",
+        "out": "selftest-photo-2.webp",
+        "encoding": "webp-lossy",
+        "originalBytes": 733041,
+        "optimizedBytes": 118412,
+        "reductionPct": 83.8,
+        "width": 512,
+        "height": 512,
+        "alpha": false,
+        "candidates": [
+          {
+            "encoding": "webp-lossy",
+            "bytes": 118412
+          },
+          {
+            "encoding": "webp-nearlossless",
+            "bytes": 241500
+          },
+          {
+            "encoding": "png-palette",
+            "bytes": 159730
+          },
+          {
+            "encoding": "png-plain",
+            "bytes": 721659
+          }
+        ],
+        "note": ""
+      }
+    ],
+    "audio": [
+      {
+        "key": "selftest-sfx.wav",
+        "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\selftest-sfx.wav",
+        "kind": "audio",
+        "status": "optimized",
+        "out": "selftest-sfx.m4a",
+        "encoding": "aac-48000",
+        "originalBytes": 22094,
+        "optimizedBytes": 4334,
+        "reductionPct": 80.4,
+        "note": ""
+      },
+      {
+        "key": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\selftest-sfx.m4a",
+        "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\assetkit-selftest\\opt\\selftest-sfx.m4a",
+        "kind": "audio",
+        "status": "kept-original",
+        "encoding": "original",
+        "out": null,
+        "originalBytes": 4334,
+        "optimizedBytes": 4334,
+        "reductionPct": 0,
+        "note": "低码率转码不小于原始（4365B ≥ 4334B），保留原始"
+      }
+    ],
+    "font": []
+  },
+  "totals": {
+    "count": 7,
+    "originalBytes": 1063116,
+    "optimizedBytes": 337298,
+    "reductionPct": 68.27,
+    "minReductionPct": 30,
+    "minReductionMet": true
+  },
+  "atlas": {
+    "packed": 5,
+    "skipped": [],
+    "image": "atlas.png",
+    "width": 1024,
+    "height": 1152,
+    "encoding": "png-palette",
+    "bytes": 509452,
+    "candidates": [
+      {
+        "encoding": "webp-lossless",
+        "bytes": 1554470
+      },
+      {
+        "encoding": "png-palette",
+        "bytes": 509452
+      }
+    ],
+    "note": "atlas.json 与图集图已写入输出目录（pf-atlas/1）"
+  },
+  "notes": [
+    "图集：atlas.json 与图集图已写入输出目录（pf-atlas/1）"
+  ]
+}

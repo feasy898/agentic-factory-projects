@@ -1,0 +1,7 @@
+[make] validate OK：golden-match3.json
+[make] 素材管线：assetkit 模块未落地（批次 3），跳过优化直通（等价 --no-assetkit；原始素材照常内联）
+[make] 构建完成：golden-match3-en.html（dist=dist/）
+[make] 打包 applovin/en：index.html 1,242,934B / 上限 5,242,880B（警告 0）
+[make] 打包 meta/en：index.html 1,242,901B / 上限 3,145,728B（警告 0）
+[make] 打包 mintegral/en：golden-match3-en.zip 343,440B / 上限 5,242,880B（警告 0）
+[make] 判官 applovin：10 项（fail 0，pf:end 25797.80000001192ms win=true）

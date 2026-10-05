@@ -1,0 +1,417 @@
+{
+  "capturedAt": "2026-09-30T08:17:09.511Z",
+  "method": {
+    "driver": "复刻器（与两判官 driveAutoplay 同手势语义：SWEEP_VECTORS/DRAG_DISTANCE=44/180ms 轮询/45s 预算），同一 node 宿主跑两侧产物",
+    "arming": "addInitScript(PROBE_JS)+route+routeWebSocket 均 await 后 goto（QC-02 竞态修复后语义）",
+    "products": "每 (模板,seed) 双实现产物 = 各自冻结模板 build.mjs + 冻结 packager bin.mjs（e2e-matrix 同链路），oracle 仓只读",
+    "seeds": "golden 基准 seed+1..+k 中取前 3 个双实现 validate 同判受理的变体（不可解盘面被两侧一致拒绝）",
+    "criteria": "硬线：胜负必等 / 手势数 ±1 / ready、first、start、end 全触发且两侧相对次序一致；折叠手势序列全等（不等=回归登记）",
+    "retry": "同格失败对称单重试一次（两侧同跑，两次全留痕）"
+  },
+  "wallSec": 410.6,
+  "totals": {
+    "cells": 12,
+    "equal": 12,
+    "regressions": 0,
+    "retried": 1
+  },
+  "perCell": [
+    {
+      "cell": "match3-seed20260931",
+      "template": "match3",
+      "seed": 20260931,
+      "attempts": [
+        {
+          "attempt": 1,
+          "o": {
+            "win": true,
+            "gestures": 18,
+            "end": 17645.099999999627,
+            "ready": 292.69999999925494,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 18,
+            "end": 17359.200000001118,
+            "ready": 160.30000000074506,
+            "finalState": "end"
+          },
+          "delta": 0,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": []
+        }
+      ],
+      "verdict": "equal",
+      "retried": false
+    },
+    {
+      "cell": "match3-seed20260932",
+      "template": "match3",
+      "seed": 20260932,
+      "attempts": [
+        {
+          "attempt": 1,
+          "o": {
+            "win": true,
+            "gestures": 16,
+            "end": 25383.599999999627,
+            "ready": 144.59999999962747,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 17,
+            "end": 25843,
+            "ready": 145,
+            "finalState": "end"
+          },
+          "delta": 1,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": []
+        }
+      ],
+      "verdict": "equal",
+      "retried": false
+    },
+    {
+      "cell": "match3-seed20260933",
+      "template": "match3",
+      "seed": 20260933,
+      "attempts": [
+        {
+          "attempt": 1,
+          "o": {
+            "win": true,
+            "gestures": 11,
+            "end": 14764,
+            "ready": 189,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 18,
+            "end": 15629.5,
+            "ready": 119,
+            "finalState": "end"
+          },
+          "delta": 7,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": [
+            "手势数超 ±1 容差：O=11 N=18（Δ=7）"
+          ]
+        },
+        {
+          "attempt": 2,
+          "o": {
+            "win": true,
+            "gestures": 12,
+            "end": 14633,
+            "ready": 118,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 11,
+            "end": 14103,
+            "ready": 104,
+            "finalState": "end"
+          },
+          "delta": 1,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": []
+        }
+      ],
+      "verdict": "equal",
+      "retried": true
+    },
+    {
+      "cell": "merge-seed20261002",
+      "template": "merge",
+      "seed": 20261002,
+      "attempts": [
+        {
+          "attempt": 1,
+          "o": {
+            "win": true,
+            "gestures": 8,
+            "end": 5619,
+            "ready": 120,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 8,
+            "end": 5699.0999999996275,
+            "ready": 302.5,
+            "finalState": "end"
+          },
+          "delta": 0,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": []
+        }
+      ],
+      "verdict": "equal",
+      "retried": false
+    },
+    {
+      "cell": "merge-seed20261003",
+      "template": "merge",
+      "seed": 20261003,
+      "attempts": [
+        {
+          "attempt": 1,
+          "o": {
+            "win": true,
+            "gestures": 8,
+            "end": 5431.699999999255,
+            "ready": 293.30000000074506,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 7,
+            "end": 4933,
+            "ready": 120.60000000149012,
+            "finalState": "end"
+          },
+          "delta": 1,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": []
+        }
+      ],
+      "verdict": "equal",
+      "retried": false
+    },
+    {
+      "cell": "merge-seed20261004",
+      "template": "merge",
+      "seed": 20261004,
+      "attempts": [
+        {
+          "attempt": 1,
+          "o": {
+            "win": true,
+            "gestures": 8,
+            "end": 6317.300000000745,
+            "ready": 266.90000000037253,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 8,
+            "end": 6322,
+            "ready": 123,
+            "finalState": "end"
+          },
+          "delta": 0,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": []
+        }
+      ],
+      "verdict": "equal",
+      "retried": false
+    },
+    {
+      "cell": "pullpin-seed20260941",
+      "template": "pullpin",
+      "seed": 20260941,
+      "attempts": [
+        {
+          "attempt": 1,
+          "o": {
+            "win": true,
+            "gestures": 4,
+            "end": 6484,
+            "ready": 98,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 4,
+            "end": 6275,
+            "ready": 114,
+            "finalState": "end"
+          },
+          "delta": 0,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": []
+        }
+      ],
+      "verdict": "equal",
+      "retried": false
+    },
+    {
+      "cell": "pullpin-seed20260948",
+      "template": "pullpin",
+      "seed": 20260948,
+      "attempts": [
+        {
+          "attempt": 1,
+          "o": {
+            "win": true,
+            "gestures": 5,
+            "end": 6913,
+            "ready": 140,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 5,
+            "end": 6864,
+            "ready": 133,
+            "finalState": "end"
+          },
+          "delta": 0,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": []
+        }
+      ],
+      "verdict": "equal",
+      "retried": false
+    },
+    {
+      "cell": "pullpin-seed20260950",
+      "template": "pullpin",
+      "seed": 20260950,
+      "attempts": [
+        {
+          "attempt": 1,
+          "o": {
+            "win": true,
+            "gestures": 4,
+            "end": 6429,
+            "ready": 130,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 4,
+            "end": 6501.799999998882,
+            "ready": 121.19999999925494,
+            "finalState": "end"
+          },
+          "delta": 0,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": []
+        }
+      ],
+      "verdict": "equal",
+      "retried": false
+    },
+    {
+      "cell": "sort-seed20260931",
+      "template": "sort",
+      "seed": 20260931,
+      "attempts": [
+        {
+          "attempt": 1,
+          "o": {
+            "win": true,
+            "gestures": 29,
+            "end": 13166,
+            "ready": 129,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 29,
+            "end": 13169.200000001118,
+            "ready": 110.80000000074506,
+            "finalState": "end"
+          },
+          "delta": 0,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": []
+        }
+      ],
+      "verdict": "equal",
+      "retried": false
+    },
+    {
+      "cell": "sort-seed20260932",
+      "template": "sort",
+      "seed": 20260932,
+      "attempts": [
+        {
+          "attempt": 1,
+          "o": {
+            "win": true,
+            "gestures": 25,
+            "end": 11934.099999999627,
+            "ready": 265.19999999925494,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 25,
+            "end": 11672,
+            "ready": 143,
+            "finalState": "end"
+          },
+          "delta": 0,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": []
+        }
+      ],
+      "verdict": "equal",
+      "retried": false
+    },
+    {
+      "cell": "sort-seed20260933",
+      "template": "sort",
+      "seed": 20260933,
+      "attempts": [
+        {
+          "attempt": 1,
+          "o": {
+            "win": true,
+            "gestures": 25,
+            "end": 12595.599999999627,
+            "ready": 155.30000000074506,
+            "finalState": "end"
+          },
+          "n": {
+            "win": true,
+            "gestures": 25,
+            "end": 12011,
+            "ready": 155,
+            "finalState": "end"
+          },
+          "delta": 0,
+          "winEq": true,
+          "seqEq": true,
+          "chainOk": true,
+          "findings": []
+        }
+      ],
+      "verdict": "equal",
+      "retried": false
+    }
+  ],
+  "verdict": "PASS（行为流等价）"
+}

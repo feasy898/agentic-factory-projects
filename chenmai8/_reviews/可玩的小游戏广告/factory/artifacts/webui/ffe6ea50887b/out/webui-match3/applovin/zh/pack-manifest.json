@@ -1,0 +1,22 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "applovin",
+  "locale": "zh",
+  "project": "webui-match3",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\spec.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\webui-match3\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "index.html"
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 1242449,
+      "sha256": "1db75ded552731c9195abdfa78ba9edd7bcd2b784ff7d2d0c571ce04b5407fd6",
+      "role": "package"
+    }
+  ],
+  "warnings": []
+}

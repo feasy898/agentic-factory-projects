@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="mraid.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <title>Gem Rush (Playable Demo)</title>
+  <style data-pf="css/style.css">html,body{margin:0;padding:0;background:#1e223e url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAKklEQVR42mOQU7KjKWIYtWDUglELRi0YtWDUglELRi0YtWDUglELhooFAL8h+BDVMjdlAAAAAElFTkSuQmCC) repeat;overflow:hidden;touch-action:none}#game{display:block;width:100vw;height:100vh}#hud{position:fixed;left:0;right:0;bottom:12px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;color:#fff;font-family:sans-serif}.piece-icon{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAFklEQVR42mPQO1NIEmIY1TCqYfhqAAC4lWsQZ+JqLgAAAABJRU5ErkJggg==)}#cta{padding:10px 22px;border:0;border-radius:22px;color:#fff;background:#e74c3c url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAFklEQVR42mN47mNDEmIY1TCqYfhqAADG/m8QxE7EoQAAAABJRU5ErkJggg==) no-repeat right 10px center;font-size:16px}
+</style>
+  <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAFklEQVR42mN47mNDEmIY1TCqYfhqAADG/m8QxE7EoQAAAABJRU5ErkJggg==">
+</head>
+<body>
+  <canvas id="game" width="390" height="644"></canvas>
+  <div id="hud">
+    <span id="score">Score 0</span>
+    <button id="cta" type="button">Play Now</button>
+  </div>
+  <script data-pf="js/game.js">(function(){"use strict";var d="https://example.com/playable-lp";function n(e,t){document.dispatchEvent(new CustomEvent(e,{detail:t||null}))}window.PF={locale:document.documentElement.getAttribute("lang")||"en",isMuted:function(){return!0},open:function(e){n("pf:cta",{url:e||d})}};function o(){n("pf:ready");var e=!1,t=0;document.getElementById("game").addEventListener("pointerdown",function(){e||(e=!0,n("pf:first-interaction")),t+=1,document.getElementById("score").textContent="Score "+t,t>=3&&(n("pf:end",{win:!0}),t=0)}),document.getElementById("cta").addEventListener("click",function(){window.PF.open(d)})}document.readyState==="loading"?document.addEventListener("DOMContentLoaded",o):o()})();
+</script>
+</body>
+</html>

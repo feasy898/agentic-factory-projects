@@ -1,0 +1,39 @@
+{
+  "format": "pf-atlas/1",
+  "image": "atlas.png",
+  "width": 1024,
+  "height": 1152,
+  "encoding": "png-palette",
+  "frames": {
+    "atlas": {
+      "x": 0,
+      "y": 0,
+      "width": 640,
+      "height": 512
+    },
+    "selftest-photo": {
+      "x": 0,
+      "y": 512,
+      "width": 512,
+      "height": 512
+    },
+    "selftest-photo-2": {
+      "x": 512,
+      "y": 512,
+      "width": 512,
+      "height": 512
+    },
+    "selftest-gem": {
+      "x": 0,
+      "y": 1024,
+      "width": 128,
+      "height": 128
+    },
+    "selftest-gem-2": {
+      "x": 128,
+      "y": 1024,
+      "width": 128,
+      "height": 128
+    }
+  }
+}

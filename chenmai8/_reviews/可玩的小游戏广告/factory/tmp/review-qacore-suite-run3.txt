@@ -1,0 +1,98 @@
+
+> pf-factory@0.1.0 test:qacore
+> node --test qacore/tests/qacore.test.mjs qacore/tests/templates.test.mjs qacore/tests/autoplay-flag.test.mjs
+
+TAP version 13
+# Subtest: 探针旗契约：阴性 false；首指针前 running 置真（构造即 running 路径）；置真不复位；首指针后不置旗
+ok 1 - 探针旗契约：阴性 false；首指针前 running 置真（构造即 running 路径）；置真不复位；首指针后不置旗
+  ---
+  duration_ms: 1464.3739
+  type: 'test'
+  ...
+# Subtest: 探针缺失时旗读取返回 null（None→fail 语义前提不因旗修订漂移）
+ok 2 - 探针缺失时旗读取返回 null（None→fail 语义前提不因旗修订漂移）
+  ---
+  duration_ms: 758.099
+  type: 'test'
+  ...
+# Subtest: B-like（noAudio）5 连跑：快速质检全 pass exit 0（旗阴性不误报，接线回归）
+ok 3 - B-like（noAudio）5 连跑：快速质检全 pass exit 0（旗阴性不误报，接线回归）
+  ---
+  duration_ms: 17314.3849
+  type: 'test'
+  ...
+# Subtest: 慢桥（PF 桥 ~1200ms 后装配）3 连跑：快速质检等待桥就绪，CHK04 稳定 pass
+ok 4 - 慢桥（PF 桥 ~1200ms 后装配）3 连跑：快速质检等待桥就绪，CHK04 稳定 pass
+  ---
+  duration_ms: 15428.2643
+  type: 'test'
+  ...
+# Subtest: 门项5 金标层：mini.html --autoplay 全过、已实装项零 skip、CHK03/08/09 必 pass
+ok 5 - 门项5 金标层：mini.html --autoplay 全过、已实装项零 skip、CHK03/08/09 必 pass
+  ---
+  duration_ms: 4510.0389
+  type: 'test'
+  ...
+# Subtest: 门项6 变异层：MUT-01/02/04 各自恰好命中对应 CHK 且 exit 1（夹具只读）
+ok 6 - 门项6 变异层：MUT-01/02/04 各自恰好命中对应 CHK 且 exit 1（夹具只读）
+  ---
+  duration_ms: 13323.4972
+  type: 'test'
+  ...
+# Subtest: 退出码契约：产物不存在 → 2；非 .html → 2
+ok 7 - 退出码契约：产物不存在 → 2；非 .html → 2
+  ---
+  duration_ms: 2261.6629
+  type: 'test'
+  ...
+# Subtest: CHK10 阴性对照：无嵌入的夹具 + --require-sprite → 恰 CHK10 fail、exit 1（检查非永绿）
+ok 8 - CHK10 阴性对照：无嵌入的夹具 + --require-sprite → 恰 CHK10 fail、exit 1（检查非永绿）
+  ---
+  duration_ms: 4520.089
+  type: 'test'
+  ...
+# Subtest: CHK10 阴性对照：--require-text 未上屏 → 恰 CHK10 fail（夹具无 texts 钩子从严）
+ok 9 - CHK10 阴性对照：--require-text 未上屏 → 恰 CHK10 fail（夹具无 texts 钩子从严）
+  ---
+  duration_ms: 4444.1512
+  type: 'test'
+  ...
+# Subtest: 本器复验 tmpl-match3：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+ok 10 - 本器复验 tmpl-match3：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+  ---
+  duration_ms: 30663.7935
+  type: 'test'
+  ...
+# Subtest: 本器复验 tmpl-merge：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+ok 11 - 本器复验 tmpl-merge：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+  ---
+  duration_ms: 12483.2244
+  type: 'test'
+  ...
+# Subtest: 本器复验 tmpl-pullpin：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+ok 12 - 本器复验 tmpl-pullpin：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+  ---
+  duration_ms: 20553.5523
+  type: 'test'
+  ...
+# Subtest: 本器复验 tmpl-sort：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+ok 13 - 本器复验 tmpl-sort：构建 → --autoplay 全过（pf:end ≤ 预算、结束页可见）
+  ---
+  duration_ms: 32758.0148
+  type: 'test'
+  ...
+# Subtest: CHK10 实装层：demo-zh 构建 + 标题/教程/胜/CTA/分文案 + piece-0 像素对账 → pass
+ok 14 - CHK10 实装层：demo-zh 构建 + 标题/教程/胜/CTA/分文案 + piece-0 像素对账 → pass
+  ---
+  duration_ms: 34598.8529
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 131448.7866

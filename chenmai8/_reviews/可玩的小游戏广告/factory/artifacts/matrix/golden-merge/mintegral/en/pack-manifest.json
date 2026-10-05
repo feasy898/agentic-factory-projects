@@ -1,0 +1,36 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "mintegral",
+  "locale": "en",
+  "project": "golden-merge",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\specs-eval\\golden-merge.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\matrix\\golden-merge\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-merge-en.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-merge-en.zip",
+      "bytes": 342485,
+      "sha256": "65eef54e8df8257b53e3429a8a9f10f0e01aea003f9eb466d933ce92a2fb90df",
+      "role": "package"
+    },
+    {
+      "path": "Template.html",
+      "bytes": 1239082,
+      "sha256": "a6c80456d245e5e44b28c3655678f2972f38d31cfbd77cd6d0d2f47c66d785bc",
+      "role": "entry-in-zip"
+    },
+    {
+      "path": "build.js",
+      "bytes": 55,
+      "sha256": "c313221de22848013f4e599101039b18d1bb4a7af3041bc31d299b1a652bc9ae",
+      "role": "bundle-in-zip"
+    }
+  ],
+  "warnings": [
+    "dist 内没有外链 <script>，build.js 为空占位"
+  ]
+}

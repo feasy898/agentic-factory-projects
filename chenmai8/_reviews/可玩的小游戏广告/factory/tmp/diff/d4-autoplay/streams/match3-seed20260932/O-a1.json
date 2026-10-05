@@ -1,0 +1,145 @@
+{
+ "artifact": "golden-match3/preview/en/index.html",
+ "pfEvents": {
+  "ready": 144.59999999962747,
+  "start": 2946.5,
+  "first": 1163.2999999988824,
+  "cta": null,
+  "end": 25383.599999999627,
+  "endWin": true
+ },
+ "gesturesCount": 16,
+ "gestures": [
+  {
+   "i": 1,
+   "t": 1131,
+   "stateBefore": "tutorial",
+   "type": "swap-down",
+   "x": 165,
+   "y": 487
+  },
+  {
+   "i": 2,
+   "t": 1600,
+   "stateBefore": "tutorial",
+   "type": "swap-down",
+   "x": 165,
+   "y": 487
+  },
+  {
+   "i": 3,
+   "t": 2043,
+   "stateBefore": "tutorial",
+   "type": "swap-down",
+   "x": 165,
+   "y": 487
+  },
+  {
+   "i": 4,
+   "t": 2505,
+   "stateBefore": "tutorial",
+   "type": "swap-down",
+   "x": 165,
+   "y": 487
+  },
+  {
+   "i": 5,
+   "t": 2965,
+   "stateBefore": "tutorial",
+   "type": "swap-right",
+   "x": 287,
+   "y": 304
+  },
+  {
+   "i": 6,
+   "t": 6352,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 226,
+   "y": 487
+  },
+  {
+   "i": 7,
+   "t": 10254,
+   "stateBefore": "playing",
+   "type": "swap-down",
+   "x": 104,
+   "y": 304
+  },
+  {
+   "i": 8,
+   "t": 11705,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 226,
+   "y": 426
+  },
+  {
+   "i": 9,
+   "t": 14148,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 287,
+   "y": 487
+  },
+  {
+   "i": 10,
+   "t": 15167,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 226,
+   "y": 609
+  },
+  {
+   "i": 11,
+   "t": 16212,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 165,
+   "y": 487
+  },
+  {
+   "i": 12,
+   "t": 17584,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 226,
+   "y": 365
+  },
+  {
+   "i": 13,
+   "t": 20334,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 287,
+   "y": 548
+  },
+  {
+   "i": 14,
+   "t": 23114,
+   "stateBefore": "playing",
+   "type": "swap-down",
+   "x": 104,
+   "y": 548
+  },
+  {
+   "i": 15,
+   "t": 24135,
+   "stateBefore": "playing",
+   "type": "swap-down",
+   "x": 104,
+   "y": 487
+  },
+  {
+   "i": 16,
+   "t": 24428,
+   "stateBefore": "playing",
+   "type": "swap-down",
+   "x": 104,
+   "y": 487
+  }
+ ],
+ "finalState": "end",
+ "endScreenVisible": true,
+ "wallSec": 25.5
+}

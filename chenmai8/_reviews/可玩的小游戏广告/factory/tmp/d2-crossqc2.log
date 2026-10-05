@@ -1,0 +1,7 @@
+d2-crossqc: 48 格 × {N(A), O(B)}，并发 2（oracle 判官=venv python -m qacore；新判官=qacore/cli.mjs）
+  [retry] O(golden-match3|en|applovin×O(B)) attempt1 exit=0 fails=null
+  [retry] O(golden-match3|en|meta×O(B)) attempt1 exit=0 fails=null
+  [retry] O(golden-match3|en|mintegral×O(B)) attempt1 exit=0 fails=null
+  [retry] O(golden-match3|en|google×O(B)) attempt1 exit=0 fails=null
+  [retry] O(golden-match3|en|unity×O(B)) attempt1 exit=0 fails=null
+  [retry] O(golden-match3|en|tiktok×O(B)) attempt1 exit=0 fails=null

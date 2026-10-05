@@ -1,0 +1,81 @@
+{
+ "artifact": "golden-merge/preview/en/index.html",
+ "pfEvents": {
+  "ready": 120,
+  "start": 1719,
+  "first": 931,
+  "cta": null,
+  "end": 5619,
+  "endWin": true
+ },
+ "gesturesCount": 8,
+ "gestures": [
+  {
+   "i": 1,
+   "t": 936,
+   "stateBefore": "tutorial",
+   "type": "swap-right",
+   "x": 123,
+   "y": 383
+  },
+  {
+   "i": 2,
+   "t": 1270,
+   "stateBefore": "tutorial",
+   "type": "swap-right",
+   "x": 123,
+   "y": 383
+  },
+  {
+   "i": 3,
+   "t": 1607,
+   "stateBefore": "tutorial",
+   "type": "swap-right",
+   "x": 123,
+   "y": 383
+  },
+  {
+   "i": 4,
+   "t": 1921,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 123,
+   "y": 529
+  },
+  {
+   "i": 5,
+   "t": 2752,
+   "stateBefore": "playing",
+   "type": "swap-down",
+   "x": 269,
+   "y": 529
+  },
+  {
+   "i": 6,
+   "t": 3588,
+   "stateBefore": "playing",
+   "type": "swap-down",
+   "x": 342,
+   "y": 529
+  },
+  {
+   "i": 7,
+   "t": 4420,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 269,
+   "y": 602
+  },
+  {
+   "i": 8,
+   "t": 4869,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 269,
+   "y": 602
+  }
+ ],
+ "finalState": "end",
+ "endScreenVisible": true,
+ "wallSec": 5.7
+}

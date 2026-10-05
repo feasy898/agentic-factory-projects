@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>qacore fixture audio A-like</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #10203a; }
+  body { display: flex; align-items: center; justify-content: center; }
+  canvas { background: #24405f; border-radius: 8px; }
+</style>
+</head>
+<body>
+  <canvas id="stage" width="320" height="240"></canvas>
+  <p>audio A-like：load 后创建 AudioContext（本 Chromium 免手势唯一确定性 running 路径）
+  → 80ms 后 suspend → 100ms 后 resume，全程无指针事件</p>
+  <script>
+    // 画布内容（CHK05 像素方差需要非空白）
+    (function () {
+      const ctx = document.getElementById("stage").getContext("2d");
+      ctx.fillStyle = "#39a7ff";
+      ctx.fillRect(0, 0, 320, 240);
+      ctx.fillStyle = "#ff8a3d";
+      ctx.beginPath(); ctx.arc(160, 120, 60, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#10203a";
+      ctx.font = "bold 28px sans-serif";
+      ctx.fillText("A-LIKE", 104, 130);
+    })();
+    // A-like 音频行为（仿 oracle 模板引擎 running 翻转，vendor engine.js onGameVisible
+    // 的 suspend→resume 同型）：本 Chromium 无手势策略下，load 前创建的上下文恒
+    // suspended 且 resume() 永不落定（tmp/diff/probe-contract 实测），load 后创建则
+    // 构造即 running——探针旗经"构造时初次 upd()"路径置真；随后 80ms suspend /
+    // 100ms resume 再经 statechange 路径重复记账（置真不复位）。全程无任何指针
+    // 事件，快速质检在 load+400ms 采样，时间线各点均在其前。
+    window.addEventListener("load", function () {
+      setTimeout(function () {
+        let ac;
+        try { ac = new AudioContext(); } catch (e) { return; }
+        if (ac.state !== "running") { ac.resume().catch(function () {}); }
+        setTimeout(function () { ac.suspend().catch(function () {}); }, 80);
+        setTimeout(function () { ac.resume().catch(function () {}); }, 180);
+      }, 50);
+    });
+    // QC 桥接桩：恒静音（无手势），CHK04 的 fail 只能来自 audioRunningBeforeInteraction
+    (function () {
+      window.PF = {
+        isMuted: function () { return true; },
+        setMuted: function (v) { /* 恒静音夹具 */ },
+      };
+      document.dispatchEvent(new Event("pf:ready"));
+    })();
+  </script>
+</body>
+</html>

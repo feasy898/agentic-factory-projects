@@ -1,0 +1,40 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "tiktok",
+  "locale": "zh",
+  "project": "golden-pullpin",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\specs-eval\\golden-pullpin.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\matrix\\golden-pullpin\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-pullpin-zh.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-pullpin-zh.zip",
+      "bytes": 342991,
+      "sha256": "57d6b9213d3e9e2bd1e639264ba5aa7ce634511465b7e8a45e794d0a97caeffe",
+      "role": "package"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1241823,
+      "sha256": "48f6c2a458805ef971514b7733b9dbd56ac61cff86e077d4b677ca15d364878a",
+      "role": "entry-in-zip"
+    },
+    {
+      "path": "config.json",
+      "bytes": 98,
+      "sha256": "1d2aefc52cacb559b5b634b42b2c70a10ffda38c7639e38ff74d68874f25beb6",
+      "role": "generated-in-zip"
+    },
+    {
+      "path": "js-sdk.js",
+      "bytes": 493,
+      "sha256": "e5dcc71988c665155bf5660c54d236baeaaf792a0bdfdd1deefab610b050f544",
+      "role": "generated-in-zip"
+    }
+  ],
+  "warnings": []
+}

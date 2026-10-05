@@ -1,0 +1,36 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "mintegral",
+  "locale": "zh",
+  "project": "demo-zh",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\0a3db5149b04\\spec.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\0a3db5149b04\\out\\demo-zh\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "demo-zh-zh.zip"
+  ],
+  "files": [
+    {
+      "path": "demo-zh-zh.zip",
+      "bytes": 343345,
+      "sha256": "10b8bd44e0d350d722f0ccc67a7d16c9e8a231be1e6fcbb72fed56cca0586a91",
+      "role": "package"
+    },
+    {
+      "path": "Template.html",
+      "bytes": 1242410,
+      "sha256": "e18b348ba07550be0115115249b08698d1e0c21398515eda01e79f82084c9bf5",
+      "role": "entry-in-zip"
+    },
+    {
+      "path": "build.js",
+      "bytes": 55,
+      "sha256": "c313221de22848013f4e599101039b18d1bb4a7af3041bc31d299b1a652bc9ae",
+      "role": "bundle-in-zip"
+    }
+  ],
+  "warnings": [
+    "dist 内没有外链 <script>，build.js 为空占位"
+  ]
+}

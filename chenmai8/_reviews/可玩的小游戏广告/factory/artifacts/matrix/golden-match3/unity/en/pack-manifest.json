@@ -1,0 +1,28 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "unity",
+  "locale": "en",
+  "project": "golden-match3",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\specs-eval\\golden-match3.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\matrix\\golden-match3\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-match3-en.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-match3-en.zip",
+      "bytes": 343287,
+      "sha256": "e88a3ceee6d8dfb9372614ff1f56eda5140ec3933fc82fc05156654f8cc27209",
+      "role": "package"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1242934,
+      "sha256": "69f76c6c45a7359c5bd46b66419498f8ddccd1718214a8f5c6114f89251b5bef",
+      "role": "entry-in-zip"
+    }
+  ],
+  "warnings": []
+}

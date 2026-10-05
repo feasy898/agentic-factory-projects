@@ -1,0 +1,1 @@
+"C:\Program Files\Python312\python.exe" D:\new-workspace\agent-asset\afp-clone\zcode-research\skillfactory\v5\assets\hotwords\out\oracle_student\hotwords.py --store D:\new-workspace\agent-asset\afp-clone\zcode-research\skillfactory\v5\assets\hotwords\out\oracle_student\out\_work\store.json add 悟空客服 --category 产品 --note 与既有词重复应报错

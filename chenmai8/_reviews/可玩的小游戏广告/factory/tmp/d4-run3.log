@@ -1,0 +1,48 @@
+d4-autoplay-streams: 4 模板 × 3 seed × {O,N}，jobs=1（驱动=复刻器，同语义同宿主）
+  [seed] match3 seed=20260931 validate N=0 O=0 受理
+  [seed] match3 seed=20260932 validate N=0 O=0 受理
+  [seed] match3 seed=20260933 validate N=0 O=0 受理
+  [seed] merge seed=20261002 validate N=0 O=0 受理
+  [seed] merge seed=20261003 validate N=0 O=0 受理
+  [seed] merge seed=20261004 validate N=0 O=0 受理
+  [seed] pullpin seed=20260931 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260932 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260933 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260934 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260935 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260936 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260937 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260938 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260939 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260940 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260941 validate N=0 O=0 受理
+  [seed] pullpin seed=20260942 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260943 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260944 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260945 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260946 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260947 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260948 validate N=0 O=0 受理
+  [seed] pullpin seed=20260949 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260950 validate N=0 O=0 受理
+  [seed] sort seed=20260931 validate N=0 O=0 受理
+  [seed] sort seed=20260932 validate N=0 O=0 受理
+  [seed] sort seed=20260933 validate N=0 O=0 受理
+d4: seed 变体受理 12 格（每模板 3）
+d4: 双实现产物构建完成
+  [drive] match3-seed20260931 a1: O gestures=18 win=true end=17645ms | N gestures=18 win=true end=17359ms | Δ=0 winEq=true seqEq=true
+  [drive] match3-seed20260932 a1: O gestures=16 win=true end=25384ms | N gestures=17 win=true end=25843ms | Δ=1 winEq=true seqEq=true
+  [drive] match3-seed20260933 a1: O gestures=11 win=true end=14764ms | N gestures=18 win=true end=15630ms | Δ=7 winEq=true seqEq=true ✗手势数超 ±1 容差：O=11 N=18（Δ=7）
+  [retry] match3-seed20260933 对称单重试（两侧同跑，抖动口径）
+  [drive] match3-seed20260933 a2: O gestures=12 win=true end=14633ms | N gestures=11 win=true end=14103ms | Δ=1 winEq=true seqEq=true
+  [drive] merge-seed20261002 a1: O gestures=8 win=true end=5619ms | N gestures=8 win=true end=5699ms | Δ=0 winEq=true seqEq=true
+  [drive] merge-seed20261003 a1: O gestures=8 win=true end=5432ms | N gestures=7 win=true end=4933ms | Δ=1 winEq=true seqEq=true
+  [drive] merge-seed20261004 a1: O gestures=8 win=true end=6317ms | N gestures=8 win=true end=6322ms | Δ=0 winEq=true seqEq=true
+  [drive] pullpin-seed20260941 a1: O gestures=4 win=true end=6484ms | N gestures=4 win=true end=6275ms | Δ=0 winEq=true seqEq=true
+  [drive] pullpin-seed20260948 a1: O gestures=5 win=true end=6913ms | N gestures=5 win=true end=6864ms | Δ=0 winEq=true seqEq=true
+  [drive] pullpin-seed20260950 a1: O gestures=4 win=true end=6429ms | N gestures=4 win=true end=6502ms | Δ=0 winEq=true seqEq=true
+  [drive] sort-seed20260931 a1: O gestures=29 win=true end=13166ms | N gestures=29 win=true end=13169ms | Δ=0 winEq=true seqEq=true
+  [drive] sort-seed20260932 a1: O gestures=25 win=true end=11934ms | N gestures=25 win=true end=11672ms | Δ=0 winEq=true seqEq=true
+  [drive] sort-seed20260933 a1: O gestures=25 win=true end=12596ms | N gestures=25 win=true end=12011ms | Δ=0 winEq=true seqEq=true
+d4-autoplay-streams: cells=12 equal=12 regressions=0 retried=1 wall=410.6s
+d4-autoplay-streams: PASS（行为流等价）

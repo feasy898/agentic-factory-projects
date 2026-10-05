@@ -1,0 +1,3 @@
+d2-crossqc: 48 格 × {N(A), O(B)}，并发 2（oracle 判官=venv python -m qacore；新判官=qacore/cli.mjs）
+d2-crossqc: cells=48 wallSec=791.6 regressions=0 diffs=0
+d2-crossqc: PASS（零回归） → D:\workspace\澄迈8项目\可玩的小游戏广告\factory\tmp\diff\crossqc\crossqc-evidence.json

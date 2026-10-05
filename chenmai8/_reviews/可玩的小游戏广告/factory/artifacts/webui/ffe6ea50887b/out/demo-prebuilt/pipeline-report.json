@@ -1,0 +1,161 @@
+{
+  "command": "pf make",
+  "spec": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\spec.json",
+  "specMtime": 1790765482267.159,
+  "startedAt": "2026-09-30T10:51:25",
+  "finishedAt": "2026-09-30T10:52:01",
+  "timings": {
+    "makeWallSec": 35.67,
+    "specModifiedToQrScannableSec": 39.39,
+    "note": "二维码可扫 = qr.png 落盘且静态伺服端口 TCP 监听实测通过"
+  },
+  "locales": [
+    "zh"
+  ],
+  "channels": [
+    "applovin",
+    "meta",
+    "mintegral"
+  ],
+  "assetkit": {
+    "dir": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\assetkit",
+    "optmap": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\assetkit\\asset-optmap.json",
+    "report": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\assetkit\\report.json",
+    "totals": {
+      "count": 1,
+      "originalBytes": 893,
+      "optimizedBytes": 402,
+      "reductionPct": 54.98,
+      "minReductionPct": null,
+      "minReductionMet": null
+    }
+  },
+  "preview": {
+    "html": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\preview\\webui-match3-zh.html",
+    "url": "http://192.168.0.215:8618/preview/webui-match3-zh.html"
+  },
+  "serve": {
+    "host": "192.168.0.215",
+    "port": 8618,
+    "reused": false,
+    "root": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\demo-prebuilt",
+    "stateFile": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\.demo-serve.json"
+  },
+  "packages": [
+    {
+      "channel": "applovin",
+      "locale": "zh",
+      "format": "single-html",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\webui-match3\\applovin\\zh\\index.html",
+      "rel": "channels/applovin/zh/index.html",
+      "bytes": 1242449,
+      "maxBytes": 5242880,
+      "warnings": []
+    },
+    {
+      "channel": "meta",
+      "locale": "zh",
+      "format": "single-html",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\webui-match3\\meta\\zh\\index.html",
+      "rel": "channels/meta/zh/index.html",
+      "bytes": 1242416,
+      "maxBytes": 3145728,
+      "warnings": []
+    },
+    {
+      "channel": "mintegral",
+      "locale": "zh",
+      "format": "zip",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\webui-match3\\mintegral\\zh\\webui-match3-zh.zip",
+      "rel": "channels/mintegral/zh/webui-match3-zh.zip",
+      "bytes": 343253,
+      "maxBytes": 5242880,
+      "warnings": [
+        "[packager]   警告: dist 内没有外链 <script>，build.js 为空占位"
+      ]
+    }
+  ],
+  "qa": {
+    "channel": "applovin",
+    "locale": "zh",
+    "report": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\webui-match3\\applovin\\zh\\index.report.json",
+    "reportRel": "channels/applovin/zh/index.report.json",
+    "shotRel": "channels/applovin/zh/index.report.png",
+    "shotLsRel": "channels/applovin/zh/index.report-landscape.png",
+    "pf": {
+      "present": true,
+      "readyMs": 180,
+      "endMs": 21784,
+      "endWin": true
+    },
+    "loadMs": 741,
+    "checks": [
+      {
+        "id": "CHK01",
+        "name": "包体大小 ≤ 渠道上限",
+        "status": "pass",
+        "detail": "1242449 B ≤ 上限 5242880 B"
+      },
+      {
+        "id": "CHK02",
+        "name": "文件数 ≤ 渠道上限",
+        "status": "skip",
+        "detail": "未实装（当前输入为单 HTML 文件，无目录清点）"
+      },
+      {
+        "id": "CHK03",
+        "name": "零外网请求",
+        "status": "pass",
+        "detail": "两趟共 4 条请求均指向本地伺服地址，无外网请求、无外部 WebSocket、无 WebRTC 构造"
+      },
+      {
+        "id": "CHK04",
+        "name": "首交互前静音",
+        "status": "pass",
+        "detail": "首交互前 PF.isMuted()=true，无未静音媒体元素，无 running AudioContext，首交互后 isMuted()=false（已解除静音，gestures=15）"
+      },
+      {
+        "id": "CHK05",
+        "name": "横竖屏渲染非空白",
+        "status": "pass",
+        "detail": "390×844 与 844×390 双仿真像素方差 1298/666 ≥ 阈值 30"
+      },
+      {
+        "id": "CHK06",
+        "name": "渠道退出接口调用",
+        "status": "skip",
+        "detail": "未实装（渠道 stub 注入属 M8 后续里程碑）"
+      },
+      {
+        "id": "CHK07",
+        "name": "自动试玩到结束页",
+        "status": "pass",
+        "detail": "pf:end 于 21784ms 触发（win=True，gestures=15），结束页可见"
+      },
+      {
+        "id": "CHK08",
+        "name": "控制台零错误",
+        "status": "pass",
+        "detail": "两趟均无 console error 与 pageerror"
+      },
+      {
+        "id": "CHK09",
+        "name": "本地加载 ≤3s",
+        "status": "pass",
+        "detail": "load 耗时 741ms"
+      },
+      {
+        "id": "CHK10",
+        "name": "多语言文案与素材上屏",
+        "status": "pass",
+        "detail": "渲染文案命中 5/5（集合共 26 条，active+visible 采样核验通过）；替换素材像素对账通过 1/1"
+      }
+    ]
+  },
+  "demoPrebuilt": {
+    "root": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\demo-prebuilt",
+    "index": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\demo-prebuilt\\index.html",
+    "summary": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\demo-prebuilt\\summary.html",
+    "qr": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\demo-prebuilt\\qr.png"
+  }
+}

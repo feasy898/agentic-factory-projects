@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>演示兜底 · webui-match3</title>
+<style>
+  body { font-family: system-ui, "Segoe UI", "Microsoft YaHei", sans-serif;
+         margin: 24px auto; max-width: 960px; color: #1f2328; line-height: 1.55; }
+  h1 { font-size: 22px; } h2 { font-size: 17px; margin-top: 28px; }
+  table { border-collapse: collapse; width: 100%; font-size: 13px; }
+  th, td { border: 1px solid #d0d7de; padding: 5px 9px; text-align: left; }
+  th { background: #f6f8fa; }
+  .card { border: 1px solid #d0d7de; border-radius: 8px; padding: 14px 18px; margin: 14px 0; }
+  .kv { display: flex; gap: 28px; flex-wrap: wrap; }
+  .kv b { font-size: 21px; }
+  .dim { color: #57606a; font-size: 12.5px; }
+  img.qr { width: 180px; height: 180px; image-rendering: pixelated; }
+  a { color: #0969da; }</style>
+</head>
+<body>
+<h1>演示兜底 · webui-match3（规格驱动试玩广告工厂）</h1>
+<p class="dim">生成于 2026-09-30T10:52:01 · spec <code>artifacts/webui/ffe6ea50887b/spec.json</code> ·
+命令 <code>node pf/pf.mjs make --spec D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\webui\ffe6ea50887b\spec.json</code></p>
+
+<div class="card">
+<h2 style="margin-top:0">墙钟计时</h2>
+<div class="kv">
+  <div><b>35.7s</b><br><span class="dim">make 编排墙钟（入口 → 二维码可扫）</span></div>
+  <div><b>39.4s</b><br><span class="dim">spec 修改完成 → 二维码可扫（spec mtime 口径）</span></div>
+</div>
+<p class="dim">"可扫" = 二维码落盘且本机静态伺服端口 8618 已在监听（TCP 实测）。目标 ≤90s。</p>
+</div>
+
+<div class="card">
+<h2 style="margin-top:0">手机预览（扫码即玩）</h2>
+<img class="qr" src="qr.png" alt="预览二维码">
+<p>预览链接：<a href="preview/webui-match3-zh.html">http://192.168.0.215:8618/preview/webui-match3-zh.html</a></p>
+<p class="dim">伺服根目录 <code>artifacts/webui/ffe6ea50887b/out/demo-prebuilt</code>（本机 本次启动的静态伺服器，0.0.0.0:8618）。
+手机须与本机同一局域网；打不开时放行防火墙或改用手机热点，兜底本页即静态件。</p>
+</div>
+
+<div class="card">
+<h2 style="margin-top:0">渠道包（artifacts/webui/ffe6ea50887b/spec.json → 3 包）</h2>
+<table><tr><th>渠道</th><th>语言</th><th>形态</th><th>字节</th><th>上限</th><th>警告</th><th>产物</th></tr>
+<tr><td>applovin</td><td>zh</td><td>single-html</td><td>1,242,449</td><td>5,242,880</td><td>0 条</td><td><a href="channels/applovin/zh/index.html">index.html</a></td></tr><tr><td>meta</td><td>zh</td><td>single-html</td><td>1,242,416</td><td>3,145,728</td><td>0 条</td><td><a href="channels/meta/zh/index.html">index.html</a></td></tr><tr><td>mintegral</td><td>zh</td><td>zip</td><td>343,253</td><td>5,242,880</td><td>1 条</td><td><a href="channels/mintegral/zh/webui-match3-zh.zip">webui-match3-zh.zip</a></td></tr></table>
+<p class="dim">来源：同一份真实可玩 HTML（preview/webui-match3-zh.html）经打包器按渠道规则库出包
+（single-html 2 包、zip 1 包）；zip 渠道包内结构由规则库 package.structure 声明，单 HTML 渠道全内联零外链。</p>
+</div>
+
+<div class="card">
+<h2 style="margin-top:0">质检（--autoplay · 渠道 applovin）</h2>
+<p class="dim">自动试玩以真实指针事件驱动到结束页：pf:ready 180ms ·
+pf:end 21784ms（win=true）· 本地加载 741ms ·
+报告 <a href="channels/applovin/zh/index.report.json">channels/applovin/zh/index.report.json</a>
+（截图 <a href="channels/applovin/zh/index.report.png">竖屏</a> /
+<a href="channels/applovin/zh/index.report-landscape.png">横屏</a>）</p>
+<table><tr><th>检查</th><th>名称</th><th>状态</th><th>说明</th></tr>
+<tr><td>CHK01</td><td>包体大小 ≤ 渠道上限</td><td><span style="color:#1a7f37;font-weight:600">pass</span></td><td>1242449 B ≤ 上限 5242880 B</td></tr><tr><td>CHK02</td><td>文件数 ≤ 渠道上限</td><td><span style="color:#9a6700;font-weight:600">skip</span></td><td>未实装（当前输入为单 HTML 文件，无目录清点）</td></tr><tr><td>CHK03</td><td>零外网请求</td><td><span style="color:#1a7f37;font-weight:600">pass</span></td><td>两趟共 4 条请求均指向本地伺服地址，无外网请求、无外部 WebSocket、无 WebRTC 构造</td></tr><tr><td>CHK04</td><td>首交互前静音</td><td><span style="color:#1a7f37;font-weight:600">pass</span></td><td>首交互前 PF.isMuted()=true，无未静音媒体元素，无 running AudioContext，首交互后 isMuted()=false（已解除静音，gestures=15）</td></tr><tr><td>CHK05</td><td>横竖屏渲染非空白</td><td><span style="color:#1a7f37;font-weight:600">pass</span></td><td>390×844 与 844×390 双仿真像素方差 1298/666 ≥ 阈值 30</td></tr><tr><td>CHK06</td><td>渠道退出接口调用</td><td><span style="color:#9a6700;font-weight:600">skip</span></td><td>未实装（渠道 stub 注入属 M8 后续里程碑）</td></tr><tr><td>CHK07</td><td>自动试玩到结束页</td><td><span style="color:#1a7f37;font-weight:600">pass</span></td><td>pf:end 于 21784ms 触发（win=True，gestures=15），结束页可见</td></tr><tr><td>CHK08</td><td>控制台零错误</td><td><span style="color:#1a7f37;font-weight:600">pass</span></td><td>两趟均无 console error 与 pageerror</td></tr><tr><td>CHK09</td><td>本地加载 ≤3s</td><td><span style="color:#1a7f37;font-weight:600">pass</span></td><td>load 耗时 741ms</td></tr><tr><td>CHK10</td><td>多语言文案与素材上屏</td><td><span style="color:#1a7f37;font-weight:600">pass</span></td><td>渲染文案命中 5/5（集合共 26 条，active+visible 采样核验通过）；替换素材像素对账通过 1/1</td></tr></table>
+<p class="dim">skip = 未实装/无判定前提，不算通过。质检不过时 make 不产出二维码与兜底目录。</p>
+</div>
+
+<p class="dim">pf make（编排 CLI）· Node v22.23.2 ·
+规则库 rulesVersion=1.1.0 ·
+本页与二维码同源（demo-prebuilt 静态目录），零外链</p>
+</body>
+</html>

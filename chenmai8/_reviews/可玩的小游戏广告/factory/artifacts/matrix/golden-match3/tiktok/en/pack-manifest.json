@@ -1,0 +1,40 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "tiktok",
+  "locale": "en",
+  "project": "golden-match3",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\specs-eval\\golden-match3.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\matrix\\golden-match3\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-match3-en.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-match3-en.zip",
+      "bytes": 343950,
+      "sha256": "5dd1a257ddbe34f09987f385a37c4c5ab31817f616a107ece0e911c8bf4e568e",
+      "role": "package"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1242935,
+      "sha256": "f1aa575bb7dbf2251d83c643dc8593d1c76eb329eec945232a50a2dec94a7886",
+      "role": "entry-in-zip"
+    },
+    {
+      "path": "config.json",
+      "bytes": 96,
+      "sha256": "e4a79567da1fe52b4b719c7a11d4b632fc7ccbaf461b3ee766c7217ee87a5fd7",
+      "role": "generated-in-zip"
+    },
+    {
+      "path": "js-sdk.js",
+      "bytes": 493,
+      "sha256": "e5dcc71988c665155bf5660c54d236baeaaf792a0bdfdd1deefab610b050f544",
+      "role": "generated-in-zip"
+    }
+  ],
+  "warnings": []
+}

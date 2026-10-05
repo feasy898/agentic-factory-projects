@@ -1,0 +1,61 @@
+{
+  "autoplay_new": {
+    "n": 6,
+    "distinct": 1,
+    "members": [
+      [
+        "tmp\\qacore-eval\\qacore-report.json",
+        "tmp\\qacore-eval\\negative-sprite.json",
+        "tmp\\qacore-eval\\negative-text.json",
+        "tmp\\qacore-eval\\mutations\\MUT-01-external-img.report.json",
+        "tmp\\qacore-eval\\mutations\\MUT-02-unmuted-audio.report.json",
+        "tmp\\qacore-eval\\mutations\\MUT-04-oversize.report.json"
+      ]
+    ]
+  },
+  "quick_new": {
+    "n": 8,
+    "distinct": 1,
+    "members": [
+      [
+        "tmp\\qacore-eval\\autoplay-flag\\b-like-run1.report.json",
+        "tmp\\qacore-eval\\autoplay-flag\\b-like-run2.report.json",
+        "tmp\\qacore-eval\\autoplay-flag\\b-like-run3.report.json",
+        "tmp\\qacore-eval\\autoplay-flag\\b-like-run4.report.json",
+        "tmp\\qacore-eval\\autoplay-flag\\b-like-run5.report.json",
+        "tmp\\qacore-eval\\autoplay-flag\\slow-bridge-run1.report.json",
+        "tmp\\qacore-eval\\autoplay-flag\\slow-bridge-run2.report.json",
+        "tmp\\qacore-eval\\autoplay-flag\\slow-bridge-run3.report.json"
+      ]
+    ]
+  },
+  "reference_compare": {
+    "new_autoplay_vs_factory_before": {
+      "top": true,
+      "facts": true,
+      "muteLoadTime": true,
+      "vsp": true,
+      "vsl": true,
+      "checks": true,
+      "checkIds": true
+    },
+    "new_autoplay_vs_oracle": {
+      "top": true,
+      "facts": true,
+      "muteLoadTime": true,
+      "vsp": true,
+      "vsl": true,
+      "checks": true,
+      "checkIds": true
+    },
+    "new_quick_vs_factory_before": {
+      "top": true,
+      "facts": true,
+      "muteLoadTime": true,
+      "vsp": true,
+      "vsl": true,
+      "checks": true,
+      "checkIds": true
+    }
+  }
+}

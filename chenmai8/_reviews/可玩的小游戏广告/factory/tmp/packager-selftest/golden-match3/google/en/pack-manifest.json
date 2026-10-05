@@ -1,0 +1,28 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "google",
+  "locale": "en",
+  "project": "golden-match3",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\specs-eval\\golden-match3.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\packages\\packager\\test\\fixture\\match3-dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-match3-en.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-match3-en.zip",
+      "bytes": 1281,
+      "sha256": "ab89aa26c046441d4e187e12a4b06e5531fbbc1fb85d2e54f0544149b0cfd2cb",
+      "role": "package"
+    },
+    {
+      "path": "index.html",
+      "bytes": 2220,
+      "sha256": "d785e191956082401b374e260201838c1ab16848f444cbf67f3402a835538d54",
+      "role": "entry-in-zip"
+    }
+  ],
+  "warnings": []
+}

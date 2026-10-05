@@ -27,3 +27,8 @@ __pycache__/
 .DS_Store
 Thumbs.db
 .mimosa/
+
+# ---- Windows 保留名文件与本地 bundle（不入库，2026-10-05）----
+nul
+NUL
+nightshift2.bundle

@@ -1,0 +1,256 @@
+{
+  "command": "pfcore make",
+  "spec": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\repo\\specs-eval\\golden-match3.json",
+  "specMtime": 1790630002.6308427,
+  "startedAt": "2026-09-30T14:42:05",
+  "finishedAt": "2026-09-30T14:42:44",
+  "timings": {
+    "makeWallSec": 38.99,
+    "specModifiedToQrScannableSec": 120562.15,
+    "note": "二维码可扫 = qr.png 落盘且静态伺服端口 TCP 监听实测通过"
+  },
+  "locales": [
+    "en",
+    "zh"
+  ],
+  "channels": [
+    "applovin",
+    "meta",
+    "mintegral",
+    "google",
+    "unity",
+    "tiktok"
+  ],
+  "assetkit": {
+    "dir": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\assetkit",
+    "report": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\assetkit\\report.json",
+    "totals": {
+      "count": 0,
+      "originalBytes": 0,
+      "optimizedBytes": 0,
+      "reductionPct": 0.0,
+      "minReductionPct": null,
+      "minReductionMet": null
+    }
+  },
+  "preview": {
+    "html": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\preview\\golden-match3-en.html",
+    "url": "http://192.168.0.215:8618/preview/golden-match3-en.html"
+  },
+  "serve": {
+    "host": "192.168.0.215",
+    "port": 8618,
+    "reused": false,
+    "root": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\demo-prebuilt",
+    "stateFile": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\.demo-serve.json"
+  },
+  "packages": [
+    {
+      "channel": "applovin",
+      "locale": "en",
+      "format": "single-html",
+      "rel": "channels/applovin/en/index.html",
+      "bytes": 1242922,
+      "maxBytes": 5242880,
+      "warnings": [],
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\applovin\\en\\index.html"
+    },
+    {
+      "channel": "applovin",
+      "locale": "zh",
+      "format": "single-html",
+      "rel": "channels/applovin/zh/index.html",
+      "bytes": 1242922,
+      "maxBytes": 5242880,
+      "warnings": [],
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\applovin\\zh\\index.html"
+    },
+    {
+      "channel": "meta",
+      "locale": "en",
+      "format": "single-html",
+      "rel": "channels/meta/en/index.html",
+      "bytes": 1242889,
+      "maxBytes": 3145728,
+      "warnings": [],
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\meta\\en\\index.html"
+    },
+    {
+      "channel": "meta",
+      "locale": "zh",
+      "format": "single-html",
+      "rel": "channels/meta/zh/index.html",
+      "bytes": 1242889,
+      "maxBytes": 3145728,
+      "warnings": [],
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\meta\\zh\\index.html"
+    },
+    {
+      "channel": "mintegral",
+      "locale": "en",
+      "format": "zip",
+      "rel": "channels/mintegral/en/golden-match3-en.zip",
+      "bytes": 343448,
+      "maxBytes": 5242880,
+      "warnings": [
+        "[packager]   警告: dist 内没有外链 <script>，build.js 为空占位"
+      ],
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\mintegral\\en\\golden-match3-en.zip"
+    },
+    {
+      "channel": "mintegral",
+      "locale": "zh",
+      "format": "zip",
+      "rel": "channels/mintegral/zh/golden-match3-zh.zip",
+      "bytes": 343447,
+      "maxBytes": 5242880,
+      "warnings": [
+        "[packager]   警告: dist 内没有外链 <script>，build.js 为空占位"
+      ],
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\mintegral\\zh\\golden-match3-zh.zip"
+    },
+    {
+      "channel": "google",
+      "locale": "en",
+      "format": "zip",
+      "rel": "channels/google/en/golden-match3-en.zip",
+      "bytes": 343280,
+      "maxBytes": 5242880,
+      "warnings": [],
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\google\\en\\golden-match3-en.zip"
+    },
+    {
+      "channel": "google",
+      "locale": "zh",
+      "format": "zip",
+      "rel": "channels/google/zh/golden-match3-zh.zip",
+      "bytes": 343280,
+      "maxBytes": 5242880,
+      "warnings": [],
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\google\\zh\\golden-match3-zh.zip"
+    },
+    {
+      "channel": "unity",
+      "locale": "en",
+      "format": "zip",
+      "rel": "channels/unity/en/golden-match3-en.zip",
+      "bytes": 343295,
+      "maxBytes": 5242880,
+      "warnings": [],
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\unity\\en\\golden-match3-en.zip"
+    },
+    {
+      "channel": "unity",
+      "locale": "zh",
+      "format": "zip",
+      "rel": "channels/unity/zh/golden-match3-zh.zip",
+      "bytes": 343294,
+      "maxBytes": 5242880,
+      "warnings": [],
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\unity\\zh\\golden-match3-zh.zip"
+    },
+    {
+      "channel": "tiktok",
+      "locale": "en",
+      "format": "zip",
+      "rel": "channels/tiktok/en/golden-match3-en.zip",
+      "bytes": 343957,
+      "maxBytes": 5242880,
+      "warnings": [],
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\tiktok\\en\\golden-match3-en.zip"
+    },
+    {
+      "channel": "tiktok",
+      "locale": "zh",
+      "format": "zip",
+      "rel": "channels/tiktok/zh/golden-match3-zh.zip",
+      "bytes": 343957,
+      "maxBytes": 5242880,
+      "warnings": [],
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\tiktok\\zh\\golden-match3-zh.zip"
+    }
+  ],
+  "qa": {
+    "channel": "applovin",
+    "locale": "en",
+    "report": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\golden-match3\\applovin\\en\\index.report.json",
+    "report_rel": "channels/applovin/en/index.report.json",
+    "shot_rel": "channels/applovin/en/index.report.png",
+    "shot_ls_rel": "channels/applovin/en/index.report-landscape.png",
+    "pf": {
+      "present": true,
+      "readyMs": 362.5,
+      "endMs": 26058.5,
+      "endWin": true
+    },
+    "loadMs": 661,
+    "checks": [
+      {
+        "id": "CHK01",
+        "name": "包体大小 ≤ 渠道上限",
+        "status": "pass",
+        "detail": "1242922 B ≤ 上限 5242880 B"
+      },
+      {
+        "id": "CHK02",
+        "name": "文件数 ≤ 渠道上限",
+        "status": "skip",
+        "detail": "未实装（当前输入为单 HTML 文件，无目录清点）"
+      },
+      {
+        "id": "CHK03",
+        "name": "零外网请求",
+        "status": "pass",
+        "detail": "两趟共 4 条请求均指向本地伺服地址，无外网请求、无外部 WebSocket、无 WebRTC 构造"
+      },
+      {
+        "id": "CHK04",
+        "name": "首交互前静音",
+        "status": "pass",
+        "detail": "首交互前 PF.isMuted()=true，无未静音媒体元素，无 running AudioContext，首交互后 isMuted()=false（已解除静音，gestures=18）"
+      },
+      {
+        "id": "CHK05",
+        "name": "横竖屏渲染非空白",
+        "status": "pass",
+        "detail": "390×844 与 844×390 双仿真像素方差 1293/593 ≥ 阈值 30"
+      },
+      {
+        "id": "CHK06",
+        "name": "渠道退出接口调用",
+        "status": "skip",
+        "detail": "未实装（渠道 stub 注入属 M8 后续里程碑）"
+      },
+      {
+        "id": "CHK07",
+        "name": "自动试玩到结束页",
+        "status": "pass",
+        "detail": "pf:end 于 26058ms 触发（win=True，gestures=18），结束页可见"
+      },
+      {
+        "id": "CHK08",
+        "name": "控制台零错误",
+        "status": "pass",
+        "detail": "两趟均无 console error 与 pageerror"
+      },
+      {
+        "id": "CHK09",
+        "name": "本地加载 ≤2s",
+        "status": "pass",
+        "detail": "load 耗时 661ms"
+      },
+      {
+        "id": "CHK10",
+        "name": "多语言文案与素材上屏",
+        "status": "pass",
+        "detail": "渲染文案命中 5/5（集合共 30 条，active+visible 采样核验通过）"
+      }
+    ]
+  },
+  "demoPrebuilt": {
+    "root": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\demo-prebuilt",
+    "index": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\demo-prebuilt\\index.html",
+    "summary": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\demo-prebuilt\\summary.html",
+    "qr": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\oracle\\demo-prebuilt\\qr.png"
+  }
+}

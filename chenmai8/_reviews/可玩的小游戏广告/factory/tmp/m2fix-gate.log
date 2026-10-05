@@ -1,0 +1,40 @@
+========================================================================
+批次 2 出口门（gate-m2）：批次1回归 + 四模板logic+autoplay + 48包全矩阵 + 中性名
+仓库根   : D:\workspace\澄迈8项目\可玩的小游戏广告\factory
+Node     : v22.23.2
+启动时刻 : 2026-09-30T03:37:05.017Z
+========================================================================
+
+[1/4] 批次 1 三包回归（gate-m1 子进程：spec/bridge/packager 冻结测试 + 资产 sha）
+  [PASS] gate-m1.mjs（批次 1 出口门全量子进程回归）：exit 0（0=过）
+  [PASS] GATE-M1 横幅对账：5/5 门项全绿（实际 5/5）
+  [PASS] spec 冻结 ajv-check 在位（D1 前置）
+  [PASS] bridge 冻结 26 用例在位（D3）
+  [PASS] packager 冻结 46 断言在位（D2）
+  （本门项 135.3s）
+
+[2/4] 四模板 logic+autoplay（冻结数值向量 + 判官本器复验 + tsc strict）
+  [PASS] node --test 四模板 logic-test.ts（冻结数值向量 4 件）：exit 0（0=过）
+  [PASS] 逻辑层用例全过：pass=4 fail=0 tests=4（每模板 1 件，钉死 4——缩水即差分失败）
+  [PASS] node --test qacore/tests/templates.test.mjs（四模板 autoplay 复验）：exit 0（0=过）
+  [PASS] autoplay 用例全过：pass=5 fail=0 tests=5（M2.2 基线钉死 5 = 四模板 + CHK10 demo-zh 实装层）
+  [PASS] tsc --noEmit -p qacore（strict）：exit 0（0=过）
+  [PASS] tsc --noEmit -p pf（strict）：exit 0（0=过）
+  （本门项 124.0s）
+
+[3/4] 全量 48 包矩阵（4 golden×{en,zh}×6 渠道，预算 ≤1200s）
+  [PASS] e2e-matrix 全量 --budget-sec 1200（真实构建→打包→逐包质检）：exit 0（0=过）
+  [PASS] e2e 收官横幅在位（PASS：全矩阵全绿）
+  [PASS] summary totals：pass=48/fail=0/skip=0（期望 48/0/0 = 4 模板×{en,zh}×6 渠道 = 48 包）
+  [PASS] summary wallSec=763.9s ≤ 1200s 决策预算（硬线 D7 口径）
+  [PASS] summary mode="full"（应 full）
+  （首检抖动单重试 6 格，summary retried 字段留痕）
+  （本门项 764.3s）
+
+[4/4] 中性名扫描（入库树零上游名命中）
+  [PASS] 扫描 180 个入库文件（共 180）× 5 词（大小写不敏感子串，路径+内容）：命中 0 处
+  （本门项 1.2s）
+
+========================================================================
+GATE-M2: PASS（4/4 门项全绿，墙钟 1024.8s）
+批次 2 出口门通过：批次1三包回归全绿 + 四模板 logic/autoplay 全绿 + 48 包全矩阵 0 FAIL 且在决策预算内 + 中性名零命中。

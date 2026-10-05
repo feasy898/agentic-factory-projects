@@ -1,0 +1,22 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "preview",
+  "locale": "zh",
+  "project": "demo-zh",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\specs-eval\\demo-zh.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\make-ak-smoke\\demo-zh\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "index.html"
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 1242377,
+      "sha256": "45618deb4e9ec83adfe7d90e66d3e961c31aab4cd6c17ee1539bf7e4419659d9",
+      "role": "package"
+    }
+  ],
+  "warnings": []
+}

@@ -1,0 +1,137 @@
+{
+ "artifact": "golden-match3/preview/en/index.html",
+ "pfEvents": {
+  "ready": 182,
+  "start": 4236,
+  "first": 1188,
+  "cta": null,
+  "end": 18043,
+  "endWin": true
+ },
+ "gesturesCount": 15,
+ "gestures": [
+  {
+   "i": 1,
+   "t": 1158,
+   "stateBefore": "tutorial",
+   "type": "swap-right",
+   "x": 226,
+   "y": 487
+  },
+  {
+   "i": 2,
+   "t": 1686,
+   "stateBefore": "tutorial",
+   "type": "swap-right",
+   "x": 226,
+   "y": 487
+  },
+  {
+   "i": 3,
+   "t": 2212,
+   "stateBefore": "tutorial",
+   "type": "swap-right",
+   "x": 226,
+   "y": 487
+  },
+  {
+   "i": 4,
+   "t": 2773,
+   "stateBefore": "tutorial",
+   "type": "swap-right",
+   "x": 226,
+   "y": 487
+  },
+  {
+   "i": 5,
+   "t": 3372,
+   "stateBefore": "tutorial",
+   "type": "swap-right",
+   "x": 226,
+   "y": 487
+  },
+  {
+   "i": 6,
+   "t": 3880,
+   "stateBefore": "tutorial",
+   "type": "swap-right",
+   "x": 226,
+   "y": 487
+  },
+  {
+   "i": 7,
+   "t": 4835,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 43,
+   "y": 609
+  },
+  {
+   "i": 8,
+   "t": 6775,
+   "stateBefore": "playing",
+   "type": "swap-down",
+   "x": 348,
+   "y": 426
+  },
+  {
+   "i": 9,
+   "t": 8295,
+   "stateBefore": "playing",
+   "type": "swap-down",
+   "x": 287,
+   "y": 426
+  },
+  {
+   "i": 10,
+   "t": 10174,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 287,
+   "y": 487
+  },
+  {
+   "i": 11,
+   "t": 12116,
+   "stateBefore": "playing",
+   "type": "swap-down",
+   "x": 165,
+   "y": 426
+  },
+  {
+   "i": 12,
+   "t": 14170,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 226,
+   "y": 487
+  },
+  {
+   "i": 13,
+   "t": 15323,
+   "stateBefore": "playing",
+   "type": "swap-down",
+   "x": 226,
+   "y": 548
+  },
+  {
+   "i": 14,
+   "t": 16508,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 226,
+   "y": 609
+  },
+  {
+   "i": 15,
+   "t": 16991,
+   "stateBefore": "playing",
+   "type": "swap-right",
+   "x": 226,
+   "y": 609
+  }
+ ],
+ "finalState": "end",
+ "endScreenVisible": true,
+ "wallSec": 18.3
+}

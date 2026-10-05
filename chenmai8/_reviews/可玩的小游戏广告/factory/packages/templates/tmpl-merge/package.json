@@ -1,0 +1,12 @@
+{
+  "name": "@pf/tmpl-merge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "合成玩法模板（M3）：PlayableSpec 驱动渲染，拖动同类合成升级，含教程→游玩→结束页流程、attract 参数与 QC 钩子",
+  "scripts": {
+    "build": "node build.mjs",
+    "logic": "node tests/logic-test.ts",
+    "typecheck": "tsc --noEmit"
+  }
+}

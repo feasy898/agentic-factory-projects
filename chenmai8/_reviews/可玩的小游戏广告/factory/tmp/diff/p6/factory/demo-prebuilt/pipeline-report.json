@@ -1,0 +1,241 @@
+{
+  "command": "pf make",
+  "spec": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\specs-eval\\golden-match3.json",
+  "specMtime": 1790709193998.6252,
+  "startedAt": "2026-09-30T06:40:53",
+  "finishedAt": "2026-09-30T06:41:30",
+  "timings": {
+    "makeWallSec": 36.48,
+    "specModifiedToQrScannableSec": 41296.39,
+    "note": "二维码可扫 = qr.png 落盘且静态伺服端口 TCP 监听实测通过"
+  },
+  "locales": [
+    "en",
+    "zh"
+  ],
+  "channels": [
+    "applovin",
+    "meta",
+    "mintegral",
+    "google",
+    "unity",
+    "tiktok"
+  ],
+  "assetkit": null,
+  "preview": {
+    "html": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\preview\\golden-match3-en.html",
+    "url": "http://192.168.0.215:8618/preview/golden-match3-en.html"
+  },
+  "serve": {
+    "host": "192.168.0.215",
+    "port": 8618,
+    "reused": false,
+    "root": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\demo-prebuilt",
+    "stateFile": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\.demo-serve.json"
+  },
+  "packages": [
+    {
+      "channel": "applovin",
+      "locale": "en",
+      "format": "single-html",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\applovin\\en\\index.html",
+      "rel": "channels/applovin/en/index.html",
+      "bytes": 1242934,
+      "maxBytes": 5242880,
+      "warnings": []
+    },
+    {
+      "channel": "applovin",
+      "locale": "zh",
+      "format": "single-html",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\applovin\\zh\\index.html",
+      "rel": "channels/applovin/zh/index.html",
+      "bytes": 1242934,
+      "maxBytes": 5242880,
+      "warnings": []
+    },
+    {
+      "channel": "meta",
+      "locale": "en",
+      "format": "single-html",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\meta\\en\\index.html",
+      "rel": "channels/meta/en/index.html",
+      "bytes": 1242901,
+      "maxBytes": 3145728,
+      "warnings": []
+    },
+    {
+      "channel": "meta",
+      "locale": "zh",
+      "format": "single-html",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\meta\\zh\\index.html",
+      "rel": "channels/meta/zh/index.html",
+      "bytes": 1242901,
+      "maxBytes": 3145728,
+      "warnings": []
+    },
+    {
+      "channel": "mintegral",
+      "locale": "en",
+      "format": "zip",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\mintegral\\en\\golden-match3-en.zip",
+      "rel": "channels/mintegral/en/golden-match3-en.zip",
+      "bytes": 343440,
+      "maxBytes": 5242880,
+      "warnings": []
+    },
+    {
+      "channel": "mintegral",
+      "locale": "zh",
+      "format": "zip",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\mintegral\\zh\\golden-match3-zh.zip",
+      "rel": "channels/mintegral/zh/golden-match3-zh.zip",
+      "bytes": 343441,
+      "maxBytes": 5242880,
+      "warnings": []
+    },
+    {
+      "channel": "google",
+      "locale": "en",
+      "format": "zip",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\google\\en\\golden-match3-en.zip",
+      "rel": "channels/google/en/golden-match3-en.zip",
+      "bytes": 343276,
+      "maxBytes": 5242880,
+      "warnings": []
+    },
+    {
+      "channel": "google",
+      "locale": "zh",
+      "format": "zip",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\google\\zh\\golden-match3-zh.zip",
+      "rel": "channels/google/zh/golden-match3-zh.zip",
+      "bytes": 343276,
+      "maxBytes": 5242880,
+      "warnings": []
+    },
+    {
+      "channel": "unity",
+      "locale": "en",
+      "format": "zip",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\unity\\en\\golden-match3-en.zip",
+      "rel": "channels/unity/en/golden-match3-en.zip",
+      "bytes": 343287,
+      "maxBytes": 5242880,
+      "warnings": []
+    },
+    {
+      "channel": "unity",
+      "locale": "zh",
+      "format": "zip",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\unity\\zh\\golden-match3-zh.zip",
+      "rel": "channels/unity/zh/golden-match3-zh.zip",
+      "bytes": 343288,
+      "maxBytes": 5242880,
+      "warnings": []
+    },
+    {
+      "channel": "tiktok",
+      "locale": "en",
+      "format": "zip",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\tiktok\\en\\golden-match3-en.zip",
+      "rel": "channels/tiktok/en/golden-match3-en.zip",
+      "bytes": 343950,
+      "maxBytes": 5242880,
+      "warnings": []
+    },
+    {
+      "channel": "tiktok",
+      "locale": "zh",
+      "format": "zip",
+      "artifact": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\tiktok\\zh\\golden-match3-zh.zip",
+      "rel": "channels/tiktok/zh/golden-match3-zh.zip",
+      "bytes": 343949,
+      "maxBytes": 5242880,
+      "warnings": []
+    }
+  ],
+  "qa": {
+    "channel": "applovin",
+    "locale": "en",
+    "report": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\golden-match3\\applovin\\en\\index.report.json",
+    "reportRel": "channels/applovin/en/index.report.json",
+    "shotRel": "channels/applovin/en/index.report.png",
+    "shotLsRel": "channels/applovin/en/index.report-landscape.png",
+    "pf": {
+      "present": true,
+      "readyMs": 146.10000000009313,
+      "endMs": 25529,
+      "endWin": true
+    },
+    "loadMs": 455,
+    "checks": [
+      {
+        "id": "CHK01",
+        "name": "包体大小 ≤ 渠道上限",
+        "status": "pass",
+        "detail": "1242934 B ≤ 上限 5242880 B"
+      },
+      {
+        "id": "CHK02",
+        "name": "文件数 ≤ 渠道上限",
+        "status": "skip",
+        "detail": "未实装（当前输入为单 HTML 文件，无目录清点）"
+      },
+      {
+        "id": "CHK03",
+        "name": "零外网请求",
+        "status": "pass",
+        "detail": "两趟共 4 条请求均指向本地伺服地址，无外网请求、无外部 WebSocket、无 WebRTC 构造"
+      },
+      {
+        "id": "CHK04",
+        "name": "首交互前静音",
+        "status": "pass",
+        "detail": "首交互前 PF.isMuted()=true，无未静音媒体元素，无 running AudioContext，首交互后 isMuted()=false（已解除静音，gestures=21）"
+      },
+      {
+        "id": "CHK05",
+        "name": "横竖屏渲染非空白",
+        "status": "pass",
+        "detail": "390×844 与 844×390 双仿真像素方差 1339/594 ≥ 阈值 30"
+      },
+      {
+        "id": "CHK06",
+        "name": "渠道退出接口调用",
+        "status": "skip",
+        "detail": "未实装（渠道 stub 注入属 M8 后续里程碑）"
+      },
+      {
+        "id": "CHK07",
+        "name": "自动试玩到结束页",
+        "status": "pass",
+        "detail": "pf:end 于 25529ms 触发（win=True，gestures=21），结束页可见"
+      },
+      {
+        "id": "CHK08",
+        "name": "控制台零错误",
+        "status": "pass",
+        "detail": "两趟均无 console error 与 pageerror"
+      },
+      {
+        "id": "CHK09",
+        "name": "本地加载 ≤2s",
+        "status": "pass",
+        "detail": "load 耗时 455ms"
+      },
+      {
+        "id": "CHK10",
+        "name": "多语言文案与素材上屏",
+        "status": "pass",
+        "detail": "渲染文案命中 5/5（集合共 30 条，active+visible 采样核验通过）"
+      }
+    ]
+  },
+  "demoPrebuilt": {
+    "root": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\demo-prebuilt",
+    "index": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\demo-prebuilt\\index.html",
+    "summary": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\demo-prebuilt\\summary.html",
+    "qr": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\p6\\factory\\demo-prebuilt\\qr.png"
+  }
+}

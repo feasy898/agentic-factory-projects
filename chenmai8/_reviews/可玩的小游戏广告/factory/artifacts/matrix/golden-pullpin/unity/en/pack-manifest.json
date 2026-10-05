@@ -1,0 +1,28 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "unity",
+  "locale": "en",
+  "project": "golden-pullpin",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\specs-eval\\golden-pullpin.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\matrix\\golden-pullpin\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-pullpin-en.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-pullpin-en.zip",
+      "bytes": 342328,
+      "sha256": "c4503445b4995063e2103529cbe68658a89565eac042f494a4414b8ba13f0137",
+      "role": "package"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1241822,
+      "sha256": "f684eb4faf6b08ba5406d56df57f0d3d14c4433048902389edf93ae87be4442a",
+      "role": "entry-in-zip"
+    }
+  ],
+  "warnings": []
+}

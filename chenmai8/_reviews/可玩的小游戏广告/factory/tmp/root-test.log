@@ -1,0 +1,735 @@
+
+> pf-factory@0.1.0 test
+> node --test test/assets.test.mjs test/build-chain.test.mjs test/toolchain.test.mjs packages/spec/test/eval-matrix.test.mjs packages/spec/test/schema.test.mjs packages/spec/test/invariants.test.mjs packages/spec/test/ajv-check.mjs packages/engine-bridge/test/channels.test.mjs packages/engine-bridge/test/events.test.mjs packages/engine-bridge/test/mute.test.mjs packages/packager/test/structure.test.mjs packages/packager/test/run.mjs packages/templates/tmpl-match3/tests/logic-test.ts packages/templates/tmpl-merge/tests/logic-test.ts packages/templates/tmpl-pullpin/tests/logic-test.ts packages/templates/tmpl-sort/tests/logic-test.ts qacore/tests/unit.test.mjs pf/test/pf.test.mjs
+
+TAP version 13
+# Subtest: 6 渠道各自：就绪后 pf:ready，PF.open 调用对应退出接口一次
+ok 1 - 6 渠道各自：就绪后 pf:ready，PF.open 调用对应退出接口一次
+  ---
+  duration_ms: 263.1132
+  type: 'test'
+  ...
+# Subtest: mraid 形渠道：getState=loading 时 pf:ready 推迟到 mraid ready 事件之后
+ok 2 - mraid 形渠道：getState=loading 时 pf:ready 推迟到 mraid ready 事件之后
+  ---
+  duration_ms: 79.5568
+  type: 'test'
+  ...
+# [PF] channel=applovin: 未检测到 mraid 全局，按就绪处理（预览模式）
+# [PF] channel=unity: 未检测到 mraid 全局，按就绪处理（预览模式）
+# [PF] channel=mintegral: 未检测到 mraid 全局，按就绪处理（预览模式）
+# [PF] channel=meta: 未检测到渠道运行时全局对象，按就绪处理（预览模式）
+# [PF] channel=google: 未检测到渠道运行时全局对象，按就绪处理（预览模式）
+# [PF] channel=tiktok: 未检测到渠道运行时全局对象，按就绪处理（预览模式）
+# Subtest: mraid 形渠道：就绪等待超时也放行（不卡死加载）
+ok 3 - mraid 形渠道：就绪等待超时也放行（不卡死加载）
+  ---
+  duration_ms: 48.0732
+  type: 'test'
+  ...
+# Subtest: mraid getState 抛错时按就绪处理（不阻塞）
+ok 4 - mraid getState 抛错时按就绪处理（不阻塞）
+  ---
+  duration_ms: 12.2622
+  type: 'test'
+  ...
+# Subtest: pf:cta 先于渠道退出接口（同步序），且每次点击都派发、外呼仅一次
+ok 5 - pf:cta 先于渠道退出接口（同步序），且每次点击都派发、外呼仅一次
+  ---
+  duration_ms: 9.7144
+  type: 'test'
+  ...
+# Subtest: 渠道 stub 缺失时回退 window.open(url)（预览/QC 兜底）
+ok 6 - 渠道 stub 缺失时回退 window.open(url)（预览/QC 兜底）
+  ---
+  duration_ms: 52.652
+  type: 'test'
+  ...
+# Subtest: pangle 与 tiktok 同协议，归一到 tiktok 路由
+ok 7 - pangle 与 tiktok 同协议，归一到 tiktok 路由
+  ---
+  duration_ms: 9.6774
+  type: 'test'
+  ...
+# Subtest: 渠道识别：PF_CHANNEL 注入 > 全局探测 > preview
+ok 8 - 渠道识别：PF_CHANNEL 注入 > 全局探测 > preview
+  ---
+  duration_ms: 54.0006
+  type: 'test'
+  ...
+# Subtest: initBridge 幂等：重复调用返回同一 window.PF
+ok 9 - initBridge 幂等：重复调用返回同一 window.PF
+  ---
+  duration_ms: 23.4753
+  type: 'test'
+  ...
+# Subtest: locale 解析：显式 > PF_LOCALE > URL ?locale= > defaultLocale > en
+ok 10 - locale 解析：显式 > PF_LOCALE > URL ?locale= > defaultLocale > en
+  ---
+  duration_ms: 50.2106
+  type: 'test'
+  ...
+# Subtest: 首交互与退出都允许发生在 pf:ready 之前（不阻塞玩家操作）
+ok 11 - 首交互与退出都允许发生在 pf:ready 之前（不阻塞玩家操作）
+  ---
+  duration_ms: 12.15
+  type: 'test'
+  ...
+# [PF] channel=meta: 未检测到渠道运行时全局对象，按就绪处理（预览模式）
+# [PF] channel=google: 未检测到渠道运行时全局对象，按就绪处理（预览模式）
+# Subtest: 事件序：ready → start → end，phase 相位机同步推进
+ok 12 - 事件序：ready → start → end，phase 相位机同步推进
+  ---
+  duration_ms: 187.0866
+  type: 'test'
+  ...
+# Subtest: pf:end detail 为 {win: boolean}，false 亦然
+ok 13 - pf:end detail 为 {win: boolean}，false 亦然
+  ---
+  duration_ms: 16.8016
+  type: 'test'
+  ...
+# Subtest: 事件冒泡到 document（bubbles=true，CustomEvent 实例）
+ok 14 - 事件冒泡到 document（bubbles=true，CustomEvent 实例）
+  ---
+  duration_ms: 15.122
+  type: 'test'
+  ...
+# Subtest: pf:first-interaction 只派发一次，detail.type 记录事件类型
+ok 15 - pf:first-interaction 只派发一次，detail.type 记录事件类型
+  ---
+  duration_ms: 16.6936
+  type: 'test'
+  ...
+# Subtest: 四类交互事件（pointerdown/touchstart/mousedown/keydown）都算首交互
+ok 16 - 四类交互事件（pointerdown/touchstart/mousedown/keydown）都算首交互
+  ---
+  duration_ms: 58.2285
+  type: 'test'
+  ...
+# Subtest: pf:cta 携带 {url} detail，且先于退出接口调用
+ok 17 - pf:cta 携带 {url} detail，且先于退出接口调用
+  ---
+  duration_ms: 24.506
+  type: 'test'
+  ...
+# Subtest: 典型可玩广告生命周期事件序：ready → start → first-interaction → cta → end
+ok 18 - 典型可玩广告生命周期事件序：ready → start → first-interaction → cta → end
+  ---
+  duration_ms: 17.2967
+  type: 'test'
+  ...
+# Subtest: 初始化即静音：PF.isMuted() === true
+ok 19 - 初始化即静音：PF.isMuted() === true
+  ---
+  duration_ms: 153.3356
+  type: 'test'
+  ...
+# Subtest: 首交互前的音频被强制 muted；交互后自动解除（已建与新建都解除）
+ok 20 - 首交互前的音频被强制 muted；交互后自动解除（已建与新建都解除）
+  ---
+  duration_ms: 17.1089
+  type: 'test'
+  ...
+# Subtest: AudioContext 在首交互前 suspended，交互后 resume
+ok 21 - AudioContext 在首交互前 suspended，交互后 resume
+  ---
+  duration_ms: 22.1773
+  type: 'test'
+  ...
+# Subtest: 无 AudioContext 的环境 getContext() 返回 null（不抛错）
+ok 22 - 无 AudioContext 的环境 getContext() 返回 null（不抛错）
+  ---
+  duration_ms: 11.5616
+  type: 'test'
+  ...
+# Subtest: 平台侧 mraid 音量为 0：交互后仍静音，平台放开后解除，归零再静音
+ok 23 - 平台侧 mraid 音量为 0：交互后仍静音，平台放开后解除，归零再静音
+  ---
+  duration_ms: 12.8575
+  type: 'test'
+  ...
+# Subtest: mraid 形渠道缺音频接口（无 getAudioVolume）时正常初始化
+ok 24 - mraid 形渠道缺音频接口（无 getAudioVolume）时正常初始化
+  ---
+  duration_ms: 11.968
+  type: 'test'
+  ...
+# Subtest: 环境缺 Audio 构造器：create 抛出明确错误
+ok 25 - 环境缺 Audio 构造器：create 抛出明确错误
+  ---
+  duration_ms: 12.0301
+  type: 'test'
+  ...
+# Subtest: 静音策略与事件解耦：交互解除静音的同时只发一个 first-interaction
+ok 26 - 静音策略与事件解耦：交互解除静音的同时只发一个 first-interaction
+  ---
+  duration_ms: 11.4361
+  type: 'test'
+  ...
+# [PASS] applovin: build exit 0
+# [PASS] applovin: 产物存在（单文件 index.html）
+#        目录内容: index.html
+# [PASS] applovin: ≤5MB（实际 2253 B ≤ 5242880）
+# [PASS] applovin: 白名单外零 http 外链（landingUrl 除外）
+# [PASS] applovin: mraid.js 已按规则注入（相对引用，非外链）
+# [PASS] applovin: 资源已内联（≥3 处 base64 data URI）
+# [PASS] meta: build exit 0
+# [PASS] meta: ≤3MB（实际 2220 B ≤ 3145728）
+# [PASS] meta: 白名单外零 http 外链
+# [PASS] meta: 无 MRAID 引用（渠道禁用）
+# [PASS] mintegral: build exit 0
+# [PASS] mintegral: 产物为 zip
+#        目录内容: golden-match3-en.zip
+# [PASS] mintegral: zip ≤5MB（实际 1424 B ≤ 5242880）
+# [PASS] mintegral: 包内结构恰为 [build.js, Template.html]
+#        实际条目: Template.html, build.js
+# [PASS] mintegral: Template.html 以相对路径引用 build.js
+# [PASS] mintegral: 条目内白名单外零外链
+# [PASS] mintegral: Template.html 资源内联（含 base64 data URI）
+# [PASS] mintegral: 系统 tar 交叉验证通过（条目名/入口引用/CRC）
+# [PASS] google: build exit 0
+# [PASS] google: 产物为 zip
+#        目录内容: golden-match3-en.zip
+# [PASS] google: zip ≤5MB（实际 1281 B ≤ 5242880）
+# [PASS] google: 包内结构恰为 [index.html]
+#        实际条目: index.html
+# [PASS] google: 白名单外零外链
+# [PASS] google: 资源已内联（含 base64 data URI）
+# [PASS] google: 无 mraid/js-sdk 运行时注入（规则库声明为空）
+# [PASS] unity: build exit 0
+# [PASS] unity: 产物为 zip
+#        目录内容: golden-match3-en.zip
+# [PASS] unity: zip ≤5MB（实际 1296 B ≤ 5242880）
+# [PASS] unity: 包内结构恰为 [index.html]
+#        实际条目: index.html
+# [PASS] unity: mraid.js 已按规则注入（相对引用，容器提供，不占包内条目）
+# [PASS] unity: 白名单外零外链
+# [PASS] unity: 资源已内联（含 base64 data URI）
+# [PASS] tiktok: build exit 0
+# [PASS] tiktok: 产物为 zip
+#        目录内容: golden-match3-en.zip
+# [PASS] tiktok: zip ≤5MB（实际 1958 B ≤ 5242880）
+# [PASS] tiktok: 包内结构恰为 [config.json, index.html, js-sdk.js]
+#        实际条目: config.json, index.html, js-sdk.js
+# [PASS] tiktok: 入口以相对路径引用 js-sdk.js（规则库注入项）
+# [PASS] tiktok: js-sdk 桩兜底定义 window.openAppStore（容器已实现时让位）
+# [PASS] tiktok: config.json 可解析
+#        {
+#   "version": "1.0.0",
+#   "orientation": "portrait",
+#   "gameName": "Gem Rush (Playable Demo)"
+# }
+# [PASS] tiktok: config.json 含 spec 派生字段（orientation/gameName）
+#        orientation=portrait gameName=Gem Rush (Playable Demo)
+# [PASS] tiktok: 条目内白名单外零外链
+# [PASS] tiktok: 入口资源已内联（含 base64 data URI）
+# [PASS] applovin: 重复构建字节可复现
+# [PASS] 负向: dist 混入 http 外链资源 → 拒绝
+#        [packager] 失败: dist 内出现带协议的引用 "https://cdn.example.com/leak.png"（外链禁止，请先内联或移除）
+# [PASS] 负向: meta 产物混入 MRAID → 拒绝
+#        [packager] 失败: index.html 引用了 MRAID，而渠道 meta 禁用 MRAID: mraid.open
+# [PASS] 负向: 未知渠道（not-a-channel）→ 拒绝
+#        [packager] 失败: 规则库中没有渠道 "not-a-channel"（现有: preview, applovin, meta, mintegral, google, unity, tiktok）
+# 全部自验收断言通过（exit 0）
+# Subtest: packages\\packager\\test\\run.mjs
+ok 4 - packages\\packager\\test\\run.mjs
+  ---
+  duration_ms: 24812.8816
+  type: 'test'
+  ...
+# Subtest: setup: 七渠道全部构建 exit 0
+ok 28 - setup: 七渠道全部构建 exit 0
+  ---
+  duration_ms: 17032.374
+  type: 'test'
+  ...
+# Subtest: 结构: applovin
+ok 29 - 结构: applovin
+  ---
+  duration_ms: 37.6168
+  type: 'test'
+  ...
+# Subtest: 结构: meta
+ok 30 - 结构: meta
+  ---
+  duration_ms: 43.3738
+  type: 'test'
+  ...
+# Subtest: 结构: preview
+ok 31 - 结构: preview
+  ---
+  duration_ms: 46.0441
+  type: 'test'
+  ...
+# Subtest: 结构: mintegral
+ok 32 - 结构: mintegral
+  ---
+  duration_ms: 50.7549
+  type: 'test'
+  ...
+# Subtest: 结构: google
+ok 33 - 结构: google
+  ---
+  duration_ms: 50.1616
+  type: 'test'
+  ...
+# Subtest: 结构: unity
+ok 34 - 结构: unity
+  ---
+  duration_ms: 54.5525
+  type: 'test'
+  ...
+# Subtest: 结构: tiktok
+ok 35 - 结构: tiktok
+  ---
+  duration_ms: 62.7016
+  type: 'test'
+  ...
+# Subtest: CLI: channels 列出规则库全部 7 渠道
+ok 36 - CLI: channels 列出规则库全部 7 渠道
+  ---
+  duration_ms: 1341.2576
+  type: 'test'
+  ...
+# Subtest: CLI 退出码: 未知渠道 = 1（不是 2）
+ok 37 - CLI 退出码: 未知渠道 = 1（不是 2）
+  ---
+  duration_ms: 1072.6984
+  type: 'test'
+  ...
+# Subtest: CLI 退出码: 未知子命令 = 2；多余位置参数 = 2
+ok 38 - CLI 退出码: 未知子命令 = 2；多余位置参数 = 2
+  ---
+  duration_ms: 2040.6648
+  type: 'test'
+  ...
+# Subtest: CLI 退出码: 缺 --spec = 构建失败 1（oracle 同判）
+ok 39 - CLI 退出码: 缺 --spec = 构建失败 1（oracle 同判）
+  ---
+  duration_ms: 955.782
+  type: 'test'
+  ...
+# [PASS] golden 通过：specs-eval\\golden-match3.json
+# [PASS] bad 拒绝：specs-eval/bad/01-missing-field.json（错误含字段路径）
+#        判定：被拒绝
+#        $.flow: must have required property 'flow' [schema-required]
+# [PASS] bad 拒绝：specs-eval/bad/02-pullpin-unsolvable.json（错误含字段路径）
+#        判定：被拒绝
+#        $.game.params.orderSolution[0]: 第 0 关不可解：机关针在救援针之前被拔出（rescuee=针2, hazard=针0，布局由 seed 确定性生成） [I1-pullpin-unsolvable]
+# [PASS] bad 拒绝：specs-eval/bad/03-duration-over-budget.json（错误含字段路径）
+#        判定：被拒绝
+#        $.game.durationBudgetSec.max: must be <= 30 [schema-maximum]
+# [PASS] bad 拒绝：specs-eval/bad/04-missing-locale-strings.json（错误含字段路径）
+#        判定：被拒绝
+#        $.i18n.strings.ja: 语言 'ja' 缺少 strings 条目 [I5-i18n-coverage]
+# [PASS] bad 拒绝：specs-eval/bad/05-bad-url.json（错误含字段路径）
+#        判定：被拒绝
+#        $.flow.endScreen.landingUrl: must match pattern "^https?://\\S+$" [schema-pattern]
+# [PASS] bad 拒绝：specs-eval/bad/06-unknown-template.json（错误含字段路径）
+#        判定：被拒绝
+#        $.game.template: must be equal to one of the allowed values [schema-enum]
+# ------------------------------------------------------------------------
+# AJV-CHECK: PASS（golden 1 通过，bad 6 全拒）
+# Subtest: packages\\spec\\test\\ajv-check.mjs
+ok 6 - packages\\spec\\test\\ajv-check.mjs
+  ---
+  duration_ms: 7980.4697
+  type: 'test'
+  ...
+# Subtest: golden×4 + demo-zh 全部通过（schema + 四模板不变式）
+ok 41 - golden×4 + demo-zh 全部通过（schema + 四模板不变式）
+  ---
+  duration_ms: 58.2399
+  type: 'test'
+  ...
+# Subtest: bad×6 全拒，{path, code} 集与 oracle 基线逐件全等
+ok 42 - bad×6 全拒，{path, code} 集与 oracle 基线逐件全等
+  ---
+  duration_ms: 72.0219
+  type: 'test'
+  ...
+# Subtest: bad03 双层同守：schema 层先行，报 schema-maximum（I4-duration-max 为兜底，spec-contract §3）
+ok 43 - bad03 双层同守：schema 层先行，报 schema-maximum（I4-duration-max 为兜底，spec-contract §3）
+  ---
+  duration_ms: 22.3078
+  type: 'test'
+  ...
+# Subtest: 校验次序：schema 失败即止，不合并报告（spec-contract §2.4）
+ok 44 - 校验次序：schema 失败即止，不合并报告（spec-contract §2.4）
+  ---
+  duration_ms: 16.1265
+  type: 'test'
+  ...
+# Subtest: io 归一契约形状：非对象输入 → schema-type 单条（$ 路径）
+ok 45 - io 归一契约形状：非对象输入 → schema-type 单条（$ 路径）
+  ---
+  duration_ms: 0.7122
+  type: 'test'
+  ...
+# Subtest: 常量冻结值（与 oracle pfcore.invariants 逐项同值）
+ok 46 - 常量冻结值（与 oracle pfcore.invariants 逐项同值）
+  ---
+  duration_ms: 3.2568
+  type: 'test'
+  ...
+# Subtest: 自由度①先推进后取值：bad02 seed=424242 首两抽 %3 = [2,0]（§2.3 发布算例）
+ok 47 - 自由度①先推进后取值：bad02 seed=424242 首两抽 %3 = [2,0]（§2.3 发布算例）
+  ---
+  duration_ms: 0.6107
+  type: 'test'
+  ...
+# Subtest: 自由度②单流跨关卡：pullpinLevelRoles 连抽共享一流（Python 权威实测冻结）
+ok 48 - 自由度②单流跨关卡：pullpinLevelRoles 连抽共享一流（Python 权威实测冻结）
+  ---
+  duration_ms: 0.305
+  type: 'test'
+  ...
+# Subtest: 自由度③各生成器独立建流：同一 seed 下各生成器输出其自有流（Python 权威实测冻结）
+ok 49 - 自由度③各生成器独立建流：同一 seed 下各生成器输出其自有流（Python 权威实测冻结）
+  ---
+  duration_ms: 2.9768
+  type: 'test'
+  ...
+# Subtest: 规则卡 §12 算例 B（恰一合法步盘）：find_move 命中唯一可行步 (0,1)-(1,1)
+ok 50 - 规则卡 §12 算例 B（恰一合法步盘）：find_move 命中唯一可行步 (0,1)-(1,1)
+  ---
+  duration_ms: 0.585
+  type: 'test'
+  ...
+# Subtest: 规则卡 §12 算例 C（死局拉丁方）：任何相邻交换不成 run → null
+ok 51 - 规则卡 §12 算例 C（死局拉丁方）：任何相邻交换不成 run → null
+  ---
+  duration_ms: 0.3269
+  type: 'test'
+  ...
+# Subtest: I1 模拟与 bad02 逐值复现：L0 rescuee=针2/hazard=针0，order [0,1,2] 首拔即机关针
+ok 52 - I1 模拟与 bad02 逐值复现：L0 rescuee=针2/hazard=针0，order [0,1,2] 首拔即机关针
+  ---
+  duration_ms: 0.5307
+  type: 'test'
+  ...
+# Subtest: I2 基元：已解盘面 / 合法走法 / 逆步判据（Python 权威实测冻结）
+ok 53 - I2 基元：已解盘面 / 合法走法 / 逆步判据（Python 权威实测冻结）
+  ---
+  duration_ms: 0.2873
+  type: 'test'
+  ...
+# Subtest: merge 轻量不变式：三条码与路径（缺省值经 *_DEFAULTS 解析）
+ok 54 - merge 轻量不变式：三条码与路径（缺省值经 *_DEFAULTS 解析）
+  ---
+  duration_ms: 1.2344
+  type: 'test'
+  ...
+# Subtest: I4 双保险：target > max → I4-duration-target（max ≤ 30 由 I4 层复算）
+ok 55 - I4 双保险：target > max → I4-duration-target（max ≤ 30 由 I4 层复算）
+  ---
+  duration_ms: 0.6895
+  type: 'test'
+  ...
+# Subtest: I5：rtl ⊄ locales 与 defaultLocale ∉ locales 的码与路径
+ok 56 - I5：rtl ⊄ locales 与 defaultLocale ∉ locales 的码与路径
+  ---
+  duration_ms: 0.4155
+  type: 'test'
+  ...
+# Subtest: 注册制：新增玩法只改模板包一处（P1 目标形态演示，决策 §3.4）
+ok 57 - 注册制：新增玩法只改模板包一处（P1 目标形态演示，决策 §3.4）
+  ---
+  duration_ms: 0.3618
+  type: 'test'
+  ...
+# Subtest: schema 契约锚点：draft 2020-12 / specVersion 恒 1.0.0 / required 七键
+ok 58 - schema 契约锚点：draft 2020-12 / specVersion 恒 1.0.0 / required 七键
+  ---
+  duration_ms: 2.3128
+  type: 'test'
+  ...
+# Subtest: golden×4 + demo-zh 通过 schema 校验
+ok 59 - golden×4 + demo-zh 通过 schema 校验
+  ---
+  duration_ms: 59.1246
+  type: 'test'
+  ...
+# Subtest: bad/01,03,05,06 被 schema 拦截（缺失必填/时长上限/url 模式/模板枚举）
+ok 60 - bad/01,03,05,06 被 schema 拦截（缺失必填/时长上限/url 模式/模板枚举）
+  ---
+  duration_ms: 58.7568
+  type: 'test'
+  ...
+# Subtest: specs-eval 全部 JSON 可解析（golden×4 + bad×6 + demo-zh + spike-manifest）
+ok 61 - specs-eval 全部 JSON 可解析（golden×4 + bad×6 + demo-zh + spike-manifest）
+  ---
+  duration_ms: 162.5212
+  type: 'test'
+  ...
+# PASS 初始盘面无三连
+# PASS 初始盘面存在可行步
+# PASS 果冻数=goalCount(30)
+# PASS bestMove 非空且坐标合法
+# PASS 生成期 64 次重试全部找到可胜盘面（30/30，最大重试 7）
+# PASS hint 驱动线与模拟线一致全部可胜（30/30）
+# logic-test: 6 pass / 0 fail
+# Subtest: packages\\templates\\tmpl-match3\\tests\\logic-test.ts
+ok 10 - packages\\templates\\tmpl-match3\\tests\\logic-test.ts
+  ---
+  duration_ms: 2700.1959
+  type: 'test'
+  ...
+# PASS 生成盘面必有可行合成且 tier 全在出生域（30 seeds）
+# PASS 同阶相邻可合成（新阶=2，落点=目标格）
+# PASS 结算后盘面恒满
+# PASS 满阶（maxTier）同阶不可合成
+# PASS 不同阶不可合成
+# PASS allMerges 与逐点验证一致（>0 且坐标合法）
+# PASS 生成期 64 次重试全部找到可胜盘面（30/30，最大重试 1）
+# PASS hint 驱动线与模拟线一致全部可胜（30/30）
+# PASS hint 线步数/得分与 simulatePlay 逐局一致（30/30）
+# PASS 紧参数 3×3/spawn1/goal3 生成期可胜
+# logic-test: 10 pass / 0 fail
+# Subtest: packages\\templates\\tmpl-merge\\tests\\logic-test.ts
+ok 11 - packages\\templates\\tmpl-merge\\tests\\logic-test.ts
+  ---
+  duration_ms: 2490.8308
+  type: 'test'
+  ...
+# PASS golden seed 针角色与 pfcore.invariants 一致（[(2,1),(1,0),(1,0)]）
+# PASS golden normalizeSpec：levels=3 pinsPerLevel=3 hazard=lava
+# PASS golden orderSolution 逐关可解（I1）
+# PASS 直接拔救援针必过关（hint 线 = M1 可解判定）
+# PASS 300 seed × pinsPerLevel{3,4,5}：角色合法且规范解恒可解
+# PASS effectiveOrders：坏形状逐关回退规范解
+# PASS effectiveOrders：不可解顺序（第 0 关机关针先拔）回退规范解；可解的 [1]（直拔救援针）原样保留
+# PASS effectiveOrders：合法可解顺序原样保留
+# PASS LCG 与 Python 同余（seed 12345 前三拍）
+# logic-test: 9 pass / 0 fail
+# Subtest: packages\\templates\\tmpl-pullpin\\tests\\logic-test.ts
+ok 12 - packages\\templates\\tmpl-pullpin\\tests\\logic-test.ts
+  ---
+  duration_ms: 8170.1664
+  type: 'test'
+  ...
+# PASS golden seed 规范扰动盘面与 pfcore.invariants 一致（20 步迹）
+# PASS LCG 与 Python 同余（seed 12345 前三拍）
+# PASS LCG 扰动流延续与 Python 同余（golden seed 消费 20 拍后）
+# PASS legalMoves 与 Python 权威侧一致（固定盘面）
+# PASS BFS 最优解恰 3 步且逐回放至胜（同 M1 走法语义）
+# PASS 40 seed 规范扰动盘面恒为每柱单色（深化发牌依据的运行期证明）
+# PASS golden normalizeSpec：rods=5 layersPerRod=4 colors=4 moveLimit=30 screwMode=false
+# PASS golden 发牌：确定性 + 深化真实谜题 + 最优解回放至胜 + 步数 ≤ moveLimit
+#        (golden 发牌最优 13 步：1->4x1 2->4x1 3->2x1 0->3x1 0->4x1 1->0x1 1->4x1 3->1x2 2->3x2 2->0x1 3->2x3 0->3x3 0->1x1)
+# PASS 60 seed × 4 组参数：发牌全深化可解、最优 ≤ 40、解可回放、贪心兜底有解
+# PASS moveLimit=6：深化发牌最优步数全部 ≤ 6（预算内必可胜）
+# PASS solvedBoard：4 色满柱 + 1 空柱，isSolved=true，completedColors=4
+# PASS isSolved：未满的同色柱不算完成（严格满柱判定）
+# PASS SolutionCache：同盘面返回同一解（缓存命中）
+# logic-test: 13 pass / 0 fail
+# Subtest: packages\\templates\\tmpl-sort\\tests\\logic-test.ts
+ok 13 - packages\\templates\\tmpl-sort\\tests\\logic-test.ts
+  ---
+  duration_ms: 8584.9387
+  type: 'test'
+  ...
+# Subtest: pf validate：golden×4 + demo-zh 全 OK，exit 0（F1 正向半边）
+ok 66 - pf validate：golden×4 + demo-zh 全 OK，exit 0（F1 正向半边）
+  ---
+  duration_ms: 6745.9157
+  type: 'test'
+  ...
+# Subtest: pf validate：bad×6 glob 展开（Windows shell 不展开由 CLI 自行展开），exit 1 + {path,code} 与 oracle 基线逐件全等
+ok 67 - pf validate：bad×6 glob 展开（Windows shell 不展开由 CLI 自行展开），exit 1 + {path,code} 与 oracle 基线逐件全等
+  ---
+  duration_ms: 4627.0696
+  type: 'test'
+  ...
+# Subtest: pf validate：无匹配 glob → io-not-found 计败 exit 1；零参数 → argparse 用法错误 exit 2（oracle nargs='+' 同语义）
+ok 68 - pf validate：无匹配 glob → io-not-found 计败 exit 1；零参数 → argparse 用法错误 exit 2（oracle nargs='+' 同语义）
+  ---
+  duration_ms: 5592.7399
+  type: 'test'
+  ...
+# Subtest: pf 占位子命令 build/pack/rules-check → exit 2（占位语义本身是契约，pipeline-contract §2）
+ok 69 - pf 占位子命令 build/pack/rules-check → exit 2（占位语义本身是契约，pipeline-contract §2）
+  ---
+  duration_ms: 3558.8725
+  type: 'test'
+  ...
+# Subtest: pf 用法错误：未知子命令/未知旗标 → exit 2；无参数 → 帮助 exit 0
+ok 70 - pf 用法错误：未知子命令/未知旗标 → exit 2；无参数 → 帮助 exit 0
+  ---
+  duration_ms: 1657.3074
+  type: 'test'
+  ...
+# Subtest: pf make 用法/环境错误：spec 不存在 → exit 2；坏 spec → exit 1（校验是第一道闸）
+ok 71 - pf make 用法/环境错误：spec 不存在 → exit 2；坏 spec → exit 1（校验是第一道闸）
+  ---
+  duration_ms: 7011.1762
+  type: 'test'
+  ...
+# Subtest: pf make 渠道语义：规则库外渠道 → exit 2（渠道拼写错误不是 1）
+ok 72 - pf make 渠道语义：规则库外渠道 → exit 2（渠道拼写错误不是 1）
+  ---
+  duration_ms: 2621.1579
+  type: 'test'
+  ...
+# Subtest: pf static-server 子进程：文件 200 / 目录 index 200 / 穿越与缺失 404 / MIME 正确
+ok 73 - pf static-server 子进程：文件 200 / 目录 index 200 / 穿越与缺失 404 / MIME 正确
+  ---
+  duration_ms: 195.4778
+  type: 'test'
+  ...
+# Subtest: pf 网络探测单元：addrTier 段优先级表逐值 + pidIsOurServer 拒绝非正整数
+ok 74 - pf 网络探测单元：addrTier 段优先级表逐值 + pidIsOurServer 拒绝非正整数
+  ---
+  duration_ms: 0.8605
+  type: 'test'
+  ...
+# [make] 伺服状态文件已清理（记录 PID 不存在或映像名非 node（跨重启残留/PID 复用））；重新定位/启动静态伺服器
+# [make] 伺服状态文件已清理（伺服根目录变更，旧伺服器（PID 18188）已终止）；重新定位/启动静态伺服器
+# Subtest: pf 伺服复用三重核实：同根复用 / PID 已死清状态换口（防 PID 复用误判语义）
+ok 75 - pf 伺服复用三重核实：同根复用 / PID 已死清状态换口（防 PID 复用误判语义）
+  ---
+  duration_ms: 3945.4843
+  type: 'test'
+  ...
+# Subtest: pf glob 展开：单层与 ** 递归与排序（oracle _expand_spec_paths 同义）
+ok 76 - pf glob 展开：单层与 ** 递归与排序（oracle _expand_spec_paths 同义）
+  ---
+  duration_ms: 723.0081
+  type: 'test'
+  ...
+# Subtest: pf CHK10 判定输入推导：requiredTextsFor 与 oracle 同源（标题/教程/胜/CTA/分；lose 不要求）
+ok 77 - pf CHK10 判定输入推导：requiredTextsFor 与 oracle 同源（标题/教程/胜/CTA/分；lose 不要求）
+  ---
+  duration_ms: 9.0102
+  type: 'test'
+  ...
+# Subtest: pf e2e：spec mtime 计时口径与 LAN IP 探测存在（lanIp 返回非 127.* 或退化值）
+ok 78 - pf e2e：spec mtime 计时口径与 LAN IP 探测存在（lanIp 返回非 127.* 或退化值）
+  ---
+  duration_ms: 9.9679
+  type: 'test'
+  ...
+# Subtest: CHK01：超上限恰 fail（其余不受扰）/ 规则库无该渠道 skip（不假定）
+ok 79 - CHK01：超上限恰 fail（其余不受扰）/ 规则库无该渠道 skip（不假定）
+  ---
+  duration_ms: 150.946
+  type: 'test'
+  ...
+# Subtest: CHK03：外链/WebRTC 记账 → 恰 fail；干净 → pass
+ok 80 - CHK03：外链/WebRTC 记账 → 恰 fail；干净 → pass
+  ---
+  duration_ms: 0.8136
+  type: 'test'
+  ...
+# Subtest: CHK04：静音要求下缺 PF 桥=从严 fail（不再 skip）；探针缺失 fail；未静音事实 fail
+ok 81 - CHK04：静音要求下缺 PF 桥=从严 fail（不再 skip）；探针缺失 fail；未静音事实 fail
+  ---
+  duration_ms: 1.1158
+  type: 'test'
+  ...
+# Subtest: CHK05：无画布 skip；有画布方差双达标 pass、单侧低于阈值恰 fail
+ok 82 - CHK05：无画布 skip；有画布方差双达标 pass、单侧低于阈值恰 fail
+  ---
+  duration_ms: 0.6029
+  type: 'test'
+  ...
+# Subtest: CHK07：未开 autoplay skip；无钩子/超预算/未达终态/结束页不可见 恰 fail；齐备 pass
+ok 83 - CHK07：未开 autoplay skip；无钩子/超预算/未达终态/结束页不可见 恰 fail；齐备 pass
+  ---
+  duration_ms: 2.2606
+  type: 'test'
+  ...
+# Subtest: CHK08：console error/pageerror → 恰 fail；零错误 pass
+ok 84 - CHK08：console error/pageerror → 恰 fail；零错误 pass
+  ---
+  duration_ms: 0.4259
+  type: 'test'
+  ...
+# Subtest: CHK09：load_ms ≤ max_load_sec×1000 pass / 超阈值恰 fail（≤2.0s 默认口径）
+ok 85 - CHK09：load_ms ≤ max_load_sec×1000 pass / 超阈值恰 fail（≤2.0s 默认口径）
+  ---
+  duration_ms: 0.4786
+  type: 'test'
+  ...
+# Subtest: CHK10：required 全缺 skip；未命中/钩子缺/从未可见/素材未对账 恰 fail；齐备 pass
+ok 86 - CHK10：required 全缺 skip；未命中/钩子缺/从未可见/素材未对账 恰 fail；齐备 pass
+  ---
+  duration_ms: 0.9417
+  type: 'test'
+  ...
+# Subtest: MUT 构造算法：锚点注入逐字节符合 §8 表；MUT-04 pad 精确到 maxBytes+4096
+ok 87 - MUT 构造算法：锚点注入逐字节符合 §8 表；MUT-04 pad 精确到 maxBytes+4096
+  ---
+  duration_ms: 148.0806
+  type: 'test'
+  ...
+# Subtest: pngvar：确定性合成 PNG 的灰度方差向量（>30 非空白 / =0 纯色空白）
+ok 88 - pngvar：确定性合成 PNG 的灰度方差向量（>30 非空白 / =0 纯色空白）
+  ---
+  duration_ms: 96.9581
+  type: 'test'
+  ...
+# Subtest: verify-reused-assets.mjs 真实执行 exit 0（登记册全项 sha256 逐项重算一致，项数随模块批次增长）
+ok 89 - verify-reused-assets.mjs 真实执行 exit 0（登记册全项 sha256 逐项重算一致，项数随模块批次增长）
+  ---
+  duration_ms: 2298.6682
+  type: 'test'
+  ...
+# Subtest: channel-rules 锚点：rulesVersion 1.1.0 + 七渠道
+ok 90 - channel-rules 锚点：rulesVersion 1.1.0 + 七渠道
+  ---
+  duration_ms: 15.4236
+  type: 'test'
+  ...
+# Subtest: vendor 中性引擎 bundle 在位且体量在锚定区间（~1.2MB，版本锚 3.88.2）
+ok 91 - vendor 中性引擎 bundle 在位且体量在锚定区间（~1.2MB，版本锚 3.88.2）
+  ---
+  duration_ms: 11.3964
+  type: 'test'
+  ...
+# Subtest: specs-eval 目录结构完整：assets/demo-zh 素材在位
+ok 92 - specs-eval 目录结构完整：assets/demo-zh 素材在位
+  ---
+  duration_ms: 35.2704
+  type: 'test'
+  ...
+# Subtest: esbuild 构建链：双模块 iife 打包产物正确
+ok 93 - esbuild 构建链：双模块 iife 打包产物正确
+  ---
+  duration_ms: 2062.1832
+  type: 'test'
+  ...
+# Subtest: 运行时 Node ≥ 22（决策 §1 单栈锚）
+ok 94 - 运行时 Node ≥ 22（决策 §1 单栈锚）
+  ---
+  duration_ms: 1.5042
+  type: 'test'
+  ...
+# Subtest: workspaces 同时含 packages/* 与 packages/templates/*（坑 14）
+ok 95 - workspaces 同时含 packages/* 与 packages/templates/*（坑 14）
+  ---
+  duration_ms: 18.2227
+  type: 'test'
+  ...
+# Subtest: npm run build exit 0（批次 2 起：模板包真实构建；批次 1 曾为无包空跑）
+ok 96 - npm run build exit 0（批次 2 起：模板包真实构建；批次 1 曾为无包空跑）
+  ---
+  duration_ms: 37495.1832
+  type: 'test'
+  ...
+# Subtest: 单栈守卫：入库树范围（除 node_modules/.git/tmp/artifacts）零 .py 文件
+ok 97 - 单栈守卫：入库树范围（除 node_modules/.git/tmp/artifacts）零 .py 文件
+  ---
+  duration_ms: 51.8381
+  type: 'test'
+  ...
+1..97
+# tests 97
+# suites 0
+# pass 97
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 43278.7435

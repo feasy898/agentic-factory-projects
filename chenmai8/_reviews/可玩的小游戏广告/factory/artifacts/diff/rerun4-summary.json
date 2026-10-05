@@ -1,0 +1,103 @@
+{
+  "generatedAt": "2026-09-30T06:40:12",
+  "mode": "full",
+  "wallSec": 99,
+  "budgetSec": null,
+  "totals": {
+    "cells": 4,
+    "pass": 4,
+    "fail": 0,
+    "skip": 0,
+    "retried": 1
+  },
+  "cells": [
+    {
+      "spec": "golden-match3.json",
+      "project": "golden-match3",
+      "locale": "en",
+      "channel": "applovin",
+      "format": "single-html",
+      "artifact": "golden-match3/applovin/en/index.html",
+      "bytes": 1242934,
+      "maxBytes": 5242880,
+      "report": "golden-match3/applovin/en/index.report.json",
+      "wallSec": 35.9,
+      "status": "pass",
+      "fails": [],
+      "pfEnd": 25191,
+      "endWin": true,
+      "checks": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 2
+      }
+    },
+    {
+      "spec": "golden-merge.json",
+      "project": "golden-merge",
+      "locale": "en",
+      "channel": "applovin",
+      "format": "single-html",
+      "artifact": "golden-merge/applovin/en/index.html",
+      "bytes": 1239082,
+      "maxBytes": 5242880,
+      "report": "golden-merge/applovin/en/index.report.json",
+      "wallSec": 9.2,
+      "status": "pass",
+      "fails": [],
+      "pfEnd": 4941,
+      "endWin": true,
+      "checks": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 2
+      },
+      "retried": true,
+      "firstAttemptFails": [
+        "qacore exit 1：qacore: index.html @ applovin -> D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\rerun4\\golden-merge\\applovin\\en\\index.report.json (4 请求, 1 FAIL, pf:end 9901ms)"
+      ]
+    },
+    {
+      "spec": "golden-pullpin.json",
+      "project": "golden-pullpin",
+      "locale": "en",
+      "channel": "applovin",
+      "format": "single-html",
+      "artifact": "golden-pullpin/applovin/en/index.html",
+      "bytes": 1241822,
+      "maxBytes": 5242880,
+      "report": "golden-pullpin/applovin/en/index.report.json",
+      "wallSec": 12.9,
+      "status": "pass",
+      "fails": [],
+      "pfEnd": 7424,
+      "endWin": true,
+      "checks": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 2
+      }
+    },
+    {
+      "spec": "golden-sort.json",
+      "project": "golden-sort",
+      "locale": "en",
+      "channel": "applovin",
+      "format": "single-html",
+      "artifact": "golden-sort/applovin/en/index.html",
+      "bytes": 1242574,
+      "maxBytes": 5242880,
+      "report": "golden-sort/applovin/en/index.report.json",
+      "wallSec": 17.8,
+      "status": "pass",
+      "fails": [],
+      "pfEnd": 13510,
+      "endWin": true,
+      "checks": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 2
+      }
+    }
+  ]
+}

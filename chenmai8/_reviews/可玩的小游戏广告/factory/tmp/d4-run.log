@@ -1,0 +1,31 @@
+d4-autoplay-streams: 4 模板 × 3 seed × {O,N}，jobs=1（驱动=复刻器，同语义同宿主）
+  [seed] match3 seed=20260931 validate N=0 O=0 受理
+  [seed] match3 seed=20260932 validate N=0 O=0 受理
+  [seed] match3 seed=20260933 validate N=0 O=0 受理
+  [seed] merge seed=20261002 validate N=0 O=0 受理
+  [seed] merge seed=20261003 validate N=0 O=0 受理
+  [seed] merge seed=20261004 validate N=0 O=0 受理
+  [seed] pullpin seed=20260931 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260932 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260933 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260934 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260935 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260936 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260937 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260938 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260939 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260940 validate N=1 O=1 跳过
+  [seed] pullpin seed=20260941 validate N=0 O=0 受理
+  [seed] pullpin seed=20260942 validate N=1 O=1 跳过
+file:///D:/workspace/%E6%BE%84%E8%BF%888%E9%A1%B9%E7%9B%AE/%E5%8F%AF%E7%8E%A9%E7%9A%84%E5%B0%8F%E6%B8%B8%E6%88%8F%E5%B9%BF%E5%91%8A/factory/scripts/diff/d4-autoplay-streams.mjs:99
+    if (chosen.length < SEEDS_PER_TEMPLATE) throw new Error(`golden-${t}: 只受理 ${chosen.length}/3 个 seed 变体`);
+                                                  ^
+
+Error: golden-pullpin: 只受理 1/3 个 seed 变体
+    at deriveSpecs (file:///D:/workspace/%E6%BE%84%E8%BF%888%E9%A1%B9%E7%9B%AE/%E5%8F%AF%E7%8E%A9%E7%9A%84%E5%B0%8F%E6%B8%B8%E6%88%8F%E5%B9%BF%E5%91%8A/factory/scripts/diff/d4-autoplay-streams.mjs:99:51)
+    at file:///D:/workspace/%E6%BE%84%E8%BF%888%E9%A1%B9%E7%9B%AE/%E5%8F%AF%E7%8E%A9%E7%9A%84%E5%B0%8F%E6%B8%B8%E6%88%8F%E5%B9%BF%E5%91%8A/factory/scripts/diff/d4-autoplay-streams.mjs:257:15
+    at ModuleJob.run (node:internal/modules/esm/module_job:343:25)
+    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:681:26)
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+
+Node.js v22.23.2

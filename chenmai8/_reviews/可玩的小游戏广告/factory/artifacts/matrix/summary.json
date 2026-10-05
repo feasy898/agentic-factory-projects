@@ -1,0 +1,99 @@
+{
+  "generatedAt": "2026-09-30T12:26:32",
+  "mode": "full",
+  "wallSec": 40,
+  "budgetSec": null,
+  "totals": {
+    "cells": 4,
+    "pass": 4,
+    "fail": 0,
+    "skip": 0,
+    "retried": 0
+  },
+  "cells": [
+    {
+      "spec": "golden-match3.json",
+      "project": "golden-match3",
+      "locale": "zh",
+      "channel": "mintegral",
+      "format": "zip",
+      "artifact": "golden-match3/mintegral/zh/golden-match3-zh.zip",
+      "bytes": 343441,
+      "maxBytes": 5242880,
+      "report": "golden-match3/mintegral/zh/index.report.json",
+      "wallSec": 32.6,
+      "status": "pass",
+      "fails": [],
+      "pfEnd": 27067,
+      "endWin": true,
+      "checks": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 2
+      }
+    },
+    {
+      "spec": "golden-merge.json",
+      "project": "golden-merge",
+      "locale": "zh",
+      "channel": "mintegral",
+      "format": "zip",
+      "artifact": "golden-merge/mintegral/zh/golden-merge-zh.zip",
+      "bytes": 342484,
+      "maxBytes": 5242880,
+      "report": "golden-merge/mintegral/zh/index.report.json",
+      "wallSec": 12.4,
+      "status": "pass",
+      "fails": [],
+      "pfEnd": 6353,
+      "endWin": true,
+      "checks": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 2
+      }
+    },
+    {
+      "spec": "golden-pullpin.json",
+      "project": "golden-pullpin",
+      "locale": "zh",
+      "channel": "mintegral",
+      "format": "zip",
+      "artifact": "golden-pullpin/mintegral/zh/golden-pullpin-zh.zip",
+      "bytes": 342481,
+      "maxBytes": 5242880,
+      "report": "golden-pullpin/mintegral/zh/index.report.json",
+      "wallSec": 14.5,
+      "status": "pass",
+      "fails": [],
+      "pfEnd": 8412,
+      "endWin": true,
+      "checks": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 2
+      }
+    },
+    {
+      "spec": "golden-sort.json",
+      "project": "golden-sort",
+      "locale": "zh",
+      "channel": "mintegral",
+      "format": "zip",
+      "artifact": "golden-sort/mintegral/zh/golden-sort-zh.zip",
+      "bytes": 343268,
+      "maxBytes": 5242880,
+      "report": "golden-sort/mintegral/zh/index.report.json",
+      "wallSec": 19.9,
+      "status": "pass",
+      "fails": [],
+      "pfEnd": 14953.100000000093,
+      "endWin": true,
+      "checks": {
+        "pass": 8,
+        "fail": 0,
+        "skip": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "mintegral",
+  "locale": "zh",
+  "project": "golden-pullpin",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\repo\\specs-eval\\golden-pullpin.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\oracle-matrix\\golden-pullpin\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-pullpin-zh.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-pullpin-zh.zip",
+      "bytes": 342382,
+      "sha256": "7d00f73b84a18fd34d6189e49c72ca4e305ecc7e5630b628b43a6f0faca84a6c",
+      "role": "package"
+    },
+    {
+      "path": "Template.html",
+      "bytes": 1241446,
+      "sha256": "0585ff120ca5c9f0c1d3202a9c0476fbc75516570fd9209cbbd86912b123877c",
+      "role": "entry-in-zip"
+    },
+    {
+      "path": "build.js",
+      "bytes": 55,
+      "sha256": "c313221de22848013f4e599101039b18d1bb4a7af3041bc31d299b1a652bc9ae",
+      "role": "bundle-in-zip"
+    }
+  ],
+  "warnings": [
+    "dist 内没有外链 <script>，build.js 为空占位"
+  ]
+}

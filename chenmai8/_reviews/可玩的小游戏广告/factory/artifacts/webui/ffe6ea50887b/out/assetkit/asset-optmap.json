@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "outDir": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\assetkit",
+  "entries": [
+    {
+      "key": "assets/piece-0.png",
+      "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\assets\\piece-0.png",
+      "out": "piece-0.webp",
+      "kind": "image",
+      "encoding": "webp-nearlossless",
+      "originalBytes": 893,
+      "optimizedBytes": 402
+    }
+  ]
+}

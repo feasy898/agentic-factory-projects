@@ -1,0 +1,438 @@
+{
+  "channel": "preview",
+  "url": "http://127.0.0.1:10810/pullpin.html",
+  "autoplay": true,
+  "pf": {
+    "present": true,
+    "readyMs": 510.89999997615814,
+    "endMs": 14796.699999988079,
+    "endWin": true
+  },
+  "checks": [
+    {
+      "id": "CHK01",
+      "name": "包体大小 ≤ 渠道上限",
+      "status": "pass",
+      "detail": "1387710 B ≤ 上限 5242880 B"
+    },
+    {
+      "id": "CHK02",
+      "name": "文件数 ≤ 渠道上限",
+      "status": "skip",
+      "detail": "未实装（当前输入为单 HTML 文件，无目录清点）"
+    },
+    {
+      "id": "CHK03",
+      "name": "零外网请求",
+      "status": "pass",
+      "detail": "两趟共 2 条请求均指向本地伺服地址，无外网请求、无外部 WebSocket、无 WebRTC 构造"
+    },
+    {
+      "id": "CHK04",
+      "name": "首交互前静音",
+      "status": "pass",
+      "detail": "首交互前 PF.isMuted()=true，无未静音媒体元素，无 running AudioContext，首交互后 isMuted()=false（已解除静音，gestures=5）"
+    },
+    {
+      "id": "CHK05",
+      "name": "横竖屏渲染非空白",
+      "status": "pass",
+      "detail": "390×844 与 844×390 双仿真像素方差 1189/554 ≥ 阈值 30"
+    },
+    {
+      "id": "CHK06",
+      "name": "渠道退出接口调用",
+      "status": "skip",
+      "detail": "未实装（渠道 stub 注入属 M8 后续里程碑）"
+    },
+    {
+      "id": "CHK07",
+      "name": "自动试玩到结束页",
+      "status": "pass",
+      "detail": "pf:end 于 14797ms 触发（win=True，gestures=5），结束页可见"
+    },
+    {
+      "id": "CHK08",
+      "name": "控制台零错误",
+      "status": "pass",
+      "detail": "两趟均无 console error 与 pageerror"
+    },
+    {
+      "id": "CHK09",
+      "name": "本地加载 ≤2s",
+      "status": "pass",
+      "detail": "load 耗时 1818ms"
+    },
+    {
+      "id": "CHK10",
+      "name": "多语言文案与素材上屏",
+      "status": "skip",
+      "detail": "未提供 --require-text/--require-sprite，无判定对象（locale 仿真属后续）"
+    }
+  ],
+  "screenshot": "fix-2.png",
+  "requests": [
+    {
+      "url": "http://127.0.0.1:10810/pullpin.html",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "blocked": false,
+      "failed": false
+    },
+    {
+      "url": "http://127.0.0.1:10810/pullpin.html",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "blocked": false,
+      "failed": false
+    }
+  ],
+  "facts": {
+    "artifact_bytes": 1387710,
+    "channel": "preview",
+    "channel_max_bytes": 5242880,
+    "channel_mute_required": true,
+    "external_requests": [],
+    "runtime_stubs": [],
+    "rtc_connections": 0,
+    "request_count": 2,
+    "console_errors": [],
+    "load_ms": 1817.9120999999996,
+    "max_load_sec": 2,
+    "autoplay_enabled": true,
+    "autoplay_timeout_sec": 45,
+    "muteLoadTime": {
+      "has_canvas": true,
+      "variance": 1189.4877319335938,
+      "probeInstalled": true,
+      "enabled": true,
+      "timeoutSec": 45,
+      "reachedState": "end",
+      "gestures": 5,
+      "firstMutedBeforeInteraction": true,
+      "audioRunningBeforeInteraction": 0,
+      "mediaUnmutedBeforeInteraction": 0,
+      "mediaPlaysBeforeInteraction": 0,
+      "mutedAfterFirstGesture": false,
+      "pfEndFired": true,
+      "pfEndMs": 14796.699999988079,
+      "pfEndWin": true,
+      "pfReadyMs": 510.89999997615814,
+      "endScreenVisible": true,
+      "qcHooksPresent": true,
+      "textStatesHook": true,
+      "qcTexts": [
+        "1/3",
+        "2/3",
+        "3/3",
+        "Pin Rescue (Playable Demo)",
+        "Play Now",
+        "Rescued!",
+        "Score  320",
+        "Score 0",
+        "Score 120",
+        "Score 20",
+        "Score 220",
+        "Score 320",
+        "Tap the pin to pull it out!"
+      ],
+      "qcVisibleTexts": [
+        "1/3",
+        "2/3",
+        "3/3",
+        "Pin Rescue (Playable Demo)",
+        "Play Now",
+        "Rescued!",
+        "Score  320",
+        "Score 0",
+        "Score 120",
+        "Score 20",
+        "Score 220",
+        "Score 320",
+        "Tap the pin to pull it out!"
+      ],
+      "page_texts": [
+        "1/3",
+        "2/3",
+        "3/3",
+        "Pin Rescue (Playable Demo)",
+        "Play Now",
+        "Rescued!",
+        "Score  320",
+        "Score 0",
+        "Score 120",
+        "Score 20",
+        "Score 220",
+        "Score 320",
+        "Tap the pin to pull it out!"
+      ],
+      "text_states": [
+        {
+          "text": "1/3",
+          "everVisible": true
+        },
+        {
+          "text": "2/3",
+          "everVisible": true
+        },
+        {
+          "text": "3/3",
+          "everVisible": true
+        },
+        {
+          "text": "Pin Rescue (Playable Demo)",
+          "everVisible": true
+        },
+        {
+          "text": "Play Now",
+          "everVisible": true
+        },
+        {
+          "text": "Rescued!",
+          "everVisible": true
+        },
+        {
+          "text": "Score  320",
+          "everVisible": true
+        },
+        {
+          "text": "Score 0",
+          "everVisible": true
+        },
+        {
+          "text": "Score 120",
+          "everVisible": true
+        },
+        {
+          "text": "Score 20",
+          "everVisible": true
+        },
+        {
+          "text": "Score 220",
+          "everVisible": true
+        },
+        {
+          "text": "Score 320",
+          "everVisible": true
+        },
+        {
+          "text": "Tap the pin to pull it out!",
+          "everVisible": true
+        }
+      ],
+      "text_states_hook": true,
+      "asset_audit": []
+    },
+    "required_texts": [],
+    "required_sprites": [],
+    "page_texts": [
+      "1/3",
+      "2/3",
+      "3/3",
+      "Pin Rescue (Playable Demo)",
+      "Play Now",
+      "Rescued!",
+      "Score  320",
+      "Score 0",
+      "Score 120",
+      "Score 20",
+      "Score 220",
+      "Score 320",
+      "Tap the pin to pull it out!"
+    ],
+    "text_states": [
+      {
+        "text": "1/3",
+        "everVisible": true
+      },
+      {
+        "text": "2/3",
+        "everVisible": true
+      },
+      {
+        "text": "3/3",
+        "everVisible": true
+      },
+      {
+        "text": "Pin Rescue (Playable Demo)",
+        "everVisible": true
+      },
+      {
+        "text": "Play Now",
+        "everVisible": true
+      },
+      {
+        "text": "Rescued!",
+        "everVisible": true
+      },
+      {
+        "text": "Score  320",
+        "everVisible": true
+      },
+      {
+        "text": "Score 0",
+        "everVisible": true
+      },
+      {
+        "text": "Score 120",
+        "everVisible": true
+      },
+      {
+        "text": "Score 20",
+        "everVisible": true
+      },
+      {
+        "text": "Score 220",
+        "everVisible": true
+      },
+      {
+        "text": "Score 320",
+        "everVisible": true
+      },
+      {
+        "text": "Tap the pin to pull it out!",
+        "everVisible": true
+      }
+    ],
+    "text_states_hook": true,
+    "asset_audit": [],
+    "pf_present": true,
+    "probe_installed": true,
+    "viewport_shots": {
+      "portrait": {
+        "has_canvas": true,
+        "variance": 1189.4877319335938,
+        "probeInstalled": true,
+        "enabled": true,
+        "timeoutSec": 45,
+        "reachedState": "end",
+        "gestures": 5,
+        "firstMutedBeforeInteraction": true,
+        "audioRunningBeforeInteraction": 0,
+        "mediaUnmutedBeforeInteraction": 0,
+        "mediaPlaysBeforeInteraction": 0,
+        "mutedAfterFirstGesture": false,
+        "pfEndFired": true,
+        "pfEndMs": 14796.699999988079,
+        "pfEndWin": true,
+        "pfReadyMs": 510.89999997615814,
+        "endScreenVisible": true,
+        "qcHooksPresent": true,
+        "textStatesHook": true,
+        "qcTexts": [
+          "1/3",
+          "2/3",
+          "3/3",
+          "Pin Rescue (Playable Demo)",
+          "Play Now",
+          "Rescued!",
+          "Score  320",
+          "Score 0",
+          "Score 120",
+          "Score 20",
+          "Score 220",
+          "Score 320",
+          "Tap the pin to pull it out!"
+        ],
+        "qcVisibleTexts": [
+          "1/3",
+          "2/3",
+          "3/3",
+          "Pin Rescue (Playable Demo)",
+          "Play Now",
+          "Rescued!",
+          "Score  320",
+          "Score 0",
+          "Score 120",
+          "Score 20",
+          "Score 220",
+          "Score 320",
+          "Tap the pin to pull it out!"
+        ],
+        "page_texts": [
+          "1/3",
+          "2/3",
+          "3/3",
+          "Pin Rescue (Playable Demo)",
+          "Play Now",
+          "Rescued!",
+          "Score  320",
+          "Score 0",
+          "Score 120",
+          "Score 20",
+          "Score 220",
+          "Score 320",
+          "Tap the pin to pull it out!"
+        ],
+        "text_states": [
+          {
+            "text": "1/3",
+            "everVisible": true
+          },
+          {
+            "text": "2/3",
+            "everVisible": true
+          },
+          {
+            "text": "3/3",
+            "everVisible": true
+          },
+          {
+            "text": "Pin Rescue (Playable Demo)",
+            "everVisible": true
+          },
+          {
+            "text": "Play Now",
+            "everVisible": true
+          },
+          {
+            "text": "Rescued!",
+            "everVisible": true
+          },
+          {
+            "text": "Score  320",
+            "everVisible": true
+          },
+          {
+            "text": "Score 0",
+            "everVisible": true
+          },
+          {
+            "text": "Score 120",
+            "everVisible": true
+          },
+          {
+            "text": "Score 20",
+            "everVisible": true
+          },
+          {
+            "text": "Score 220",
+            "everVisible": true
+          },
+          {
+            "text": "Score 320",
+            "everVisible": true
+          },
+          {
+            "text": "Tap the pin to pull it out!",
+            "everVisible": true
+          }
+        ],
+        "text_states_hook": true,
+        "asset_audit": []
+      },
+      "landscape": {
+        "has_canvas": true,
+        "variance": 553.7866353988647,
+        "probeInstalled": true,
+        "firstMutedBeforeInteraction": true,
+        "audioRunningBeforeInteraction": 0,
+        "mediaUnmutedBeforeInteraction": 0,
+        "mediaPlaysBeforeInteraction": 0
+      }
+    },
+    "variance_threshold": 30
+  }
+}

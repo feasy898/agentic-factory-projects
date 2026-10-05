@@ -1,0 +1,22 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "meta",
+  "locale": "zh",
+  "project": "webui-match3",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\spec.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\webui-match3\\dist",
+  "maxBytes": 3145728,
+  "packageFiles": [
+    "index.html"
+  ],
+  "files": [
+    {
+      "path": "index.html",
+      "bytes": 1242416,
+      "sha256": "8019d24a425e24bbfbf1c9590554139f6a25ecea739048298c8f7377ccee391f",
+      "role": "package"
+    }
+  ],
+  "warnings": []
+}

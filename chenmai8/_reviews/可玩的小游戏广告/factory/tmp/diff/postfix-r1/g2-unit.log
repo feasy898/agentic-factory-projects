@@ -1,0 +1,76 @@
+TAP version 13
+# Subtest: CHK01：超上限恰 fail（其余不受扰）/ 规则库无该渠道 skip（不假定）
+ok 1 - CHK01：超上限恰 fail（其余不受扰）/ 规则库无该渠道 skip（不假定）
+  ---
+  duration_ms: 86.6861
+  type: 'test'
+  ...
+# Subtest: CHK03：外链/WebRTC 记账 → 恰 fail；干净 → pass
+ok 2 - CHK03：外链/WebRTC 记账 → 恰 fail；干净 → pass
+  ---
+  duration_ms: 0.851
+  type: 'test'
+  ...
+# Subtest: CHK04：静音要求下缺 PF 桥=从严 fail（不再 skip）；探针缺失 fail；未静音事实 fail
+ok 3 - CHK04：静音要求下缺 PF 桥=从严 fail（不再 skip）；探针缺失 fail；未静音事实 fail
+  ---
+  duration_ms: 1.1757
+  type: 'test'
+  ...
+# Subtest: CHK04：旗驱动值 1（首交互前曾 running）恰 fail 且文案含计数值（chk04-determinism 判定向量）
+ok 4 - CHK04：旗驱动值 1（首交互前曾 running）恰 fail 且文案含计数值（chk04-determinism 判定向量）
+  ---
+  duration_ms: 0.7664
+  type: 'test'
+  ...
+# Subtest: CHK05：无画布 skip；有画布方差双达标 pass、单侧低于阈值恰 fail
+ok 5 - CHK05：无画布 skip；有画布方差双达标 pass、单侧低于阈值恰 fail
+  ---
+  duration_ms: 2.135
+  type: 'test'
+  ...
+# Subtest: CHK07：未开 autoplay skip；无钩子/超预算/未达终态/结束页不可见 恰 fail；齐备 pass
+ok 6 - CHK07：未开 autoplay skip；无钩子/超预算/未达终态/结束页不可见 恰 fail；齐备 pass
+  ---
+  duration_ms: 0.598
+  type: 'test'
+  ...
+# Subtest: CHK08：console error/pageerror → 恰 fail；零错误 pass
+ok 7 - CHK08：console error/pageerror → 恰 fail；零错误 pass
+  ---
+  duration_ms: 0.4947
+  type: 'test'
+  ...
+# Subtest: CHK09：load_ms ≤ max_load_sec×1000 pass / 超阈值恰 fail（≤2.0s 默认口径）
+ok 8 - CHK09：load_ms ≤ max_load_sec×1000 pass / 超阈值恰 fail（≤2.0s 默认口径）
+  ---
+  duration_ms: 0.5282
+  type: 'test'
+  ...
+# Subtest: CHK10：required 全缺 skip；未命中/钩子缺/从未可见/素材未对账 恰 fail；齐备 pass
+ok 9 - CHK10：required 全缺 skip；未命中/钩子缺/从未可见/素材未对账 恰 fail；齐备 pass
+  ---
+  duration_ms: 1.7157
+  type: 'test'
+  ...
+# Subtest: MUT 构造算法：锚点注入逐字节符合 §8 表；MUT-04 pad 精确到 maxBytes+4096
+ok 10 - MUT 构造算法：锚点注入逐字节符合 §8 表；MUT-04 pad 精确到 maxBytes+4096
+  ---
+  duration_ms: 33.7456
+  type: 'test'
+  ...
+# Subtest: pngvar：确定性合成 PNG 的灰度方差向量（>30 非空白 / =0 纯色空白）
+ok 11 - pngvar：确定性合成 PNG 的灰度方差向量（>30 非空白 / =0 纯色空白）
+  ---
+  duration_ms: 47.3663
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 463.5675

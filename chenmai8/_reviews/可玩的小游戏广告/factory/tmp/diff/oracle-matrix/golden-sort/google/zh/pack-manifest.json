@@ -1,0 +1,28 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "google",
+  "locale": "zh",
+  "project": "golden-sort",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\repo\\specs-eval\\golden-sort.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\oracle-matrix\\golden-sort\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "golden-sort-zh.zip"
+  ],
+  "files": [
+    {
+      "path": "golden-sort-zh.zip",
+      "bytes": 342927,
+      "sha256": "16e96b2192e21d35ad357a788c23f520644f5e9e59e2f0d9af8adcbc56ae8799",
+      "role": "package"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1241959,
+      "sha256": "fd6532ec6e8ff6468621f23bd597ec6d3eed19e61b6224fc2b5dd0a126df9d9b",
+      "role": "entry-in-zip"
+    }
+  ],
+  "warnings": []
+}

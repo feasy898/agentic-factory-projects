@@ -1,0 +1,11 @@
+{
+  "spec": "demo-zh.json",
+  "locale": "zh",
+  "sprites": [
+    {
+      "spriteKey": "piece-0",
+      "path": "specs-eval/assets/demo-zh/piece-0.png",
+      "bytes": 893
+    }
+  ]
+}

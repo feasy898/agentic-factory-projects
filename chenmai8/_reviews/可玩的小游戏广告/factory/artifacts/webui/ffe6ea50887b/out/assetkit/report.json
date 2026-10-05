@@ -1,0 +1,77 @@
+{
+  "assetkitVersion": "1.0.0",
+  "generatedAt": "2026-09-30T10:51:26",
+  "spec": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\spec.json",
+  "outDir": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\assetkit",
+  "subsetTextChars": 37,
+  "materials": {
+    "image": [
+      {
+        "key": "assets/piece-0.png",
+        "src": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\assets\\piece-0.png",
+        "kind": "image",
+        "status": "optimized",
+        "out": "piece-0.webp",
+        "encoding": "webp-nearlossless",
+        "originalBytes": 893,
+        "optimizedBytes": 402,
+        "reductionPct": 55,
+        "width": 96,
+        "height": 96,
+        "alpha": true,
+        "candidates": [
+          {
+            "encoding": "webp-lossy",
+            "bytes": 1248
+          },
+          {
+            "encoding": "webp-nearlossless",
+            "bytes": 402
+          },
+          {
+            "encoding": "png-palette",
+            "bytes": 469
+          },
+          {
+            "encoding": "png-plain",
+            "bytes": 550
+          }
+        ],
+        "note": ""
+      }
+    ],
+    "audio": [],
+    "font": []
+  },
+  "totals": {
+    "count": 1,
+    "originalBytes": 893,
+    "optimizedBytes": 402,
+    "reductionPct": 54.98,
+    "minReductionPct": null,
+    "minReductionMet": null
+  },
+  "atlas": {
+    "packed": 1,
+    "skipped": [],
+    "image": "atlas.webp",
+    "width": 96,
+    "height": 96,
+    "encoding": "webp-lossless",
+    "bytes": 402,
+    "candidates": [
+      {
+        "encoding": "webp-lossless",
+        "bytes": 402
+      },
+      {
+        "encoding": "png-palette",
+        "bytes": 469
+      }
+    ],
+    "note": "atlas.json 与图集图已写入输出目录（pf-atlas/1）"
+  },
+  "notes": [
+    "图集：atlas.json 与图集图已写入输出目录（pf-atlas/1）"
+  ]
+}

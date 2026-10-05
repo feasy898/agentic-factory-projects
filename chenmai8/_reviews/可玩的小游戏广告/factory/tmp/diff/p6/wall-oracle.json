@@ -1,0 +1,9 @@
+{
+ "label": "oracle",
+ "exit": 0,
+ "wallSec": 40.5,
+ "tail": [
+  "▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀",
+  "[make] PASS：12 个渠道包 + 质检报告 + 二维码 + demo-prebuilt 兜底，exit 0"
+ ]
+}

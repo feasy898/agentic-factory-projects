@@ -1,0 +1,4 @@
+
+> pf-factory@0.1.0 typecheck:qacore
+> tsc --noEmit -p qacore
+

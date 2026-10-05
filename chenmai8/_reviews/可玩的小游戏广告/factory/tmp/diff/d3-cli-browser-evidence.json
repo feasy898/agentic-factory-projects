@@ -1,0 +1,828 @@
+{
+  "capturedAt": "2026-09-30T08:21:57.917Z",
+  "withBrowser": true,
+  "rows": [
+    {
+      "id": "validate:golden-match3.json",
+      "impl": "N",
+      "args": "validate specs-eval/golden-match3.json",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "OK      specs-eval/golden-match3.json | validate: 1/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate:golden-match3.json",
+      "impl": "O",
+      "args": "pfcore validate specs-eval/golden-match3.json",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "OK      specs-eval/golden-match3.json | validate: 1/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate-pair:golden-match3.json",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "validate:golden-merge.json",
+      "impl": "N",
+      "args": "validate specs-eval/golden-merge.json",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "OK      specs-eval/golden-merge.json | validate: 1/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate:golden-merge.json",
+      "impl": "O",
+      "args": "pfcore validate specs-eval/golden-merge.json",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "OK      specs-eval/golden-merge.json | validate: 1/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate-pair:golden-merge.json",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "validate:golden-pullpin.json",
+      "impl": "N",
+      "args": "validate specs-eval/golden-pullpin.json",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "OK      specs-eval/golden-pullpin.json | validate: 1/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate:golden-pullpin.json",
+      "impl": "O",
+      "args": "pfcore validate specs-eval/golden-pullpin.json",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "OK      specs-eval/golden-pullpin.json | validate: 1/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate-pair:golden-pullpin.json",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "validate:golden-sort.json",
+      "impl": "N",
+      "args": "validate specs-eval/golden-sort.json",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "OK      specs-eval/golden-sort.json | validate: 1/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate:golden-sort.json",
+      "impl": "O",
+      "args": "pfcore validate specs-eval/golden-sort.json",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "OK      specs-eval/golden-sort.json | validate: 1/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate-pair:golden-sort.json",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "validate:demo-zh.json",
+      "impl": "N",
+      "args": "validate specs-eval/demo-zh.json",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "OK      specs-eval/demo-zh.json | validate: 1/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate:demo-zh.json",
+      "impl": "O",
+      "args": "pfcore validate specs-eval/demo-zh.json",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "OK      specs-eval/demo-zh.json | validate: 1/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate-pair:demo-zh.json",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "validate:01-missing-field.json",
+      "impl": "N",
+      "args": "validate specs-eval/bad/01-missing-field.json",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "  $.flow: must have required property 'flow' [schema-required] | validate: 0/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate:01-missing-field.json",
+      "impl": "O",
+      "args": "pfcore validate specs-eval/bad/01-missing-field.json",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "  $.flow: 'flow' is a required property [schema-required] | validate: 0/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate-pair:01-missing-field.json",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "validate:02-pullpin-unsolvable.json",
+      "impl": "N",
+      "args": "validate specs-eval/bad/02-pullpin-unsolvable.json",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "  $.game.params.orderSolution[0]: 第 0 关不可解：机关针在救援针之前被拔出（rescuee=针2, hazard=针0，布局由 seed 确定性生成） [I1-pullpin-unsolvable] | validate: 0/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate:02-pullpin-unsolvable.json",
+      "impl": "O",
+      "args": "pfcore validate specs-eval/bad/02-pullpin-unsolvable.json",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "  $.game.params.orderSolution[0]: 第 0 关不可解：机关针在救援针之前被拔出（rescuee=针2, hazard=针0，布局由 seed 确定性生成） [I1-pullpin-unsolvable] | validate: 0/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate-pair:02-pullpin-unsolvable.json",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "validate:03-duration-over-budget.json",
+      "impl": "N",
+      "args": "validate specs-eval/bad/03-duration-over-budget.json",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "  $.game.durationBudgetSec.max: must be <= 30 [schema-maximum] | validate: 0/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate:03-duration-over-budget.json",
+      "impl": "O",
+      "args": "pfcore validate specs-eval/bad/03-duration-over-budget.json",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "  $.game.durationBudgetSec.max: 35 is greater than the maximum of 30 [schema-maximum] | validate: 0/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate-pair:03-duration-over-budget.json",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "validate:04-missing-locale-strings.json",
+      "impl": "N",
+      "args": "validate specs-eval/bad/04-missing-locale-strings.json",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "  $.i18n.strings.ja: 语言 'ja' 缺少 strings 条目 [I5-i18n-coverage] | validate: 0/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate:04-missing-locale-strings.json",
+      "impl": "O",
+      "args": "pfcore validate specs-eval/bad/04-missing-locale-strings.json",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "  $.i18n.strings.ja: 语言 'ja' 缺少 strings 条目 [I5-i18n-coverage] | validate: 0/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate-pair:04-missing-locale-strings.json",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "validate:05-bad-url.json",
+      "impl": "N",
+      "args": "validate specs-eval/bad/05-bad-url.json",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "  $.flow.endScreen.landingUrl: must match pattern \"^https?://\\S+$\" [schema-pattern] | validate: 0/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate:05-bad-url.json",
+      "impl": "O",
+      "args": "pfcore validate specs-eval/bad/05-bad-url.json",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "  $.flow.endScreen.landingUrl: 'www.example.com/playable-lp' does not match '^https?://\\\\S+$' [schema-pattern] | validate: 0/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate-pair:05-bad-url.json",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "validate:06-unknown-template.json",
+      "impl": "N",
+      "args": "validate specs-eval/bad/06-unknown-template.json",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "  $.game.template: must be equal to one of the allowed values [schema-enum] | validate: 0/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate:06-unknown-template.json",
+      "impl": "O",
+      "args": "pfcore validate specs-eval/bad/06-unknown-template.json",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "  $.game.template: 'whack-a-mole' is not one of ['match3', 'merge', 'pullpin', 'sort'] [schema-enum] | validate: 0/1 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate-pair:06-unknown-template.json",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "validate:glob",
+      "impl": "N",
+      "args": "validate specs-eval/golden-*.json",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "OK      specs-eval/golden-sort.json | validate: 4/4 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate:glob",
+      "impl": "O",
+      "args": "pfcore validate specs-eval/golden-*.json",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "OK      specs-eval/golden-sort.json | validate: 4/4 通过",
+      "stderrTail": ""
+    },
+    {
+      "id": "validate-pair:glob",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "validate:no-args",
+      "impl": "N",
+      "args": "validate",
+      "exit": 2,
+      "timedOut": false,
+      "stdoutTail": "",
+      "stderrTail": "  node pf/pf.mjs pack <spec.json> [--all-channels] [--locale en] [--out artifacts]       # 占位 |   node pf/pf.mjs rules-check                                                            # 占位"
+    },
+    {
+      "id": "validate:no-args",
+      "impl": "O",
+      "args": "pfcore validate",
+      "exit": 2,
+      "timedOut": false,
+      "stdoutTail": "",
+      "stderrTail": "usage: pfcore validate [-h] spec [spec ...] | pfcore validate: error: the following arguments are required: spec"
+    },
+    {
+      "id": "validate-pair:no-args(用法2)",
+      "pair": true,
+      "equal": true,
+      "n": 2,
+      "o": 2
+    },
+    {
+      "id": "make:no-spec",
+      "impl": "N",
+      "args": "make",
+      "exit": 2,
+      "timedOut": false,
+      "stdoutTail": "",
+      "stderrTail": "  node pf/pf.mjs pack <spec.json> [--all-channels] [--locale en] [--out artifacts]       # 占位 |   node pf/pf.mjs rules-check                                                            # 占位"
+    },
+    {
+      "id": "make:no-spec",
+      "impl": "O",
+      "args": "pfcore make",
+      "exit": 2,
+      "timedOut": false,
+      "stdoutTail": "",
+      "stderrTail": "                   [--serve-host SERVE_HOST] [--no-serve] [--no-assetkit] | pfcore make: error: the following arguments are required: --spec"
+    },
+    {
+      "id": "make-pair:no-spec(用法)",
+      "pair": true,
+      "equal": true,
+      "n": 2,
+      "o": 2
+    },
+    {
+      "id": "make:bad-spec",
+      "impl": "N",
+      "args": "make --spec specs-eval/bad/01-missing-field.json --no-serve --no-assetkit --out D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\n-badspec",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "[make] validate FAIL 01-missing-field.json |   $.flow: must have required property 'flow' [schema-required]",
+      "stderrTail": "[make] FAIL：spec 校验未通过（校验是流水线第一道闸）"
+    },
+    {
+      "id": "make:bad-spec",
+      "impl": "O",
+      "args": "pfcore make --spec specs-eval/bad/01-missing-field.json --no-serve --no-assetkit --out D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\o-badspec",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "[make] validate FAIL 01-missing-field.json |   $.flow: 'flow' is a required property [schema-required]",
+      "stderrTail": "[make] FAIL：spec 校验未通过（校验是流水线第一道闸）"
+    },
+    {
+      "id": "make-pair:bad-spec(判定1)",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "make:unknown-channel",
+      "impl": "N",
+      "args": "make --spec specs-eval/golden-match3.json --locales en --channels not-a-channel --no-serve --no-assetkit --out D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\",
+      "exit": 2,
+      "timedOut": false,
+      "stdoutTail": "[make] validate OK：golden-match3.json",
+      "stderrTail": "[make] FAIL：渠道不在规则库：not-a-channel（现有：preview, applovin, meta, mintegral, google, unity, tiktok）"
+    },
+    {
+      "id": "make:unknown-channel",
+      "impl": "O",
+      "args": "pfcore make --spec specs-eval/golden-match3.json --locales en --channels not-a-channel --no-serve --no-assetkit --out D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\di",
+      "exit": 2,
+      "timedOut": false,
+      "stdoutTail": "[make] validate OK：golden-match3.json",
+      "stderrTail": "[make] FAIL：渠道不在规则库：not-a-channel（现有：preview, applovin, meta, mintegral, google, unity, tiktok）"
+    },
+    {
+      "id": "make-pair:unknown-channel",
+      "pair": true,
+      "equal": true,
+      "n": 2,
+      "o": 2
+    },
+    {
+      "id": "pack:no-args",
+      "impl": "N",
+      "args": "",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "  node packages/packager/bin.mjs build --spec specs-eval/golden-match3.json \\ |     --dist packages/packager/test/fixture/match3-dist --channel applovin --locale en --out artifacts",
+      "stderrTail": ""
+    },
+    {
+      "id": "pack:no-args",
+      "impl": "O",
+      "args": "",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "  node packages/packager/bin.mjs build --spec specs-eval/golden-match3.json \\ |     --dist packages/packager/test/fixture/match3-dist --channel applovin --locale en --out artifacts",
+      "stderrTail": ""
+    },
+    {
+      "id": "pack-pair:no-args(用法2)",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "pack:unknown-channel",
+      "impl": "N",
+      "args": "build --spec specs-eval/golden-match3.json --dist packages/packager/test/fixture/match3-dist --channel not-a-channel --locale en --out D:\\workspace\\澄迈8项目\\可玩的小游戏",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "",
+      "stderrTail": "[packager] 失败: 规则库中没有渠道 \"not-a-channel\"（现有: preview, applovin, meta, mintegral, google, unity, tiktok）"
+    },
+    {
+      "id": "pack:unknown-channel",
+      "impl": "O",
+      "args": "build --spec specs-eval/golden-match3.json --dist packages/packager/test/fixture/match3-dist --channel not-a-channel --locale en --out D:\\workspace\\澄迈8项目\\可玩的小游戏",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "",
+      "stderrTail": "[packager] 失败: 规则库中没有渠道 \"not-a-channel\"（现有: preview, applovin, meta, mintegral, google, unity, tiktok）"
+    },
+    {
+      "id": "pack-pair:unknown-channel",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "pack:ok#1",
+      "impl": "N",
+      "args": "build --spec specs-eval/golden-match3.json --dist packages/packager/test/fixture/match3-dist --channel tiktok --locale en --out D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\fact",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "[packager]   包体积 0.00MB / 上限 5.00MB；白名单外链接=0；警告 0 条 | {\"ok\":true,\"artifact\":\"D:\\\\workspace\\\\澄迈8项目\\\\可玩的小游戏广告\\\\factory\\\\tmp\\\\diff\\\\cli\\\\n-pack\\\\golden-match3\\\\tiktok\\\\en\\\\golden-match3-en.zip\",\"totalByt",
+      "stderrTail": ""
+    },
+    {
+      "id": "pack:ok#2",
+      "impl": "N",
+      "args": "build --spec specs-eval/golden-match3.json --dist packages/packager/test/fixture/match3-dist --channel tiktok --locale en --out D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\fact",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "[packager]   包体积 0.00MB / 上限 5.00MB；白名单外链接=0；警告 0 条 | {\"ok\":true,\"artifact\":\"D:\\\\workspace\\\\澄迈8项目\\\\可玩的小游戏广告\\\\factory\\\\tmp\\\\diff\\\\cli\\\\n-pack\\\\golden-match3\\\\tiktok\\\\en\\\\golden-match3-en.zip\",\"totalByt",
+      "stderrTail": ""
+    },
+    {
+      "id": "pack-repro:N(同输入两次构建字节一致)",
+      "impl": "N",
+      "ok": true,
+      "exit": 0,
+      "shas": [
+        "d17519e5cda5c4207bc0f19925109374f6d3ad5afbd1dfdf6e973215bdba652d",
+        "d17519e5cda5c4207bc0f19925109374f6d3ad5afbd1dfdf6e973215bdba652d"
+      ]
+    },
+    {
+      "id": "pack:ok#1",
+      "impl": "O",
+      "args": "build --spec specs-eval/golden-match3.json --dist packages/packager/test/fixture/match3-dist --channel tiktok --locale en --out D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\fact",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "[packager]   包体积 0.00MB / 上限 5.00MB；白名单外链接=0；警告 0 条 | {\"ok\":true,\"artifact\":\"D:\\\\workspace\\\\澄迈8项目\\\\可玩的小游戏广告\\\\factory\\\\tmp\\\\diff\\\\cli\\\\o-pack\\\\golden-match3\\\\tiktok\\\\en\\\\golden-match3-en.zip\",\"totalByt",
+      "stderrTail": ""
+    },
+    {
+      "id": "pack:ok#2",
+      "impl": "O",
+      "args": "build --spec specs-eval/golden-match3.json --dist packages/packager/test/fixture/match3-dist --channel tiktok --locale en --out D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\fact",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "[packager]   包体积 0.00MB / 上限 5.00MB；白名单外链接=0；警告 0 条 | {\"ok\":true,\"artifact\":\"D:\\\\workspace\\\\澄迈8项目\\\\可玩的小游戏广告\\\\factory\\\\tmp\\\\diff\\\\cli\\\\o-pack\\\\golden-match3\\\\tiktok\\\\en\\\\golden-match3-en.zip\",\"totalByt",
+      "stderrTail": ""
+    },
+    {
+      "id": "pack-repro:O(同输入两次构建字节一致)",
+      "impl": "O",
+      "ok": true,
+      "exit": 0,
+      "shas": [
+        "d17519e5cda5c4207bc0f19925109374f6d3ad5afbd1dfdf6e973215bdba652d",
+        "d17519e5cda5c4207bc0f19925109374f6d3ad5afbd1dfdf6e973215bdba652d"
+      ]
+    },
+    {
+      "id": "qc:pass-artifact",
+      "impl": "N",
+      "args": "run D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\matrix\\golden-match3\\applovin\\en\\index.html --channel applovin --out D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\d",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "qacore: index.html @ applovin -> D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\n-qc0.json (4 请求, 0 FAIL)",
+      "stderrTail": ""
+    },
+    {
+      "id": "qc:pass-artifact",
+      "impl": "O",
+      "args": "qacore run D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\matrix\\golden-match3\\applovin\\en\\index.html --channel applovin --out D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factor",
+      "exit": 0,
+      "timedOut": false,
+      "stdoutTail": "qacore: index.html @ applovin -> D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\o-qc0.json (4 请求, 0 FAIL)",
+      "stderrTail": ""
+    },
+    {
+      "id": "qc-pair:pass-artifact(0)",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "qc:missing-artifact",
+      "impl": "N",
+      "args": "run D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\no-such.html --channel applovin",
+      "exit": 2,
+      "timedOut": false,
+      "stdoutTail": "",
+      "stderrTail": "qacore: 产物不存在或不是文件：D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\no-such.html"
+    },
+    {
+      "id": "qc:missing-artifact",
+      "impl": "O",
+      "args": "qacore run D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\no-such.html --channel applovin",
+      "exit": 2,
+      "timedOut": false,
+      "stdoutTail": "",
+      "stderrTail": "qacore: 产物不存在或不是文件：D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\no-such.html"
+    },
+    {
+      "id": "qc-pair:missing-artifact(2)",
+      "pair": true,
+      "equal": true,
+      "n": 2,
+      "o": 2
+    },
+    {
+      "id": "qc:no-args",
+      "impl": "N",
+      "args": "run",
+      "exit": 2,
+      "timedOut": false,
+      "stdoutTail": "",
+      "stderrTail": "                       [--autoplay-timeout 45.0] |                        [--require-text <str>]... [--require-sprite <key>]..."
+    },
+    {
+      "id": "qc:no-args",
+      "impl": "O",
+      "args": "qacore run",
+      "exit": 2,
+      "timedOut": false,
+      "stdoutTail": "",
+      "stderrTail": "                  artifact | qacore run: error: the following arguments are required: artifact"
+    },
+    {
+      "id": "qc-pair:no-args(用法2)",
+      "pair": true,
+      "equal": true,
+      "n": 2,
+      "o": 2
+    },
+    {
+      "id": "qc:chk09-forced-fail",
+      "impl": "N",
+      "args": "run D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\matrix\\golden-match3\\applovin\\en\\index.html --channel applovin --max-load-sec 0.001 --out D:\\workspace\\澄迈8项目\\可",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "qacore: index.html @ applovin -> D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\n-qc1.json (4 请求, 1 FAIL)",
+      "stderrTail": ""
+    },
+    {
+      "id": "qc:chk09-forced-fail",
+      "impl": "O",
+      "args": "qacore run D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\matrix\\golden-match3\\applovin\\en\\index.html --channel applovin --max-load-sec 0.001 --out D:\\workspace\\",
+      "exit": 1,
+      "timedOut": false,
+      "stdoutTail": "qacore: index.html @ applovin -> D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\o-qc1.json (4 请求, 1 FAIL)",
+      "stderrTail": ""
+    },
+    {
+      "id": "qc-pair:chk09-forced-fail(1)",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "serve:missing-root",
+      "impl": "N",
+      "args": "serve --root D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\no-root --port 18631",
+      "exit": 2,
+      "timedOut": false,
+      "stdoutTail": "",
+      "stderrTail": "[serve] FAIL：目录不存在：D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\no-root（先跑 pf make 产出 demo-prebuilt，或用 --root 指向预览产物目录）"
+    },
+    {
+      "id": "serve:missing-root",
+      "impl": "O",
+      "args": "pfcore serve --root D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\no-root --port 18631",
+      "exit": 2,
+      "timedOut": false,
+      "stdoutTail": "",
+      "stderrTail": "[serve] FAIL：目录不存在：D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\no-root（先跑 python -m pfcore make 产出 demo-prebuilt，或用 --root 指向预览产物目录）"
+    },
+    {
+      "id": "serve-pair:missing-root",
+      "pair": true,
+      "equal": true,
+      "n": 2,
+      "o": 2,
+      "nTail": "[serve] FAIL：目录不存在：D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\no-root（先跑 pf make 产出 demo-prebuilt，或用 --root 指向预览产物目录）",
+      "oTail": "[serve] FAIL：目录不存在：D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\no-root（先跑 python -m pfcore make 产出 demo-prebuilt，或用 --root 指向预览产物目录）"
+    }
+  ],
+  "pairs": [
+    {
+      "id": "validate-pair:golden-match3.json",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "validate-pair:golden-merge.json",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "validate-pair:golden-pullpin.json",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "validate-pair:golden-sort.json",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "validate-pair:demo-zh.json",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "validate-pair:01-missing-field.json",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "validate-pair:02-pullpin-unsolvable.json",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "validate-pair:03-duration-over-budget.json",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "validate-pair:04-missing-locale-strings.json",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "validate-pair:05-bad-url.json",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "validate-pair:06-unknown-template.json",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "validate-pair:glob",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "validate-pair:no-args(用法2)",
+      "pair": true,
+      "equal": true,
+      "n": 2,
+      "o": 2
+    },
+    {
+      "id": "make-pair:no-spec(用法)",
+      "pair": true,
+      "equal": true,
+      "n": 2,
+      "o": 2
+    },
+    {
+      "id": "make-pair:bad-spec(判定1)",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "make-pair:unknown-channel",
+      "pair": true,
+      "equal": true,
+      "n": 2,
+      "o": 2
+    },
+    {
+      "id": "pack-pair:no-args(用法2)",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "pack-pair:unknown-channel",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "qc-pair:pass-artifact(0)",
+      "pair": true,
+      "equal": true,
+      "n": 0,
+      "o": 0
+    },
+    {
+      "id": "qc-pair:missing-artifact(2)",
+      "pair": true,
+      "equal": true,
+      "n": 2,
+      "o": 2
+    },
+    {
+      "id": "qc-pair:no-args(用法2)",
+      "pair": true,
+      "equal": true,
+      "n": 2,
+      "o": 2
+    },
+    {
+      "id": "qc-pair:chk09-forced-fail(1)",
+      "pair": true,
+      "equal": true,
+      "n": 1,
+      "o": 1
+    },
+    {
+      "id": "serve-pair:missing-root",
+      "pair": true,
+      "equal": true,
+      "n": 2,
+      "o": 2,
+      "nTail": "[serve] FAIL：目录不存在：D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\no-root（先跑 pf make 产出 demo-prebuilt，或用 --root 指向预览产物目录）",
+      "oTail": "[serve] FAIL：目录不存在：D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\tmp\\diff\\cli\\no-root（先跑 python -m pfcore make 产出 demo-prebuilt，或用 --root 指向预览产物目录）"
+    }
+  ],
+  "repro": [
+    {
+      "id": "pack-repro:N(同输入两次构建字节一致)",
+      "impl": "N",
+      "ok": true,
+      "exit": 0,
+      "shas": [
+        "d17519e5cda5c4207bc0f19925109374f6d3ad5afbd1dfdf6e973215bdba652d",
+        "d17519e5cda5c4207bc0f19925109374f6d3ad5afbd1dfdf6e973215bdba652d"
+      ]
+    },
+    {
+      "id": "pack-repro:O(同输入两次构建字节一致)",
+      "impl": "O",
+      "ok": true,
+      "exit": 0,
+      "shas": [
+        "d17519e5cda5c4207bc0f19925109374f6d3ad5afbd1dfdf6e973215bdba652d",
+        "d17519e5cda5c4207bc0f19925109374f6d3ad5afbd1dfdf6e973215bdba652d"
+      ]
+    }
+  ],
+  "regressions": [],
+  "verdict": "PASS（双实现同判）"
+}

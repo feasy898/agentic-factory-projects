@@ -1,0 +1,118 @@
+{
+  "specVersion": "1.0.0",
+  "meta": {
+    "projectId": "golden-match3",
+    "title": "Gem Rush (Playable Demo)",
+    "seed": 20260930
+  },
+  "game": {
+    "template": "match3",
+    "params": {
+      "cols": 6,
+      "rows": 6,
+      "moves": 15,
+      "colors": 5,
+      "goalType": "clear-jelly",
+      "goalCount": 30,
+      "spriteKeys": ["piece-0", "piece-1", "piece-2", "piece-3", "piece-4"]
+    },
+    "difficulty": { "targetLevel": 0.4 },
+    "attract": { "nearWin": true, "failBait": false, "firstClickSucceed": true },
+    "durationBudgetSec": { "target": 20, "max": 30 }
+  },
+  "flow": {
+    "tutorial": { "enabled": true, "gesture": "drag", "maxSec": 3 },
+    "endScreen": {
+      "showScore": true,
+      "ctaKey": "cta",
+      "landingUrl": "https://example.com/playable-lp"
+    }
+  },
+  "assets": {
+    "background": "assets/theme-a/bg-portrait.png",
+    "sprites": {
+      "piece-0": "assets/theme-a/piece-0.png",
+      "piece-1": "assets/theme-a/piece-1.png",
+      "piece-2": "assets/theme-a/piece-2.png",
+      "piece-3": "assets/theme-a/piece-3.png",
+      "piece-4": "assets/theme-a/piece-4.png",
+      "jelly": "assets/theme-a/jelly.png"
+    },
+    "audio": {
+      "tap": "assets/theme-a/sfx-tap.ogg",
+      "win": "assets/theme-a/sfx-win.ogg"
+    },
+    "fontSubset": "build/theme-a/font-subset.woff2"
+  },
+  "i18n": {
+    "defaultLocale": "en",
+    "locales": ["en", "ja", "ko", "pt-BR", "de", "ar", "zh"],
+    "strings": {
+      "en": {
+        "cta": "Play Now",
+        "tutorial": "Drag to match 3 gems!",
+        "win": "You Win!",
+        "lose": "Try Again!",
+        "score": "Score"
+      },
+      "ja": {
+        "cta": "今すぐ遊ぶ",
+        "tutorial": "ドラッグして3つ揃えよう！",
+        "win": "クリア！",
+        "lose": "もう一度！",
+        "score": "スコア"
+      },
+      "ko": {
+        "cta": "지금 플레이",
+        "tutorial": "드래그해서 3개를 맞춰요!",
+        "win": "성공!",
+        "lose": "다시 도전!",
+        "score": "점수"
+      },
+      "pt-BR": {
+        "cta": "Jogue Agora",
+        "tutorial": "Arraste para juntar 3!",
+        "win": "Você Venceu!",
+        "lose": "Tente de Novo!",
+        "score": "Pontos"
+      },
+      "de": {
+        "cta": "Jetzt Spielen",
+        "tutorial": "Ziehe und kombiniere 3!",
+        "win": "Gewonnen!",
+        "lose": "Nochmal versuchen!",
+        "score": "Punkte"
+      },
+      "ar": {
+        "cta": "العب الآن",
+        "tutorial": "اسحب لمطابقة 3 جواهر!",
+        "win": "لقد فزت!",
+        "lose": "حاول مجدداً!",
+        "score": "النقاط"
+      },
+      "zh": {
+        "cta": "立即游玩",
+        "tutorial": "拖动宝石，三个同色连成一线！",
+        "win": "你赢了！",
+        "lose": "再试一次！",
+        "score": "得分"
+      }
+    },
+    "rtl": ["ar"]
+  },
+  "channels": {
+    "targets": ["applovin", "unity", "google", "meta", "tiktok", "mintegral"],
+    "orientation": "portrait",
+    "overrides": {
+      "applovin": { "maxBytes": 5242880, "ctaStyle": "banner" },
+      "meta": { "maxBytes": 3145728, "ctaStyle": "endcard" }
+    }
+  },
+  "variants": [
+    { "id": "v1", "seed": 1, "palette": "A" }
+  ],
+  "qc": {
+    "maxLoadSec": 2.0,
+    "autoplayTimeoutSec": 45
+  }
+}

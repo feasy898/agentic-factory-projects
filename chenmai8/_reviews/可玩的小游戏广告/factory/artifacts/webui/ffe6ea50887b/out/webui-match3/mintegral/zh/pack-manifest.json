@@ -1,0 +1,36 @@
+{
+  "packager": "@pf/packager",
+  "rulesVersion": "1.1.0",
+  "channel": "mintegral",
+  "locale": "zh",
+  "project": "webui-match3",
+  "specPath": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\spec.json",
+  "dist": "D:\\workspace\\澄迈8项目\\可玩的小游戏广告\\factory\\artifacts\\webui\\ffe6ea50887b\\out\\webui-match3\\dist",
+  "maxBytes": 5242880,
+  "packageFiles": [
+    "webui-match3-zh.zip"
+  ],
+  "files": [
+    {
+      "path": "webui-match3-zh.zip",
+      "bytes": 343253,
+      "sha256": "f6d214c6900b9a2233c64c811fc233b469414c3134465ad22a0129867613a8fd",
+      "role": "package"
+    },
+    {
+      "path": "Template.html",
+      "bytes": 1242449,
+      "sha256": "1db75ded552731c9195abdfa78ba9edd7bcd2b784ff7d2d0c571ce04b5407fd6",
+      "role": "entry-in-zip"
+    },
+    {
+      "path": "build.js",
+      "bytes": 55,
+      "sha256": "c313221de22848013f4e599101039b18d1bb4a7af3041bc31d299b1a652bc9ae",
+      "role": "bundle-in-zip"
+    }
+  ],
+  "warnings": [
+    "dist 内没有外链 <script>，build.js 为空占位"
+  ]
+}

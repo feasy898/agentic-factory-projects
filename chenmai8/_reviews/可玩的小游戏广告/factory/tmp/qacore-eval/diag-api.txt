@@ -1,0 +1,8 @@
+2026-09-29T23:12:10.528Z pw:api => browser.newContext started
+2026-09-29T23:12:10.540Z pw:api <= browser.newContext succeeded
+2026-09-29T23:12:10.541Z pw:api => browserContext.newPage started
+2026-09-29T23:12:11.067Z pw:api <= browserContext.newPage succeeded
+2026-09-29T23:12:11.089Z pw:api => page.addInitScript started
+2026-09-29T23:12:11.093Z pw:api <= page.addInitScript succeeded
+2026-09-29T23:12:11.094Z pw:api => page.addInitScript started
+2026-09-29T23:12:11.096Z pw:api <= page.addInitScript succeeded

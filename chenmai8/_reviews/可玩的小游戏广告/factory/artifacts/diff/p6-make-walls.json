@@ -1,0 +1,15 @@
+{
+  "capturedAt": "2026-09-30",
+  "protocol": "同一台共享机串行执行；--locales en,zh --channels all --no-serve；含首个 single-html 渠道 qacore --autoplay 质检与 demo-prebuilt 兜底",
+  "factoryWallSec": 38.0,
+  "factoryExit": 0,
+  "factoryTail": ["[make] PASS：12 个渠道包 + 质检报告 + 二维码 + demo-prebuilt 兜底，exit 0"],
+  "factoryDemoPrebuilt": true,
+  "oracleWallSec": 40.5,
+  "oracleExit": 0,
+  "oracleTail": ["[make] PASS：12 个渠道包 + 质检报告 + 二维码 + demo-prebuilt 兜底，exit 0"],
+  "oracleRecordBaselineSec": 28.9,
+  "oracleRecordBaselineSource": "repo/docs/assets/specs/pipeline-contract.md §5（留档实测 28.9s）+ repo/README.md:26（留档 28.9s、最近 45.36s）",
+  "timingShell": "factory/tmp/p6-run-make.cjs（node perf_hooks 墙钟，编排入口→退出）",
+  "notes": "oracle 同条件本机实测 40.5s 高于其留档 28.9s（留档为安静机数据，本机多代理共享负载）；本会话 oracle 冻结 e2e 全矩阵同机实测 655.2s 亦高于其早前 361.6s，同证负载差异。"
+}

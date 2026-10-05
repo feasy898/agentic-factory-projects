@@ -1,0 +1,6 @@
+[make] 根目录：D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\demo-prebuilt（渠道包 3 · 质检报告 1 · 预览 1）
+[make] 汇总页（本页）：http://192.168.0.215:8630/（本机 http://127.0.0.1:8630/）
+[make] LAN 预览：http://192.168.0.215:8630/preview/golden-match3-en.html
+[make] 二维码：D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\demo-prebuilt\qr.png → http://192.168.0.215:8630/preview/golden-match3-en.html
+[make] SERVE port=8630 landing_url=http://192.168.0.215:8630/ preview_url=http://192.168.0.215:8630/preview/golden-match3-en.html qr=D:\workspace\澄迈8项目\可玩的小游戏广告\factory\artifacts\demo-prebuilt\qr.png
+[make] 伺服中 0.0.0.0:8630（Ctrl+C 停止）…

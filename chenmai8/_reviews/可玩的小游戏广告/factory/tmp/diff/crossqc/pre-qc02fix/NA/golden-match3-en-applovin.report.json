@@ -1,0 +1,787 @@
+{
+  "channel": "applovin",
+  "url": "http://127.0.0.1:2991/index.html",
+  "autoplay": true,
+  "pf": {
+    "present": true,
+    "readyMs": 120,
+    "endMs": 30131,
+    "endWin": true
+  },
+  "checks": [
+    {
+      "id": "CHK01",
+      "name": "包体大小 ≤ 渠道上限",
+      "status": "pass",
+      "detail": "1242922 B ≤ 上限 5242880 B"
+    },
+    {
+      "id": "CHK02",
+      "name": "文件数 ≤ 渠道上限",
+      "status": "skip",
+      "detail": "未实装（当前输入为单 HTML 文件，无目录清点）"
+    },
+    {
+      "id": "CHK03",
+      "name": "零外网请求",
+      "status": "pass",
+      "detail": "两趟共 4 条请求均指向本地伺服地址，无外网请求、无外部 WebSocket、无 WebRTC 构造"
+    },
+    {
+      "id": "CHK04",
+      "name": "首交互前静音",
+      "status": "fail",
+      "detail": "首交互前存在 running AudioContext（1）"
+    },
+    {
+      "id": "CHK05",
+      "name": "横竖屏渲染非空白",
+      "status": "pass",
+      "detail": "390×844 与 844×390 双仿真像素方差 1284/593 ≥ 阈值 30"
+    },
+    {
+      "id": "CHK06",
+      "name": "渠道退出接口调用",
+      "status": "skip",
+      "detail": "未实装（渠道 stub 注入属 M8 后续里程碑）"
+    },
+    {
+      "id": "CHK07",
+      "name": "自动试玩到结束页",
+      "status": "pass",
+      "detail": "pf:end 于 30131ms 触发（win=True，gestures=19），结束页可见"
+    },
+    {
+      "id": "CHK08",
+      "name": "控制台零错误",
+      "status": "pass",
+      "detail": "两趟均无 console error 与 pageerror"
+    },
+    {
+      "id": "CHK09",
+      "name": "本地加载 ≤2s",
+      "status": "pass",
+      "detail": "load 耗时 866ms"
+    },
+    {
+      "id": "CHK10",
+      "name": "多语言文案与素材上屏",
+      "status": "pass",
+      "detail": "渲染文案命中 5/5（集合共 30 条，active+visible 采样核验通过）"
+    }
+  ],
+  "screenshot": "golden-match3-en-applovin.report.png",
+  "requests": [
+    {
+      "url": "http://127.0.0.1:2991/index.html",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "blocked": false,
+      "failed": false
+    },
+    {
+      "url": "http://127.0.0.1:2991/mraid.js",
+      "method": "GET",
+      "resource_type": "script",
+      "status": 200,
+      "blocked": false,
+      "failed": false,
+      "stub": true
+    },
+    {
+      "url": "http://127.0.0.1:2991/index.html",
+      "method": "GET",
+      "resource_type": "document",
+      "status": 200,
+      "blocked": false,
+      "failed": false
+    },
+    {
+      "url": "http://127.0.0.1:2991/mraid.js",
+      "method": "GET",
+      "resource_type": "script",
+      "status": 200,
+      "blocked": false,
+      "failed": false,
+      "stub": true
+    }
+  ],
+  "facts": {
+    "artifact_bytes": 1242922,
+    "channel": "applovin",
+    "channel_max_bytes": 5242880,
+    "channel_mute_required": true,
+    "external_requests": [],
+    "runtime_stubs": [
+      "http://127.0.0.1:2991/mraid.js"
+    ],
+    "rtc_connections": 0,
+    "request_count": 4,
+    "console_errors": [],
+    "load_ms": 866.0992000000001,
+    "max_load_sec": 2,
+    "autoplay_enabled": true,
+    "autoplay_timeout_sec": 45,
+    "muteLoadTime": {
+      "has_canvas": true,
+      "variance": 1284.467116355896,
+      "probeInstalled": true,
+      "enabled": true,
+      "timeoutSec": 45,
+      "reachedState": "end",
+      "gestures": 19,
+      "firstMutedBeforeInteraction": true,
+      "audioRunningBeforeInteraction": 1,
+      "mediaUnmutedBeforeInteraction": 0,
+      "mediaPlaysBeforeInteraction": 0,
+      "mutedAfterFirstGesture": false,
+      "pfEndFired": true,
+      "pfEndMs": 30131,
+      "pfEndWin": true,
+      "pfReadyMs": 120,
+      "endScreenVisible": true,
+      "qcHooksPresent": true,
+      "textStatesHook": true,
+      "qcTexts": [
+        "0/30",
+        "11/30",
+        "14/30",
+        "19/30",
+        "21/30",
+        "24/30",
+        "25/30",
+        "27/30",
+        "28/30",
+        "29/30",
+        "30/30",
+        "Drag to match 3 gems!",
+        "Gem Rush (Playable Demo)",
+        "Play Now",
+        "Score  2810",
+        "You Win!",
+        "×10",
+        "×11",
+        "×12",
+        "×13",
+        "×14",
+        "×15",
+        "×2",
+        "×3",
+        "×4",
+        "×5",
+        "×6",
+        "×7",
+        "×8",
+        "×9"
+      ],
+      "qcVisibleTexts": [
+        "0/30",
+        "11/30",
+        "14/30",
+        "19/30",
+        "21/30",
+        "24/30",
+        "25/30",
+        "27/30",
+        "28/30",
+        "29/30",
+        "30/30",
+        "Drag to match 3 gems!",
+        "Gem Rush (Playable Demo)",
+        "Play Now",
+        "Score  2810",
+        "You Win!",
+        "×10",
+        "×11",
+        "×12",
+        "×13",
+        "×14",
+        "×15",
+        "×2",
+        "×3",
+        "×4",
+        "×5",
+        "×6",
+        "×7",
+        "×8",
+        "×9"
+      ],
+      "page_texts": [
+        "0/30",
+        "11/30",
+        "14/30",
+        "19/30",
+        "21/30",
+        "24/30",
+        "25/30",
+        "27/30",
+        "28/30",
+        "29/30",
+        "30/30",
+        "Drag to match 3 gems!",
+        "Gem Rush (Playable Demo)",
+        "Play Now",
+        "Score  2810",
+        "You Win!",
+        "×10",
+        "×11",
+        "×12",
+        "×13",
+        "×14",
+        "×15",
+        "×2",
+        "×3",
+        "×4",
+        "×5",
+        "×6",
+        "×7",
+        "×8",
+        "×9"
+      ],
+      "text_states": [
+        {
+          "text": "0/30",
+          "everVisible": true
+        },
+        {
+          "text": "11/30",
+          "everVisible": true
+        },
+        {
+          "text": "14/30",
+          "everVisible": true
+        },
+        {
+          "text": "19/30",
+          "everVisible": true
+        },
+        {
+          "text": "21/30",
+          "everVisible": true
+        },
+        {
+          "text": "24/30",
+          "everVisible": true
+        },
+        {
+          "text": "25/30",
+          "everVisible": true
+        },
+        {
+          "text": "27/30",
+          "everVisible": true
+        },
+        {
+          "text": "28/30",
+          "everVisible": true
+        },
+        {
+          "text": "29/30",
+          "everVisible": true
+        },
+        {
+          "text": "30/30",
+          "everVisible": true
+        },
+        {
+          "text": "Drag to match 3 gems!",
+          "everVisible": true
+        },
+        {
+          "text": "Gem Rush (Playable Demo)",
+          "everVisible": true
+        },
+        {
+          "text": "Play Now",
+          "everVisible": true
+        },
+        {
+          "text": "Score  2810",
+          "everVisible": true
+        },
+        {
+          "text": "You Win!",
+          "everVisible": true
+        },
+        {
+          "text": "×10",
+          "everVisible": true
+        },
+        {
+          "text": "×11",
+          "everVisible": true
+        },
+        {
+          "text": "×12",
+          "everVisible": true
+        },
+        {
+          "text": "×13",
+          "everVisible": true
+        },
+        {
+          "text": "×14",
+          "everVisible": true
+        },
+        {
+          "text": "×15",
+          "everVisible": true
+        },
+        {
+          "text": "×2",
+          "everVisible": true
+        },
+        {
+          "text": "×3",
+          "everVisible": true
+        },
+        {
+          "text": "×4",
+          "everVisible": true
+        },
+        {
+          "text": "×5",
+          "everVisible": true
+        },
+        {
+          "text": "×6",
+          "everVisible": true
+        },
+        {
+          "text": "×7",
+          "everVisible": true
+        },
+        {
+          "text": "×8",
+          "everVisible": true
+        },
+        {
+          "text": "×9",
+          "everVisible": true
+        }
+      ],
+      "text_states_hook": true,
+      "asset_audit": []
+    },
+    "required_texts": [
+      "Gem Rush (Playable Demo)",
+      "Drag to match 3 gems!",
+      "You Win!",
+      "Play Now",
+      "Score"
+    ],
+    "required_sprites": [],
+    "page_texts": [
+      "0/30",
+      "11/30",
+      "14/30",
+      "19/30",
+      "21/30",
+      "24/30",
+      "25/30",
+      "27/30",
+      "28/30",
+      "29/30",
+      "30/30",
+      "Drag to match 3 gems!",
+      "Gem Rush (Playable Demo)",
+      "Play Now",
+      "Score  2810",
+      "You Win!",
+      "×10",
+      "×11",
+      "×12",
+      "×13",
+      "×14",
+      "×15",
+      "×2",
+      "×3",
+      "×4",
+      "×5",
+      "×6",
+      "×7",
+      "×8",
+      "×9"
+    ],
+    "text_states": [
+      {
+        "text": "0/30",
+        "everVisible": true
+      },
+      {
+        "text": "11/30",
+        "everVisible": true
+      },
+      {
+        "text": "14/30",
+        "everVisible": true
+      },
+      {
+        "text": "19/30",
+        "everVisible": true
+      },
+      {
+        "text": "21/30",
+        "everVisible": true
+      },
+      {
+        "text": "24/30",
+        "everVisible": true
+      },
+      {
+        "text": "25/30",
+        "everVisible": true
+      },
+      {
+        "text": "27/30",
+        "everVisible": true
+      },
+      {
+        "text": "28/30",
+        "everVisible": true
+      },
+      {
+        "text": "29/30",
+        "everVisible": true
+      },
+      {
+        "text": "30/30",
+        "everVisible": true
+      },
+      {
+        "text": "Drag to match 3 gems!",
+        "everVisible": true
+      },
+      {
+        "text": "Gem Rush (Playable Demo)",
+        "everVisible": true
+      },
+      {
+        "text": "Play Now",
+        "everVisible": true
+      },
+      {
+        "text": "Score  2810",
+        "everVisible": true
+      },
+      {
+        "text": "You Win!",
+        "everVisible": true
+      },
+      {
+        "text": "×10",
+        "everVisible": true
+      },
+      {
+        "text": "×11",
+        "everVisible": true
+      },
+      {
+        "text": "×12",
+        "everVisible": true
+      },
+      {
+        "text": "×13",
+        "everVisible": true
+      },
+      {
+        "text": "×14",
+        "everVisible": true
+      },
+      {
+        "text": "×15",
+        "everVisible": true
+      },
+      {
+        "text": "×2",
+        "everVisible": true
+      },
+      {
+        "text": "×3",
+        "everVisible": true
+      },
+      {
+        "text": "×4",
+        "everVisible": true
+      },
+      {
+        "text": "×5",
+        "everVisible": true
+      },
+      {
+        "text": "×6",
+        "everVisible": true
+      },
+      {
+        "text": "×7",
+        "everVisible": true
+      },
+      {
+        "text": "×8",
+        "everVisible": true
+      },
+      {
+        "text": "×9",
+        "everVisible": true
+      }
+    ],
+    "text_states_hook": true,
+    "asset_audit": [],
+    "pf_present": true,
+    "probe_installed": true,
+    "viewport_shots": {
+      "portrait": {
+        "has_canvas": true,
+        "variance": 1284.467116355896,
+        "probeInstalled": true,
+        "enabled": true,
+        "timeoutSec": 45,
+        "reachedState": "end",
+        "gestures": 19,
+        "firstMutedBeforeInteraction": true,
+        "audioRunningBeforeInteraction": 1,
+        "mediaUnmutedBeforeInteraction": 0,
+        "mediaPlaysBeforeInteraction": 0,
+        "mutedAfterFirstGesture": false,
+        "pfEndFired": true,
+        "pfEndMs": 30131,
+        "pfEndWin": true,
+        "pfReadyMs": 120,
+        "endScreenVisible": true,
+        "qcHooksPresent": true,
+        "textStatesHook": true,
+        "qcTexts": [
+          "0/30",
+          "11/30",
+          "14/30",
+          "19/30",
+          "21/30",
+          "24/30",
+          "25/30",
+          "27/30",
+          "28/30",
+          "29/30",
+          "30/30",
+          "Drag to match 3 gems!",
+          "Gem Rush (Playable Demo)",
+          "Play Now",
+          "Score  2810",
+          "You Win!",
+          "×10",
+          "×11",
+          "×12",
+          "×13",
+          "×14",
+          "×15",
+          "×2",
+          "×3",
+          "×4",
+          "×5",
+          "×6",
+          "×7",
+          "×8",
+          "×9"
+        ],
+        "qcVisibleTexts": [
+          "0/30",
+          "11/30",
+          "14/30",
+          "19/30",
+          "21/30",
+          "24/30",
+          "25/30",
+          "27/30",
+          "28/30",
+          "29/30",
+          "30/30",
+          "Drag to match 3 gems!",
+          "Gem Rush (Playable Demo)",
+          "Play Now",
+          "Score  2810",
+          "You Win!",
+          "×10",
+          "×11",
+          "×12",
+          "×13",
+          "×14",
+          "×15",
+          "×2",
+          "×3",
+          "×4",
+          "×5",
+          "×6",
+          "×7",
+          "×8",
+          "×9"
+        ],
+        "page_texts": [
+          "0/30",
+          "11/30",
+          "14/30",
+          "19/30",
+          "21/30",
+          "24/30",
+          "25/30",
+          "27/30",
+          "28/30",
+          "29/30",
+          "30/30",
+          "Drag to match 3 gems!",
+          "Gem Rush (Playable Demo)",
+          "Play Now",
+          "Score  2810",
+          "You Win!",
+          "×10",
+          "×11",
+          "×12",
+          "×13",
+          "×14",
+          "×15",
+          "×2",
+          "×3",
+          "×4",
+          "×5",
+          "×6",
+          "×7",
+          "×8",
+          "×9"
+        ],
+        "text_states": [
+          {
+            "text": "0/30",
+            "everVisible": true
+          },
+          {
+            "text": "11/30",
+            "everVisible": true
+          },
+          {
+            "text": "14/30",
+            "everVisible": true
+          },
+          {
+            "text": "19/30",
+            "everVisible": true
+          },
+          {
+            "text": "21/30",
+            "everVisible": true
+          },
+          {
+            "text": "24/30",
+            "everVisible": true
+          },
+          {
+            "text": "25/30",
+            "everVisible": true
+          },
+          {
+            "text": "27/30",
+            "everVisible": true
+          },
+          {
+            "text": "28/30",
+            "everVisible": true
+          },
+          {
+            "text": "29/30",
+            "everVisible": true
+          },
+          {
+            "text": "30/30",
+            "everVisible": true
+          },
+          {
+            "text": "Drag to match 3 gems!",
+            "everVisible": true
+          },
+          {
+            "text": "Gem Rush (Playable Demo)",
+            "everVisible": true
+          },
+          {
+            "text": "Play Now",
+            "everVisible": true
+          },
+          {
+            "text": "Score  2810",
+            "everVisible": true
+          },
+          {
+            "text": "You Win!",
+            "everVisible": true
+          },
+          {
+            "text": "×10",
+            "everVisible": true
+          },
+          {
+            "text": "×11",
+            "everVisible": true
+          },
+          {
+            "text": "×12",
+            "everVisible": true
+          },
+          {
+            "text": "×13",
+            "everVisible": true
+          },
+          {
+            "text": "×14",
+            "everVisible": true
+          },
+          {
+            "text": "×15",
+            "everVisible": true
+          },
+          {
+            "text": "×2",
+            "everVisible": true
+          },
+          {
+            "text": "×3",
+            "everVisible": true
+          },
+          {
+            "text": "×4",
+            "everVisible": true
+          },
+          {
+            "text": "×5",
+            "everVisible": true
+          },
+          {
+            "text": "×6",
+            "everVisible": true
+          },
+          {
+            "text": "×7",
+            "everVisible": true
+          },
+          {
+            "text": "×8",
+            "everVisible": true
+          },
+          {
+            "text": "×9",
+            "everVisible": true
+          }
+        ],
+        "text_states_hook": true,
+        "asset_audit": []
+      },
+      "landscape": {
+        "has_canvas": true,
+        "variance": 593.1144292354584,
+        "probeInstalled": true,
+        "firstMutedBeforeInteraction": true,
+        "audioRunningBeforeInteraction": 1,
+        "mediaUnmutedBeforeInteraction": 0,
+        "mediaPlaysBeforeInteraction": 0
+      }
+    },
+    "variance_threshold": 30
+  }
+}

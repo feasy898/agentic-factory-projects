@@ -1,0 +1,22 @@
+==============================================================================
+[matrix] 端到端矩阵门 mode=quick specs=[golden-match3.json] locales=[en] channels=[applovin,meta,mintegral,google,unity,tiktok] budget=<=90s
+[matrix] 构建 OK：golden-match3×en（1,242,938B）
+[matrix] 打包 OK：applovin/en index.html 1,242,934B（single-html）
+[matrix] 打包 OK：meta/en index.html 1,242,901B（single-html）
+[matrix] 打包 OK：mintegral/en golden-match3-en.zip 343,440B（zip）
+[matrix] 打包 OK：google/en golden-match3-en.zip 343,276B（zip）
+[matrix] 打包 OK：unity/en golden-match3-en.zip 343,287B（zip）
+[matrix] 打包 OK：tiktok/en golden-match3-en.zip 343,950B（zip）
+[matrix] 质检完成：6 包并行度 4（含单重试 0 格），阶段墙钟 86.7s
+------------------------------------------------------------------------------
+spec                  locale channel         bytes        上限  结果        质检墙钟
+golden-match3.json    en     applovin    1,242,934 5,242,880  pass     52.3s
+golden-match3.json    en     google        343,276 5,242,880  pass     52.8s
+golden-match3.json    en     meta        1,242,901 3,145,728  pass     52.4s
+golden-match3.json    en     mintegral     343,440 5,242,880  pass     53.0s
+golden-match3.json    en     tiktok        343,950 5,242,880  pass     34.2s
+golden-match3.json    en     unity         343,287 5,242,880  pass     34.4s
+------------------------------------------------------------------------------
+[matrix] 总墙钟 97.5s（预算 ≤90s），包 6：pass 6 / fail 0，skip 0
+[matrix] summary.json：artifacts/matrix/summary.json
+[matrix] FAIL：总墙钟 97.5s 超预算 90s

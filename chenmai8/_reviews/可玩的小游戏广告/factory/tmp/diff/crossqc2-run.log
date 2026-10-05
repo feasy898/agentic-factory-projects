@@ -1,0 +1,8 @@
+d2-crossqc: 48 格 × 腿{NA,NB}，并发 2（oracle 判官=venv python -m qacore；新判官=qacore/cli.mjs）
+  [retry] N(golden-sort|en|unity×N(A)) attempt1 exit=1 fails=null
+  [retry] N(golden-sort|zh|applovin×N(A)) attempt1 exit=1 fails=null
+d2-crossqc: 确定性验证 NA 双跑 8 格 → D:\workspace\澄迈8项目\可玩的小游戏广告\factory\tmp\diff\crossqc2\NA-run2
+d2-crossqc: cells=48 wallSec=942.2 regressions=0 expectedQc02=0 diffs=0
+d2-crossqc: meta NA_CHK04_fail=0/48 NB新跑fail格=0 NB≡冻结OB=48/48 det=8/8
+d2-crossqc: PASS（零回归） → D:\workspace\澄迈8项目\可玩的小游戏广告\factory\tmp\diff\crossqc2\crossqc-evidence.json
+EXIT=0
