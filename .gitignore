@@ -26,3 +26,7 @@ __pycache__/
 # ---- OS/编辑器 ----
 .DS_Store
 Thumbs.db
+
+# ---- Windows NUL 设备名残留文件（2026-10-05 追加，绝不入库）----
+nul
+NUL

@@ -115,11 +115,11 @@ windev-01 负责**全部软件面**（bring-up 脚本包、仿真预扫参、训
 ## 7. 资源位置（密钥一律走 Vault/bao，零落盘）
 
 - **tailnet 预授权 key**（可复用、7 天）：bao `secret/chenmai8/tailnet-preauth-3060`
-  （srv-1=100.64.0.6；入网前由 owner 中转给你；入网命令模板：
-  `tailscale up --login-server=https://net.hkmingdajiaoyu.com --authkey <key>`；
+  （srv-1=100.100.0.6；入网前由 owner 中转给你；入网命令模板：
+  `tailscale up --login-server=https://headscale.example.internal --authkey <key>`；
   **机器上严禁装 mihomo 类 TUN 代理**，会弄死 tailscale 数据面）。
 - **四个上游参考仓 URL + 锁定 commit**：bao `secret/chenmai8/upstream-refs`。
-- **COS 凭据**（厂商件镜像/大文件中转）：Vault `secret/tencentcloud`（100.64.0.2:8200）。
+- **COS 凭据**（厂商件镜像/大文件中转）：Vault `secret/tencentcloud`（100.100.0.2:8200）。
 - **GitHub PAT**（owner feasy898）：owner 直接交付给 3060 agent，0600 落盘。
 - **LLM 通道**：3060 的 ZCode CLI 用 minimax 通道（`minimax/MiniMax-M3.1-Flash-Preview`
   作 workflow 子代理模型；GLM-5.3-Flash 兜底）。国内直连无障碍，无需代理。

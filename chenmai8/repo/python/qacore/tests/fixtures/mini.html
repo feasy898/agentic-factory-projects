@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>qacore fixture mini</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #10203a; }
+  body {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 16px;
+    color: #fff; font-family: sans-serif;
+  }
+  canvas { background: #24405f; border-radius: 8px; }
+</style>
+</head>
+<body>
+  <canvas id="stage" width="320" height="240"></canvas>
+  <p id="label">qacore fixture：一块画布与一句文字</p>
+  <script>
+    const ctx = document.getElementById("stage").getContext("2d");
+    ctx.fillStyle = "#ff8a3d";
+    ctx.fillRect(24, 24, 120, 80);
+    ctx.beginPath();
+    ctx.arc(232, 128, 44, 0, Math.PI * 2);
+    ctx.fillStyle = "#39a7ff";
+    ctx.fill();
+    ctx.fillStyle = "#ffd54d";
+    ctx.font = "bold 22px sans-serif";
+    ctx.fillText("MINI", 128, 210);
+  </script>
+  <script>
+    // QC 桥接桩（仅夹具用）：最小实现 window.PF 与 __PF_QC__ 契约，
+    // 让 CHK04（静音）与 CHK07（自动试玩）在夹具上被真实判定而非跳过。
+    (function () {
+      let muted = true;                      // 首交互前必须静音
+      window.PF = {
+        isMuted: function () { return muted; },
+        setMuted: function (v) { muted = !!v; },
+      };
+      let hints = 0;
+      window.__PF_QC__ = {
+        hint: function () {
+          if (hints === 0) {                 // 第一次 hint 即首交互：解除静音
+            document.dispatchEvent(new Event("pf:first-interaction"));
+            muted = false;
+          }
+          hints += 1;
+          if (hints >= 3) {                  // 3 次交互后到达结束页
+            document.dispatchEvent(new CustomEvent("pf:end", { detail: { win: true } }));
+          }
+          return { x: 160, y: 120, type: "tap" };
+        },
+        state: function () { return hints >= 3 ? "end" : "playing"; },
+        endScreenVisible: function () { return hints >= 3; },
+      };
+      document.dispatchEvent(new Event("pf:ready"));
+    })();
+  </script>
+</body>
+</html>
