@@ -14,7 +14,8 @@
     m.delta_e_mean      # CIE76，对 metrology.reference_lab
     m.est_weight_g      # weight_model 决定的估重
 
-配置口径见 config.py 模块 docstring；统计口径见 core.py 模块 docstring。
+配置口径见 config.py 模块 docstring；统计口径见 core.py 模块 docstring；
+大中小筛段（轨2）见 size_bands.py 模块 docstring。
 """
 
 from beaneye.metrology.config import (
@@ -44,6 +45,16 @@ from beaneye.metrology.core import (
     screen_of,
     screen_of_ratio,
 )
+from beaneye.metrology.size_bands import (
+    SizeBand,
+    SizeBandError,
+    SizeBandHistogram,
+    SizeBands,
+    aggregate_sieve_hist,
+    band_of_screen,
+    load_size_bands,
+    size_band_histogram,
+)
 
 __all__ = [
     # 配置
@@ -71,4 +82,13 @@ __all__ = [
     "merge_sides_lab",
     "DELTA_E_BUCKET_WIDTH",
     "DELTA_E_BUCKET_OPEN",
+    # 大中小筛段（轨2）
+    "SizeBand",
+    "SizeBands",
+    "SizeBandHistogram",
+    "SizeBandError",
+    "load_size_bands",
+    "band_of_screen",
+    "size_band_histogram",
+    "aggregate_sieve_hist",
 ]

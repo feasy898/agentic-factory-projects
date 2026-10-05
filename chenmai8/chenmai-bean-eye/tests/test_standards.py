@@ -7,8 +7,9 @@
 
 表驱动 GradeCase 覆盖（spec：≥20 用例）：
 - CQI：0 主 +5 次 = 层级达 Fine（verified:false → passed=False，W13 ⑤）/
-  0 主 +6 次 = 不过 / 1 主 = 不过 / peaberry 不计缺陷；
-- NY/T：一/二/三级阈值与筛目降级链；DB46：特/一/合格阈值 + 全局色差条件；
+  0 主 +6 次 = 降优质档 / 1 主 = 降优质档 / peaberry 不计缺陷；
+- NY/T：一/二/三级阈值与筛目降级链；DB46：理一/二/三级法定百分比阈值
+  （4.3 表 2）+ 一级无严重缺陷 + 粒度降档 + 全局内控色差条件；
 - 引擎横切：sha256、warnings 传递、reasons 模板键格式、BatchResult 不变式、
   未知 id / 非法 YAML（解析 + 语义 + 重复键）的路径行号报错、count_rule。
 """
@@ -143,11 +144,12 @@ class GradeCase:
     sieve_hist: dict[str, int] | None = None
     delta_e: float = 3.0
     expect_grade: str = ""
-    # W13 修复（评审 A/M 项）：出厂三套 YAML 全部 verified:false，引擎对未
-    # 核对阈值一律不给 passed=True（grade 名仍记录实际达到的层级）。默认即
-    # False；全部键置 verified:true 后才可能 passed=True（见
-    # test_all_verified_yields_pass_possible）。显式 expect_passed=False
-    # 的条目保留作审计。
+    # W13 修复（评审 A/M 项）：引擎对未核对阈值一律不给 passed=True（grade
+    # 名仍记录实际达到的层级）。2026-10-02 法定回填后：db46 grades（法定
+    # 数值）verified:true，cqi/nyt 阈值仍 verified:false（协议/国标原文未
+    # 逐条对照）；三套的 metrology/weight 标定项恒 false → warnings 非空
+    # → passed 仍全量阻断（见 test_all_verified_yields_pass_possible）。
+    # 显式 expect_passed=False 的条目保留作审计。
     expect_passed: bool = False
     expect_primary: int = 0
     expect_secondary: int = 0
@@ -156,17 +158,17 @@ class GradeCase:
 
 C = GradeCase  # 简写
 CASES: list[GradeCase] = [
-    # --- CQI Fine Robusta：Fine = 0 主 + ≤5 次（开发指令 §3.3 基线）------
+    # --- CQI Fine Robusta：Fine = 0 主 + ≤5 次（协议公开口径）------------
     C("cqi_0p0s_all_normal_pass", "cqi_fine_robusta", {"normal": 12},
       expect_grade="Fine", expect_primary=0, expect_secondary=0),
     C("cqi_0p5s_boundary_pass", "cqi_fine_robusta", {"broken": 5},
       expect_grade="Fine", expect_secondary=5),
     C("cqi_0p6s_boundary_fail", "cqi_fine_robusta", {"broken": 6},
-      expect_grade="未达 Fine", expect_passed=False, expect_secondary=6),
+      expect_grade="优质", expect_passed=False, expect_secondary=6),  # 6>5 降 Premium 档（总缺陷≤12 双轴近似）
     C("cqi_1p0s_fail", "cqi_fine_robusta", {"black": 1},
-      expect_grade="未达 Fine", expect_passed=False, expect_primary=1),
+      expect_grade="优质", expect_passed=False, expect_primary=1),  # 1 主 ≤12 → 优质档
     C("cqi_1p5s_fail_primary_dominates", "cqi_fine_robusta", {"mold": 1, "broken": 5},
-      expect_grade="未达 Fine", expect_passed=False, expect_primary=1, expect_secondary=5,
+      expect_grade="优质", expect_passed=False, expect_primary=1, expect_secondary=5,
       expect_counts={"mold": 1, "broken": 5}),
     C("cqi_mix_5s_pass", "cqi_fine_robusta", {"broken": 2, "faded": 3},
       expect_grade="Fine", expect_secondary=5,
@@ -174,7 +176,8 @@ CASES: list[GradeCase] = [
     C("cqi_peaberry_not_a_defect", "cqi_fine_robusta", {"peaberry": 7},
       expect_grade="Fine", expect_primary=0, expect_secondary=0,
       expect_counts={"peaberry": 7}),
-    # --- NY/T 604（占位基线：一级 0/8/筛15，二级 2/16/筛14，三级 5/30/筛13）--
+    # --- NY/T 604（国际口径折算基线：一级 0/8/筛15，二级 2/16/筛14，
+    #     三级 5/30/筛13；待 NY/T 604-2020 正式文本替换）------------------
     C("nyt_g1_zero_defect", "nyt_604", {},
       expect_grade="一级"),
     C("nyt_g1_secondary_boundary", "nyt_604", {"broken": 8},
@@ -196,22 +199,28 @@ CASES: list[GradeCase] = [
     C("nyt_sieve_below_all_fail", "nyt_604", {},
       sieve_hist={"12": 1, "15": 30},
       expect_grade="等外", expect_passed=False),  # 三级筛 13：1 粒 12 目 → 等外
-    # --- DB46/T 642（占位基线：特级 0/4/筛14，一级 1/8/筛13，合格 3/18/无筛；
-    #     全局色差条件 delta_e_max=10.0）-----------------------------------
+    # --- DB46/T 642（2026-10-02 法定回填，4.3 表 2：一级 ≤4.0%+0 严重+筛16、
+    #     二级 ≤7.0%+筛14、三级 ≤10.0%+筛12；引擎 v0 以本盘粒数占比近似
+    #     质量%，6.5.4 的 5% 筛差容差在 premium 层如实实现；全局内控色差
+    #     delta_e_max=10.0 为机器内控线，无法定出处）----------------------
     C("db46_special_zero_defect", "db46_t642", {},
-      expect_grade="特级"),
-    C("db46_special_secondary_boundary", "db46_t642", {"brocade": 4},
-      expect_grade="特级", expect_secondary=4),
-    C("db46_secondary_over_to_g1", "db46_t642", {"brocade": 5},
-      expect_grade="一级", expect_secondary=5),
-    C("db46_g1_primary_boundary", "db46_t642", {"insect": 1, "broken": 7},
-      expect_grade="一级", expect_primary=1, expect_secondary=7),
-    C("db46_hege_boundary", "db46_t642", {"black": 3, "broken": 18},
-      expect_grade="合格", expect_primary=3, expect_secondary=18),
+      expect_grade="二级"),  # 缺省 hist 含 15 目 → 一级筛 16 不过 → 二级
+    C("db46_special_secondary_boundary", "db46_t642", {"brocade": 4, "normal": 96},
+      sieve_hist={"16": 100},
+      expect_grade="一级", expect_secondary=4),  # 恰 4.0%（表 2 一级上限）
+    C("db46_secondary_over_to_g1", "db46_t642", {"brocade": 5, "normal": 95},
+      sieve_hist={"16": 100},
+      expect_grade="二级", expect_secondary=5),  # 5% > 4.0% → 落二级（≤7.0%）
+    C("db46_g1_primary_boundary", "db46_t642", {"insect": 1, "broken": 7, "normal": 192},
+      sieve_hist={"16": 200},
+      expect_grade="二级", expect_primary=1, expect_secondary=7),  # 表 2 表尾：一级应无严重缺陷
+    C("db46_hege_boundary", "db46_t642", {"black": 3, "broken": 27, "normal": 270},
+      sieve_hist={"12": 300},
+      expect_grade="三级", expect_primary=3, expect_secondary=27),  # 恰 10.0%（3+27=30 缺陷/300，表 2 三级上限）
     C("db46_over_all_fail", "db46_t642", {"insect": 4},
-      expect_grade="等外", expect_passed=False, expect_primary=4),
+      expect_grade="等外", expect_passed=False, expect_primary=4),  # 4/4=100% > 10.0%
     C("db46_delta_e_boundary_pass", "db46_t642", {}, delta_e=10.0,
-      expect_grade="特级"),  # ≤10.0 恰好达标
+      expect_grade="二级"),  # ≤10.0 内控线恰好达标；缺省 hist 15 目 → 二级
     C("db46_delta_e_over_all_fail", "db46_t642", {}, delta_e=10.01,
       expect_grade="等外", expect_passed=False),  # 全局色差条件压过所有级别
     C("db46_delta_e_over_even_at_hege", "db46_t642", {"insect": 2, "broken": 16},
@@ -219,7 +228,7 @@ CASES: list[GradeCase] = [
       expect_primary=2, expect_secondary=16),
     C("db46_sieve_downgrade_special_to_g1", "db46_t642", {},
       sieve_hist={"13": 6, "16": 40},
-      expect_grade="一级"),  # 特级筛 14：6 粒 13 目 → 降一级
+      expect_grade="三级"),  # 13 目低于一级 16/二级 14 下限 → 三级
 ]
 
 
@@ -278,7 +287,7 @@ def test_list_standards_contains_shipped_three():
 
 
 def test_verified_false_collected_as_warnings():
-    """verified 标志传递：三套出厂 YAML 全部 verified:false → warnings 非空。"""
+    """verified 标志传递：未核对键收集为 warnings（cqi/nyt 阈值 + 三套标定项）。"""
     for sid in SHIPPED:
         std = load_standard(sid)
         assert std.warnings, sid
@@ -291,6 +300,12 @@ def test_verified_false_collected_as_warnings():
     ]
     nyt = load_standard("nyt_604")
     assert any("grades[2](name=三级)" in w for w in nyt.warnings)
+    # db46：法定数值（grades）已 verified:true，warnings 只剩机器标定项
+    db46 = load_standard("db46_t642")
+    assert not any(w.startswith("verified:false @ grades") for w in db46.warnings)
+    assert any("sieve_targets" in w for w in db46.warnings)
+    assert any("reference_lab" in w for w in db46.warnings)
+    assert any("weight" in w for w in db46.warnings)
     # warnings 进入 GradingDecision（M10 页脚角标数据源）
     d = StandardEngineV1(cqi).evaluate([], make_measurements())
     assert d.warnings == list(cqi.warnings)
@@ -391,14 +406,15 @@ def test_decision_embeds_in_batch_result_invariant():
 
 
 def test_reasons_template_key_format_and_content():
-    d = evaluate_case("db46_t642", {"brocade": 5})
+    d = evaluate_case("db46_t642", {"brocade": 4, "normal": 96}, sieve_hist={"16": 100})
     assert d.reasons, "应有 reasons"
     for r in d.reasons:
         assert REASON_RE.match(r), f"reason 格式非法: {r!r}"
     keys = [r.split(":", 1)[0] for r in d.reasons]
     assert "grading.reason.grade_selected" in keys
     assert "grading.reason.primary_within_limit" in keys
-    assert any(r.endswith("grade=一级;index=1") for r in d.reasons)
+    assert "grading.reason.defect_pct_within" in keys  # 法定百分比轴（表 2）
+    assert any(r.endswith("grade=一级;index=0") for r in d.reasons)
     # 全部未达：no_grade_matched + 相对第一级的越限理由
     d2 = evaluate_case("nyt_604", {"sour": 6})
     keys2 = [r.split(":", 1)[0] for r in d2.reasons]

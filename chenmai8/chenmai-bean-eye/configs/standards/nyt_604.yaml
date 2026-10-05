@@ -2,11 +2,30 @@
 # BeanEye 标准配置 · NY/T 604 生咖啡（nyt_604）
 # ---------------------------------------------------------------------
 # 对应农业行业标准《生咖啡》（NY/T 604；2006 版已被 2020 版替代，
-# 2021-04-01 实施）。D1 原文核对未取到等级表全文，本文件的级别命名
-# （一级/二级/三级）与全部阈值是**结构化占位基线**（参照 §3.3 CQI
-# 结构自定、缺陷计数按 300g 样基的公开检索线索），一律 verified: false，
-# 护照页脚显示"标准阈值核对中"角标；取得原文后回填并置 true。
-# 字段语义与判定规则见 cqi_fine_robusta.yaml 文件头（同 schema）。
+# 2021-04-01 实施）。**正式文本暂缺**——本文件阈值为国际口径折算基线，
+# 待 NY/T 604-2020 正式文本替换（取得原文后逐值回填并置 verified:true）。
+#
+# 折算锚点（2026-10-02 回填注记，来源标协议/标准名，见 docs/standards_matrix.md）：
+# - 越南 TCVN 4193:2014：水分 ≤12.5%；缺陷按重量百分比——一级黑绿米
+#   ≤0.6%、破碎等总错 ≤14~16%，二级放宽至 2~3.5%；筛分 90% 留存
+#   （16 号 / 13 号筛档）；
+# - 巴西 COB IN 8/2003 等效表（300 g 计数口径）：黑豆 1=1、酸豆 2=1、
+#   未熟 5=1、虫蛀 2-5=1、贝壳 3=1（n 粒 = 1 个当量缺陷）。
+# v0 粒数轴折算说明：重量百分比 ↔ 粒数当量需平均粒重（本仓暂无称重标定），
+# 下述粒数阈值为上述锚点在 300 g 样基上的保守折算占位（偏严方向），
+# **不宣称等于 NY/T 604-2020 法定限值**；verified 保持 false，护照页脚
+# 显示"标准阈值核对中"角标。
+#
+# v0 判定语义（字段语义）：
+#   grades 从最优到最差排列；定级取第一个满足全部条件的级别。
+#   primary_max        本级允许的主缺陷粒数上限（全样累计，每粒只计一次）
+#   secondary_full_max 本级允许的次缺陷粒数上限（全样累计；peaberry 计量
+#                      不计缺陷，见 configs/taxonomy.yaml counts_as_defect）
+#   sieve_min          本级要求的粒度下限（目数）；null = 不设筛目条件。
+#                      v0 语义：sieve_hist 中 screen < sieve_min 的粒数须为 0
+#                      （比 TCVN「90% 留存」更严的保守解释，待原文核对）
+#   fail_grade         所有级别都未达到时 GradingDecision.grade 的取值
+# count_rule: most_severe_per_bean —— 每粒只按最严重缺陷计一次。
 # =====================================================================
 
 standard: nyt_604
@@ -14,7 +33,7 @@ display:
   zh: NY/T 604 生咖啡
   en: NY/T 604 Green Coffee
   vi: NY/T 604 Cà phê nhân
-sample_g: 300                       # 抽样基量（克）：占位基线，待原文核对
+sample_g: 300                       # 抽样基量（克）：300 g 样基（公开检索线索）
 count_rule: most_severe_per_bean
 severity_order: [normal, broken, faded, brocade, immature, peaberry, shell, elephant, insect, dried, sour, mold, black]
 
@@ -33,14 +52,14 @@ defect_classes:
   mold:     {kind: primary,   zh: 霉豆,          en: mold,      vi: hat moc}
   black:    {kind: primary,   zh: 黑豆,          en: black,     vi: hat den}
 
-grades:                             # 从最优到最差排列（命名与阈值为占位基线）
+grades:                             # 从最优到最差排列（国际口径折算，待正式文本替换）
   - name: 一级
-    primary_max: 0                  # 主缺陷 0 粒
-    secondary_full_max: 8           # 次缺陷全样累计 ≤8 粒
-    sieve_min: 15                   # v0 语义：筛目 <15 的粒数须为 0
-    verified: false
+    primary_max: 0                  # 主缺陷 0 粒（TCVN 一级黑绿米 ≤0.6% 的保守折算上限取 0）
+    secondary_full_max: 8           # 次缺陷全样累计 ≤8 粒（破碎等总错 ≤14~16% 的保守折算）
+    sieve_min: 15                   # v0 语义：筛目 <15 的粒数须为 0（TCVN 16/13 档折中）
+    verified: false                 # 待 NY/T 604-2020 正式文本替换
   - name: 二级
-    primary_max: 2
+    primary_max: 2                  # 黑绿米放宽档（≤2~3.5% 区间折算）
     secondary_full_max: 16
     sieve_min: 14
     verified: false
@@ -54,7 +73,7 @@ fail_grade: 等外
 
 metrology:
   sieve_targets:
-    min_screen: 13                  # 整盘基准目数（占位基线）
+    min_screen: 13                  # 整盘基准目数（TCVN 13 号筛档下限）
     verified: false
   reference_lab: [52, -8, 20]       # 生豆参考色占位（0-255 标度；实测后回填）
   reference_lab_verified: false
@@ -64,3 +83,12 @@ weight:
   model: area_linear
   g_per_mm2: 0.00042                # 占位系数；到货后标定回填
   verified: false
+
+notes:
+  - 水分锚点：TCVN 4193:2014 ≤12.5%（v0 管线无水分计，暂不进判定；接水
+    分计后经 premium 层核）。
+  - 巴西 COB 等效因子（黑豆 1=1、酸豆 2=1、未熟 5=1、虫蛀 2-5=1、贝壳
+    3=1，300 g 计数口径）v0 未启用（taxonomy 单粒单缺陷口径）；折算升级位
+    见 docs/standards_matrix.md §1。
+  - 取得 NY/T 604-2020 正式文本后：逐值回填 grades/metrology，置
+    verified:true，并删除本文件「国际口径折算」注记。

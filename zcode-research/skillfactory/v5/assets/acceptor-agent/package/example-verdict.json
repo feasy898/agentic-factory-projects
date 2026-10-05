@@ -1,0 +1,11 @@
+{
+  "verdict": "PASS",
+  "deliverable_path": "zcode-research/skillfactory/v5/assets/hotwords/out/oracle_student/out/manifest.json",
+  "checks": [
+    { "name": "manifest_exists", "passed": true, "evidence": "zcode-research/skillfactory/v5/assets/hotwords/out/oracle_student/out/manifest.json（文件存在，all_pass=true）", "status": "verified" },
+    { "name": "eval_green", "passed": true, "evidence": "python eval/runner.py out/oracle_student/out oracle/out → exit 0，4/4 checks", "status": "verified" },
+    { "name": "red_path_intact", "passed": true, "evidence": "python eval/runner.py _red_empty oracle/out → exit 1", "status": "verified" }
+  ],
+  "blockers": [],
+  "boundary_note": "本验收仅判定交付物是否符合任务卡与确定性门；不对该资产的商业效果、学员收益或就业前景作任何判断。"
+}

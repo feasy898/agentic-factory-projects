@@ -1,0 +1,9 @@
+{
+  "agent_md_required_sections": ["职责", "输出契约", "禁令"],
+  "schema_required_top_fields": ["verdict", "deliverable_path", "checks", "blockers", "boundary_note"],
+  "verdict_enum": ["PASS", "FAIL"],
+  "check_item_required": ["name", "passed", "evidence", "status"],
+  "check_status_enum": ["verified", "judged"],
+  "example_verdict_must_validate": true,
+  "agent_md_required_prohibition_phrases": ["禁止修改", "禁止把未跑过的检查标 verified"]
+}

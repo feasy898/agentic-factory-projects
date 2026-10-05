@@ -689,23 +689,31 @@ def write_batch(
     *,
     index: int = 1,
     with_rle: bool = True,
+    img_ext: str = ".png",
+    jpeg_quality: int = 92,
 ) -> dict[str, Path]:
     """落盘一个合成 batch：整盘双面图 + labels JSON + manifest.yaml。
 
     manifest.yaml 与 configs/synth.yaml 同 schema（标准 YAML 输入格式），
     另带 seed/scan_id/文件清单——回读 :func:`load_compose_config` 后以同
     seed 可字节级复现本批。
+    ``img_ext`` 支持图像后缀（默认 ".png"；".jpg" 时按 ``jpeg_quality``
+    编码，磁盘预算受限的全量产出用）。
     """
+    ext = img_ext.lower()
+    params: list[int] = []
+    if ext in (".jpg", ".jpeg"):
+        params = [int(cv2.IMWRITE_JPEG_QUALITY), int(jpeg_quality)]
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     stem = f"{tray.scan_id}"
-    top_p = out / f"top_{index:04d}.png"
-    bottom_p = out / f"bottom_{index:04d}.png"
+    top_p = out / f"top_{index:04d}{ext}"
+    bottom_p = out / f"bottom_{index:04d}{ext}"
     labels_p = out / f"labels_{index:04d}.json"
     manifest_p = out / f"manifest_{index:04d}.yaml"
 
-    imwrite_bgr(top_p, tray.top_bgr)
-    imwrite_bgr(bottom_p, tray.bottom_bgr)
+    imwrite_bgr(top_p, tray.top_bgr, params=params)
+    imwrite_bgr(bottom_p, tray.bottom_bgr, params=params)
     labels = labels_to_json(tray, with_rle=with_rle)
     write_json(labels_p, labels)
 

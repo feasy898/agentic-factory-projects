@@ -1,0 +1,158 @@
+{
+  "archive": {
+    "bytes": 10582914,
+    "path": "_downloads/ext-scaa17_v5_coco.zip",
+    "sha256": "29e8fca64aebe2d6cddf57fd324c2e6f621442856bb75746225688a065ee652f"
+  },
+  "categories": [
+    "Black",
+    "Broken",
+    "Cut",
+    "Dry Cherry",
+    "Fade",
+    "Floater",
+    "Fungus Damage",
+    "Husk",
+    "Immature",
+    "Insect Damage",
+    "Parchment",
+    "Shell",
+    "Sour",
+    "Withered",
+    "objects"
+  ],
+  "category_histogram": {
+    "Black": 185,
+    "Broken": 103,
+    "Cut": 106,
+    "Dry Cherry": 89,
+    "Fade": 52,
+    "Floater": 74,
+    "Fungus Damage": 117,
+    "Husk": 77,
+    "Immature": 101,
+    "Insect Damage": 185,
+    "Parchment": 85,
+    "Shell": 89,
+    "Sour": 196,
+    "Withered": 76
+  },
+  "coco_validation": {
+    "annotation_files": 3,
+    "categories": [
+      "Black",
+      "Broken",
+      "Cut",
+      "Dry Cherry",
+      "Fade",
+      "Floater",
+      "Fungus Damage",
+      "Husk",
+      "Immature",
+      "Insect Damage",
+      "Parchment",
+      "Shell",
+      "Sour",
+      "Withered",
+      "objects"
+    ],
+    "category_histogram": {
+      "Black": 185,
+      "Broken": 103,
+      "Cut": 106,
+      "Dry Cherry": 89,
+      "Fade": 52,
+      "Floater": 74,
+      "Fungus Damage": 117,
+      "Husk": 77,
+      "Immature": 101,
+      "Insect Damage": 185,
+      "Parchment": 85,
+      "Shell": 89,
+      "Sour": 196,
+      "Withered": 76
+    },
+    "problems": [],
+    "splits": {
+      "test": {
+        "annotations": 65,
+        "category_histogram": {
+          "Black": 6,
+          "Broken": 1,
+          "Cut": 7,
+          "Dry Cherry": 1,
+          "Fade": 2,
+          "Floater": 2,
+          "Fungus Damage": 4,
+          "Husk": 1,
+          "Immature": 8,
+          "Insect Damage": 9,
+          "Parchment": 3,
+          "Shell": 4,
+          "Sour": 13,
+          "Withered": 4
+        },
+        "images": 64,
+        "missing_images": 0,
+        "polygon_annotations": 0
+      },
+      "train": {
+        "annotations": 1253,
+        "category_histogram": {
+          "Black": 161,
+          "Broken": 84,
+          "Cut": 84,
+          "Dry Cherry": 80,
+          "Fade": 40,
+          "Floater": 58,
+          "Fungus Damage": 99,
+          "Husk": 61,
+          "Immature": 77,
+          "Insect Damage": 150,
+          "Parchment": 70,
+          "Shell": 73,
+          "Sour": 157,
+          "Withered": 59
+        },
+        "images": 1224,
+        "missing_images": 0,
+        "polygon_annotations": 0
+      },
+      "valid": {
+        "annotations": 217,
+        "category_histogram": {
+          "Black": 18,
+          "Broken": 18,
+          "Cut": 15,
+          "Dry Cherry": 8,
+          "Fade": 10,
+          "Floater": 14,
+          "Fungus Damage": 14,
+          "Husk": 15,
+          "Immature": 16,
+          "Insect Damage": 26,
+          "Parchment": 12,
+          "Shell": 12,
+          "Sour": 26,
+          "Withered": 13
+        },
+        "images": 212,
+        "missing_images": 0,
+        "polygon_annotations": 0
+      }
+    }
+  },
+  "export_id": null,
+  "format": "coco",
+  "internal_name": "ext-scaa17",
+  "license": "未声明（以导出包/项目页实际声明为准）",
+  "source_ref": "真实来源坐标（URL/workspace/project/许可页）只登记在本机外部登记文件 C:/devsetup/dataset_sources.txt（不入库）；本 manifest 仅持中性代号",
+  "tool": "scripts/download_datasets.py v2",
+  "totals": {
+    "annotations": 1535,
+    "images": 1500,
+    "polygon_annotations": 0
+  },
+  "version": 5,
+  "written_at_utc": "2026-10-03T03:25:36Z"
+}

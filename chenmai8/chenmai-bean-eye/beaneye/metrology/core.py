@@ -35,6 +35,11 @@
    的粒占比 ≤ ``max_below_frac``（默认 0 = 全部达标）为过；无筛目目标或
    空盘 → ``None``（不判定）。色差布尔（``delta_e_max`` 对照）归 M9 定级
    消费，M8 只产出 ``delta_e_mean``/``delta_e_hist``。
+5. **大中小筛段（轨2，v1.2 增补）**：``size_band_hist``/``size_band_frac``
+   由 ``sieve_hist`` 按整目数聚合（大 ≥17 / 中 15-16 / 小 ≤14，口径与来源
+   见 ``configs/size_bands.yaml``；``size_bands.aggregate_sieve_hist`` 与逐粒
+   ``size_band_histogram`` 恒一致）；筛段配置缺失/非法时两字段为空映射
+   （契约兼容：老字段语义不变）。
 
 两面皆 ``None`` 的占位 ``PairedBean``（契约允许、正常配对不会产出）不进
 任何统计，``bean_count`` 也不计。
@@ -226,6 +231,17 @@ def measure(
             key=lambda kv: int(kv[0]),
         )
     )
+    # ---- 大中小筛段（轨2）：与 sieve_hist 同源聚合；筛段配置不可用时置空 ----
+    # 函数内导入（size_bands 顶层反向依赖 core.screen_of，避免循环导入）
+    from beaneye.metrology.size_bands import SizeBandError, aggregate_sieve_hist
+
+    try:
+        size_band_hist: dict[str, int] = aggregate_sieve_hist(sieve_hist)
+    except SizeBandError:
+        size_band_hist = {}  # configs/size_bands.yaml 缺失/非法 → 功能关闭（契约兼容）
+    size_band_frac: dict[str, float] = {
+        k: (v / n if n else 0.0) for k, v in size_band_hist.items()
+    }
     if n == 0 or config.min_screen is None:
         sieve_pass: bool | None = None
     else:
@@ -279,4 +295,6 @@ def measure(
         delta_e_hist=delta_e_hist,
         est_weight_g=est_weight_g,
         weight_model=config.weight_model_tag,
+        size_band_hist=size_band_hist,
+        size_band_frac=size_band_frac,
     )

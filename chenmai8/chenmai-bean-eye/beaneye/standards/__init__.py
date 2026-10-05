@@ -22,6 +22,14 @@ __all__ = [
     "list_standards",
     "StandardEngineV1",
     "load_engine",
+    "DEFAULT_PREMIUM_BASIS_ID",
+    "evaluate_premium",
+    "premium_or_commercial",
+    "DB46Legal",
+    "DB46LegalError",
+    "DB46PhysGrade",
+    "db46_legal_grade",
+    "load_db46_legal",
 ]
 
 _LAZY = {
@@ -36,6 +44,15 @@ _LAZY = {
     "list_standards": ("beaneye.standards.loader", "list_standards"),
     "StandardEngineV1": ("beaneye.standards.engine", "StandardEngineV1"),
     "load_engine": ("beaneye.standards.engine", "load_engine"),
+    # 轨3 精品/普通判定层 + DB46 法定表
+    "DEFAULT_PREMIUM_BASIS_ID": ("beaneye.standards.premium", "DEFAULT_PREMIUM_BASIS_ID"),
+    "evaluate_premium": ("beaneye.standards.premium", "evaluate_premium"),
+    "premium_or_commercial": ("beaneye.standards.premium", "premium_or_commercial"),
+    "DB46Legal": ("beaneye.standards.db46_legal", "DB46Legal"),
+    "DB46LegalError": ("beaneye.standards.db46_legal", "DB46LegalError"),
+    "DB46PhysGrade": ("beaneye.standards.db46_legal", "DB46PhysGrade"),
+    "db46_legal_grade": ("beaneye.standards.db46_legal", "db46_legal_grade"),
+    "load_db46_legal": ("beaneye.standards.db46_legal", "load_db46_legal"),
 }
 
 

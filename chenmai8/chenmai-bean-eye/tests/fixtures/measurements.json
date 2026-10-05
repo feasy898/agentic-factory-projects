@@ -25,5 +25,15 @@
     "4-8": 100
   },
   "est_weight_g": 196.0,
-  "weight_model": "area_linear:v1"
+  "weight_model": "area_linear:v1",
+  "size_band_hist": {
+    "large": 0,
+    "medium": 80,
+    "small": 270
+  },
+  "size_band_frac": {
+    "large": 0.0,
+    "medium": 0.22857142857142856,
+    "small": 0.7714285714285715
+  }
 }

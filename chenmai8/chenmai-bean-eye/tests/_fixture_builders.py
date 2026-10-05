@@ -226,6 +226,10 @@ def measurements() -> Measurements:
         delta_e_hist={"0-2": 90, "2-4": 160, "4-8": 100},
         est_weight_g=196.0,
         weight_model="area_linear:v1",
+        # 轨2 大中小筛段（v1.2 增补）：与 sieve_hist 同源聚合
+        # （大 ≥17 / 中 15-16 / 小 ≤14，configs/size_bands.yaml 口径）
+        size_band_hist={"large": 0, "medium": 80, "small": 270},
+        size_band_frac={"large": 0.0, "medium": 80 / 350, "small": 270 / 350},
     )
 
 
@@ -280,6 +284,9 @@ def measurements_for_batch() -> Measurements:
         delta_e_hist={"2-4": 3},
         est_weight_g=19.6,
         weight_model="area_linear:v1",
+        # 轨2 大中小筛段：14 目×2 → small、15 目×1 → medium（与 sieve_hist 同源）
+        size_band_hist={"large": 0, "medium": 1, "small": 2},
+        size_band_frac={"large": 0.0, "medium": 1 / 3, "small": 2 / 3},
     )
 
 

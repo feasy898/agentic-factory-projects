@@ -1,0 +1,85 @@
+{
+  "template": "周报",
+  "title": "研发部工作周报",
+  "filled_fields": [
+    "部门",
+    "填报人",
+    "周期",
+    "本周工作内容",
+    "下周工作计划",
+    "问题与需协调事项",
+    "报送日期"
+  ],
+  "missing_fields": [],
+  "fields": [
+    {
+      "name": "部门",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "研发部"
+    },
+    {
+      "name": "填报人",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "王小明"
+    },
+    {
+      "name": "周期",
+      "required": true,
+      "kind": "text",
+      "status": "filled",
+      "value": "2026-09-21 至 2026-09-27"
+    },
+    {
+      "name": "本周工作内容",
+      "required": true,
+      "kind": "list",
+      "status": "filled",
+      "value": [
+        "完成打分器 v0.9 与评测台联调",
+        "修复评测集 3 处标注不一致问题"
+      ]
+    },
+    {
+      "name": "下周工作计划",
+      "required": true,
+      "kind": "list",
+      "status": "filled",
+      "value": [
+        "启动回归测试全量跑批",
+        "输出周度质量报告初稿"
+      ]
+    },
+    {
+      "name": "问题与需协调事项",
+      "required": false,
+      "kind": "list",
+      "status": "filled",
+      "value": [
+        "测试机资源紧张，需协调一台 GPU 机器"
+      ]
+    },
+    {
+      "name": "报送日期",
+      "required": false,
+      "kind": "text",
+      "status": "filled",
+      "value": "2026-09-28"
+    }
+  ],
+  "summary": {
+    "total": 7,
+    "filled": 7,
+    "missing": 0,
+    "missing_required": 0,
+    "missing_required_names": [],
+    "unknown_keys": []
+  },
+  "outputs": {
+    "docx": "oracle\\out\\周报\\case1\\文书.docx",
+    "fields_json": "oracle\\out\\周报\\case1\\fields.json"
+  }
+}
