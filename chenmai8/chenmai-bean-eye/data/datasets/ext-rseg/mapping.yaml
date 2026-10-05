@@ -1,0 +1,23 @@
+# =========================================================================
+# ext-rseg（罗布斯塔豆实例分割集，4 类多边形）→ taxonomy 13 类 映射表
+# -------------------------------------------------------------------------
+# 语义对齐 train/prepare_coco.py --mapping-yaml（--mapping-source ext-rseg）。
+# 状态：类别名依据 2026-10-02 公开项目页核验（Instance Segmentation、418 图、
+#       4 类、CC BY 4.0）；**下载后必须**做两件事：
+#   1) 对照 content/*/_annotations.coco.json 的 categories 复核本表增删；
+#   2) 【绿豆占比核验】该项目所属 workspace 名称含 "Roasted"，其复数姊妹
+#      项目带烘焙专属类（Quaker/Scorched），图源同池——必须抽样看图判定
+#      绿豆/烘焙豆占比：若「Good beans/Insect damage」样本以烘焙豆为主，
+#      则全表作废（全部改 null，登记册记录结论）；若以绿豆为主，按下表启用。
+#      样本核对结论记入 data/datasets/dataset_registry.md。
+# =========================================================================
+ext-rseg:
+  # —— 待核验后启用（绿豆占比核验通过的前提）——
+  # 2026-10-03 实测：主源无版本，经备选 robusta-coffee-bean-defects 下载成功，
+  # 实际导出类名 5 类（与页面预核的 4 类有出入）：Broken-Chipped 为连字符键，
+  # 另增 defects 粗标桶类。
+  "Black":           black    # 黑豆：若样本为绿生豆黑粒 → black；若为烘焙深色豆 → null
+  "Broken-Chipped":  broken   # 破碎/缺口（实测键名连字符）：物理破损表型不因烘焙改变 → broken
+  "Good beans":      normal   # 好豆：前提是样本确为绿生豆（核验项）
+  "Insect damage":   insect   # 虫蛀孔洞：物理虫害表型 → insect（核验项：确认非烘焙豆图）
+  "defects":         null     # 粗标缺陷桶（实测新增，2026-10-03）：无细分语义，不映射

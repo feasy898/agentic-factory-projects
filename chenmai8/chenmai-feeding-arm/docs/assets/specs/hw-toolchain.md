@@ -1,8 +1,14 @@
-# hw-toolchain spec（真机工具链占位：FeetechArm + bring-up + 真机 eval 清单）
+# hw-toolchain spec（真机工具链：FeetechArm + bring-up + 真机 eval 清单）
 
-> 状态：**planned（占位）**——接口与参数已冻结（fail-closed 骨架），全部实现与脚本随硬件
-> bring-up（T10）补齐。本页对照 `chengshao/cs_arm/feetech.py` 与开发指令 §5.9 逐行核验于
-> 2026-09-29；**§3 清单中的真机 eval 命令当前均无实现入口（如实记录，勿凭本文误以为已存在）**。
+> 状态（2026-10-02 更新）：**B1 已交付**（tag `sw-b1-bringup-v1.0`）——§3 的五个真机入口
+> （calibrate_handeye / camera_check / safety_drill / cs_arm.eval_hw / cs_arm.eval_scoop）
+> 均已实现：mock dry-run 全绿（pytest 21 用例 + 6 份 mock 证据 JSON），真机分支
+> fail-closed（exit 2 / HardwareUnavailable）。**真机 eval 结论仍待 T10 硬件 bring-up
+> 实测**——本文"当前均无实现入口"的旧表述已作废。
+> 本页其余部分对照 `chengshao/cs_arm/feetech.py` 与开发指令 §5.9（2026-09-29 核验）。
+> 独立复核修复记录（2026-10-02）：失败标定不得落 `config/calib/`（防失败外参被装载，
+> calibrate_handeye 已加安全闸）；eval_scoop 混合食物参数来源 bug 已修；camera_check
+> 模块 docstring 过强表述已订正。
 
 ---
 

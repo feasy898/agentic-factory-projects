@@ -11,8 +11,11 @@
    ``per_side`` 计数与契约 ``BatchResult.defect_counts`` 不变式冲突，
    显式抛 :class:`StandardsError`）；
 2. 主/次缺陷分计（peaberry 计量不计缺陷，见 configs/taxonomy.yaml）；
-3. 逐 grade 判定（grades 从最优到最差，取第一个满足全部条件者）：
+3. 逐 grade 判定（grades 从最优到最差，取第一个满足全部条件者；三条限定轴
+   均可选，null = 该轴不设限）：
    主缺陷数 ≤ primary_max、次缺陷数 ≤ secondary_full_max、
+   缺陷豆总量占比 ≤ defect_pct_max（(主+次)/本盘粒数×100，v0 粒数占比近似
+   质量百分比——DB46/T 642—2024 表 2 口径；空盘记 0.0）、
    筛目条件（grade.sieve_min 非 null 时，sieve_hist 中 screen < sieve_min
    的粒数须为 0，v0 语义待原文核对）、全局色差条件
    （metrology.delta_e_max 非 null 时 delta_e_mean ≤ 该值）；
@@ -117,17 +120,23 @@ class StandardEngineV1:
         hist = count_defects(beans)  # 每粒只计一次（W7 实现，与契约交叉验证）
         primary, secondary = primary_secondary_counts(beans)
         de_max = std.metrology.delta_e_max
+        # 法定百分比轴（GradeRule.defect_pct_max）：缺陷豆总量占比（v0 以粒数
+        # 占比近似质量百分比，同密度假设；分母=本盘粒数，与 tray_count 注记
+        # 同一口径）。空盘（无豆）定义为 0.0（无缺陷即无占比）。
+        n_beans = len(beans)
+        defect_pct = ((primary + secondary) / n_beans * 100.0) if n_beans else 0.0
 
         def conditions(g: GradeRule) -> tuple[bool, int]:
             """返回 (该级全部条件是否满足, 低于筛目下限的粒数)。"""
-            ok_p = primary <= g.primary_max
-            ok_s = secondary <= g.secondary_full_max
+            ok_p = g.primary_max is None or primary <= g.primary_max
+            ok_s = g.secondary_full_max is None or secondary <= g.secondary_full_max
+            ok_pct = g.defect_pct_max is None or defect_pct <= g.defect_pct_max
             below = (
                 _below_sieve_count(std, measurements, g.sieve_min) if g.sieve_min is not None else 0
             )
             ok_sv = g.sieve_min is None or below == 0
             ok_de = de_max is None or measurements.delta_e_mean <= de_max
-            return (ok_p and ok_s and ok_sv and ok_de), below
+            return (ok_p and ok_s and ok_pct and ok_sv and ok_de), below
 
         chosen: GradeRule | None = None
         below_ref = 0
@@ -143,22 +152,34 @@ class StandardEngineV1:
             below_ref = _below_sieve_count(std, measurements, ref.sieve_min) if ref.sieve_min is not None else 0
 
         reasons: list[str] = []
-        reasons.append(
-            _reason(
-                "grading.reason.primary_within_limit" if primary <= ref.primary_max else "grading.reason.primary_over_limit",
-                count=primary,
-                limit=ref.primary_max,
+        if ref.primary_max is not None:
+            reasons.append(
+                _reason(
+                    "grading.reason.primary_within_limit" if primary <= ref.primary_max else "grading.reason.primary_over_limit",
+                    count=primary,
+                    limit=ref.primary_max,
+                )
             )
-        )
-        reasons.append(
-            _reason(
-                "grading.reason.secondary_within_limit"
-                if secondary <= ref.secondary_full_max
-                else "grading.reason.secondary_over_limit",
-                count=secondary,
-                limit=ref.secondary_full_max,
+        if ref.secondary_full_max is not None:
+            reasons.append(
+                _reason(
+                    "grading.reason.secondary_within_limit"
+                    if secondary <= ref.secondary_full_max
+                    else "grading.reason.secondary_over_limit",
+                    count=secondary,
+                    limit=ref.secondary_full_max,
+                )
             )
-        )
+        if ref.defect_pct_max is not None:
+            reasons.append(
+                _reason(
+                    "grading.reason.defect_pct_within"
+                    if defect_pct <= ref.defect_pct_max
+                    else "grading.reason.defect_pct_over",
+                    defect_pct=f"{defect_pct:.2f}",
+                    limit=ref.defect_pct_max,
+                )
+            )
         if ref.sieve_min is not None:
             reasons.append(
                 _reason(
@@ -214,6 +235,33 @@ class StandardEngineV1:
             reasons=reasons,
             warnings=list(std.warnings),
             standard_yaml_sha=std.sha256,
+        )
+
+    # -- 轨3：精品/普通判定层（与定级解耦，见 premium.py 模块 docstring）----
+    def evaluate_premium(
+        self,
+        beans: list[PairedBean],
+        measurements: Measurements,
+        *,
+        bands=None,
+        db46_legal: bool | str | None = None,
+        moisture_pct: float | None = None,
+    ):
+        """精品/普通判定（轨3）：委托 :func:`beaneye.standards.premium.evaluate_premium`。
+
+        精品阈值恒用 CQI 口径基准（轨3 spec：精品 = 0 严重 + 一般缺陷等效
+        ≤5），**不随本引擎持有的标准切换**——本引擎标准只管 :meth:`evaluate`
+        的法定/协议定级；DB46 口径的法定等级经 ``db46_legal=True`` 附带给出。
+        返回契约 ``PremiumDecision``（v1.2 增补，与 GradingDecision 并存）。
+        """
+        from beaneye.standards.premium import evaluate_premium as _eval_premium
+
+        return _eval_premium(
+            beans,
+            measurements,
+            bands=bands,
+            db46_legal=db46_legal,
+            moisture_pct=moisture_pct,
         )
 
 

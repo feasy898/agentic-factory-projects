@@ -1,0 +1,106 @@
+{
+  "module": "cs_arm.handeye:scene",
+  "date": "2026-10-02",
+  "cmd": "python scripts/calibrate_handeye.py --cam scene (--mode eye-to-hand) --points 12 --out mock_handeye_scene.npz --mock  (cwd=包根 chengshao/)",
+  "metrics": {
+    "cam": "scene",
+    "mode": "eye-to-hand",
+    "key": "T_base_cam",
+    "points_requested": 12,
+    "views_used": 12,
+    "reproj_err_mm": 0.4383,
+    "reproj_err_px": 0.584,
+    "method": "tsai",
+    "T": [
+      [
+        -0.9695050095504554,
+        0.011594349793632781,
+        -0.24479707414394125,
+        0.33959391839872316
+      ],
+      [
+        -0.0011215484144995102,
+        0.9986598835976794,
+        0.051741463274855175,
+        -0.04026963860338539
+      ],
+      [
+        0.24506892619368398,
+        0.05043815961682326,
+        -0.9681927563603967,
+        0.7999242072750623
+      ],
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "collection": {
+      "intrinsics_source": "synthetic_known",
+      "image_size_px": [
+        1280,
+        800
+      ],
+      "board_anchor": "板平装夹爪下端（随臂入顶部相机视野）",
+      "tilt_band_deg": [
+        25.0,
+        75.0
+      ],
+      "candidates_tried": 60,
+      "drive_rejected": 10,
+      "tcp_out_of_view": 28,
+      "render_skipped": 3,
+      "detect_failed": 2,
+      "fronto_skipped": 5,
+      "views_collected": 12,
+      "ground_truth_key": "T_base_cam",
+      "ground_truth_T": [
+        [
+          -0.9693774373814584,
+          0.01267935730579914,
+          -0.245248073986461,
+          0.34
+        ],
+        [
+          0.0,
+          0.9986662214804427,
+          0.05163117347083389,
+          -0.04
+        ],
+        [
+          0.2455756174699695,
+          0.0500500946281545,
+          -0.9680845025781354,
+          0.8
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    },
+    "est_vs_gt_mock_only": {
+      "pos_err_mm": 0.493,
+      "angle_err_deg": 0.0712
+    },
+    "elapsed_s": 21.89
+  },
+  "thresholds": {
+    "reproj_err_mm_max": 3.0,
+    "reproj_err_px_max": 2.0,
+    "min_views": 6,
+    "rule": "重投影残差 ≤3mm 或 ≤2px"
+  },
+  "pass": true,
+  "notes": [
+    "通过线=重投影残差 ≤3mm 或 ≤2px（§5.9）",
+    "mock 结论不等于真机结论：合成棋盘图像 + cs_sim FK 位姿，残差是合成数据上的链路验证；真机标定精度以 D3 bring-up 实测为准"
+  ],
+  "evidence_kind": "mock_dry_run",
+  "real_machine_measured": false,
+  "mock": true
+}

@@ -9,7 +9,13 @@
 - spoon_cls.export_onnx：无 checkpoint 拒绝（exit 2）/ dry-run 计划（exit 0）；
 - spoon_cls.eval：指标重算达标（exit 0）/ 漏检率超线（exit 1）/ 坏输入（exit 2）；
 - transfer.cos_transfer：计划生成（exit 0）/ execute 无 --yes / 无 coscmd 拒绝（exit 2）；
-- record.record_demo：dry-run 计划（exit 0）/ execute 无硬件会话拒绝（exit 2）。
+- record.record_demo：dry-run 计划（exit 0）/ execute 无硬件会话拒绝（exit 2）；
+- record.record_scripted：plan-only dry-run（exit 0 不落盘）/ --mock 合成小样本
+  落数据集 + 格式校验通过（exit 0）/ 参数拒绝（exit 2）；
+- record.record_keyboard：plan-only dry-run 键位表（exit 0）/ --mock 合成小样本
+  + 校验（exit 0）/ execute 无硬件会话、无串口、无相机逐级拒绝（exit 2）；
+- record.session：数据集结构自检入口（好数据 exit 0 / 篡改对账字段 exit 1 /
+  目录不存在 exit 2）。
 
 运行（仓库根）：python -m pytest tests/test_training_scripts.py -q
 """
@@ -33,9 +39,11 @@ ENV_BASE = {"PYTHONUTF8": "1", "PYTHONPATH": str(REPO_ROOT)}
 
 def run_module(module: str, *argv: str, env_extra: dict | None = None,
                cwd: Path = REPO_ROOT) -> subprocess.CompletedProcess:
-    env = {**os.environ, **ENV_BASE, **(env_extra or {})}
+    # 先清洗外层环境（防宿主机误设放行变量），再叠加用例显式注入项
+    env = {**os.environ, **ENV_BASE}
     env.pop("CS_ALLOW_TRAIN", None)
     env.pop("CS_HW_SESSION", None)
+    env.update(env_extra or {})
     return subprocess.run(
         [PY, "-m", module, *argv], cwd=str(cwd), env=env,
         stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
@@ -322,3 +330,132 @@ def test_record_demo_execute_refused_without_hw_session():
                    "--episode", "x", "--execute")
     assert r.returncode == 2, r.stdout
     assert "CS_HW_SESSION" in r.stdout
+
+
+# ---------------------------------------------------------------------------
+# record.session（机器人学习运行栈数据集布局：结构自检入口）
+# ---------------------------------------------------------------------------
+
+def test_session_validate_missing_dir_is_usage_error():
+    r = run_module("chengshao.training.record.session",
+                   "--validate", "data/_pytest_nonexist_dataset")
+    assert r.returncode == 2, r.stdout
+
+
+def test_session_validate_detects_corrupted_dataset(tmp_path):
+    # 先用 --mock 产一个真实小数据集，再篡改对账字段，校验器必须抓到
+    repo_ds = REPO_ROOT / "data" / "_pytest_kb_corrupt"
+    try:
+        r = run_module("chengshao.training.record.record_keyboard",
+                       "--episodes", "1", "--mock", "--out", "data/_pytest_kb_corrupt")
+        assert r.returncode == 0, r.stdout
+        info_path = repo_ds / "meta" / "info.json"
+        info = json.loads(info_path.read_text(encoding="utf-8"))
+        info["total_frames"] += 7  # 篡改：行数对账必挂
+        info_path.write_text(json.dumps(info, ensure_ascii=False), encoding="utf-8")
+        r2 = run_module("chengshao.training.record.session",
+                        "--validate", "data/_pytest_kb_corrupt")
+        assert r2.returncode == 1, r2.stdout
+        assert "'ok': False" in r2.stdout
+    finally:
+        shutil.rmtree(repo_ds, ignore_errors=True)
+
+
+# ---------------------------------------------------------------------------
+# record.record_scripted（脚本示教自记录）
+# ---------------------------------------------------------------------------
+
+def test_record_scripted_dry_run_plan_writes_nothing():
+    default_out = REPO_ROOT / "data" / "recordings" / "scripted_scoop"
+    r = run_module("chengshao.training.record.record_scripted", "--episodes", "1")
+    assert r.returncode == 0, r.stdout
+    assert "PLAN:" in r.stdout and "plan-only" in r.stdout
+    assert not default_out.exists()  # 缺省路径不落盘
+
+
+def test_record_scripted_mock_writes_dataset_and_validates(tmp_path):
+    repo_ds = REPO_ROOT / "data" / "_pytest_scripted_ds"
+    report = tmp_path / "scripted_eval.json"
+    try:
+        r = run_module("chengshao.training.record.record_scripted",
+                       "--episodes", "1", "--mock",
+                       "--out", "data/_pytest_scripted_ds",
+                       "--report", str(report))
+        assert r.returncode == 0, r.stdout
+        assert "'ok': True" in r.stdout
+        info = json.loads((repo_ds / "meta" / "info.json").read_text(encoding="utf-8"))
+        # 布局对齐训练框架数据集格式（中性名）：特征维度/双路视频/回合记账
+        assert info["features"]["observation.state"]["shape"] == [6]
+        assert info["features"]["action"]["shape"] == [6]
+        assert "observation.images.scene" in info["features"]
+        assert "observation.images.wrist" in info["features"]
+        assert info["total_episodes"] == 1 and info["total_frames"] >= 1
+        assert (repo_ds / "data" / "chunk-000" / "episode_000000.parquet").is_file()
+        assert (repo_ds / "videos" / "chunk-000" / "observation.images.scene"
+                / "episode_000000.mp4").is_file()
+        events = json.loads((repo_ds / "meta" / "record_events.json").read_text(
+            encoding="utf-8"))["events"]
+        assert events["0"]["scoop_done"]  # 合爪事件已按帧下标记录
+        rep = json.loads(report.read_text(encoding="utf-8"))
+        assert rep["pass"] is True and rep["metrics"]["episodes"] == 1
+    finally:
+        shutil.rmtree(repo_ds, ignore_errors=True)
+
+
+def test_record_scripted_rejects_bad_cams_and_fps():
+    r = run_module("chengshao.training.record.record_scripted",
+                   "--cams", "left,right")
+    assert r.returncode == 2, r.stdout
+    r2 = run_module("chengshao.training.record.record_scripted", "--fps", "120")
+    assert r2.returncode == 2, r2.stdout
+    r3 = run_module("chengshao.training.record.record_scripted",
+                    "--mock", "--execute")
+    assert r3.returncode == 2, r3.stdout  # 合成 dry-run 与真实采集互斥
+
+
+# ---------------------------------------------------------------------------
+# record.record_keyboard（键盘遥操录制）
+# ---------------------------------------------------------------------------
+
+def test_record_keyboard_dry_run_plan_shows_keymap():
+    default_out = REPO_ROOT / "data" / "recordings" / "keyboard_teleop"
+    r = run_module("chengshao.training.record.record_keyboard", "--episodes", "1")
+    assert r.returncode == 0, r.stdout
+    assert "KEYMAP:" in r.stdout and "scoop_done" in r.stdout
+    assert not default_out.exists()  # 缺省路径不落盘、不启动监听
+
+
+def test_record_keyboard_mock_writes_dataset_and_validates(tmp_path):
+    repo_ds = REPO_ROOT / "data" / "_pytest_kb_ds"
+    try:
+        r = run_module("chengshao.training.record.record_keyboard",
+                       "--episodes", "1", "--mock", "--out", "data/_pytest_kb_ds")
+        assert r.returncode == 0, r.stdout
+        assert "'ok': True" in r.stdout
+        info = json.loads((repo_ds / "meta" / "info.json").read_text(encoding="utf-8"))
+        assert info["features"]["action"]["shape"] == [6]
+        assert (repo_ds / "data" / "chunk-000" / "episode_000000.parquet").is_file()
+        events = json.loads((repo_ds / "meta" / "record_events.json").read_text(
+            encoding="utf-8"))["events"]
+        assert events["0"]["scoop_done"]  # 合成按键序列含 space 标记
+    finally:
+        shutil.rmtree(repo_ds, ignore_errors=True)
+
+
+def test_record_keyboard_execute_refused_without_hw_session():
+    r = run_module("chengshao.training.record.record_keyboard",
+                   "--execute", "--port", "COM3")
+    assert r.returncode == 2, r.stdout
+    assert "CS_HW_SESSION" in r.stdout
+
+
+def test_record_keyboard_execute_refused_without_port_then_without_camera():
+    r = run_module("chengshao.training.record.record_keyboard", "--execute",
+                   env_extra={"CS_HW_SESSION": "1"})
+    assert r.returncode == 2, r.stdout
+    assert "--port" in r.stdout  # 硬件会话放行了但没有串口号 → 仍拒绝
+    # 串口号给了但本机无相机 → 设备缺失 fail-closed（stderr 合并进 stdout）
+    r2 = run_module("chengshao.training.record.record_keyboard", "--execute",
+                    "--port", "COM3", env_extra={"CS_HW_SESSION": "1"})
+    assert r2.returncode == 2, r2.stdout
+    assert "fail-closed" in r2.stdout

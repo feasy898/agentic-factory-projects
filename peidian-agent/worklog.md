@@ -334,3 +334,80 @@ PASS exit 0（新增 t_adapter_sg_incomer）；run_matrix 全绿 exit 0（25/25+
 - **悬留维持登记（不计收工阻断）**：Higress 凭据缺（真实 LLM 注入未跑，离线兜底已实证）；
   srv-1 通道缺（caddy 未上线，deploy/ 包就绪+api.js 相对路径已清障）；浏览器截图缺（无 headless
   浏览器）。模型配额 0/10 未动，密钥零打印。
+
+## 2026-10-01 · ZCode 主会话 · 转向计划启动轮（Phase 0 基线修复 + 阶段 a 工作流点火）
+
+**做了什么**：
+- 接手实测：session cwd（D:\new-workspace\配电agent）为空目录，项目本体在
+  `D:\new-workspace\澄迈项目\机械臂\peidian-agent`（remote feasy898/agentic-factory-projects，
+  本地=远程 HEAD 0ab1c25，浅克隆）；Monorepo 顶层另有 6 个项目不在本任务范围。
+- 环境修复（详见 tests/CHANGELOG.md 2026-10-01 节与 ASSET-MANIFEST §6 R-2）：
+  core.autocrlf=true 致全树 CRLF → 门禁 0/8；排查后确认登记口径=CRLF 字节，
+  完成 LF 归一（338 文件）+ `.gitattributes` 锁 LF + sparse-checkout disable
+  （原 cone 仅含 chenmai8，peidian-agent 全树 skip-worktree 无法提交）；
+  golden/dev MANIFEST 按 sanctioned 工具重建（12 种子内容零变化，CRLF 证明）；
+  test_m1/test_m6 spec_hash 按 01 v2 §6 重登记；pyproject `>=3.11`→`>=3.12`。
+- 基线五门：run_evals **233/233 PASS exit 0**（登记时点实跑）；ci_isolation OK。
+- 阶段 a 点火：动态工作流 `dwfrun-8ab46deb`（4 域研究员 GLM-5.3-Flash 并行 → 汇总 →
+  独立复核 → 修订+python 机械校验），目标产出 docs/theory/ 六件（A-1..A-3）。
+
+**悬留/待办（如实登记）**：A-4 owner 批示门未过（不可代签）；M1-agent-core.md 冻结后
+内容漂移待 owner 复核（R-2）；Higress/LLM 真实模型凭据仍缺（真实注入验证待凭据）；
+git stat 缓存 341 文件 ` M` 噪音（内容 diff 为空，提交以内容为准）。
+
+## 2026-10-02 · ZCode 主会话 · 转向计划主交付轮（阶段 a/b/c/d 主体落地）
+
+**做了什么**（提交链：fbc9eaf 环境基线 → 9c9fb4a 阶段 d 主体 → 390ff33 人类体验+收敛件
+→ b556609 清理；另有 monorepo 内其他会话并发提交，本会话只动 peidian-agent 子树）：
+- **阶段 a 理论卷**（GLM-5.3-Flash 工作流 dwfrun-8ab46deb）：docs/theory/ 六件
+  （overview/references/business/equipment/safety/operations），references 62 条、
+  四域论断 252 条、43 个来源 WebFetch 实测可达；独立复核+修订 5 处（R46/R47 空号、
+  统计行不符、类型枚举名不副实等）；A-1..A-3 过，A-4 待 owner。
+- **阶段 b/c 草案**：docs/contracts/agent-purpose-contract.md（七节+红线 R1-R7）、
+  module-map.md（26 件三态判定：fault/ 升唯一注入引擎权威、m5 injector 停演进、
+  三处 LLM 调用点收编、web/ 冻结+ui/ 全新）；evidence/owner-gates.md 批示门台账。
+- **阶段 d 主体**：ParkDSL v1.1 三节（faults/calendar/scenario，25/25）；arena 编排层
+  （engine/run_scenario/faultlib/tests 24 用例）；fault 引擎 4→15 类（11 类通用信号 +
+  ack→repair 生命周期 + Criterion 判据表带出处）；park_adapter 修复低压侧串联开关
+  方向反向的潜伏缺陷；arena/faults 论文故障库 11 条目（38 条判据有出处、【待核】如实）。
+- **人类体验模式**：CLI --human（异常暂停等人工）+ arena/serve.py（HTTP+SSE）+ ui/
+  全新前端三件套（owner 裁定推翻重做）；冒烟实测通过（run/事件流/人工注入/静态服务）。
+- **收敛件**：thresholds.yaml（红线 3/N Clopper-Pearson、收益、前后窗漂移；
+  frozen: false 待校准）+ converge.py（calibrate/judge，未冻结拒绝判定）。
+- docs/expert-review.md：判据溯源总表（标准条文 vs 工程惯例 vs 待核）+ 审查清单。
+- **门禁**：全绿实跑——run_evals 233/233、ci_isolation zero hits、dsl 25/25、
+  fault 15/15、arena 24/24；样例场景端到端 4/4 注入检出、4/4 agent 闭环、0 误升级。
+
+**悬留/待办（如实登记）**：①场景库 20 个工作流 dwfrun-b46ea344 生产中（S-201 起，
+完成并复核后单独提交）；②D-5 链路未闭环：100 次校准→owner 冻阈值→3 万次隔离判定→
+D-7 报告，均需 owner 批复（thresholds 现为草案）；③A-4/B-4 owner 批示门未过；
+④Higress/LLM 真实凭据缺（场景生成器的真实模型路径未启用，当前离线兜底）；
+⑤gen_scenario.py（LLM 规则化生成器）未实现——语料由工作流产出先行，生成器
+列后续；⑥ui/ 待办：遥测曲线、人机对比评分卡、单线图（ui/README 已列）。
+
+## 2026-10-02 · ZCode 主会话 · 场景库收尾 + 引擎三修 + 100 次校准（DD-558e7 前链）
+
+**做了什么**：
+- **场景库 20 个全部入库**（D-4 达标）：GLM-5.3-Flash 工作流 dwfrun-b46ea344
+  （4 编撰组×5 → 独立复核 → 修订+机械校验 exit 0）；覆盖设备量测/网络保护/直流运维/
+  园区变体四类，全部过 dsl 校验 + arena 干跑（detected≥1、0 rejected）。
+- **修了三个引擎缺陷**（commit 8a4f146，均由场景编撰升级/实测驱动，纯加法修复）：
+  ①telemetry 叶元件（负荷/光伏/储能/电容）通用信号被 energized 判定整体抑制
+  （phase_loss@load 结构性不可检出——连样板 F-PHLOSS-01 也从未触发）；
+  ②dsl/validate faults/injections target 命名空间过窄（拒 link ID，与
+  dsl_spec id_rules.note 相悖）；③park_adapter ③.5 独立开关一母线面+一线路面时
+  方向反向（联络串开关 BUS→SG→LN→SG→BUS 形态下 B 段整段失电，S-207 暴露）。
+- **批跑 10x 提速**（3 万次的前提）：arena busy 判定精化（全部异常 ack 后按空闲
+  大步长跳到下一事件，消缺期无新状态）单 run 30s→1.7-3.6s；converge.py 多进程
+  批跑（--workers，64 核机 12 workers）。
+- **100 次校准**（12 workers、100 run、0 errors）：红线违规 0、收益 0.6414 vs
+  参照 0.6320（pass）、漂移全 pass；N=100 红线置信上界 2.95%（3/N 须 3 万次才能
+  判定——统计口径预期，非失败）；升级率 0.2/平均检出时延 3502s/平均闭环 1.7。
+  基线数字已写入 thresholds.yaml calibration_baseline，冻结决策包入
+  evidence/owner-gates.md（等 owner 裁定 D-5）。
+- **门禁**：arena 24/24、dsl 25/25、fault 15/15、run_evals 233/233 全绿（每步实跑）。
+
+**悬留/待办**：①**D-5 等 owner 冻结**（决策包已就绪：红线 3/N 维持/收益基线建议补
+--agent-off 批/漂移维持）；②3 万次隔离判定 + D-7 报告在冻结后执行；③A-4/B-4 批示门
+未过；④M1 spec 漂移 R-2 待复核；⑤Higress 凭据缺；⑥gen_scenario.py 未实现；
+⑦ui/ 遥测曲线/对比评分卡/单线图待迭代。

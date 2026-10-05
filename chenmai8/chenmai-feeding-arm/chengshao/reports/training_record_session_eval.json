@@ -1,0 +1,23 @@
+{
+  "module": "training.record.session",
+  "date": "2026-10-02",
+  "cmd": "python -m chengshao.training.record.session --validate data\\_b3_evidence_scripted",
+  "metrics": {
+    "ok": true,
+    "root": "data\\_b3_evidence_scripted",
+    "format": "robot-learning-runtime-dataset v2.1（中性名）",
+    "episodes": 1,
+    "frames": 60,
+    "cams": [
+      "scene",
+      "wrist"
+    ],
+    "fps": 30.0,
+    "errors": [],
+    "validated_at": "2026-10-01T20:42:22Z"
+  },
+  "thresholds": {
+    "structure_ok": true
+  },
+  "pass": true
+}

@@ -1,0 +1,73 @@
+{
+  "archive": {
+    "bytes": 3076276,
+    "path": "_downloads/ext-rgreen_v7_coco.zip",
+    "sha256": "17805efbb6f5029073d371470cc40584da12b627b57d0dc194c08eaf687ceeb2"
+  },
+  "categories": [
+    "defect-coffee",
+    "full-black",
+    "partial-black"
+  ],
+  "category_histogram": {
+    "full-black": 3449,
+    "partial-black": 1396
+  },
+  "coco_validation": {
+    "annotation_files": 3,
+    "categories": [
+      "defect-coffee",
+      "full-black",
+      "partial-black"
+    ],
+    "category_histogram": {
+      "full-black": 3449,
+      "partial-black": 1396
+    },
+    "problems": [],
+    "splits": {
+      "test": {
+        "annotations": 485,
+        "category_histogram": {
+          "full-black": 329,
+          "partial-black": 156
+        },
+        "images": 24,
+        "missing_images": 0,
+        "polygon_annotations": 0
+      },
+      "train": {
+        "annotations": 3133,
+        "category_histogram": {
+          "full-black": 1893,
+          "partial-black": 1240
+        },
+        "images": 176,
+        "missing_images": 0,
+        "polygon_annotations": 0
+      },
+      "valid": {
+        "annotations": 1227,
+        "category_histogram": {
+          "full-black": 1227
+        },
+        "images": 50,
+        "missing_images": 0,
+        "polygon_annotations": 0
+      }
+    }
+  },
+  "export_id": null,
+  "format": "coco",
+  "internal_name": "ext-rgreen",
+  "license": "未声明（以导出包/项目页实际声明为准）",
+  "source_ref": "真实来源坐标（URL/workspace/project/许可页）只登记在本机外部登记文件 C:/devsetup/dataset_sources.txt（不入库）；本 manifest 仅持中性代号",
+  "tool": "scripts/download_datasets.py v2",
+  "totals": {
+    "annotations": 4845,
+    "images": 250,
+    "polygon_annotations": 0
+  },
+  "version": 7,
+  "written_at_utc": "2026-10-03T03:25:14Z"
+}

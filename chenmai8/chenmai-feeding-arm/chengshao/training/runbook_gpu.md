@@ -27,19 +27,32 @@ python -m chengshao.training.transfer.cos_transfer \
 # 核对 /tmp/cos_plan.json 的命令清单后由操作者逐条执行（写入只用 coscmd）
 ```
 
-## 3. 采数（方案 B：拖动示教；硬件到位后启用）
+## 3. 采数（无主臂方案三入口；硬件到位后启用真实采集）
 
 ```bash
-# dry-run：打印采样计划/布局（本机与 GPU 机行为一致）
+# 入口 1：脚本示教自记录（ScriptedScoop 执行期 obs/action/image；
+#         --mock 合成数据 dry-run 零硬件可跑）
+python -m chengshao.training.record.record_scripted            # plan-only dry-run
+python -m chengshao.training.record.record_scripted --mock --episodes 1
+CS_HW_SESSION=1 python -m chengshao.training.record.record_scripted \
+    --execute --port <串口号> --episodes <N> --out data/datasets/spoon_scooping_v1
+
+# 入口 2：键盘遥操录制（精细调整/纠错条目补采；键位表见 --plan 输出）
+python -m chengshao.training.record.record_keyboard            # plan-only dry-run
+CS_HW_SESSION=1 python -m chengshao.training.record.record_keyboard \
+    --execute --port <串口号> --episodes <N> --out data/datasets/spoon_scooping_v1
+
+# 入口 3：方案 B 拖动示教（录制循环硬件到位后补齐——fail-closed）
 python -m chengshao.training.record.record_demo --episode taro_bowlA_full_001
-# 真实录制：需 CS_HW_SESSION=1 + cs_arm 接口 + 双路相机（D4 硬件到位后
-# 补齐录制循环实现——fail-closed，不存在的代码不会被误触发）
-CS_HW_SESSION=1 python -m chengshao.training.record.record_demo \
-    --episode taro_bowlA_full_001 --execute
 ```
 
-回合产出布局见 dry-run 输出（frames/ + wrist/ + joints.csv + events.json）。
-采数协议（覆盖矩阵/条数/质检）见 `plan/training-plan.md §1`。
+- 入口 1/2 输出**机器人学习运行栈数据集布局**（meta/ + parquet + mp4，中性名），
+  自带结构自检：`python -m chengshao.training.record.session --validate <数据集根>`
+  （exit 0=过；装载终验以训练框架实际读取为准）；
+- 入口 3 回合产出布局见 dry-run 输出（frames/ + wrist/ + joints.csv +
+  events.json），供 spoon_cls/prepare_data 消费；
+- 采数协议（覆盖矩阵/条数/质检）见 `plan/training-plan.md §1`；
+- 12GB 本地机（3060 Ubuntu）的采数+训练同机闭环实操另见 `runbook_3060.md`。
 
 ## 4. 勺上分类器（小模型，CPU 预研可跑、GPU 定稿）
 

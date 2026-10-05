@@ -8,10 +8,15 @@
     act/         策略训练命令生成器（对接训练框架 CLI，入口名运行期注入）
     spoon_cls/   勺上分类器：帧数据导出/自动标注 → 训练 → ONNX 导出 → 评测
     transfer/    COS 中转（7z 分卷 + coscmd 上/下行）
-    record/      拖动示教录制（无主臂方案的采数脚本，输出回合原始格式）
+    record/      采数脚本（无主臂方案）：record_scripted（脚本示教自记录）/
+                 record_keyboard（键盘遥操）+ session（机器人学习运行栈
+                 数据集布局写入与结构自检、mock 环境、硬件门）+
+                 record_demo（方案 B 拖动示教计划，硬件到位后补录制循环）
     config/      训练配置（结构与默认值；入口名等运行期注入项不入库）
     requirements-gpu.txt   GPU 机依赖清单（机器可读声明，按命名纪律豁免扫描）
-    runbook_act.md / runbook_gpu.md   操作手册
+    runbook_act.md / runbook_gpu.md / runbook_3060.md   操作手册
+                 （3060 册：12GB 本地机 ACT 实操 + 采数同机闭环；SmolVLA
+                 LoRA 注记「12GB 紧张、建议远端 V100」）
 
 命名纪律：仓库文本用中性名「训练框架」指代 requirements-gpu.txt 声明的
 策略训练依赖栈；其 CLI 入口名不写入仓库（scripts/check_naming.py 把关），

@@ -53,6 +53,23 @@
 | C3-A4 | 演示脚本补齐 | 含可执行的一键演示命令 |
 | C3-A5 | 生豆到货→自采链 | 物理等待：WAITING_EVENT |
 
+**C3 执行记录（2026-10-01/02 跨夜，三线并行）**：
+
+- **新增实时标注模块**：`beaneye/realtime/` 四模块（sources 三源+IP 丢帧策略 / engine 逐帧管线 / overlay 13 类配色+中文 HUD / server MJPEG 推流中枢）+ app 增量 `GET /live/stream`（源失败 503/参数错 400）与 demo.html「实时」入口 + `scripts/demo_realtime.py`；加分项：画面四角 ArUco 时周期重解单应 warp 正射网格，`eq_diameter_mm` 给真毫米（未标定时诚实标注伪毫米）。实测：合成源 720p 引擎处理帧 EMA **5.91 FPS**（≥5 目标达成；消费循环 3.64 FPS，elapsed 含合成盘预合成热身）；ArUco 标定生效（mm/px 与合成真值偏差 <10%）。本线新增 28 测试全过；接手时 `test_realtime_sources` 1 失败系该线遗留测试自身两处 bug（时钟增量/`grab→retrieve` 配对语义），已修复并披露。
+- **新增 SO-101 分拣软件链**（真机延后，Mock 全链验证）：`beaneye/sort/` 九模块（arm 冻结 ArmProtocol / mock_arm / so101 惰性 import lerobot / frame 复用 ArUco 单应+三点仿射 / planner / session 状态机+软件急停 / render / config）+ `configs/sort.yaml` + `scripts/demo_sort_sim.py`。实测：合成盘检出 55 粒→规划 43 步→MockArm 43 步全执行（行程 21710mm）；`--strict-envelope` 下 28 粒超界显式 skipped、15 步执行。6 个测试文件 100 用例全绿；so101 真机路径（transport=None）舵机换算/连杆几何为占位默认值，无硬件未实测，核对清单已写入 `docs/SO101联调手册.md`。
+- **训练脚本复核 7 条修复全闭环**（high 2 / medium 2 / low 3）：merge_ext_coco 去重、真实档门槛改逐盘相对误差、跨类 TP 强制、种子重叠双向拒绝、onnxruntime 导入护栏、措辞纠正、缺图盘剔除；修复后全量 pytest **649 passed / 0 failed / exit 0**（含既有 508 基线 + 本线 13 + 并行线测试）。
+- **终局 gate_d4**：`python scripts/gate_d4.py` → 四项口径过，**exit 0**（本轮新代码态下的复跑结论）。
+- **已知问题与物理等待**：摄像头真机实测（USB 直插 / 手机 IP 推流）待做，操作单见 `docs/交接-实时标注与SO101联调.md`；SO-101 上电联调待硬件（接线→.venv-arm→自检→三点标定→空载试跑→急停，见 `docs/SO101联调手册.md`），`configs/sort.yaml` 外参与几何为「明日实测」占位值；NN 栈真实模式 API 仍待 GPU 机 `--cpu-smoke`/`--smoke-train` 核对；C3-A5 生豆到货维持 WAITING_EVENT。
+
+**C3 执行记录（2026-10-02 批1：标准回填 / 数据集入库 / 采集操作卡，三线并行；终局 gate_d4 exit 0）**：
+
+- **标准回填线**（法定数值落地，文件 19 个）：DB46/T 642—2024 印刷稿（15 页）经仓库外临时 venv 文本层全文抽取 + 表 1/表 2 所在页（6/7 页）150dpi 位图逐页人工复核（文本与图一致），三套 YAML 就地回填——`configs/standards/db46_t642.yaml` 法定值 `verified: true`（杯品一级≥80/二级 70~79/三级 60~69；缺陷豆% ≤4.0/4.1~7.0/7.1~10.0、外来杂质 ≤0.5/0.6~0.8/0.9~1.2、粒度筛号 ≥16/14~15/12~13、水分≤12.0/灰分≤5.5/咖啡因≥1.5、一级应无严重缺陷；`legal:` 节每值带条款号；`delta_e_max=10.0` 保留并显式标注机器内控线）；`cqi_fine_robusta.yaml` 按简报公开口径回填（350g/Fine 0+≤5/新增优质档≤12 双轴近似/奎克 100g 样≤3·≤5/筛 16 乌干达实施口径）；`nyt_604.yaml` 数值维持折算基线并锚定 TCVN 4193:2014 与巴西 COB 等效表（注释标明「待 NY/T 604-2020 正式文本替换」——**正式文本待用户补，找到后回填并置 verified:true**）。关键工程决策：法定%口径以引擎新增 `defect_pct_max` 轴进入定级主链路（粒数占比近似，理由键 `defect_pct_within/over` 显式标注，不编造粒数当量）；6.5.4 粒度 5% 降档容差在 `premium.db46_legal_grade` 如实实现（恰 5% 过/6% 降档有测试钉住）。轨2：`configs/size_bands.yaml` + `beaneye/metrology/size_bands.py`（大≥17/中 15-16/小≤14 + ICO 筛径表，待真实豆标定）；轨3：PremiumDecision 契约 v1.2 只增 + `beaneye/standards/premium.py`；`docs/standards_matrix.md` 六标准矩阵 + ISO 10470 双系数表；`tests/test_standards_values.py` 25 例（既有 `test_standards.py` 12 处同步/替换，无 skip/xfail/删断言/放宽容差，清单见批 1 简报）。
+- **数据集入库线**（复核修复全闭环，文件 8 个）：HIGH-1 dcv 模式显式 `--out` 时 manifest internal_name 取目录名；HIGH-2 自抓 ext-main 页面证实类别表为西语，`mapping.yaml` 改西语键并纠正 broca→insect（brocade 旧译系误配），登记册同步；MEDIUM-3 「分割格式×检测型项目」下载前预检警告；MEDIUM-4 登记册 §0 manifest 入库口径（ext-main dcv 模式含上游坐标不入库；universe 三集仅中性代号）；LOW-5 为复核员未复跑备注。四集（ext-main/ext-rseg/ext-rgreen/ext-scaa17）登记册 + mapping.yaml 就位，状态 **PENDING_KEY**（真实下载待 Private Key；Publishable Key 401 实测）；下载器 selftest 5/5 PASS；本线 20 项=12 passed+8 skipped（skip=数据未下载）。
+- **采集操作卡线**（明日可执行，文件 7 个）：`docs/采集操作卡-v0.1.md`（13 类分堆指引 + 大中小三堆；≥20px/mm 设备换算表、双灯 45°+柔光、背景 RGB≈(208,203,200)、ArUco 1:1 打印核验、命名/自检/预标注两命令、蓝牙秤补做项；工作量预估 ≥260 粒/约 540 张/7~9.5h，经验估算）+ 脚手架 `data/datasets/hn_robusta/v0.1/`（13 类子目录 + size_trays + sorting_log/photo_log 模板）；`tests/test_hn_scaffold.py` 4 例。
+- **终局与基线**：全量 pytest **690 passed / 8 skipped / 0 failed**（前夜基线 653 passed；8 个 skip 均为数据集线「数据未下载」跳过；中途一轮瞬时失败系并行线 mapping.yaml 编辑窗口，单独重跑即绿）；终局 `gate_d4` **exit 0**；中性名自扫（gate_d3 同款 23 条模式）19 个新增/改动文件 0 命中。
+- **批1成果简报**：`chenmai-bean-eye/docs/批1成果-标准与数据集.md`（三线摘要/回填前后对照表/四集统计/明日拍摄指引/批 2 触发条件）。
+- **待补与物理等待**：NY/T 604-2020 正式文本待用户补；四集真实下载待 Private Key；C3-A5 生豆到货维持 WAITING_EVENT（到货后按 `docs/采集操作卡-v0.1.md` 执行自采链）。
+
 ### 2.4 子线 C4 政务AI脱敏网关（`chenmai-gov-ai-gateway/`）
 
 | # | 断言 | 判定 |
@@ -87,6 +104,7 @@
 - 六仓代码全量在库（全历史保留）；五仓资产化收敛一轮完成（C1–C5 反馈归零）、可玩线按模式 M 走完五步闭环。
 - 各线门禁最近基线（09-30 实跑）：C1 8/8、C4 9/9、C5 6/6、C2 4/4+差分 PASS、C3 四项口径过。
 - 支撑层五文档 + plan 五件套 + _regen/_reviews 判定基建全部在库。
+- 2026-10-01/02 跨夜（C3 夜班）：实时标注模块 / SO-101 分拣软件链（Mock 全链）/ 训练脚本 7 条修复三条线落地，终局 gate_d4 exit 0；真机增量（摄像头、SO-101 上电）与生豆到货为后续物理等待项，操作单 `chenmai-bean-eye/docs/交接-实时标注与SO101联调.md`。
 - 待解：六仓环境未重建（门禁不能开箱跑）；C4 整门新跑；C5 D1/D2；VLM 凭证；损坏素材换源。
 
 ## 4. 下一步任务清单（按优先级，分批）

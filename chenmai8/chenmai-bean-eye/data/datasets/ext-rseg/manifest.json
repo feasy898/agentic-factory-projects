@@ -1,0 +1,88 @@
+{
+  "archive": {
+    "bytes": 32494347,
+    "path": "_downloads/ext-rseg_v3_coco-segmentation.zip",
+    "sha256": "ac10ec53067913ddc6ae5d0bc87150c5bd2cb4be64c35d7d16063e7b86e9f9d6"
+  },
+  "categories": [
+    "Black",
+    "Broken-Chipped",
+    "Good beans",
+    "Insect damage",
+    "defects"
+  ],
+  "category_histogram": {
+    "Black": 158,
+    "Broken-Chipped": 86,
+    "Good beans": 463,
+    "Insect damage": 295
+  },
+  "coco_validation": {
+    "annotation_files": 3,
+    "categories": [
+      "Black",
+      "Broken-Chipped",
+      "Good beans",
+      "Insect damage",
+      "defects"
+    ],
+    "category_histogram": {
+      "Black": 158,
+      "Broken-Chipped": 86,
+      "Good beans": 463,
+      "Insect damage": 295
+    },
+    "problems": [],
+    "splits": {
+      "test": {
+        "annotations": 44,
+        "category_histogram": {
+          "Black": 7,
+          "Broken-Chipped": 4,
+          "Good beans": 19,
+          "Insect damage": 14
+        },
+        "images": 44,
+        "missing_images": 0,
+        "polygon_annotations": 44
+      },
+      "train": {
+        "annotations": 876,
+        "category_histogram": {
+          "Black": 138,
+          "Broken-Chipped": 75,
+          "Good beans": 405,
+          "Insect damage": 258
+        },
+        "images": 876,
+        "missing_images": 0,
+        "polygon_annotations": 876
+      },
+      "valid": {
+        "annotations": 82,
+        "category_histogram": {
+          "Black": 13,
+          "Broken-Chipped": 7,
+          "Good beans": 39,
+          "Insect damage": 23
+        },
+        "images": 82,
+        "missing_images": 0,
+        "polygon_annotations": 82
+      }
+    }
+  },
+  "export_id": null,
+  "format": "coco-segmentation",
+  "internal_name": "ext-rseg",
+  "license": "未声明（以导出包/项目页实际声明为准）",
+  "source_ref": "真实来源坐标（URL/workspace/project/许可页）只登记在本机外部登记文件 C:/devsetup/dataset_sources.txt（不入库）；本 manifest 仅持中性代号",
+  "tool": "scripts/download_datasets.py v2",
+  "totals": {
+    "annotations": 1002,
+    "images": 1002,
+    "polygon_annotations": 1002
+  },
+  "version": 3,
+  "written_at_utc": "2026-10-03T03:24:59Z"
+}

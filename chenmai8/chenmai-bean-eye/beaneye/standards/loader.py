@@ -158,14 +158,23 @@ class ClassInfo:
 
 @dataclass(frozen=True)
 class GradeRule:
-    """单个级别阈值（grades 从最优到最差排列，index 即位次）。"""
+    """单个级别阈值（grades 从最优到最差排列，index 即位次）。
+
+    三条限定轴均可选（null = 该轴不设限，判定时直接通过）：
+    - ``primary_max`` / ``secondary_full_max``：主/次缺陷粒数上限（全样累计）；
+    - ``defect_pct_max``：缺陷豆总量百分比上限（(主+次)/本盘粒数×100，v0 以
+      粒数占比近似质量百分比——DB46/T 642—2024 表 2 的「缺陷豆，%」即此
+      口径，同密度假设见 premium.db46_legal 注释）；
+    - ``sieve_min``：筛目下限（v0 语义：低于该目数的粒数须为 0）。
+    """
 
     index: int
     name: str
-    primary_max: int
-    secondary_full_max: int
+    primary_max: int | None
+    secondary_full_max: int | None
     sieve_min: int | None  # null = 不设筛目条件
     verified: bool
+    defect_pct_max: float | None = None  # null = 不设缺陷百分比条件
 
 
 @dataclass(frozen=True)
@@ -205,6 +214,7 @@ class Standard:
     weight: WeightCfg
     notes: tuple[str, ...] = ()
     warnings: tuple[str, ...] = field(default=())  # verified:false 收集
+    legal: LMap | None = None  # 可选法定数值节（如 DB46 表1/表2 抄录；原文条款号见各键）
 
     def grade_names(self) -> list[str]:
         return [g.name for g in self.grades]
@@ -262,9 +272,9 @@ TOP_REQUIRED = (
     "metrology",
     "weight",
 )
-TOP_OPTIONAL = ("fail_grade", "notes")
+TOP_OPTIONAL = ("fail_grade", "notes", "legal")
 
-_GRADE_KEYS = ("name", "primary_max", "secondary_full_max", "sieve_min", "verified")
+_GRADE_KEYS = ("name", "primary_max", "secondary_full_max", "sieve_min", "verified", "defect_pct_max")
 _CLASS_KEYS = ("kind", "zh", "en", "vi")
 
 
@@ -394,7 +404,7 @@ def load_standard(target: str | Path, *, taxonomy: Taxonomy | None = None) -> St
             vi=_want_str(path, item, "vi", f"defect_classes.{key}"),
         )
 
-    # -- grades（单调放宽：从最优到最差）-------------------------------------
+    # -- grades（单调放宽：从最优到最差；三条限定轴均可选）-------------------
     grades_raw = raw["grades"]
     if not isinstance(grades_raw, list) or not grades_raw:
         raise _err(path, raw.line("grades"), "grades 必须是非空列表")
@@ -405,14 +415,27 @@ def load_standard(target: str | Path, *, taxonomy: Taxonomy | None = None) -> St
         if not isinstance(item, LMap):
             raise _err(path, raw.line("grades"), f"{where} 必须是映射")
         _reject_unknown_keys(path, item, _GRADE_KEYS, where)
-        _require_keys(path, item, _GRADE_KEYS, where)
+        _require_keys(path, item, ("name", "sieve_min", "verified"), where)
         name = _want_str(path, item, "name", where)
         if name in names:
             raise _err(path, item.line("name"), f"{where}.name 重复: {name!r}")
         names.add(name)
+        counts: dict[str, int | None] = {}
         for k in ("primary_max", "secondary_full_max"):
-            if not _is_int(item[k]) or item[k] < 0:
-                raise _err(path, item.line(k), f"{where}.{k} 必须是 >=0 的整数，得到 {item[k]!r}")
+            v = item.get(k)
+            if v is not None and (not _is_int(v) or v < 0):
+                raise _err(path, item.line(k), f"{where}.{k} 必须是 >=0 的整数或 null（不设限），得到 {v!r}")
+            counts[k] = v
+        pct_max = item.get("defect_pct_max")
+        if pct_max is not None and (not _is_num(pct_max) or pct_max <= 0):
+            raise _err(path, item.line("defect_pct_max"), f"{where}.defect_pct_max 必须是 >0 的数字或 null（不设限），得到 {pct_max!r}")
+        if counts["primary_max"] is None and counts["secondary_full_max"] is None and pct_max is None:
+            raise _err(
+                path,
+                item.line("name"),
+                f"{where} 三条限定轴（primary_max/secondary_full_max/defect_pct_max）全为 null——"
+                "级别至少要有一条限定轴",
+            )
         sieve_min = item["sieve_min"]
         if sieve_min is not None and (not _is_int(sieve_min) or sieve_min < 1):
             raise _err(path, item.line("sieve_min"), f"{where}.sieve_min 必须是 >=1 的整数或 null，得到 {sieve_min!r}")
@@ -422,22 +445,25 @@ def load_standard(target: str | Path, *, taxonomy: Taxonomy | None = None) -> St
             GradeRule(
                 index=i,
                 name=name,
-                primary_max=item["primary_max"],
-                secondary_full_max=item["secondary_full_max"],
+                primary_max=counts["primary_max"],
+                secondary_full_max=counts["secondary_full_max"],
                 sieve_min=sieve_min,
                 verified=item["verified"],
+                defect_pct_max=None if pct_max is None else float(pct_max),
             )
         )
         if i > 0:
             prev = grades[i - 1]
-            if grades[i].primary_max < prev.primary_max:
-                raise _err(path, item.line("primary_max"),
-                           f"{where}.primary_max({grades[i].primary_max}) 不得小于上一级({prev.primary_max})——"
-                           "grades 必须从最优到最差单调放宽")
-            if grades[i].secondary_full_max < prev.secondary_full_max:
-                raise _err(path, item.line("secondary_full_max"),
-                           f"{where}.secondary_full_max({grades[i].secondary_full_max}) 不得小于上一级"
-                           f"({prev.secondary_full_max})——grades 必须从最优到最差单调放宽")
+            for axis in ("primary_max", "secondary_full_max", "defect_pct_max"):
+                cur_v, prev_v = getattr(grades[i], axis), getattr(prev, axis)
+                if cur_v is not None and prev_v is None:
+                    raise _err(path, item.line(axis),
+                               f"{where}.{axis}({cur_v}) 在上一级不设限（null）后不得再设数值——"
+                               f"{axis} 必须单调放宽且 null 只能在尾部")
+                if cur_v is not None and prev_v is not None and cur_v < prev_v:
+                    raise _err(path, item.line(axis),
+                               f"{where}.{axis}({cur_v}) 不得小于上一级({prev_v})——"
+                               "grades 必须从最优到最差单调放宽")
             if prev.sieve_min is None and grades[i].sieve_min is not None:
                 raise _err(path, item.line("sieve_min"),
                            f"{where}.sieve_min 在上一级为 null 后不得再设数值——sieve_min 必须非递增且 null 只能在尾部")
@@ -458,6 +484,14 @@ def load_standard(target: str | Path, *, taxonomy: Taxonomy | None = None) -> St
         if not isinstance(raw["notes"], list) or not all(isinstance(s, str) for s in raw["notes"]):
             raise _err(path, raw.line("notes"), "notes 必须是字符串列表")
         notes = tuple(raw["notes"])
+
+    # -- legal（可选法定数值节；原样保留，供 premium.db46_legal 等模块
+    #    结构化消费——引擎只消费 grades/metrology/weight，不解释本节）---------
+    legal: LMap | None = None
+    if "legal" in raw:
+        if not isinstance(raw["legal"], LMap) or not raw["legal"]:
+            raise _err(path, raw.line("legal"), "legal 必须是非空映射")
+        legal = raw["legal"]
 
     # -- metrology -----------------------------------------------------------
     met = raw["metrology"]
@@ -535,4 +569,5 @@ def load_standard(target: str | Path, *, taxonomy: Taxonomy | None = None) -> St
         weight=weight,
         notes=notes,
         warnings=tuple(warnings),
+        legal=legal,
     )

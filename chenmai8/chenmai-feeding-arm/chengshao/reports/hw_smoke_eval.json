@@ -1,0 +1,66 @@
+{
+  "module": "cs_arm.eval_hw",
+  "date": "2026-10-02",
+  "cmd": "python -m cs_arm.eval_hw --mock  (cwd=包根 chengshao/)",
+  "metrics": {
+    "backend": "MockArm+SafetyEnvelope+VirtualClock",
+    "mock_equivalent": true,
+    "model_tier": "mjcf",
+    "servos_online": 6,
+    "servos_expected": 6,
+    "readback_max_err_rad": 0.0,
+    "readback_targets_rejected": 0,
+    "over_limit_target_rejected": true,
+    "motion_after_reject_rad": 0.0,
+    "limit_violations_executed": 0,
+    "executed_targets_in_limits": true,
+    "temperature": {
+      "mode": "mock_equivalent",
+      "watchdog_quiet_ok": true,
+      "watchdog_trips_on_silence": true,
+      "watchdog_recovers_after_reset": true,
+      "violations_total": 0,
+      "note": "MockArm 无热模型：以看门狗通道健康 + 零 violation 等价替代温度读数，不等于真机温度实测（真机读舵机温度寄存器，上限 55°C）"
+    },
+    "gripper": {
+      "cycles_completed": 3,
+      "rejected": 0,
+      "max_readback_err_rad": 0.0,
+      "open_rad": 0.6,
+      "close_rad": 0.2
+    },
+    "envelope_stats": {
+      "written": 6,
+      "rejected": 1,
+      "cartesian_rewritten_to_joints": 0,
+      "estop_count": 0,
+      "watchdog_trips": 1,
+      "zone_latches": 0
+    },
+    "elapsed_s": 1.21
+  },
+  "thresholds": {
+    "servos_online_required": 6,
+    "readback_err_rad_max": 0.001,
+    "limit_violations_executed_max": 0,
+    "over_limit_targets_must_reject": true,
+    "temperature_max_c": 55.0,
+    "temperature_mock_equivalent": true,
+    "gripper_cycles_min": 2,
+    "gripper_readback_err_rad_max": 0.001
+  },
+  "pass": true,
+  "checks": {
+    "connectivity_6_of_6": true,
+    "readback_consistent": true,
+    "limits_ok": true,
+    "temperature_ok_mock_equivalent": true,
+    "gripper_open_close": true
+  },
+  "notes": [
+    "mock 结论不等于真机结论：MockArm 为仿真内虚拟执行器（无串口/舵机/热模型），本报告证明的是冒烟检查链与包络语义，不是 §5.9 真机冒烟达标",
+    "真机分支：FeetechArm.connect() 校验 6/6 在线后逐项执行同构检查（T10 实现）"
+  ],
+  "evidence_kind": "mock_dry_run",
+  "real_machine_measured": false
+}

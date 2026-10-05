@@ -1,0 +1,15 @@
+# =========================================================================
+# ext-rgreen（罗布斯塔绿豆检测集，2 类 bbox）→ taxonomy 13 类 映射表
+# -------------------------------------------------------------------------
+# 语义对齐 train/prepare_coco.py --mapping-yaml（--mapping-source ext-rgreen）。
+# 状态：类别名依据 2026-10-02 公开项目页核验（Object Detection、250 图、
+#       2 类、CC BY 4.0、3 个版本）；下载后对照 content/*/_annotations.coco.json
+#       的 categories 复核。
+# 说明：该集仅覆盖 black 一个目标类（full/partial 两个上游类都归并到 black），
+#       对 13 类体系是单类补充集；bbox 标注无多边形，合并进 COCO 时
+#       segmentation 为空属正常（train/prepare_coco.py merge 路径兼容）。
+# =========================================================================
+ext-rgreen:
+  "full-black":    black    # 整粒黑豆 → black（简报参考映射：full black → black）
+  "partial-black": black    # 局部黑斑 → black（简报参考映射：partial black → black）
+  "defect-coffee": null     # 粗标缺陷桶（2026-10-03 导出实测新增）：无细分语义，不映射
